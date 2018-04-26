@@ -1,0 +1,300 @@
+---
+title: "select curve fitting methods and products"
+output: html_notebook
+---
+
+```{r load pkgs and data, message=FALSE, warning=FALSE}
+rm(list = ls())
+source('../stable/load_pkgs.R')
+source('../stable/s1_MCD12Q2.R')
+
+stations <- fread("phenofit_st97.csv")
+load("phenofit_OUTPUT.rda")
+df_obs <- merge(df_lst$GPP_obs, stations)
+# fix GPP prod date
+GPP_mod <-df_lst$GPP_mod
+GPP_vpm <-df_lst$GPP_vpm
+
+vars <- names(df_obs)[4:(4+18)]
+days_fix <- 4
+GPP_mod[, (vars) := lapply(.SD, add, days_fix), .SDcols=vars]
+GPP_vpm[, (vars) := lapply(.SD, add, days_fix), .SDcols=vars]
+
+df_lst$GPP_mod <- GPP_mod
+df_lst$GPP_vpm <- GPP_vpm
+
+GPP_avg <- df_lst[c(1, 3)] %>% melt_list("prod") %>% data.table() 
+GPP_avg <- GPP_avg[, lapply(.SD, mean, na.rm = T), .(site,  flag, origin, meth), .SDcols=vars]
+
+EVI_avg <- df_lst[c(4, 6)] %>% melt_list("prod") %>% data.table() 
+EVI_avg <- EVI_avg[, lapply(.SD, mean, na.rm = T), .(site,  flag, origin, meth), .SDcols=vars]
+
+df_lst <- c(df_lst, listk(GPP_avg, EVI_avg))#merge averaged method into df_list
+```
+
+# 1. 挑选站点
+```{r check GPP_obs}
+l_obs <- lst$GPP_obs
+
+get_stat <- function(l){
+    stats <- map(l, ~.x$stat) %>% rm_empty() %>%
+        melt_list("site") %>% data.table() %>%
+        setkeyv(c("site", "meth")) %>% # %>% {.[order(site, meth)]}
+        merge(stations212[, .(site, lat, IGBP)], by = "site") %>%
+        {.[, .( NSE = mean(nash, na.rm = T)), .(site, lat, IGBP)]}
+    return(stats)
+}
+
+stat_lst <- llply(lst, get_stat)
+stat_df  <- melt_list(stat_lst, "prod")
+stat_df2 <- spread(stat_df, prod, NSE)
+
+ggplot(stat_df, aes(IGBP, NSE)) + geom_boxplot() +
+    theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)) +
+    facet_wrap(~prod)
+d0 <- stat_lst$GPP_obs
+
+# , "AU-Gin", "AU-RDF"
+site_rm2 <- c("AU-ASM", "AU-Cpr", "AU-Cum", "AU-Stp", "AU-Tum","AU-Wac",
+              "IT-Noe","BR-Sa3",
+              "CH-Oe2", "FR-Pue","GF-Guy", "IT-BCi", "US-AR2","US-Blo", "US-KS2","US-SRG","US-Whs",
+              "US-Me2", "US-SRM")
+#      "DE-Kli", )
+# stations <- d0[lat >=0 & !(site %in% site_rm2), 1:3] %T>% fwrite("phenofit_st99.csv")
+
+d0[NSE < 0.7, ] %>% write.xlsx("d_obs.xlsx")
+d0[, .N, .(IGBP)]
+```
+
+```{r GOF of fit for every product}
+plot_cmp <- function(type, real, ...){
+    gof_prod_phenofit(df_sim, df_obs, type, real, trim = FALSE, ...)
+}
+
+products <- c("GPP_mod", "GPP_vpm", "MOD13A1_EVI", "MOD13A1_NDVI", "MOD13Q1_EVI", "MOD13Q1_NDVI")
+newnames <- c("GPP[mod]", "GPP[vpm]", "MOD13A1_EVI", "MOD13A1_NDVI", "MOD13Q1_EVI", "MOD13Q1_NDVI")
+
+pars <- expand.grid(type = c('SOS', 'EOS'), real = c('TRS1', 'all')) %>%
+    set_rownames(paste(.$type, .$real, sep = "_"))
+
+type = 'SOS'; real = "all"; IsPlot = FALSE;
+
+res <- list()
+for (i in 1:length(products)){
+    name <- products[i]
+    df_sim <- df_lst[[name]]
+    
+    if (IsPlot){
+        figname <- sprintf('%d. %s_phenofit_gof.pdf', i, name)
+        CairoPDF(figname, width = 11.5, height = 6.5, pointsize = 8)
+    }
+    res[[i]] <- mlply(pars, plot_cmp, IsPlot = IsPlot, .progress = "text") %>% 
+        set_names(rownames(pars))
+    if (IsPlot) dev.off()
+}
+res %<>% set_names(products)
+```
+
+Then, delete sites whose seasonality is not obvious.
+
+# 2. 挑选curve fitting methods
+```{r overall performance and select curve fitting method}
+theme_set(theme_gray())
+width = 0.9
+
+# all phenophase overall performance}
+info_sos <- map(res, ~.x$SOS_all$gof) %>% melt_list("prod") %>% data.table() 
+info_eos <- map(res, ~.x$EOS_all$gof) %>% melt_list("prod") %>% data.table()
+
+p_sos <- p_season(info_sos, "(a) SOS of different curve fitting methods", 
+                  "(b) SOS of different products")
+p_eos <- p_season(info_eos, "(c) EOS of different curve fitting methods", 
+                  "(d) EOS of different products")
+
+p_sos[[2]] %<>% add(scale_x_discrete(labels = parse(text = newnames)))
+p_eos[[2]] %<>% add(scale_x_discrete(labels = parse(text = newnames)))
+
+cairo_pdf("Fig2_overall_performance2.pdf", 9, 6)
+do.call(gridExtra::grid.arrange, c(p_sos, p_eos))
+dev.off()
+
+# win.metafile("Fig2_overall_performance.emf", 9, 6)
+# gridExtra::grid.arrange(p_sos[[1]], p_sos[[2]], p_eos[[1]], p_eos[[2]])
+# dev.off()
+
+# select the best product
+info_sos_prod <- info_sos[prod %in% c("GPP_vpm", "MOD13A1_EVI", "MOD13Q1_EVI")]
+info_eos_prod <- info_eos[prod %in% c("GPP_vpm", "MOD13A1_EVI", "MOD13Q1_EVI")]
+
+info <- list(SOS = info_sos_prod, EOS = info_eos_prod) %>% melt_list("phase") %>% data.table() 
+info$phase %<>% factor(c("SOS", "EOS"))
+
+cairo_pdf("Fig3_confirm_curve fitting method.pdf", 9, 6)
+p_season_prod(info) + 
+    theme(
+        # panel.grid.major.y = element_line(size = 1),
+        panel.grid.minor = element_blank())
+dev.off()
+
+# d1 <- info_sos.prod[RMSE > 60, ] %>% spread(prod, RMSE) %>% {.[rowSums(is.na(.)) < 5, ]}
+# d2 <- info_eos.prod[RMSE > 60, ] %>% spread(prod, RMSE) %>% {.[rowSums(is.na(.)) < 5, ]}
+
+# list(sos = d1, eos = d2) %>% writelist_ToXlsx("check.xlsx")
+
+# list(sos = merge(d1, stations, by = "site"), 
+#      eos = merge(d2, stations, by = "site")) %>% writelist_ToXlsx("check2.xlsx")
+```
+判断每种占优方法出现的次数, indeed it's hard to say which one curve fitting method 
+was best.
+
+# 3. Phenology extraction methods
+与Wu ChaoYang, 2017的对比，证明无可比较性。
+在这么多站点的情况下，对比散点图已经没有意义。表现比较差的站点会极大的拉低评估指数。
+因此转而**对比MOD13A1与MOD13Q1的差异**
+
+```{r scatter plot comparing with wu2017, fig.height=8, fig.width=15}
+geom_label2 <- function(data, hjust, vjust, ...){
+    geom_label(data = data, aes(label = label, ...),
+               x = -Inf, y = Inf, hjust = hjust,vjust = vjust, show.legend = F)
+}
+# broaden axis limits to put text
+hjust <- -0.01
+vjust <- 1.2
+
+alpha <- 0.2
+d[, outlier := (val > quantile(val, 1 - alpha/2) | val < quantile(val, alpha/2)), .(index, var)]
+
+d %<>% spread(var, val) %>% mutate(RE = sim - obs) %>% data.table()
+d <- d[!is.na(RE) & outlier == F, ]
+
+# alpha <- 0.1
+# d[, outlier := (RE > quantile(RE, 1 - alpha/2) | RE < quantile(RE, alpha/2)), .(index)]
+d_fix <- d#[outlier == F, ]
+
+info_all <- ddply(d_fix, .(index), function(d){ GOF2(d$RE)})
+info_all %<>% mutate(label = sprintf("RMSE=%.1f, Bias=%.1f (n=%d)", RMSE, Bias, n_sim))
+
+ggplot(d,aes(obs, sim)) + geom_point() + 
+    facet_wrap(~index, scale = "free") +
+    geom_label(data = info_all, aes(label = label, color = NULL),
+               x = -Inf, y = Inf, hjust = hjust,vjust = vjust*1, show.legend = F)  
+# text data
+# info <- ddply(d_fix, .(meth, index), function(d){ GOF2(d$RE)})
+# info %<>% mutate(label = sprintf("RMSE=%.1f, Bias=%.1f (n=%d)", RMSE, Bias, n_sim))
+
+# ggplot(d,aes(obs, sim, color = meth)) + geom_point() + 
+#     facet_wrap(~index, scale = "free") +
+#     geom_label2(subset(info, meth == "AG"    ), hjust, vjust) + 
+#     geom_label2(subset(info, meth == "BECK"  ), hjust, vjust*2) + 
+#     geom_label2(subset(info, meth == "ELMORE"), hjust, vjust*3) + 
+#     geom_label2(subset(info, meth == "GU"    ), hjust, vjust*4) + 
+#     geom_label(data = info_all, aes(label = label, color = NULL),
+#                x = -Inf, y = Inf, hjust = hjust,vjust = vjust*5, show.legend = F)
+```
+
+**分站点计算评估指标**，因此可以摆脱不好站点的影响
+
+# 3.1 假设GPP与VI物候同步，评估误差情况
+```{r RMSE, fig.height=6, fig.width=10}
+# INPUT <- df_lst[c(1, 3, 4, 6)]
+INPUT <- c(df_lst[c(1, 3, 4, 6)], listk(GPP_avg, EVI_avg))
+l <- llply(INPUT, MEAN_rmse)
+info_all <- melt_list(l, "prod") %>% data.table()
+info_all$index %<>% fix_level()
+info_all$prod %<>% factor(c("GPP_mod", "GPP_vpm", "GPP_avg", "MOD13A1_EVI", "MOD13Q1_EVI", "EVI_avg"))
+
+info <- list(SOS = info_all[grep("SOS|UD|SD|Greenup|Maturity|POP", info_all$index), ],
+             EOS = info_all[grep("EOS|DD|RD|Senescence|Dormancy", info_all$index), ])
+
+info_df <- melt_list(info, "phase") %>% data.table()
+info_df$phase %<>% factor(c("SOS", "EOS"))
+# get mean and sd
+
+
+stat_rmse <- info_df[, .(median = median(RMSE, na.rm = T),
+                         sd = sd(RMSE, na.rm = T)), .(phase, prod, index)] %>%
+    plyr::mutate(label = sprintf("%.1f±%.1f", median, sd)) %>% 
+    .[, -(4:5)] %>%
+    spread(prod, label)
+
+stat_bias <- info_df[, .(median = median(Bias, na.rm = T),
+                         sd = sd(Bias, na.rm = T)), .(phase, prod, index)] %>%
+    plyr::mutate(label = sprintf("%.1f±%.1f", median, sd)) %>% 
+    .[, -(4:5)] %>%
+    spread(prod, label)
+
+# write.xlsx(stat_bias, "t02_phenology_extraction_method.xlsx")
+# print(stat_rmse)
+
+# dividing this figure into 
+angle <- 45
+hjust <- 1
+vjust <- 1
+
+prods     <- levels(info$SOS$prod) %>% .[-grep("avg", .)]
+prods_avg <- levels(info$SOS$prod) %>% .[grep("avg", .)]
+
+```
+
+```{r fig.height=6, fig.width=12}
+
+d_all <- info_df[prod %in% prods_avg] %>% 
+    .[, .(site, index, Bias, RMSE, prod, phase)] %>% 
+    gather(gof, val, -site, -index, -prod, -phase) %>% 
+    spread(prod, val) %>% data.table() %T>% print
+
+d <- info$SOS[prod %in% prods_avg] %>% 
+    .[, .(site, index, Bias, RMSE, prod)] %>% 
+    gather(gof, val, -site, -index, -prod) %>%
+    spread(prod, val) %>% data.table() %T>% print
+
+stat <- d[, .(xmean = median(GPP_avg, na.rm = T),
+              xsd   = sd(GPP_avg, na.rm = T),
+              ymean = median(EVI_avg, na.rm = T),
+              ysd   = sd(EVI_avg, na.rm = T)), .(index, gof)]
+ggplot(d, aes(GPP_avg, EVI_avg)) + 
+    # geom_point()  + 
+    facet_wrap(~gof, scales = "free") + 
+    geom_abline(slope = 1, col = "red") + 
+    geom_smooth(method = "lm", formula = y ~ x) + 
+    geom_errorbar(data = stat, aes(x = xmean, y = ymean, ymax = ymean+ysd, ymin = ymean-ysd), color = "red", width = 10) +
+    geom_errorbarh(data = stat, aes(x = xmean, y = ymean, xmax = xmean+ysd, xmin = xmean-ysd), color = "red", height = 10) +
+    geom_density_2d(aes(color = ..level.., fill = ..level..)) +
+    lims(x = c(-50, 100))
+```
+
+# 3.2 假设GPP与VI物候不同步，GPP_obs TRS1作为benchmark，评估误差情况
+```{r}
+which_min <- function(x){
+    if (all(is.na(x))){
+        NA
+    }else{
+        which.min(x)
+    }
+}
+x_sos.meth <- info_sos[, .(site, index, meth, RMSE, prod)] %>% spread(meth, RMSE)
+x_sos.meth$dorm <- as.matrix(x_sos.meth[, -(1:3)]) %>% apply(1, which_min)
+
+x_times <- x_sos.meth[, c(1:3, 9)] %>% 
+    ddply(.(index, prod), function(d) table(d$dorm)) %>%
+    set_colnames(c("index", "prod", colnames(x_sos)[4:8])) %>% 
+    gather(meth, val, -index, -prod)
+
+ggplot(x_times, aes(meth,  val)) + 
+    geom_col(position = "dodge") + 
+    facet_wrap(~prod) + 
+    theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))
+    
+
+x_sos.prod <- info_sos[, .(site, index, meth, RMSE, prod)] %>% spread(prod, RMSE)
+x_sos.prod$dorm <- as.matrix(x_sos.prod[, -(1:3)]) %>% apply(1, which_min)
+
+```
+
+```{r, treat GPP sos1 as real phenology}
+info_sos <- map(res, ~.x$SOS_TRS1$gof) %>% melt_list("prod") %>% data.table() 
+info_eos <- map(res, ~.x$EOS_TRS1$gof) %>% melt_list("prod") %>% data.table()
+# p_season(info_sos)
+# p_season(info_eos)
+```
+

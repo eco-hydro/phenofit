@@ -65,4 +65,4 @@ meansd.lst.rda
 
 src-i386/
 src-x64/
-test/
+# test/

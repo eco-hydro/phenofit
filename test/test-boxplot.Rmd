@@ -1,0 +1,71 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+```{r fig.height=6, fig.width=8}
+#' # Create a simple example dataset
+df <- data.frame(
+  trt = factor(c(1, 1, 2, 2)),
+  resp = c(1, 5, 3, 4),
+  group = factor(c(1, 2, 1, 2)),
+  upper = c(1.1, 5.3, 3.3, 4.2),
+  lower = c(0.8, 4.6, 2.4, 3.6)
+)
+
+p <- ggplot(df, aes(trt, resp, colour = group))
+p + geom_linerange(aes(ymin = lower, ymax = upper))
+p + geom_pointrange(aes(ymin = lower, ymax = upper))
+p + geom_crossbar(aes(ymin = lower, ymax = upper), width = 0.2)
+# p + geom_errorbar(aes(ymin = lower, ymax = upper), width = 0.2)
+```
+
+```{r fig.height=6, fig.width=8}
+p <- ggplot(mpg, aes(class, hwy))
+p + geom_boxplot()
+p + geom_boxplot() + geom_jitter(width = 0.2)
+p + geom_boxplot() + coord_flip()
+
+p + geom_boxplot(notch = TRUE)
+p + geom_boxplot(varwidth = TRUE)
+p + geom_boxplot(fill = "white", colour = "#3366FF")
+# By default, outlier points match the colour of the box. Use
+# outlier.colour to override
+p + geom_boxplot(outlier.colour = "red", outlier.shape = 1)
+
+# Boxplots are automatically dodged when any aesthetic is a factor
+p + geom_boxplot(aes(colour = drv))
+
+# You can also use boxplots with continuous x, as long as you supply
+# a grouping variable. cut_width is particularly useful
+ggplot(diamonds, aes(carat, price)) +
+  geom_boxplot()
+ggplot(diamonds, aes(carat, price)) +
+  geom_boxplot(aes(group = cut_width(carat, 0.25)))
+ggplot(diamonds, aes(carat, price)) +
+  geom_boxplot(aes(group = cut_width(carat, 0.25)), outlier.alpha = 0.1)
+
+
+# It's possible to draw a boxplot with your own computations if you
+# use stat = "identity":
+y <- rnorm(100)
+df <- data.frame(
+  x = 1,
+  y0 = min(y),
+  y25 = quantile(y, 0.25),
+  y50 = median(y),
+  y75 = quantile(y, 0.75),
+  y100 = max(y)
+)
+ggplot(df, aes(x)) +
+  geom_boxplot(
+   aes(ymin = y0, lower = y25, middle = y50, upper = y75, ymax = y100),
+   stat = "identity"
+ )
+
+```
+

@@ -1,0 +1,132 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r fig.height=6, fig.width=9}
+rm(list = ls())
+source('../stable/load_pkgs.R')
+source('../stable/s1_MCD12Q2.R')
+
+load("Y:/R/phenofit/data/phenofit_MultipleINPUT_flux136.rda")
+load("Y:/R/phenofit/data/phenofit_INPUT_flux136_obs.rda")
+
+lst <- INPUT_lst[c(1, 5, 3:4)]
+names(lst)[1] <- "GPP_mod"
+
+# stations <- fread("phenofit_st99.csv")
+# # remove two bad performance points
+# stations <- stations[!(site %in% c("US-Me6", "IT-SRo")), ]
+# sites    <- stations$site
+# 
+# fwrite(stations, "phenofit_st97.csv")
+
+# stationInfo <- fread("F:/Github/MATLAB/PML/MATLAB/LAI/flux-212.txt")
+# df <- merge(stations, stationInfo)
+# library(maptools)
+# sp <- df2sp(df)
+# writePointsShape(sp, "phenofit_st97.shp")
+
+GPP_mod <- lst$GPP_mod[site %in% sites, ] %>% plyr::mutate(doy = yday(date)) %>% 
+    {.[, .(site, date, doy, MODGPP)]} %>%
+    set_colnames(c("site", "date", "doy", "GPP"))
+GPP_mod$doy %<>% add(4)
+
+GPP_vpm <- lst$GPP_vpm[site %in% sites, ] %>% plyr::mutate(doy = yday(date)) %>%
+    {.[, .(site, date, doy, GPP_vpm)]} %>%
+    set_colnames(c("site", "date", "doy", "GPP"))
+GPP_vpm$doy %<>% add(4)
+
+GPP_obs <- d_obs[site %in% sites, ] %>% plyr::mutate(doy = yday(date)) %>%
+    {.[, .(site, date, doy, GPP_NT)]} %>%
+    set_colnames(c("site", "date", "doy", "GPP"))
+
+MOD13A1_EVI <- lst$MOD13A1[site %in% sites & SummaryQA == 0, ] %>% plyr::mutate(doy = yday(date)) %>%
+    {.[, .(site, date, doy, EVI_500m)]} %>%
+    set_colnames(c("site", "date", "doy", "GPP"))
+
+MOD13Q1_EVI <- lst$MOD13Q1[site %in% sites & SummaryQA == 0, ] %>% plyr::mutate(doy = yday(date)) %>%
+    {.[, .(site, date, doy, EVI_500m)]} %>%
+    set_colnames(c("site", "date", "doy", "GPP"))
+
+df <- listk(GPP_obs, GPP_mod, GPP_vpm, MOD13A1_EVI, MOD13Q1_EVI) %>% melt_list("prod") %>% data.table()
+
+# ggplot(df[prod %in% c("GPP_mod", "GPP_vpm")], 
+#              aes(GPP)) + 
+#     geom_point(aes(doy, GPP), alpha = 0.4) +
+#     # geom_jitter(width = 4) +
+#     geom_density(aes(GPP))
+# 
+# p1 <- ggplot(df[prod %in% c("GPP_mod", "GPP_vpm")], 
+#              aes(x = doy, y = GPP, color = as.factor(doy))) + 
+#     geom_boxplot() + 
+#     geom_smooth(se = T)
+#     # geom_point(alpha = 0.4) + 
+#     # geom_jitter(width = 4) +
+#     # geom_density(aes(y = GPP))
+#     geom_smooth(se = T) + 
+#     geom_smooth(data = df[prod == "GPP_obs", ], color = "black") + 
+#     scale_x_continuous(limits = c(0, 365)) +
+#     theme(legend.position = c(0.85, 0.8))
+
+
+# df_area <- ddply(df, .(prod, doy), function(d){
+#     # alphas <- c(0.2, 0.5) %>% set_names(.)
+#     values <- na.omit(d$GPP)
+#     # res <- llply(alphas, function(alpha){
+#     #     quantile(values, c(alpha/2, 1 - alpha/2)) %>% set_names(c("ymin", "ymax"))
+#     # })
+#     # ldply(res, . %>% {.}, .id = "alpha")#transform into data.frame
+#     quantile(values, c(.1, .25, .5, .75, .9))
+# }) %>% data.table()
+# 
+# d_group  <- df_area[, .(prod, doy)]
+# d_mean   <- df_area[, .(mean = `50%`)] 
+# d_alpha1 <- df_area[, .(`10%`, `90%`)] %>% set_names(c("ymin", "ymax")) %>% add_column(alpha = 0.2)
+# d_alpha2 <- df_area[, .(`25%`, `75%`)] %>% set_names(c("ymin", "ymax")) %>% add_column(alpha = 0.5)
+# 
+# df_quantile <- merge(cbind(d_group, d_mean), 
+#     cbind(d_group, rbind(d_alpha1, d_alpha2)))
+# 
+# 
+# colors <- c("black", scales::hue_pal()(3)[c(1, 3)])
+# 
+# d_obs <- df_area[prod == "GPP_obs"]
+# # d_gpp <- df_area[prod %in% c("GPP_mod", "GPP_vpm")]
+# d_gpp <- df_area[prod %in% c("GPP_mod", "GPP_obs")] #, "GPP_vpm"
+# d_gpp$prod %<>% factor(c("GPP_obs", "GPP_vpm", "GPP_mod"))
+# 
+# color <- "black"
+# ggplot(d_gpp, aes(doy, `50%`, fill = prod)) +
+#     # geom_ribbon(data = d_obs, aes(ymin = `10%`, ymax = `90%`), color = color, fill = color, alpha = 0.2) +
+#     # geom_ribbon(data = d_obs, aes(ymin = `25%`, ymax = `75%`), color = color, fill = color, alpha = 0.4) +
+#     geom_ribbon(aes(ymin = ymin, ymax = ymax, alpha = as.numeric(alpha))) +
+#     # geom_ribbon(aes(ymin = `25%`, ymax = `75%`), alpha = 0.5) +
+#     # geom_errorbar(aes(ymin = `25%`, ymax = `75%`), alpha = 1) +
+#     # geom
+#     # geom_line(data = d_obs, color = "black", size = 1.1) +
+#     geom_line(aes(color = prod), size = 1.1) +
+#     scale_color_manual(values = colors) +
+#     scale_fill_manual(values = colors)
+
+#
+# a <- 32
+# b <- 0.21
+# p2 <- ggplot(df[prod == "GPP_obs", ]) + 
+#     geom_density()
+#     geom_point(alpha = 0.4) +
+#     geom_smooth(aes(doy, GPP), color = "black") + 
+#     geom_smooth(data = df[prod %in% c("MOD13A1_EVI", "MOD13Q1_EVI")], aes(doy, (GPP-b)*a, color = prod)) + 
+    
+#     scale_x_continuous(limits = c(0, 365))+
+#     scale_y_continuous(sec.axis = sec_axis(~(.+b)/a), name = "GPP_obs") +
+#     theme(legend.position = c(0.85, 0.8))
+# p2
+
+# library(gridExtra)
+# grid.arrange(p1, p2, ncol = 1)
+
+# ggplot(GPP_mod, aes(doy, MODGPP)) + 
+#     # geom_density()
+#     geom_point(alpha = 0.4)
+```

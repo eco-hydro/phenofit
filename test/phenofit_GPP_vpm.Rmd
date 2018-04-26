@@ -1,0 +1,237 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath---
+title: "R Notebook"
+output: html_notebook
+---
+
+
+```{r message=FALSE, warning=FALSE}
+rm(list = ls())
+source("stable/load_pkgs.R")
+source("Y:/R/phenofit/main.R")
+library(phenofit)
+
+nptperyear <- 46
+lambda     <- 15
+ymax_min   <- 0.5
+# source("whit/whit_class.R")
+# source("../R/PhenoExtract_main.R")
+load("Y:/R/phenofit/data/phenofit_MultipleINPUT_flux136.rda")
+# df <- d_obs
+
+# global function
+
+```
+
+```{r main function}
+# global parameter: nptperyear, lambda, ymax_min
+try_season <- function(x){
+    # x <- df[site == sitename]
+    INPUT <- check_input(x$date, x$y, w = x$w, trim = T, maxgap = nptperyear / 4)
+    brks  <- try(season(INPUT, lambda=lambda, nptperyear, iters = 3, wFUN = wTSM, IsPlot = TRUE,
+                        max_MaxPeaksperyear =2.5, max_MinPeaksperyear = 3.5, 
+                        ymax_min = ymax_min,
+                        Aymin_less = 0.65))
+    title(x$site[1])
+    list2env(list(INPUT = INPUT, brks = brks), envir = .GlobalEnv) #
+}
+
+saveSingle <- FALSE
+calsite_pheno <- function(sitename, df, var = c('MODGPP_0m', 'GPPobs', 'GPPsim')){
+    
+    cat(sprintf("%s\n", sitename))
+    x <- df[df$site == sitename, ]
+    tryCatch({
+        # MODGPP_0m, GPPobs
+        # fit <- phenofit::curvefit_site(x$date, x[[var[1]]], lambda =15, 
+        #     methods = c("AG", "zhang", "beck", "elmore", 'Gu'), #,"klos"
+        #     nptperyear = 46, debug = F, wFUN = bisquare, 
+        #     south = x$lat[1] < 0)
+        fit <- curvefit_site(x$date, x[[var[1]]], 
+                        w = x$w, 
+                        lambda =lambda,
+                         methods = c("AG", "zhang", "beck", "elmore", 'Gu'), #,"klos"
+                         nptperyear = nptperyear, debug = F, wFUN = wTSM, 
+                         ymax_min = ymax_min, 
+                         south = x$lat[1] < 0)
+        # save Figure for every site
+        # sitename <- x$site[1]
+        if (saveSingle){
+            file <- sprintf('Figs/%s.pdf', sitename)
+            CairoPDF(file, width = 10, height = 6)
+            p <- plot_phenofit(fit) + ggtitle(sitename)
+            print(p)
+            dev.off()
+        }
+        fit
+    }, error = function(e){
+        message(sprintf("[e] \t%s:%s", sitename, e$message))
+    }, warning = function(w){
+        message(sprintf("[w] \t%s:%s", sitename, w$message))
+    })
+}
+```
+
+
+
+```{r debug season brk function}
+# source("../R/PhenoBrks.R")
+# source("whit/whit_class.R")
+source("../R/PhenoExtract_main.R")
+source("../R/doubleLogistics_fitting.R")
+```
+
+prepare input data in `d03_GPP_MultipleProduct_INPUTS_csv.R`
+```{r}
+# names(INPUT_lst)
+# "MODGPP"  "LAI"     "MOD13A1" "MOD13Q1" "GPP_vpm"
+# vars     <- c("MODGPP_500m", "LAI_1000m", "EVI_500m", "EVI_500m", "GPP_vpm")
+vars     <- c("MODGPP_500", "LAI_1000m", "NDVI_500m", "NDVI_500m", "GPP_vpm")
+
+k   <- 4
+df  <- INPUT_lst[[k]]
+var <- vars[[k]]
+
+# rename x variable name as 'y'
+I_var <- which(colnames(df) == var[1])
+colnames(df)[I_var] <- "y"
+
+if (k >= 3 && k <= 4){
+    df[is.na(DayOfYear), DayOfYear := as.integer(doy)] #DayOfYear has missing value
+    
+    # in case of last scene of year 
+    df[abs(DayOfYear - doy) >= 300, date := as.Date(sprintf("%d-%03d", year+1, DayOfYear), "%Y-%j")]
+    df[abs(DayOfYear - doy) <  300, date := as.Date(sprintf("%d-%03d", year  , DayOfYear), "%Y-%j")]
+
+    df <- df[!is.na(date)] #make sure remove all NA date
+
+    # remove duplicated date
+    I_del <- which(df[,duplicated(date), (site)]$V1)
+    df <- df[-I_del, ]
+    # df[,duplicated(date), (site)][V1 == T]
+    # df[, length(unique(date)) == .N, site][V1 == F,] #check duplicated date
+    # df %<>% data.table()
+    setkeyv(df, c("site", "date"))
+    
+    nptperyear <- 23
+    lambda     <- 5
+    ymax_min   <- 0.12 #EVI
+
+    if ('SummaryQA' %in% colnames(df)){
+        df$SummaryQA %<>% factor() %>% mapvalues(c("0", "1", "2", "3"), c(" good", " margin", " snow&ice", " cloud"))
+    }
+}
+
+sites    <- unique(df$site)
+sitename <- sites[1]
+
+sitename <- 'CH-Oe2'
+x <- df[site == sitename]
+```
+
+*try to extract fluxsites observed phenology*
+Test the following function in local machine, and submit to server.
+GPPobs is daily. It's different from GPP_vpm, GPP_mod, NDVI, EVI.
+
+```{r message=FALSE}
+# nptperyear <- 365
+# mar = c(3, 3, 1, 1),
+# CairoPDF("Fig3_phenofit_season_GPP_vpm.pdf", width = 11, height = 6)
+# CairoPDF("../../Figs/06Mar2018/4.1_phenofit_season_MOD13A1_NDVI.pdf", width = 11, height = 6)
+CairoPDF("../../Figs/06Mar2018/4.1_phenofit_MOD13A1_EVI.pdf", width = 11, height = 6)
+
+op <- par(mfrow = c(2, 3),
+          oma = c(1, 2, 2, 1), mar = c(3, 2, 1, 1)) #, yaxt = "n", xaxt = "n"
+
+yfits <- dlply(df, .(site), function(x) {
+    tryCatch({
+        # i <- 6
+        # sitename <- sites[i]
+        # x <- df[site == sitename]
+        # try_season(x)
+        fit <- curvefit_site(x$date, x$y, w = x$w, lambda =lambda,
+                             methods = c("AG", "zhang", "beck", "elmore", 'Gu'), #,"klos"
+                             nptperyear = nptperyear, debug = F, wFUN = wTSM,
+                             ymax_min = ymax_min,
+                             south = x$lat[1] < 0)
+        # print(plot_phenofit(fit) + ggtitle(x$site[1]))
+        # show_legend()
+        # dev.off()
+    }, error = function(e){
+        message(sprintf("[e] \t%s:%s", sitename, e$message))
+    }, warning = function(w){
+        message(sprintf("[w] \t%s:%s", sitename, w$message))
+    })
+}, .progress = "text")
+# dev.off()
+```
+
+```{r}
+for (i in 24:46){
+    # runningId(i)
+    sitename <- sites[i]
+    fprintf("[%03d]: %s\n", i, sitename)
+    
+    x <- df[site == sitename]
+    # try_season(x)
+    fit <- curvefit_site(x$date, x[[var]], w = x$w, lambda =lambda,
+                         methods = c("AG", "zhang", "beck", "elmore", 'Gu'), #,"klos"
+                         nptperyear = nptperyear, debug = F, wFUN = wTSM,
+                         ymax_min = ymax_min,
+                         south = x$lat[1] < 0)
+    # print(plot_phenofit(fit) + ggtitle(x$site[1]))
+}
+```
+```{r}
+x$SummaryQA %<>% factor() %>% mapvalues(c("0", "1", "2", "3"), c("good", "margin", "snow&ice", "cloud"))
+p1 <- ggplot(x, aes(date, NDVI_500m)) + 
+    geom_point(aes(shape = SummaryQA, color = SummaryQA), size = 4) + geom_line()
+p2 <- plot_phenofit(fit)
+```
+
+```{r message=FALSE, warning=FALSE}
+source("stable/rebuild.R") #rebuild pkg
+# then copy pkg to server
+file.rename("../../phenofit_0.1.0.tar.gz", "Y:/R/phenofit/phenofit_0.1.0.tar.gz")
+```
+
+```{r check GPPobs result}
+OBS <- get_slurm_out("Y:/R/phenofit/GPPobs/", IsSave = F)#[-58]
+# MOD <- get_slurm_out("Y:/R/phenofit/GPPsim/", IsSave = F)[-58] #PMLv2 GPP
+# plotsites(OBS, file = "../../OBS4.pdf")
+
+MOD <- get_slurm_out("Y:/R/phenofit/GPP_vpm/", IsSave = F)
+plotsites(MOD, file = "phenofit_GPP_vpm.pdf")
+
+# merge_pdf("phenofit_GPP_vpm.pdf", indir = "Y:/R/phenofit/Figs/")
+merge_pdf("../../Figs/06Mar2018/3.2_phenofit_MODGPP.pdf", indir = "Y:/R/phenofit/Figs/")
+merge_pdf("../../Figs/06Mar2018/4.2_phenofit_MOD13A1_EVI.pdf", indir = "Y:/R/phenofit/Figs/")
+merge_pdf("../../Figs/06Mar2018/4.2_phenofit_MOD13Q1_EVI.pdf", indir = "Y:/R/phenofit/Figs/")
+merge_pdf("../../Figs/06Mar2018/6.2_phenofit_MOD13A1_NDVI.pdf", indir = "Y:/R/phenofit/Figs/")
+merge_pdf("../../Figs/06Mar2018/7.2_phenofit_MOD13Q1_NDVI.pdf", indir = "Y:/R/phenofit/Figs/")
+```
+
+```{r checkdouble.zhang}
+a <- map_int(OBS, function(fit){
+    map_int(fit$fits$ZHANG, ~sum(is.na(.x$fits$iter2))) %>% sum
+})
+a[a > 0]
+a[a > 0] %>% length()
+```
+ the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+```{r}
+plot(cars)
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
