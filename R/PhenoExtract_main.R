@@ -26,13 +26,10 @@ curvefit_site <- function(t, y, w, nptperyear = 46,
 
     INPUT <- check_input(t, y, w, trim = T, maxgap = nptperyear / 4, alpha = 0.02)
     brks  <- season(INPUT, lambda, nptperyear, iters = 3, wFUN = wTSM, IsPlot = F,
-                    south = south,
+                    south = south, 
+                    Aymin_less = 0.7,
                     max_MaxPeaksperyear =2.5, max_MinPeaksperyear = 3.5, ...) #, ...
     # title(x$site[1])
-    # fit <- curvefit_site(x$date, x$GPP_NT, lambda =1e4,
-    #                      methods = c("AG", "zhang", "beck", "elmore", 'Gu'), #,"klos"
-    #                      nptperyear = 365, debug = F, wFUN = wTSM,
-    #                      south = x$lat[1] < 0)
     if (all(is.na(INPUT$y))) return(NULL)
     # also constrained in `optim_pheno` function
     # if (sum(INPUT$w == 0)/length(INPUT$w) > 0.5) return(NULL) #much rigorous than all is.na
@@ -41,8 +38,9 @@ curvefit_site <- function(t, y, w, nptperyear = 46,
     di <- brks$di
 
     # possible snow or cloud, replaced with whittaker smooth.
-    I_fix <- which(w <= 0.1)
+    I_fix <- which(w == 0)
     INPUT$y[I_fix] <- brks$whit %>% {.[[ncol(.)]][I_fix]}
+    w[I_fix]       <- 0.2 #exert the function of whitaker smoother
 
     if (debug){
         fits <- stat <- pheno<- NULL
@@ -88,7 +86,7 @@ curvefit_site <- function(t, y, w, nptperyear = 46,
                             w = wi, ylu = INPUT$ylu, iters = iters,
                             methods = methods, meth = 'BFGS', wFUN = wFUN, ...)
             #if too much missing values
-            if (sum(is.na(yi))/length(I_nona) > 0.5){
+            if (sum(wi >= 0.4)/length(wi) < 0.4){
                 fit %<>% map(function(x){
                     x$fits %<>% map(~.x*NA)
                     x$pred %<>% multiply_by(NA)

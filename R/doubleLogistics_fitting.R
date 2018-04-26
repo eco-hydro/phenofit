@@ -134,6 +134,50 @@ splinefit <- function(x, t = index(x), tout = t, plot = FALSE, df.factor = 0.06,
         pred = xpred.out, par = NULL, fun = NULL), class = "phenofit")
 }
 
+#' @export
+FitDL.Zhang <- function(x, t = index(x), tout = t, optimFUN = I_optimx,
+                        method = 'nlm', ...){
+    # print("debug")
+    e <- FIT_check(x, t)
+    deltaY <- ampl/3
+    deltaT <- (max(t) - min(t))/4
+    k      <- deltaY/deltaT
+    k_max  <- 2
+
+    FUN    <- doubleLog.zhang
+    prior  <- rbind(
+        c(doy.mx, mn, mx, doy[1], k*2, doy[2], k*2),
+        c(doy.mx + deltaT/2, mn, mx, doy[1], k*3, doy[2], k*3),
+        c(doy.mx, mn, mx, doy[1], k*4, doy[2], k*4))
+
+    lower  <- c(doy.mx - deltaT, mn - deltaY, mx - deltaY, min(t), 0 , doy.mx-deltaT, 0)
+    upper  <- c(doy.mx + deltaT, mn + deltaY, mx + deltaY, doy.mx+deltaT, k_max, max(t),   k_max)
+
+    optim_pheno(prior, FUN, x, t, tout, optimFUN, method, lower = lower, upper = upper, ...)#quick return
+}
+
+#' @export
+FitAG <- function(x, t = index(x), tout = t, FUN, optimFUN = I_optimx,
+    method = 'nlminb', ...){
+    e <- FIT_check(x, t)
+    # print(ls.str(envir = e))
+    deltaY     <- ampl/3
+    deltaT     <- (max(t) - min(t))/3
+    half       <- (max(t) - min(t))/2
+
+    FUN <- doubleAG
+    prior <- rbind(
+        c(doy.mx, mn, mx, half, 2, half, 2),
+        # c(doy.mx, mn, mx, 0.2*half, 1  , 0.2*half, 1),
+        # c(doy.mx, mn, mx, 0.5*half, 1.5, 0.5*half, 1.5),
+        c(doy.mx, mn, mx, 0.8*half, 3  , 0.8*half, 3))
+    # referenced by TIMESAT
+    lower      <- c(doy.mx - deltaT, mn - deltaY, mx - deltaY, 0.1*half, 2, 0.1*half, 2)
+    upper      <- c(doy.mx + deltaT, mn + deltaY, mx + deltaY, 1.4*half, 8, 1.4*half, 8)
+
+    optim_pheno(prior, FUN, x, t, tout, optimFUN, method, lower = lower, upper = upper, ...)#quick return
+}
+
 #'
 #' Fitting double logistics, asymmetric gaussian functions
 #'
@@ -250,14 +294,14 @@ FitDL.Gu <- function(x, t = index(x), tout = t, optimFUN = I_optimx, method = "n
 
     FUN <- doubleLog.gu
     prior <- rbind(
-        c(mn, a1, a2, t1, t2, 0.05, 0.05, 1, 1),
-        c(mn, a1, a2, t1, t2, 0.1 , 0.1, 2, 2),
-        c(mn, a1, a2, t1, t2, 0.2 , 0.2, 3, 3),
-        c(mn, a1, a2, doy[1], t2, 0.5, 0.5, 0.5, 0.5),
-        c(mn, a1, a2, t1, doy[2], 0.8, 0.8, 5, 5))
+        c(mn, a1, a2, t1, 0.05, t2, 0.05, 1, 1),
+        c(mn, a1, a2, t1,  0.1, t2 , 0.1, 2, 2),
+        c(mn, a1, a2, t1,  0.2, t2 , 0.2, 3, 3),
+        c(mn, a1, a2, doy[1], 0.5, t2    , 0.5, 0.5, 0.5),
+        c(mn, a1, a2, t1    , 0.8, doy[2], 0.8,   5, 5))
     # y0 + (a1/(1 + exp(-(t - t1)/b1))^c1) - (a2/(1 + exp(-(t - t2)/b2))^c2)
-    lower <- c(mn - deltaY, mx - deltaY, mx - deltaY, min(t), doy.mx - deltaT, 0, 0, 0, 0)
-    upper <- c(mn + deltaY, mx + deltaY, mx + deltaY, doy.mx + deltaT, max(t), 1, 1, Inf, Inf)
+    lower <- c(mn - deltaY, mx - deltaY, mx - deltaY, min(t), 0, doy.mx - deltaT, 0, 0, 0)
+    upper <- c(mn + deltaY, mx + deltaY, mx + deltaY, doy.mx + deltaT, 1, max(t), 1, Inf, Inf)
     optim_pheno(prior, FUN, x, t, tout, optimFUN, method, lower = lower, upper = upper, ...)#return
 }
 
@@ -332,46 +376,3 @@ FIT_check <- function(x, t){
     ), envir = parent.frame())
 }
 
-#' @export
-FitDL.Zhang <- function(x, t = index(x), tout = t, optimFUN = I_optimx,
-                        method = 'nlm', ...){
-    # print("debug")
-    e <- FIT_check(x, t)
-    deltaY <- ampl/3
-    deltaT <- (max(t) - min(t))/4
-    k      <- deltaY/deltaT
-    k_max  <- 2
-
-    FUN    <- doubleLog.zhang
-    prior  <- rbind(
-        c(doy.mx, mn, mx, doy[1], k*2, doy[2], -k*2),
-        c(doy.mx + deltaT/2, mn, mx, doy[1], k*3, doy[2], -k*3),
-        c(doy.mx, mn, mx, doy[1], k*4, doy[2], -k*4))
-
-    lower  <- c(doy.mx - deltaT, mn - deltaY, mx - deltaY, min(t), 0 , doy.mx-deltaT, -k_max)
-    upper  <- c(doy.mx + deltaT, mn + deltaY, mx + deltaY, doy.mx+deltaT, k_max, max(t),   0)
-
-    optim_pheno(prior, FUN, x, t, tout, optimFUN, method, lower = lower, upper = upper, ...)#quick return
-}
-
-#' @export
-FitAG <- function(x, t = index(x), tout = t, FUN, optimFUN = I_optimx,
-    method = 'nlminb', ...){
-    e <- FIT_check(x, t)
-    # print(ls.str(envir = e))
-    deltaY     <- ampl/3
-    deltaT     <- (max(t) - min(t))/3
-    half       <- (max(t) - min(t))/2
-
-    FUN <- doubleAG
-    prior <- rbind(
-        c(doy.mx, mn, mx, half, 2, half, 2),
-        # c(doy.mx, mn, mx, 0.2*half, 1  , 0.2*half, 1),
-        # c(doy.mx, mn, mx, 0.5*half, 1.5, 0.5*half, 1.5),
-        c(doy.mx, mn, mx, 0.8*half, 3  , 0.8*half, 3))
-    # referenced by TIMESAT
-    lower      <- c(doy.mx - deltaT, mn - deltaY, mx - deltaY, 0.1*half, 2, 0.1*half, 2)
-    upper      <- c(doy.mx + deltaT, mn + deltaY, mx + deltaY, 1.4*half, 8, 1.4*half, 8)
-
-    optim_pheno(prior, FUN, x, t, tout, optimFUN, method, lower = lower, upper = upper, ...)#quick return
-}
