@@ -5,7 +5,6 @@ output: html_notebook
 
 This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
 
-
 ```{r message=FALSE, warning=FALSE}
 source("stable/load_pkgs.R")
 library(phenofit)
@@ -14,13 +13,16 @@ nptperyear <- 365
 # source("whit/whit_class.R")
 # source("../R/PhenoExtract_main.R")
 load("Y:/R/phenofit/data/phenofit_INPUT_flux136_obs.rda")
+
+load("Y:/R/phenofit/data/phenofit_MultipleINPUT_flux136.rda")
+
 df <- d_obs
 
 # global function
 try_season <- function(x){
     # x <- df[site == sitename]
     INPUT <- check_input(x$date, x$GPP_NT, trim = T, maxgap = nptperyear / 4)
-    brks  <- season(INPUT, lambda=1e4, nptperyear, iters = 3, wFUN = wTSM, IsPlot = TRUE,
+    brks  <- season2(INPUT, lambda=1e4, nptperyear, iters = 3, wFUN = wTSM, IsPlot = TRUE,
                         max_MaxPeaksperyear =2.5, max_MinPeaksperyear = 3.5)
     title(x$site[1])
     list2env(list(INPUT = INPUT, brks = brks), envir = .GlobalEnv) #
@@ -33,7 +35,6 @@ try_season <- function(x){
 source("../R/PhenoExtract_main.R")
 source("../R/doubleLogistics_fitting.R")
 ```
-
 
 prepare input gpp data in `test-GPPobs.R`
 ```{r}
@@ -53,17 +54,18 @@ CairoPDF("Fig3_GPP_whittaker_v2_wTSM_1e4_1.5mon_GPPobs.pdf", width = 11, height 
 op <- par(mfrow = c(2, 3),
           oma = c(1, 2, 2, 1), mar = c(3, 2, 1, 1)) #, yaxt = "n", xaxt = "n"
 
+# need to remove na values in tail and head
 yfits <- dlply(df, .(site), function(x) {
     tryCatch({
         # i <- 6
         # sitename <- sites[i]
         # x <- df[site == sitename]
-        # try_season(x)
-        fit <- curvefit_site(x$date, x$GPP_NT, lambda =1e4,
-                             methods = c("AG", "zhang", "beck", "elmore", 'Gu'), #,"klos"
-                             nptperyear = 365, debug = F, wFUN = wTSM,
-                             south = x$lat[1] < 0)
-        plot_phenofit(fit)
+        try_season(x)
+        # fit <- curvefit_site(x$date, x$GPP_NT, lambda =1e4,
+        #                      methods = c("AG", "zhang", "beck", "elmore", 'Gu'), #,"klos"
+        #                      nptperyear = 365, debug = F, wFUN = wTSM,
+        #                      south = x$lat[1] < 0)
+        # plot_phenofit(fit)
         # show_legend()
         # dev.off()
     }, error = function(e) {
@@ -71,6 +73,17 @@ yfits <- dlply(df, .(site), function(x) {
     })
 }, .progress = "text")
 dev.off()
+
+lambda   <- 1e4
+ymax_min <- 0.5
+fit <- curvefit_site(x$date, x$GPP_NT, 
+                        # w = x$w, 
+                        lambda =lambda,IsPlot = T, 
+                        methods = c("AG", "zhang", "beck", "elmore", 'Gu'), #,"klos"
+                        nptperyear = nptperyear, debug = F, wFUN = wTSM, 
+                        ymax_min = ymax_min, 
+                        south = x$lat[1] < 0)
+plot_phenofit(fit)
 ```
 
 ```{r message=FALSE, warning=FALSE}

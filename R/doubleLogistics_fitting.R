@@ -21,6 +21,8 @@
 #'
 #' @export
 check_input <- function(t, y, w, missval, maxgap = 10, trim = TRUE, alpha = 0.01){
+    if (missing(w)) w <- rep(1, length(y))
+        
     # alpha <- 0.02
     ylu   <- quantile(y[w == 1], c(alpha/2, 1 - alpha), na.rm = T) #only consider good value
     # ylu    <- range(y, na.rm = T)
@@ -30,13 +32,14 @@ check_input <- function(t, y, w, missval, maxgap = 10, trim = TRUE, alpha = 0.01
         missval <- ylu[1] #- diff(ylu)/10
         # missval <- -1
     }
-    if (missing(w)) w <- rep(1, length(y))
-
+    
+    # adjust weights
     if (trim){
         I_trim    <- y < ylu[1] | y > ylu[2]
         w[I_trim] <- 0
     }
     w[is.na(y)] <- 0
+
     y <- na.approx(y, maxgap = maxgap, na.rm = FALSE)#just replaced with missval performance bad
     # if still have na values, whether should use mapgap to constrain interpolating range?
     y[is.na(y)] <- missval

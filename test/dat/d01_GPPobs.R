@@ -10,8 +10,7 @@ reorder_name <- function (d,
                                                        tailvars)), tailvars)
     if (is.data.table(d)) {
         d[, ..varnames]
-    }
-    else {
+    } else {
         d[, varnames]
     }
 }
@@ -35,7 +34,7 @@ d_obs1 <- merge(info1, df_raw, by = c("site", "year"))
 # d_obs <- rbind(d_obs1, d_obs2)
 
 d_obs <- d_obs1
-d_obs %<>% reorder_name(c("site", "IGBP", "lat","date", "year", "month", "growing", "N", "GPP_NT", "GPP_vpm"))
+d_obs %<>% reorder_name(c("site", "IGBP", "lat","date", "year", "month", "growing", "N", "GPP_DT", "GPP_NT", "GPP_vpm"))
 setkeyv(d_obs, c("site", "date"))
 
 # d_obs <- d_obs[lat > 0, length(unique(site))] #remove south hemisphere
