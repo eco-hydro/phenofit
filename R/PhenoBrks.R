@@ -20,7 +20,7 @@ plotdata <- function(INPUT, nptperyear, ...){
     if (!missing(ylu)) abline(h=ylu, col="red", lty=2) # show ylims
 }
 
-
+# rm duplicated max or min values
 rm_duplicate <- function(d, y, threshold){
     d <- d[, 1:5]
     if (nrow(d) > 1){
@@ -39,6 +39,42 @@ rm_duplicate <- function(d, y, threshold){
     }else{
         d
     }
+}
+
+# fix across multi-year breaks points, when whole year data are missing
+fix_di <- function(di, t){
+    for (i in 1:nrow(di)){
+        I    <- di$beg[i]:di$end[i]
+        # Try to remove NA values at head and tail. Fialed, Na value may not
+        # at head or tail.
+        # I_nona <- which(!is.na(y[I])) %>% {I[first(.):last(.)]}
+        I_nona <- I#checking year brk is enough
+        ti     <- t[I_nona]
+
+        # check year brokens
+        I_brkyear <- which(diff(ti) >= 365)
+        nbrk      <- length(I_brkyear)
+
+        if (nbrk > 0 & nbrk <= 2){
+            if (nbrk == 1) {
+                I_1 <- I_nona[1:I_brkyear]
+                I_2 <- I_nona[(I_brkyear + 1):length(I_nona)]
+
+                lst <- list(I_1, I_2)
+            } else if (nbrk == 2) {
+                I_1 <- I_nona[1:I_brkyear[1]]
+                I_2 <- I_nona[(I_brkyear[1]+1):I_brkyear[2]]
+                I_3 <- I_nona[(I_brkyear[2]+1):length(I_nona)]
+
+                lst <- list(I_1, I_2, I_3)
+            }
+            #select the longest segment
+            I_nona <- lst[[which.max(sapply(lst, length))]]
+            di$beg[i] <- first(I_nona)
+            di$end[i] <- last(I_nona)
+        }
+    }
+    di#quickly return
 }
 
 #' season
@@ -85,7 +121,7 @@ rm_duplicate <- function(d, y, threshold){
 # (smaller) one
 season <- function(INPUT, lambda, nptperyear = 46, south = FALSE,
                    iters = 2, wFUN = wTSM, IsPlot = TRUE,
-                   minpeakdistance = nptperyear/6, 
+                   minpeakdistance = nptperyear/6,
                    ymax_min = 0.5,
                    Aymin_less = 0.6, #ymin < Aymin_less * A
                    TRS = 0.05, meth = c('whit', 'sg'), ...,
@@ -121,11 +157,13 @@ season <- function(INPUT, lambda, nptperyear = 46, south = FALSE,
         ypred <- yfits[, ncol(yfits), drop = T]
         # ypred <- as.numeric(runmed(ypred, frame))
         alpha <- 0.01
-        ylu   <- quantile(ypred, c(alpha/2, 1 - alpha), na.rm = T)
-        ylu[1] <- pmax(ylu[1], INPUT$ylu[1])
-        ylu[2] <- pmax(ylu[2], INPUT$ylu[2])
-        
-        A     <- diff(ylu)
+        ylu <- c(pmax(quantile(ypred, alpha/2), INPUT$ylu[1]),
+                 pmin(max(ypred)              , INPUT$ylu[2]))
+        # ylu   <- quantile(ypred, c(alpha/2, 1 - alpha), na.rm = T)
+        # ylu[1] <- pmax(ylu[1], INPUT$ylu[1])
+        # ylu[2] <- pmax(ylu[2], INPUT$ylu[2])
+
+        A         <- diff(ylu)
         threshold <- TRS*A
 
         # For avoid fluctuating in peak of growing season or flat peak growing season,
@@ -228,6 +266,8 @@ season <- function(INPUT, lambda, nptperyear = 46, south = FALSE,
     di <- data_frame(beg  = s[seq(1, ns-1, 2)]+1,
                      peak = s[seq(2, ns, 2)],
                      end  = s[seq(3, ns, 2)])
+    di %<>% fix_di(t = t) #fix whole year data missing
+
     dt <- map_df(di, ~t[.x]) %>%
         mutate(len = difftime(end, beg, units = "days") + 1, year = year(peak)) %>%
         bind_cols(mval = ypred[di$peak], .)
@@ -237,10 +277,12 @@ season <- function(INPUT, lambda, nptperyear = 46, south = FALSE,
     }
     dt %<>% group_by(year) %>% dplyr::mutate(season = 1:n(), flag = sprintf("%d_%d", year, season))
 
+    I_max <- di$peak
+    I_min <- union(di$beg, di$end + 1)
     ## 7. plot
     if (IsPlot){
-        points(pos_max$t, pos_max$val, pch=20, cex = 1.5, col="red")
-        points(pos_min$t, pos_min$val, pch=20, cex = 1.5, col="blue")
+        points(t[I_max], ypred[I_max], pch=20, cex = 1.5, col="red")
+        points(t[I_min], ypred[I_min], pch=20, cex = 1.5, col="blue")
     }
     # Then curve fitting VI index in every segment, according to local minimum values
     # If begin at maximum value, then add the 1th point as min value. Or just begin

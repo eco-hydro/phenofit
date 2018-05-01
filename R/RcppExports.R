@@ -9,3 +9,19 @@ sgfitw_rcpp <- function(y, w, S) {
     .Call('_phenofit_sgfitw_rcpp', PACKAGE = 'phenofit', y, w, S)
 }
 
+#' wTSM_cpp
+#'
+#' Weight updating method in TIMESAT.
+#'
+#' @author Per J\"onsson, Malm\"o University, Sweden \email{per.jonsson@ts.mah.se} \cr
+#'     Lars Eklundh, Lund University, Sweden \email{lars.eklundh@nateko.lu.se} \cr
+#'     Translate by Dongdong Kong, 01 May 2018.
+#'
+#' @references
+#' [1]. Jönsson, P., Eklundh, L., 2004. TIMESAT - A program for analyzing
+#'     time-series of satellite sensor data. Comput. Geosci. 30, 833-845.
+#'     https://doi.org/10.1016/j.cageo.2004.05.006
+wTSM_cpp <- function(y, yfit, w, iters, nptperyear, wfact) {
+    .Call('_phenofit_wTSM_cpp', PACKAGE = 'phenofit', y, yfit, w, iters, nptperyear, wfact)
+}
+

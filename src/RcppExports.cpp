@@ -31,10 +31,27 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// wTSM_cpp
+NumericVector wTSM_cpp(NumericVector y, NumericVector yfit, NumericVector w, int iters, int nptperyear, double wfact);
+RcppExport SEXP _phenofit_wTSM_cpp(SEXP ySEXP, SEXP yfitSEXP, SEXP wSEXP, SEXP itersSEXP, SEXP nptperyearSEXP, SEXP wfactSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type y(ySEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type yfit(yfitSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type w(wSEXP);
+    Rcpp::traits::input_parameter< int >::type iters(itersSEXP);
+    Rcpp::traits::input_parameter< int >::type nptperyear(nptperyearSEXP);
+    Rcpp::traits::input_parameter< double >::type wfact(wfactSEXP);
+    rcpp_result_gen = Rcpp::wrap(wTSM_cpp(y, yfit, w, iters, nptperyear, wfact));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_phenofit_sgolayB", (DL_FUNC) &_phenofit_sgolayB, 2},
     {"_phenofit_sgfitw_rcpp", (DL_FUNC) &_phenofit_sgfitw_rcpp, 3},
+    {"_phenofit_wTSM_cpp", (DL_FUNC) &_phenofit_wTSM_cpp, 6},
     {NULL, NULL, 0}
 };
 

@@ -9,7 +9,86 @@
 # 1. The design logic of curvefit function should be update
 #
 
+#' curvefit_site
+#'
+#' @param t A date vector
+#' @param y A numberic vector, same length as t
+#' @param methods A character vector, c('spline', 'beck', 'elmore', 'klos', 'AG', 'zhang')
+#' @param ... other parameters pass to season or curvefit_site
+#' @export
+curvefit_site <- function(t, y, w, nptperyear = 46,
+                          wFUN = wTSM, iters = 2,
+                          lambda, south = FALSE,
+                          IsPlot = FALSE,
+                          methods = c('AG', 'zhang', 'beck', 'elmore', 'Gu'),
+                          debug = FALSE, ...)
+{
+    doys       <- as.numeric(difftime(t, t[1], units = "day") + 1)#days from origin
 
+    INPUT <- check_input(t, y, w, trim = T, maxgap = nptperyear / 4, alpha = 0.02)
+    brks  <- season(INPUT, lambda, nptperyear, iters = 3, wFUN = wFUN, IsPlot = F,
+                    south = south,
+                    Aymin_less = 0.7,
+                    max_MaxPeaksperyear =2.5, max_MinPeaksperyear = 3.5, ...) #, ...
+    # title(x$site[1])
+    if (all(is.na(INPUT$y))) return(NULL)
+    # also constrained in `optim_pheno` function
+    # if (sum(INPUT$w == 0)/length(INPUT$w) > 0.5) return(NULL) #much rigorous than all is.na
+
+    w  <- brks$whit$w
+    di <- brks$di
+
+    # possible snow or cloud, replaced with whittaker smooth.
+    I_fix <- which(w == 0)
+    INPUT$y[I_fix] <- brks$whit %>% {.[[ncol(.)]][I_fix]}
+    w[I_fix]       <- 0.2 #exert the function of whitaker smoother
+
+    if (debug){
+        fits <- stat <- pheno<- NULL
+    }else{
+        ## 1. Curve fitting
+        fits <- list()
+        for (i in 1:nrow(di)){ #
+            runningId(i)
+            I    <- di$beg[i]:di$end[i]
+            ti   <- doys[I]
+            yi   <- INPUT$y[I]
+            wi   <- w[I]
+            tout <- doys[I] %>% {first(.):last(.)} # make sure return the same length result.
+
+            fit <- curvefit(yi, ti, tout, nptperyear = nptperyear,
+                            w = wi, ylu = INPUT$ylu, iters = iters,
+                            methods = methods, meth = 'BFGS', wFUN = wFUN, ...)
+            #if too much missing values
+            if (sum(wi >= 0.4)/length(wi) < 0.4){
+                fit %<>% map(function(x){
+                    x$fits %<>% map(~.x*NA)
+                    x$pred %<>% multiply_by(NA)
+                    return(x)
+                })
+            }
+            fits[[i]] <- fit
+            # p <- getFits_pheno(fits[[i]], IsPlot = IsPlot)
+        }
+        # L1:curve fitting method, L2:yearly flag
+        fits %<>% set_names(brks$dt$flag) %>% purrr::transpose()
+
+        ## 2. GOF, try to give fitting informations for every curve fitting
+        stat  <- ldply(fits, function(fits_meth){
+            ldply(fits_meth, statistic.phenofit, .id = "flag")
+        }, .id = "meth")
+
+        # 3. phenology
+        p <- lapply(fits, getFits_pheno)
+        # pheno: list(p_date, p_doy)
+        pheno  <- map(p, tidyFits_pheno, origin = t[1]) %>% purrr::transpose()
+    }
+    return(list(INPUT = tibble(t, y),
+                seasons = brks,
+                tout = t[first(di$beg):last(di$end)],  #dates for OUTPUT curve fitting VI
+                fits = fits, stat = stat,
+                pheno = pheno))
+}
 #'
 #' curve fit vegetation index (VI) time-series
 #'
@@ -46,13 +125,12 @@ curvefit <- function(x, t = index(x), tout = t, meth = 'BFGS',
     return(fits)
 }
 
-# plotsites
 #' plot_phenofit
 #'
 #' @param fit data from phenofit_site
 #' @importFrom dplyr left_join
 #' @export
-plot_phenofit <- function(fit, plotly = F){
+plot_phenofit <- function(fit, d, plotly = F){
     #global variables
     origin.date <- fit$INPUT$t[1] #
     I   <- match(fit$tout, fit$INPUT$t)
@@ -108,19 +186,47 @@ plot_phenofit <- function(fit, plotly = F){
     # try to add whittaker smoother here
     seasons <- fit$seasons
     seasons$pos$type %<>% factor(labels = c("min", "max"))
+
     p <- ggplot(pdat1, aes(t, val, color = iters)) +
-        geom_line (data = seasons$whit, aes(t, iter2), color = "black", size = 0.6) +
-        geom_vline(data = seasons$dt, aes(xintercept = as.numeric(beg)), size = 0.5, linetype=2, color = "blue") +
-        geom_vline(data = seasons$dt, aes(xintercept = as.numeric(end)), size = 0.5, linetype=2, color = "red") +
+        geom_line (data = seasons$whit, aes(t, iter3), color = "black", size = 0.6) +
+        geom_vline(data = seasons$dt, aes(xintercept = as.numeric(beg)), size = 0.3, linetype=2, color = "blue") +
+        geom_vline(data = seasons$dt, aes(xintercept = as.numeric(end)), size = 0.3, linetype=2, color = "red") +
         geom_point(data = subset(seasons$pos, type == "max"), aes(t, val), color= "red") +
         geom_point(data = subset(seasons$pos, type == "min"), aes(t, val), color= "blue") +
-
-        geom_point(aes(t, y), size = 0.6, alpha = 0.5, color = "grey60") +
-        geom_line(size = 0.4) +
+        # geom_line(size = 0.4) +
         facet_grid(meth~.) +
         scale_x_date(breaks = fit$seasons$dt$beg, date_labels = "%Y/%m")
-      # geom_vline(data = pdat2, aes(xintercept=date, linetype = pmeth, color = pmeth), size = 0.4, alpha = 1) +
-      # scale_linetype_manual(values=c(2, 3, 1, 1, 1, 4))
+
+    if ('SummaryQA' %in% colnames(d)){
+        # p <- p + geom_point(data = x, aes(date, y, shape = SummaryQA, color = SummaryQA), size = 1, alpha = 0.7) +
+        #     scale_shape_manual(values = c(21,22, 24:25)) +
+        #     scale_fill_manual(values = c("grey40", "#7CAE00", "#F8766D", "#C77CFF")) +
+        #     guides(shape = guide_legend(override.aes = list(size = 2)))
+        p  <- p + geom_point(data = d, aes(date, y, shape = SummaryQA, color = SummaryQA), size = 2, alpha = 0.7) +
+            geom_line(aes(color = iters), size = 1, alpha = 0.7) +
+            scale_color_manual(values = c(" good" = "grey60", " margin" = "#00BFC4",
+                                          " snow&ice" = "#F8766D", " cloud" = "#C77CFF",
+                                          "iter1" = "blue", "iter2" = "red"), drop = F) +
+            scale_shape_manual(values = c(19, 15, 4, 17), drop = F) +
+            guides(shape = FALSE,
+                   color = guide_legend(
+                       "legend",
+                       override.aes = list(
+                           shape = c(c(19, 15, 4, 17)[c(4, 1, 2, 3)], NA, NA),
+                           linetype = c(0, 0, 0, 0, 1, 1),
+                           # color = c(" good" = "grey60", " margin" = "#00BFC4",
+                           #           " snow&ice" = "#F8766D", " cloud" = "#C77CFF",
+                           #           "iter1" = "blue", "iter2" = "red"),
+                           name = letters[1:6],
+                           size = 1.2
+                       )
+                   ))
+    }else{
+        p <- p + geom_point(aes(t, y), size = 2, alpha = 0.5, color = "grey60") + 
+            geom_line(aes(color = iters), size = 1)
+    }
+    # geom_vline(data = pdat2, aes(xintercept=date, linetype = pmeth, color = pmeth), size = 0.4, alpha = 1) +
+    # scale_linetype_manual(values=c(2, 3, 1, 1, 1, 4))
     # p + facet_grid(meth~pmeth)
     #return
     if (plotly){

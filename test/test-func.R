@@ -157,9 +157,11 @@ season <- function(INPUT, lambda, nptperyear = 46, south = FALSE,
         ypred <- yfits[, ncol(yfits), drop = T]
         # ypred <- as.numeric(runmed(ypred, frame))
         alpha <- 0.01
-        ylu   <- quantile(ypred, c(alpha/2, 1 - alpha), na.rm = T)
-        ylu[1] <- pmax(ylu[1], INPUT$ylu[1])
-        ylu[2] <- pmax(ylu[2], INPUT$ylu[2])
+        ylu <- c(pmax(quantile(ypred, alpha/2), INPUT$ylu[1]),
+                 pmin(max(ypred)              , INPUT$ylu[2]))
+        # ylu   <- quantile(ypred, c(alpha/2, 1 - alpha), na.rm = T)
+        # ylu[1] <- pmax(ylu[1], INPUT$ylu[1])
+        # ylu[2] <- pmax(ylu[2], INPUT$ylu[2])
 
         A         <- diff(ylu)
         threshold <- TRS*A
@@ -276,7 +278,7 @@ season <- function(INPUT, lambda, nptperyear = 46, south = FALSE,
     dt %<>% group_by(year) %>% dplyr::mutate(season = 1:n(), flag = sprintf("%d_%d", year, season))
 
     I_max <- di$peak
-    I_min <- union(di$beg, di$end + 1)
+    I_min <- union(di$beg, di$end)
     ## 7. plot
     if (IsPlot){
         points(t[I_max], ypred[I_max], pch=20, cex = 1.5, col="red")
@@ -287,156 +289,4 @@ season <- function(INPUT, lambda, nptperyear = 46, south = FALSE,
     # from the original the first minimum value.
     return(list(whit = bind_cols(data_frame(t, y), yfits),
                 pos = pos, dt = dt, di = di))
-}
-
-#' findpeaks
-#' @export
-findpeaks <- function (x, nups = 1, ndowns = nups, zero = "0", peakpat = NULL,
-                       minpeakheight = -Inf, minpeakdistance = 1,
-                       threshold_min = 0, threshold_max = 0,
-                       npeaks = 0, sortstr = FALSE)
-{
-    stopifnot(is.vector(x, mode = "numeric") || length(is.na(x)) == 0)
-    if (!zero %in% c("0", "+", "-"))
-        stop("Argument 'zero' can only be '0', '+', or '-'.")
-    xc <- paste(as.character(sign(diff(x))), collapse = "")
-    xc <- gsub("1", "+", gsub("-1", "-", xc))
-    if (zero != "0")
-        xc <- gsub("0", zero, xc)
-    if (is.null(peakpat)) {
-        peakpat <- sprintf("[+]{%d,}[-]{%d,}", nups, ndowns)
-    }
-    rc <- gregexpr(peakpat, xc)[[1]]
-
-    if (rc[1] < 0)
-        return(NULL)
-    x1 <- rc
-    x2 <- rc + attr(rc, "match.length")
-    attributes(x1) <- NULL
-    attributes(x2) <- NULL
-    n <- length(x1)
-    xv <- xp <- numeric(n)
-    for (i in 1:n) {
-        # for duplicated extreme values, get the median
-        vals <- x[x1[i]:x2[i]]
-        maxI <- which(vals == max(vals, na.rm = T))
-        xp[i] <- floor(median(maxI)) + x1[i] - 1
-        xv[i] <- x[xp[i]]
-    }
-    inds <- which(xv >= minpeakheight &
-                      xv - pmin(x[x1], x[x2]) >= threshold_max &
-                      xv - pmax(x[x1], x[x2]) >= threshold_min)
-    X <- cbind(xv[inds], xp[inds], x1[inds], x2[inds])
-    X <- X[order(X[, 2]), ,drop = F] # update 20180122; order according to index
-
-    if (minpeakdistance < 1)
-        warning("Handling 'minpeakdistance < 1' is logically not possible.")
-    if (sortstr) { # || minpeakdistance > 1
-        sl <- sort.list(X[, 1], na.last = NA, decreasing = TRUE)
-        X <- X[sl, , drop = FALSE]
-    }
-    if (length(X) == 0) return(c())
-
-    # remove near point where dist < minpeakdistance
-    rm_near <- function(x){
-        I <- which(diff(x[, 2]) < minpeakdistance)[1]
-        if (is.na(I) | length(x) == 0){
-            return(x)
-        }else{
-            I_del <- I + as.integer(x[I, 1] > x[I+1, 1]) #remove the min
-            x <- x[-I_del, , drop = F]
-            if (nrow(x) <= 1) return(x);
-            rm_near(x)
-        }
-    }
-
-    X <- rm_near(X)
-    if (npeaks > 0 && npeaks < nrow(X)) {
-        X <- X[1:npeaks, , drop = FALSE]
-    }
-
-    X <- setNames(as_tibble(X), c("val", "pos", "left", "right"))
-    return(list(gregexpr = rc, X = X))
-}
-
-
-#' curvefit_site
-#'
-#' @param t A date vector
-#' @param y A numberic vector, same length as t
-#' @param methods A character vector, c('spline', 'beck', 'elmore', 'klos', 'AG', 'zhang')
-#' @param ... other parameters pass to season or curvefit_site
-#' @export
-curvefit_site <- function(t, y, w, nptperyear = 46,
-                          wFUN = wTSM, iters = 2,
-                          lambda, south = FALSE,
-                          IsPlot = FALSE,
-                          methods = c('AG', 'zhang', 'beck', 'elmore', 'Gu'),
-                          debug = FALSE, ...)
-{
-    doys       <- as.numeric(difftime(t, t[1], units = "day") + 1)#days from origin
-
-    INPUT <- check_input(t, y, w, trim = T, maxgap = nptperyear / 4, alpha = 0.02)
-    brks  <- season(INPUT, lambda, nptperyear, iters = 3, wFUN = wTSM, IsPlot = F,
-                    south = south,
-                    Aymin_less = 0.7,
-                    max_MaxPeaksperyear =2.5, max_MinPeaksperyear = 3.5, ...) #, ...
-    # title(x$site[1])
-    if (all(is.na(INPUT$y))) return(NULL)
-    # also constrained in `optim_pheno` function
-    # if (sum(INPUT$w == 0)/length(INPUT$w) > 0.5) return(NULL) #much rigorous than all is.na
-
-    w  <- brks$whit$w
-    di <- brks$di
-
-    # possible snow or cloud, replaced with whittaker smooth.
-    I_fix <- which(w == 0)
-    INPUT$y[I_fix] <- brks$whit %>% {.[[ncol(.)]][I_fix]}
-    w[I_fix]       <- 0.2 #exert the function of whitaker smoother
-
-    if (debug){
-        fits <- stat <- pheno<- NULL
-    }else{
-        ## 1. Curve fitting
-        fits <- list()
-        for (i in 1:nrow(di)){ #
-            runningId(i)
-            I    <- di$beg[i]:di$end[i]
-            ti   <- doys[I]
-            yi   <- INPUT$y[I]
-            wi   <- w[I]
-            tout <- doys[I] %>% {first(.):last(.)} # make sure return the same length result.
-
-            fit <- curvefit(yi, ti, tout, nptperyear = nptperyear,
-                            w = wi, ylu = INPUT$ylu, iters = iters,
-                            methods = methods, meth = 'BFGS', wFUN = wFUN, ...)
-            #if too much missing values
-            if (sum(wi >= 0.4)/length(wi) < 0.4){
-                fit %<>% map(function(x){
-                    x$fits %<>% map(~.x*NA)
-                    x$pred %<>% multiply_by(NA)
-                    return(x)
-                })
-            }
-            fits[[i]] <- fit
-            # p <- getFits_pheno(fits[[i]], IsPlot = IsPlot)
-        }
-        # L1:curve fitting method, L2:yearly flag
-        fits %<>% set_names(brks$dt$flag) %>% purrr::transpose()
-
-        ## 2. GOF, try to give fitting informations for every curve fitting
-        stat  <- ldply(fits, function(fits_meth){
-            ldply(fits_meth, statistic.phenofit, .id = "flag")
-        }, .id = "meth")
-
-        # 3. phenology
-        p <- lapply(fits, getFits_pheno)
-        # pheno: list(p_date, p_doy)
-        pheno  <- map(p, tidyFits_pheno, origin = t[1]) %>% purrr::transpose()
-    }
-    return(list(INPUT = tibble(t, y),
-                seasons = brks,
-                tout = t[first(di$beg):last(di$end)],  #dates for OUTPUT curve fitting VI
-                fits = fits, stat = stat,
-                pheno = pheno))
 }

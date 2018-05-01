@@ -3,7 +3,8 @@
 #' @export
 fprintf <- function(fmt, ...) cat(sprintf(fmt, ...))
 
-#' @title runningId
+#' print the running ID in the console
+#' 
 #' @export
 runningId <- function(i, step = 1) {
     if (mod(i, step) == 0) cat(sprintf("running %d ...\n", i))

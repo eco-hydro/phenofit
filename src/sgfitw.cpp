@@ -15,8 +15,7 @@
 //
 
 // [[Rcpp::export]]
-arma::mat sgolayB(const arma::mat S, const arma::colvec w)
-{
+arma::mat sgolayB(const arma::mat S, const arma::colvec w) {
     arma::mat Q, R, B, T;
     // Rcout << repmat(sqrt(w), 1, S.n_cols) % S << std::endl;
     arma::qr_econ(Q, R, repmat(sqrt(w), 1, S.n_cols)%S);
@@ -37,15 +36,14 @@ arma::mat sgolayB(const arma::mat S, const arma::colvec w)
 // [[Rcpp::export]]
 arma::colvec sgfitw_rcpp(const arma::colvec y, const arma::colvec w, const arma::mat S){
     arma::mat B;
-    int n = y.n_rows;
-    int frame = S.n_rows;
+    int n       = y.n_rows;
+    int frame   = S.n_rows;
     int halfwin = (frame-1)/2;
 
     B = sgolayB(S, w.subvec(0, frame-1)) ;
     arma::colvec y_head = B.rows(0, halfwin) * y.subvec(0, frame-1);
     arma::colvec y_mid = arma::Col<double>(n-frame) ;
-    for (int i=0; i<=n-frame-1; i++)
-    {
+    for (int i=0; i<=n-frame-1; i++) {
         B = sgolayB(S, w.subvec(i, i+frame-1)) ;
         y_mid(i) = as_scalar( B.row(halfwin) * y.subvec(i, i+frame-1) );
     }

@@ -1,13 +1,9 @@
-#' Weigthed Whittaker Smoother
+#' whittaker smoother
 #'
-#' @references
-#' [1]. Eilers, P.H.C., 2003. A perfect smoother. Anal. Chem. https://doi.org/10.1021/ac034173t
-#' [2]. Frasso, G., Eilers, P.H.C., 2015. L- and V-curves for optimal smoothing. Stat. 
-#'      Modelling 15, 91–111. https://doi.org/10.1177/1471082X14549288
 #' @importFrom ptw whit2
 #' @export
 whitsmw2 <- function(y, w, ylu, nptperyear, wFUN = wTSM, iters=1, lambdas=1000,
-    df = NULL, ...)
+                     df = NULL, ...)
 {
     if (all(is.na(y))) return(y)
     n <- sum(w)
@@ -20,9 +16,11 @@ whitsmw2 <- function(y, w, ylu, nptperyear, wFUN = wTSM, iters=1, lambdas=1000,
         fits <- list()
         for (i in 1:iters){
             if (i > 1) {
-                print('k1')
+                # print('k1')
                 # w <- wFUN(y, z, w, iters, nptperyear, ...)
-                w <- phenofit:::wTSM_cpp(y, z, w, iters, nptperyear, 0.5)
+                wnew <- wFUN(y, z, w, iters, nptperyear, 0.5) #phenofit:::wTSM_cpp
+                # print(unique(wnew - w))
+                w    <- wnew
             }
 
             # z_temp <- smooth_HdH(yiter, w, lambda=lambda)$z

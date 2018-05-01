@@ -13,20 +13,36 @@ nptperyear <- 365
 # source("whit/whit_class.R")
 # source("../R/PhenoExtract_main.R")
 load("Y:/R/phenofit/data/phenofit_INPUT_flux136_obs.rda")
-
 load("Y:/R/phenofit/data/phenofit_MultipleINPUT_flux136.rda")
 
-df <- d_obs
+var <- "EVI_500m"
+df  <- INPUT_lst$MOD13A1
+
+if ('SummaryQA' %in% colnames(df)){
+        df$SummaryQA %<>% factor() %>% mapvalues(c("0", "1", "2", "3"), c(" good", " margin", " snow&ice", " cloud"))
+}
+
+I_var <- which(colnames(df) == var[1])
+colnames(df)[I_var] <- "y"
 
 # global function
-try_season <- function(x){
+try_season <- function(x, lambda = 1e4){
     # x <- df[site == sitename]
-    INPUT <- check_input(x$date, x$GPP_NT, trim = T, maxgap = nptperyear / 4)
-    brks  <- season2(INPUT, lambda=1e4, nptperyear, iters = 3, wFUN = wTSM, IsPlot = TRUE,
-                        max_MaxPeaksperyear =2.5, max_MinPeaksperyear = 3.5)
+    INPUT <- check_input(x$date, x$y, w = x$w, trim = T, maxgap = nptperyear / 4)
+    brks  <- season(INPUT, lambda=lambda, nptperyear, iters = 3, wFUN = wTSM, IsPlot = TRUE,
+                        max_MaxPeaksperyear =2.5, max_MinPeaksperyear = 3.5, 
+                    ymax_min = 0.1)
     title(x$site[1])
     list2env(list(INPUT = INPUT, brks = brks), envir = .GlobalEnv) #
 }
+
+sites    <- unique(d_obs$site)
+sitename <- sites[1]
+sitename <- "US-Ne2"
+
+d <- df[site == sitename]
+nptperyear <- 23
+
 ```
 
 ```{r debug season brk function}
@@ -37,11 +53,6 @@ source("../R/doubleLogistics_fitting.R")
 ```
 
 prepare input gpp data in `test-GPPobs.R`
-```{r}
-# print(d_obs)
-sites    <- unique(d_obs$site)
-sitename <- sites[1]
-```
 
 *try to extract fluxsites observed phenology*
 Test the following function in local machine, and submit to server.
@@ -74,16 +85,19 @@ yfits <- dlply(df, .(site), function(x) {
 }, .progress = "text")
 dev.off()
 
-lambda   <- 1e4
-ymax_min <- 0.5
-fit <- curvefit_site(x$date, x$GPP_NT, 
-                        # w = x$w, 
-                        lambda =lambda,IsPlot = T, 
-                        methods = c("AG", "zhang", "beck", "elmore", 'Gu'), #,"klos"
-                        nptperyear = nptperyear, debug = F, wFUN = wTSM, 
-                        ymax_min = ymax_min, 
-                        south = x$lat[1] < 0)
-plot_phenofit(fit)
+lambda     <- 5
+ymax_min   <- 0.2
+nptperyear <- 23
+# try_season(x)
+
+fit <- curvefit_site(d$date, d$y, 
+                     w = d$w,
+                     lambda =lambda,IsPlot = T, 
+                     methods = c("AG", "zhang", "beck", "elmore", 'Gu')[1], #,"klos"
+                     nptperyear = nptperyear, debug = F, wFUN = wTSM_cpp, 
+                     ymax_min = ymax_min, 
+                     south = x$lat[1] < 0)
+plot_phenofit(fit, d)
 ```
 
 ```{r message=FALSE, warning=FALSE}

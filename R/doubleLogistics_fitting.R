@@ -22,26 +22,29 @@
 #' @export
 check_input <- function(t, y, w, missval, maxgap = 10, trim = TRUE, alpha = 0.01){
     if (missing(w)) w <- rep(1, length(y))
-        
-    # alpha <- 0.02
-    ylu   <- quantile(y[w == 1], c(alpha/2, 1 - alpha), na.rm = T) #only consider good value
+    w[is.na(y)] <- 0
+    
+    # ylu   <- quantile(y[w == 1], c(alpha/2, 1 - alpha), na.rm = T) #only consider good value
     # ylu    <- range(y, na.rm = T)
-    ylu[1] <- pmax(ylu[1], 0)
+    
+    # only remove low values
+    ylu   <- c(pmax( quantile(y[w == 1], alpha/2), 0), 
+               max( y[w == 1], na.rm = T))
+
+    # adjust weights according to ylu
+    if (trim){
+        I_trim    <- y < ylu[1] #| y > ylu[2]
+        w[I_trim] <- 0
+    }
+
     # NAN values check
     if (missing(missval)){
         missval <- ylu[1] #- diff(ylu)/10
         # missval <- -1
     }
-    
-    # adjust weights
-    if (trim){
-        I_trim    <- y < ylu[1] | y > ylu[2]
-        w[I_trim] <- 0
-    }
-    w[is.na(y)] <- 0
 
-    y <- na.approx(y, maxgap = maxgap, na.rm = FALSE)#just replaced with missval performance bad
-    # if still have na values, whether should use mapgap to constrain interpolating range?
+    y <- na.approx(y, maxgap = maxgap, na.rm = FALSE) 
+    # If still have na values after na.approx, just replace it with `missval`.
     y[is.na(y)] <- missval
     list(t = t, y = y, w = w, ylu = ylu)#quickly return
 }
@@ -52,7 +55,7 @@ check_input <- function(t, y, w, missval, maxgap = 10, trim = TRUE, alpha = 0.01
 check_fit <- function(yfit, ylu){
     I_max <- yfit > ylu[2]
     I_min <- yfit < ylu[1]
-    yfit[I_max] <- ylu[2]
+    # yfit[I_max] <- ylu[2]
     yfit[I_min] <- ylu[1]
     return(yfit)
 }
@@ -76,45 +79,6 @@ check_fit2 <- function(y, ylu){
     }
     return(y)
 }
-
-# https://rpubs.com/aaronsc32/bisection-method-r
-bisection <- function(f, a, b, tolx = 1e-7, toly = 1e-3, maxit = 1000, trace = T,
-    ln = TRUE) {
-    # mid  <- (a+b)/2
-    mid  <- ifelse(ln, exp( (log(a) + log(b))/2), (a + b)/2)
-    fmid <- f(mid)
-    y0   <- f(a)
-    y1   <- f(b)
-
-    i <- 1
-    if(sign(y0) == sign(y1)){
-        stop("Starting vaules are not unsuitable!")
-    } else {
-        while(abs(f(mid)) > toly){
-            if (i > maxit) stop('Max iteration reached!')
-
-            if(sign(y1) == sign(ymid)){b <- mid}else{a <- mid}
-            mid  <- ifelse(ln, exp( (log(a) + log(b))/2), (a + b)/2)
-            ymid <- f(mid)
-            y0   <- f(a)
-            y1   <- f(b)
-            #Print the value obtained in each iteration next line
-            if (trace) cat(sprintf('i = %3d: fmid = %.4fn\n', i, fmid))
-            i<-i+1
-        }
-    }
-    return(mid)
-}
-
-# ' Weigthed Whittaker Smoother
-# '
-# ' With the help of sparseMatrix in Matrix package
-# ' @references
-# ' Eilers, P.H., 2003. A perfect smoother. Analytical chemistry, 75(14), pp.3631-3636.
-# ' @import Matrix
-# ' @export
-# ' whittaker smoother
-
 
 # 
 #' using cubic spline function to avoid the difficult in setting parameter
@@ -254,7 +218,7 @@ FitDL.Elmore <- function(x, t = index(x), tout = t, optimFUN = I_optimx,
 
     FUN   <- doubleLog.elmore
     prior <- rbind(
-        c(mn, mx - mn, doy[2], half*0.1, doy[4], half*0.1, 0.002),
+        c(mn, mx - mn, doy[2], 1/half*0.1, doy[4], half*0.1, 0.002),
         c(mn, mx - mn, doy[2], half*0.2, doy[5], half*0.2, 0.002),
         c(mn, mx - mn, doy[1], half*0.5, doy[4], half*0.5, 0.05),
         c(mn, mx - mn, doy[1], half*0.8, doy[5], half*0.8, 0.1))
