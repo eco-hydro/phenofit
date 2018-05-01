@@ -104,21 +104,16 @@ splinefit <- function(x, t = index(x), tout = t, plot = FALSE, df.factor = 0.06,
 #' @export
 FitDL.Zhang <- function(x, t = index(x), tout = t, optimFUN = I_optimx,
                         method = 'nlm', ...){
-    # print("debug")
-    e <- FIT_check(x, t)
-    deltaY <- ampl/3
-    deltaT <- (max(t) - min(t))/4
-    k      <- deltaY/deltaT
-    k_max  <- 2
+    e <- Init_param(x, t)
 
     FUN    <- doubleLog.zhang
     prior  <- rbind(
-        c(doy.mx, mn, mx, doy[1], k*2, doy[2], k*2),
-        c(doy.mx + deltaT/2, mn, mx, doy[1], k*3, doy[2], k*3),
-        c(doy.mx, mn, mx, doy[1], k*4, doy[2], k*4))
+        c(doy.mx           , mn, mx, doy[1], k  , doy[2], k  ),
+        c(doy.mx + deltaT/2, mn, mx, doy[1], k*2, doy[2], k*2),
+        c(doy.mx           , mn, mx, doy[1], k/2, doy[2], k/2))
 
-    lower  <- c(doy.mx - deltaT, mn - deltaY, mx - deltaY, min(t), 0 , doy.mx-deltaT, 0)
-    upper  <- c(doy.mx + deltaT, mn + deltaY, mx + deltaY, doy.mx+deltaT, k_max, max(t),   k_max)
+    lower  <- c(lims$t0[1], lims$mn[1], lims$mx[1], lims$sos[1], k/5 , lims$eos[1], k/5)
+    upper  <- c(lims$t0[2], lims$mn[2], lims$mx[2], lims$sos[2], k*5 , lims$eos[2], k*5)
 
     optim_pheno(prior, FUN, x, t, tout, optimFUN, method, lower = lower, upper = upper, ...)#quick return
 }
@@ -126,18 +121,15 @@ FitDL.Zhang <- function(x, t = index(x), tout = t, optimFUN = I_optimx,
 #' @export
 FitAG <- function(x, t = index(x), tout = t, FUN, optimFUN = I_optimx,
     method = 'nlminb', ...){
-    e <- FIT_check(x, t)
+    e <- Init_param(x, t)
     # print(ls.str(envir = e))
-    deltaY     <- ampl/3
-    deltaT     <- (max(t) - min(t))/3
-    half       <- (max(t) - min(t))/2
-
+    
     FUN <- doubleAG
     prior <- rbind(
-        c(doy.mx, mn, mx, half, 2, half, 2),
+        c(doy.mx, mn, mx, half    , 2, half, 2),
         # c(doy.mx, mn, mx, 0.2*half, 1  , 0.2*half, 1),
         # c(doy.mx, mn, mx, 0.5*half, 1.5, 0.5*half, 1.5),
-        c(doy.mx, mn, mx, 0.8*half, 3  , 0.8*half, 3))
+        c(doy.mx, mn, mx, 0.8*half, 3, 0.8*half, 3))
     # referenced by TIMESAT
     lower      <- c(doy.mx - deltaT, mn - deltaY, mx - deltaY, 0.1*half, 2, 0.1*half, 2)
     upper      <- c(doy.mx + deltaT, mn + deltaY, mx + deltaY, 1.4*half, 8, 1.4*half, 8)
@@ -169,23 +161,9 @@ FitAG <- function(x, t = index(x), tout = t, FUN, optimFUN = I_optimx,
 #' @export
 FitDL.Beck <- function(x, t = index(x), tout = t, optimFUN = I_optimx,
     method = 'nlminb', ...) {
-    if (any(is.na(x)))
-        stop("NA in the time series are not allowed: fill them with e.g. na.approx()")
-
-    n    <- length(x)
-    avg  <- mean(x, na.rm = TRUE)
-    mx   <- max(x, na.rm = TRUE)
-    mn   <- min(x, na.rm = TRUE)
-    ampl <- mx - mn
-    # doy  <- quantile(t, c(0.25, 0.75), na.rm = TRUE)
-    doy.mx <- t[which.max(x)]
-    doy <- c((doy.mx - first(t))/2 + first(t),
-             (last(t) - doy.mx) /2 + doy.mx)
+    e <- Init_param(x, t)
 
     FUN   <- doubleLog.beck
-    deltaY <- ampl/3
-    deltaT <- (max(t) - min(t))/3
-
     prior <- rbind(
         c(mn, mx, doy[1], 0.5, doy[2], 0.5),
         c(mn, mx, doy[1]+deltaT, 0.8, doy[2]-deltaT, 0.8))
@@ -194,61 +172,33 @@ FitDL.Beck <- function(x, t = index(x), tout = t, optimFUN = I_optimx,
     # attr(doubleLog.beck, 'par') <- c("mn", "mx", "sos", "rsp", "eos", "rau")
     # attr(doubleLog.beck, 'formula') <- expression(mn + (mx - mn)*(1/(1 + exp(-rsp*(t - sos))) + 1/(1 + exp(rau*(t - eos)))))
 
-    lower <- c(mn - deltaY, mx - deltaY, min(t), 0, doy.mx - deltaT, 0)
-    upper <- c(mn + deltaY, mx + deltaY, doy.mx + deltaT, 1, max(t), 1)
+    lower <- c(mn - deltaY, mx - deltaY, min(t)         , k/5, doy.mx - deltaT, k/5)
+    upper <- c(mn + deltaY, mx + deltaY, doy.mx + deltaT, k*5, max(t)         , k*5)
     optim_pheno(prior, FUN, x, t, tout, optimFUN, method, lower = lower, upper = upper, ...)#return
 }
 
 #' @export
 FitDL.Elmore <- function(x, t = index(x), tout = t, optimFUN = I_optimx,
     method = 'nlminb', ...) {
-    if (any(is.na(x)))
-        stop("NA in the time series are not allowed: fill them with e.g. na.approx()")
-    n    <- length(x)
-    avg  <- mean(x, na.rm = TRUE)
-    mx   <- max(x, na.rm = TRUE)
-    mn   <- min(x, na.rm = TRUE)
-    ampl <- mx - mn
-    doy  <- quantile(t, c(0.1, 0.25, 0.5, 0.75, 0.9), na.rm = TRUE)
-    doy.mx <- t[which.max(x)]
-    # doy <- c((doy.mx - first(t))/2 + first(t),
-    #          (last(t) - doy.mx) /2 + doy.mx)
-
-    half   <- (max(t) - min(t))/2
+    e <- Init_param(x, t)
 
     FUN   <- doubleLog.elmore
     prior <- rbind(
-        c(mn, mx - mn, doy[2], 1/half*0.1, doy[4], half*0.1, 0.002),
-        c(mn, mx - mn, doy[2], half*0.2, doy[5], half*0.2, 0.002),
-        c(mn, mx - mn, doy[1], half*0.5, doy[4], half*0.5, 0.05),
-        c(mn, mx - mn, doy[1], half*0.8, doy[5], half*0.8, 0.1))
+        c(mn, mx - mn, doy[2], k    , doy[4], k    , 0.002),
+        c(mn, mx - mn, doy[2], k/2  , doy[5], k/2  , 0.002),
+        c(mn, mx - mn, doy[1], k*2  , doy[4], k*2  , 0.05),
+        c(mn, mx - mn, doy[1], k*1.2, doy[5], k*1.2, 0.1))
     # xpred <- m1 + (m2 - m7*t)*((1/(1 + exp((m3l - t)/m4l))) - (1/(1 + exp((m5l - t)/m6l))))
-    deltaY <- ampl/3
-    deltaT <- (max(t) - min(t))/3
-    lower  <- c(mn - deltaY, mx - deltaY, min(t), 0  , doy.mx-deltaT,   0, 0)
-    upper  <- c(mn + deltaY, mx + deltaY, doy.mx+deltaT, 200, max(t), 200, Inf)
+    lower  <- c(mn - deltaY, mx - deltaY, min(t)       , k/5, doy.mx-deltaT, k/5, 0)
+    upper  <- c(mn + deltaY, mx + deltaY, doy.mx+deltaT, k*5, max(t)       , k*5, Inf)
 
     optim_pheno(prior, FUN, x, t, tout, optimFUN, method, lower = lower, upper = upper, ...)#return
 }
 
-#  @reference https://github.com/kongdd/phenopix/blob/master/R/FitDoubleLogGu.R
+#' @reference https://github.com/kongdd/phenopix/blob/master/R/FitDoubleLogGu.R
 #' @export
 FitDL.Gu <- function(x, t = index(x), tout = t, optimFUN = I_optimx, method = "nlminb", ...) {
-    if (any(is.na(x)))
-        stop("NA in the time series are not allowed: fill them with e.g. na.approx()")
-
-    n    <- length(x)
-    avg  <- mean(x, na.rm = TRUE)
-    mx   <- max(x, na.rm = TRUE)
-    mn   <- min(x, na.rm = TRUE)
-    ampl <- mx - mn
-    # doy  <- quantile(t, c(0.25, 0.75), na.rm = TRUE)
-    doy.mx <- t[which.max(x)]
-    doy <- c((doy.mx - first(t))/2 + first(t),
-             (last(t) - doy.mx) /2 + doy.mx)
-
-    deltaY <- ampl/3
-    deltaT <- (max(t) - min(t))/4
+    e <- Init_param(x, t)
 
     a1 <- ampl
     a2 <- ampl
@@ -267,26 +217,15 @@ FitDL.Gu <- function(x, t = index(x), tout = t, optimFUN = I_optimx, method = "n
         c(mn, a1, a2, doy[1], 0.5, t2    , 0.5, 0.5, 0.5),
         c(mn, a1, a2, t1    , 0.8, doy[2], 0.8,   5, 5))
     # y0 + (a1/(1 + exp(-(t - t1)/b1))^c1) - (a2/(1 + exp(-(t - t2)/b2))^c2)
-    lower <- c(mn - deltaY, mx - deltaY, mx - deltaY, min(t), 0, doy.mx - deltaT, 0, 0, 0)
-    upper <- c(mn + deltaY, mx + deltaY, mx + deltaY, doy.mx + deltaT, 1, max(t), 1, Inf, Inf)
+    lower <- c(mn - deltaY, mx - deltaY, mx - deltaY, min(t)         , k/5, doy.mx - deltaT, k/5, 0  , 0)
+    upper <- c(mn + deltaY, mx + deltaY, mx + deltaY, doy.mx + deltaT, k*5, max(t)         , k*5, Inf, Inf)
     optim_pheno(prior, FUN, x, t, tout, optimFUN, method, lower = lower, upper = upper, ...)#return
 }
 
 #' @export
 FitDL.Klos <- function(x, t = index(x), tout = t, optimFUN = I_optimx,
     method = 'BFGS', ...) {
-    if (any(is.na(x)))
-        stop("NA in the time series are not allowed: fill them with e.g. na.approx()")
-
-    n    <- length(x)
-    avg  <- mean(x, na.rm = TRUE)
-    mx   <- max(x, na.rm = TRUE)
-    mn   <- min(x, na.rm = TRUE)
-    ampl <- mx - mn
-    # doy  <- quantile(t, c(0.25, 0.75), na.rm = TRUE)
-    doy.mx <- t[which.max(x)]
-    doy <- c((doy.mx - first(t))/2 + first(t),
-             (last(t) - doy.mx) /2 + doy.mx)
+    e <- Init_param(x, t)
 
     a1 <- 0
     a2 <- 0  #ok
@@ -318,11 +257,12 @@ FitDL.Klos <- function(x, t = index(x), tout = t, optimFUN = I_optimx,
 }
 
 #' @export
-FIT_check <- function(x, t){
+Init_param <- function(x, t){
     if (any(is.na(x)))
         stop("NA in the time series are not allowed: fill them with e.g. na.approx()")
     mx   = max(x, na.rm = TRUE)
     mn   = min(x, na.rm = TRUE)
+    avg  = mean(x, na.rm = TRUE)
 
     doy.mx <- t[which.max(x)]
     # fixed 06 March, 2018; Avoid doy.mx not in the range of doy
@@ -331,15 +271,27 @@ FIT_check <- function(x, t){
              (last(t) - doy.mx) /2 + doy.mx)
     # if (doy[1] >= doy.mx) doy[1] <- (doy.mx - first(t))/2 + first(t)
     # if (doy[2] <= doy.mx) doy[2] <- (last(t) - doy.mx) /2 + doy.mx
-    
-    list2env(list(
-        n    = length(x),
-        avg  = mean(x, na.rm = TRUE),
-        mx   = mx,
-        mn   = mn,
-        ampl = mx - mn,
-        doy  = doy,
-        doy.mx = doy.mx
-    ), envir = parent.frame())
+    ampl = mx - mn
+        
+    deltaY <- ampl/3
+    deltaT <- (max(t) - min(t))/3
+    half   <- (max(t) - min(t))/2
+
+    k      <- 4/half #approximate value
+    # k limits: about 0.004 - 0.2
+    # kmin <- 4 / (half * 5), half = 200, k = 0.004
+    # kmax <- 4 / (half / 5), half = 100, k = 0.2
+
+    # parameters limit
+    lims = list(
+        t0  = c(doy.mx - deltaT, doy.mx + deltaT), 
+        mn  = c(mn - deltaY    , mn + deltaY),
+        mx  = c(mx - deltaY    , mx + deltaY),
+        r   = c(k/5, k*5), 
+        sos = c(min(t)         , doy.mx + deltaT),
+        eos = c(doy.mx - deltaT, max(t))
+    )
+    list2env(listk( mx, mn, ampl, doy, doy.mx, deltaT, deltaY, half, k, lims), 
+        envir = parent.frame())
 }
 
