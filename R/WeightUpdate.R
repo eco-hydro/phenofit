@@ -53,7 +53,7 @@ wBisquare <- function(y, yfit, w, ...){
 #' Chen et al., (2004) weights updating method
 #' 
 #' @references
-#' [1]. Chen, J., Jönsson, P., Tamura, M., Gu, Z., Matsushita, B., Eklundh, L., 
+#' [1]. Chen, J., J\"onsson, P., Tamura, M., Gu, Z., Matsushita, B., Eklundh, L., 
 #'      2004. A simple method for reconstructing a high-quality NDVI time-series 
 #'      data set based on the Savitzky-Golay filter. Remote Sens. Environ. 91, 
 #'      332–344. https://doi.org/10.1016/j.rse.2004.03.014
@@ -67,7 +67,7 @@ wChen <- function(y, yfit, w, ...){
     d_max  <- max(re_abs, na.rm = T) #6 * median(re, na.rm = T)
 
     I_pos  <- re > 0
-    wnew[ I_pos]  <- (1 - re_abs / d_max) * w[I_pos]
+    wnew[ I_pos]  <- (1 - re_abs[I_pos] / d_max) * w[I_pos]
     
     return(wnew)
 }
@@ -76,13 +76,14 @@ wChen <- function(y, yfit, w, ...){
 #' Beck et al., (2006) weigths updating method
 #' 
 #' @references
-#' [1]. Beck, P.S.A., Atzberger, C., Høgda, K.A., Johansen, B., Skidmore, A.K., 
+#' [1]. Beck, P.S.A., Atzberger, C., Hogda, K.A., Johansen, B., Skidmore, A.K., 
 #'      2006. Improved monitoring of vegetation dynamics at very high latitudes: 
 #'      A new method using MODIS NDVI. Remote Sens. Environ. 
 #'      https://doi.org/10.1016/j.rse.2005.10.021 \cr
 #' [2]. https://github.com/kongdd/phenopix/blob/master/R/FitDoubleLogBeck.R
 wBECK <- function(y, yfit, w, ...){
     # get optimized parameters
+    t   <- seq_along(y)
     sos <- opt$par[3]
     eos <- opt$par[5]
 

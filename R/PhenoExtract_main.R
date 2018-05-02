@@ -41,6 +41,11 @@ curvefit_site <- function(t, y, w, nptperyear = 46,
     # possible snow or cloud, replaced with whittaker smooth.
     I_fix <- which(w == 0)
     INPUT$y[I_fix] <- brks$whit %>% {.[[ncol(.)]][I_fix]}
+
+    # plot(y, type = "b"); grid()
+    # lines(brks$whit$iter3, col = "blue")
+    # lines(INPUT$y        , col = "red")
+
     w[I_fix]       <- 0.2 #exert the function of whitaker smoother
 
     if (debug){
@@ -222,7 +227,7 @@ plot_phenofit <- function(fit, d, plotly = F){
                        )
                    ))
     }else{
-        p <- p + geom_point(aes(t, y), size = 2, alpha = 0.5, color = "grey60") + 
+        p <- p + geom_point(aes(t, y), size = 2, alpha = 0.5, color = "grey60") +
             geom_line(aes(color = iters), size = 1)
     }
     # geom_vline(data = pdat2, aes(xintercept=date, linetype = pmeth, color = pmeth), size = 0.4, alpha = 1) +

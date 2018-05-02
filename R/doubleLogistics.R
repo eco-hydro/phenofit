@@ -175,11 +175,10 @@ doubleLog.klos <- function(par, t) {
     return(xpred)
 }
 attr(doubleLog.klos, 'name')    <- 'doubleLog.klos'
-attr(doubleLog.klos, 'par') <- c('a1', 'a2', 'b1', 'b2', 'c', 'B1', 'B2',
+attr(doubleLog.klos, 'par')     <- c('a1', 'a2', 'b1', 'b2', 'c', 'B1', 'B2',
     'm1', 'm2', 'q1', 'q2', 'v1', 'v2')
 attr(doubleLog.klos, 'formula') <- expression((a1*t + b1) + (a2*t^2 + b2*t + c) * (1/(1 + q1 * exp(-B1 * (t - m1)))^v1
         - 1/(1 + q2 * exp(-B2 * (t - m2)))^v2))
-
 
 .qr.solve <- function(a, b, tol = 1e-07, LAPACK = TRUE) {
     if (!is.qr(a)) a <- qr(a, tol = tol, LAPACK = LAPACK)
@@ -200,9 +199,10 @@ attr(doubleLog.klos, 'formula') <- expression((a1*t + b1) + (a2*t^2 + b2*t + c) 
 # std.errors <- sqrt(diag(vc) * s2)     # standard errors
 # return: stdError=std.error
 
-#' .error
+#' Common goal function of those curve fitting methods
+#' 
 #' @export
-.error <- function(
+f_goal <- function(
     par, x, t,
     fun = c(doubleLog.elmore,
            doubleLog.beck,

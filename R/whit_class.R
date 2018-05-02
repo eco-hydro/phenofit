@@ -20,9 +20,9 @@ whitsmw2 <- function(y, w, ylu, nptperyear, wFUN = wTSM, iters=1, lambdas=1000,
         fits <- list()
         for (i in 1:iters){
             if (i > 1) {
-                print('k1')
-                # w <- wFUN(y, z, w, iters, nptperyear, ...)
-                w <- phenofit:::wTSM_cpp(y, z, w, iters, nptperyear, 0.5)
+                # print('k1')
+                w <- wFUN(y, z, w, iters, nptperyear, ...)
+                # w <- phenofit:::wTSM_cpp(y, z, w, iters, nptperyear, 0.5)
             }
 
             # z_temp <- smooth_HdH(yiter, w, lambda=lambda)$z

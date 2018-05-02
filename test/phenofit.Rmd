@@ -12,8 +12,11 @@ library(phenofit)
 nptperyear <- 365
 # source("whit/whit_class.R")
 # source("../R/PhenoExtract_main.R")
-load("Y:/R/phenofit/data/phenofit_INPUT_flux136_obs.rda")
-load("Y:/R/phenofit/data/phenofit_MultipleINPUT_flux136.rda")
+
+indir <- "C:/Users/kongdd/Google 云端硬盘/重要文档/06_Phenofit/06_R package/"
+# indir <- "Y:/R/phenofit/data/"
+# load(paste0(indir, "phenofit_INPUT_flux136_obs.rda"))
+load(paste0(indir, "phenofit_MultipleINPUT_flux136.rda"))
 
 var <- "EVI_500m"
 df  <- INPUT_lst$MOD13A1
@@ -36,9 +39,10 @@ try_season <- function(x, lambda = 1e4){
     list2env(list(INPUT = INPUT, brks = brks), envir = .GlobalEnv) #
 }
 
-sites    <- unique(d_obs$site)
+sites    <- unique(df$site)
 sitename <- sites[1]
 sitename <- "US-Ne2"
+sitename <- "CH-Fru"
 
 d <- df[site == sitename]
 nptperyear <- 23
@@ -94,9 +98,9 @@ fit <- curvefit_site(d$date, d$y,
                      w = d$w,
                      lambda =lambda,IsPlot = T, 
                      methods = c("AG", "zhang", "beck", "elmore", 'Gu')[1], #,"klos"
-                     nptperyear = nptperyear, debug = F, wFUN = wTSM_cpp, 
+                     nptperyear = nptperyear, debug = F, wFUN = wTSM, 
                      ymax_min = ymax_min, 
-                     south = x$lat[1] < 0)
+                     south = d$lat[1] < 0)
 plot_phenofit(fit, d)
 ```
 

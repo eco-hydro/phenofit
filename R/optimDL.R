@@ -123,7 +123,7 @@ optim_pheno <- function(prior, FUN, x, t, tout, optimFUN = I_optim, method,
 #' @export
 I_optim <- function(prior, FUN, x, t, tout, pfun = p_optim, method = "BFGS",...){
     opt.lst <- alply(prior, 1, pfun, method = method,
-        objective = .error, fun = FUN, x = x, t = t, ...)
+        objective = f_goal, fun = FUN, x = x, t = t, ...)
     opt.df <- ldply(opt.lst, with, .id = NULL,
         expr = c(par, value = value,
             fevals = fevals, gevals = gevals, niter  = nitns,
@@ -150,7 +150,7 @@ methods <- c('BFGS','CG','Nelder-Mead','L-BFGS-B','nlm','nlminb',
 I_optimx <- function(prior, FUN, x, t, tout, method, debug = FALSE, ...){
     # debug = TRUE
     opt.df <- adply(prior, 1, optimx, .id = NULL,
-        fn = .error, fun = FUN, x = x, t = t,
+        fn = f_goal, fun = FUN, x = x, t = t,
         method = method, ...,
         control = list(maxit = 1000, all.methods = debug, dowarn = FALSE)
     )
@@ -258,7 +258,7 @@ p_nlm <- function(par0, objective, ...){
     npar <- length(par0)
     ans <- try(nlm(start = par0, resfn =objective, ..., iterlim=1000, print.level=0), silent=TRUE)
     # ans <- try(nlm(f=objective, p=par0, ..., iterlim=1000, print.level=0), silent=TRUE)
-    # ans <- nlm(.error, par0, x = x, t = t, fun = doubleLog.gu)
+    # ans <- nlm(f_goal, par0, x = x, t = t, fun = doubleLog.gu)
     if (class(ans)[1] != "try-error") {
         ans$convcode <- ans$code
         if (ans$convcode == 1 || ans$convcode == 2 || ans$convcode == 3)

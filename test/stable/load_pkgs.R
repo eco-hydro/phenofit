@@ -71,7 +71,7 @@ sites_rm2 <- c("GF-Guy", "BR-Sa3", "US-Whs")
 # source('R/PhenoBrks.R', encoding = "utf-8")
 # source('R/pkg_smooth.R', encoding = "utf-8")
 # source("F:/Github/PML_v2/fluxsites_tidy/R/mainfunc/load_pkgs.R", encoding = "utf-8")
-stations212 <- fread("F:/Github/MATLAB/PML/MATLAB/LAI/flux-212.txt")
+# stations212 <- fread("F:/Github/MATLAB/PML/MATLAB/LAI/flux-212.txt")
 
 #' @param fit object returned by phenofit_site
 #' @export
@@ -85,7 +85,6 @@ getparams_sites <- function(fits){
         map(~melt_list(.x, "site") %>% as_tibble())
     return(pars)
 }
-
 
 tidy_pheno <- function(RES){
     id.vars <- colnames(RES[[1]]$pheno$doy$AG)
