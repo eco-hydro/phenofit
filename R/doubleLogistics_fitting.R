@@ -108,12 +108,14 @@ FitDL.Zhang <- function(x, t = index(x), tout = t, optimFUN = I_optimx,
 
     FUN    <- doubleLog.zhang
     prior  <- rbind(
-        c(doy.mx         , mn, mx, doy[1], k  , doy[2], k  ),
-        c(doy.mx+deltaT/2, mn, mx, doy[1], k*2, doy[2], k*2),
-        c(doy.mx         , mn, mx, doy[1], k/2, doy[2], k/2))
+        c(doy.mx   , mn, mx, doy[1]   , k  , doy[2]   , k  ),
+        c(doy.mx   , mn, mx, doy[1]+t1, k*2, doy[2]-t1, k*2),
+        c(doy.mx   , mn, mx, doy[1]-t1, k/2, doy[2]+t2, k/2))
 
-    lower  <- c(lims$t0[1], lims$mn[1], lims$mx[1], lims$sos[1], k/3 , lims$eos[1], k/3)
-    upper  <- c(lims$t0[2], lims$mn[2], lims$mx[2], lims$sos[2], k*3 , lims$eos[2], k*3)
+    param_lims <- lims[c('t0', 'mn', 'mx', 'sos', 'r', 'eos', 'r')]
+    lower  <- sapply(param_lims, `[`, 1)
+    upper  <- sapply(param_lims, `[`, 2)
+    
     optim_pheno(prior, FUN, x, t, tout, optimFUN, method, w, lower = lower, upper = upper, ...)#quick return
 }
 
@@ -172,8 +174,10 @@ FitDL.Beck <- function(x, t = index(x), tout = t, optimFUN = I_optimx,
         c(mn, mx, doy[1]   , k  , doy[2]   , k  ),
         c(mn, mx, doy[1]+t1, k*2, doy[2]-t2, k*2))
 
-    lower  <- c(lims$mn[1], lims$mx[1], lims$sos[1], k/3 , lims$eos[1], k/3)
-    upper  <- c(lims$mn[2], lims$mx[2], lims$sos[2], k*3 , lims$eos[2], k*3)
+    param_lims <- lims[c('mn', 'mx', 'sos', 'r', 'eos', 'r')]
+    lower  <- sapply(param_lims, `[`, 1)
+    upper  <- sapply(param_lims, `[`, 2)
+
     optim_pheno(prior, FUN, x, t, tout, optimFUN, method, w, lower = lower, upper = upper, ...)#return
 }
 # mn + (mx - mn)*(1/(1 + exp(-rsp*(t - sos))) + 1/(1 + exp(rau*(t - eos))))
@@ -198,9 +202,10 @@ FitDL.Elmore <- function(x, t = index(x), tout = t, optimFUN = I_optimx,
         c(mn, mx - mn, doy[1]   , k*0.5  , doy[2]   , k*0.5  , 0.05),
         c(mn, mx - mn, doy[1]-t1, k*0.25 , doy[2]+t2, k*0.25, 0.1))
     # xpred <- m1 + (m2 - m7*t)*((1/(1 + exp((m3l - t)/m4l))) - (1/(1 + exp((m5l - t)/m6l))))
+    param_lims <- lims[c('mn', 'mx', 'sos', 'r', 'eos', 'r')]
+    lower  <- c(sapply(param_lims, `[`, 1), 0  )
+    upper  <- c(sapply(param_lims, `[`, 2), Inf)
     
-    lower  <- c(lims$mn[1], lims$mx[1], lims$sos[1], k/3 , lims$eos[1], k/3, 0)
-    upper  <- c(lims$mn[2], lims$mx[2], lims$sos[2], k*3 , lims$eos[2], k*3, Inf)
     optim_pheno(prior, FUN, x, t, tout, optimFUN, method, w, lower = lower, upper = upper, ...)#return
 }
 
@@ -242,8 +247,10 @@ FitDL.Gu <- function(x, t = index(x), tout = t, optimFUN = I_optimx,
         c(mn, a, a, doy[1]+t1, k*3 , doy[2]-t2, k*3, 5  , 5))
     # y0 + (a1/(1 + exp(-(t - t1)/b1))^c1) - (a2/(1 + exp(-(t - t2)/b2))^c2)
     
-    lower  <- c(lims$mn[1], lims$mx[1], lims$mx[1], lims$sos[1], k/3 , lims$eos[1], k/3, 0  , 0)
-    upper  <- c(lims$mn[2], lims$mx[2], lims$mx[2], lims$sos[2], k*3 , lims$eos[2], k*3, Inf, Inf)
+    param_lims <- lims[c('mn', 'mx', 'mx', 'sos', 'r', 'eos', 'r')]
+    lower  <- c(sapply(param_lims, `[`, 1), 0  , 0)
+    upper  <- c(sapply(param_lims, `[`, 2), Inf, Inf)
+    
     optim_pheno(prior, FUN, x, t, tout, optimFUN, method, w, lower = lower, upper = upper, ...)#return
 }
 
@@ -287,7 +294,7 @@ Init_param <- function(x, t, w){
         stop("NA in the time series are not allowed: fill them with e.g. na.approx()")
     if (missing(w)) w <- rep(1, length(x))
 
-    w_min  <- 0.1 # weights greater than w_min are treated as good values.
+    w_min  <- 0.5 # weights greater than w_min are treated as good values.
     mx     <- max(x[w >= w_min], na.rm = TRUE)
     mn     <- min(x[w >= w_min], na.rm = TRUE)
     avg    <- mean(x, na.rm = TRUE)

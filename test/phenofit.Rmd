@@ -13,8 +13,8 @@ nptperyear <- 365
 # source("whit/whit_class.R")
 # source("../R/PhenoExtract_main.R")
 
-indir <- "C:/Users/kongdd/Google 云端硬盘/重要文档/06_Phenofit/06_R package/"
-# indir <- "Y:/R/phenofit/data/"
+# indir <- "C:/Users/kongdd/Google 云端硬盘/重要文档/06_Phenofit/06_R package/"
+indir <- "Y:/R/phenofit/data/"
 # load(paste0(indir, "phenofit_INPUT_flux136_obs.rda"))
 load(paste0(indir, "phenofit_MultipleINPUT_flux136.rda"))
 
@@ -43,16 +43,58 @@ sites    <- unique(df$site)
 sitename <- sites[1]
 sitename <- "US-Ne2"
 sitename <- "CH-Fru"
-
+sitename <- "US-Whs"
+    
 d <- df[site == sitename]
 nptperyear <- 23
-
 ```
+
+```{r}
+lambda     <- 2
+ymax_min   <- 0.1
+nptperyear <- 23
+
+sites   <- c('DE-Obe', 'IT-Col', 'CN-Cha', 'AT-Neu', 'ZA-Kru', 'AU-How', 
+           'CA-NS6', 'US-KS2', 'CH-Oe2', 'CZ-wet')
+df_show <- df[site %in% sites, ]
+
+
+CairoPDF("phenofit_MOD13A1_2.pdf", width = 11, height = 6)
+# op <- par(mfrow = c(2, 3),
+#           oma = c(1, 2, 2, 1), mar = c(3, 2, 1, 1)) #, yaxt = "n", xaxt = "n"
+
+# need to remove na values in tail and head
+yfits <- dlply(df_show, .(site), function(d) {
+    tryCatch({
+        # i <- 6
+        # sitename <- sites[i]
+        # x <- df[site == sitename]
+        # try_season(x)
+        fit <- curvefit_site(d$date, d$y, 
+                     w = d$w,
+                     lambda =lambda,IsPlot = T, 
+                     methods = c("AG", "zhang", "beck", "elmore", 'Gu'), #,"klos"
+                     nptperyear = nptperyear, debug = F, wFUN = wTSM, 
+                     ymax_min = ymax_min, 
+                     south = d$lat[1] < 0)
+        p <- plot_phenofit(fit, d, sprintf('[%s]: %s', d$IGBP[1], d$site[1]))
+        print(p)
+        # show_legend()
+        # dev.off()
+    }, error = function(e) {
+        message(sprintf("[%s]:%s", d$site[1], e$message))
+    })
+}, .progress = "text")
+dev.off()
+```
+
+
 
 ```{r debug season brk function}
 # source("../R/PhenoBrks.R")
 # source("whit/whit_class.R")
 source("../R/PhenoExtract_main.R")
+source("../R/doubleLogistics.R")
 source("../R/doubleLogistics_fitting.R")
 ```
 
@@ -70,30 +112,34 @@ op <- par(mfrow = c(2, 3),
           oma = c(1, 2, 2, 1), mar = c(3, 2, 1, 1)) #, yaxt = "n", xaxt = "n"
 
 # need to remove na values in tail and head
-yfits <- dlply(df, .(site), function(x) {
+yfits <- dlply(df[1:1000], .(site), function(d) {
     tryCatch({
         # i <- 6
         # sitename <- sites[i]
         # x <- df[site == sitename]
-        try_season(x)
-        # fit <- curvefit_site(x$date, x$GPP_NT, lambda =1e4,
-        #                      methods = c("AG", "zhang", "beck", "elmore", 'Gu'), #,"klos"
-        #                      nptperyear = 365, debug = F, wFUN = wTSM,
-        #                      south = x$lat[1] < 0)
-        # plot_phenofit(fit)
+        # try_season(x)
+        fit <- curvefit_site(d$date, d$y, 
+                     w = d$w,
+                     lambda =lambda,IsPlot = T, 
+                     methods = c("AG", "zhang", "beck", "elmore", 'Gu'), #,"klos"
+                     nptperyear = nptperyear, debug = F, wFUN = wTSM, 
+                     ymax_min = ymax_min, 
+                     south = d$lat[1] < 0)
+        plot_phenofit(fit, d, sprintf('[%s]: %s', d$IGBP[1], d$site[1]))
         # show_legend()
         # dev.off()
     }, error = function(e) {
-        message(sprintf("[%s]:%s", x$site[1], e$message))
+        message(sprintf("[%s]:%s", d$site[1], e$message))
     })
 }, .progress = "text")
 dev.off()
 
-lambda     <- 5
-ymax_min   <- 0.2
+lambda     <- 2
+ymax_min   <- 0.1
 nptperyear <- 23
 # try_season(x)
 
+d <- df[site == sitename]
 fit <- curvefit_site(d$date, d$y, 
                      w = d$w,
                      lambda =lambda,IsPlot = T, 

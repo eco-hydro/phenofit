@@ -65,7 +65,7 @@ curvefit_site <- function(t, y, w, nptperyear = 46,
                             w = wi, ylu = INPUT$ylu, iters = iters,
                             methods = methods, meth = 'BFGS', wFUN = wFUN, ...)
             #if too much missing values
-            if (sum(wi >= 0.4)/length(wi) < 0.4){
+            if (sum(wi > 0.2)/length(wi) < 0.3){
                 fit %<>% map(function(x){
                     x$fits %<>% map(~.x*NA)
                     x$pred %<>% multiply_by(NA)
@@ -135,7 +135,7 @@ curvefit <- function(x, t = index(x), tout = t, meth = 'BFGS',
 #' @param fit data from phenofit_site
 #' @importFrom dplyr left_join
 #' @export
-plot_phenofit <- function(fit, d, plotly = F){
+plot_phenofit <- function(fit, d, title = NULL, plotly = F){
     #global variables
     origin.date <- fit$INPUT$t[1] #
     I   <- match(fit$tout, fit$INPUT$t)
@@ -237,7 +237,7 @@ plot_phenofit <- function(fit, d, plotly = F){
     if (plotly){
         plotly::ggplotly(p)
     }else{
-        p
+        p + ggtitle(title)
     }
 }
 

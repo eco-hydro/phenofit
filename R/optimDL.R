@@ -112,6 +112,7 @@ optim_pheno <- function(prior, FUN, x, t, tout, optimFUN = I_optim, method,
       pred = xpred.out, par = par, fun = FUN), class = 'phenofit')
 }
 
+
 #' I_optim
 #'
 #' Interface of self defined optimization functions.

@@ -44,7 +44,7 @@ doubleLog.zhang <- function(par, t){
     eos <- par[6]
     rau <- par[7]
 
-    if (t0 < sos | t0 > eos) return(rep(NA, length(t)))
+    if (t0 - sos <= 1 || t0 - eos >= -1) return(rep(NA, length(t)))
     # In order to make sure the shape of S curve, should be satisfy:
     # t0 < eos, t0 > sos
     

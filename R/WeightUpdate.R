@@ -1,5 +1,6 @@
 #' wSELF
 #' Weigths are unchanged and return the original.
+#' @export
 wSELF <- function(y, z, w, ...){w}
 
 #' wTSM
@@ -14,6 +15,7 @@ wSELF <- function(y, z, w, ...){w}
 #' [1]. Per J\"onsson, P., Eklundh, L., 2004. TIMESAT - A program for analyzing
 #'     time-series of satellite sensor data. Comput. Geosci. 30, 833-845.
 #'     https://doi.org/10.1016/j.cageo.2004.05.006
+#' @export
 wTSM <- function(y, yfit, w, iters = 2, nptperyear, wfact = 0.5, ...){
     wTSM_cpp(y, yfit, w, iters, nptperyear, wfact)
 }
@@ -57,6 +59,7 @@ wBisquare <- function(y, yfit, w, ...){
 #'      2004. A simple method for reconstructing a high-quality NDVI time-series 
 #'      data set based on the Savitzky-Golay filter. Remote Sens. Environ. 91, 
 #'      332–344. https://doi.org/10.1016/j.rse.2004.03.014
+#' @export
 wChen <- function(y, yfit, w, ...){
     if (missing(w)) w  <- rep(1, length(y))
     wnew <- w
@@ -81,6 +84,7 @@ wChen <- function(y, yfit, w, ...){
 #'      A new method using MODIS NDVI. Remote Sens. Environ. 
 #'      https://doi.org/10.1016/j.rse.2005.10.021 \cr
 #' [2]. https://github.com/kongdd/phenopix/blob/master/R/FitDoubleLogBeck.R
+#' @export
 wBECK <- function(y, yfit, w, ...){
     # get optimized parameters
     t   <- seq_along(y)
