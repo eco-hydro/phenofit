@@ -65,7 +65,7 @@ qc_summary <- function(QA){
 qc_5l <- function(QA){
     # bit5-7, five-level confidence score
     QA <- bitwShiftR(bitwAnd(QA, 224), 5) #1110 0000=224L
-    w <- numeric(length(QA)) #default zero
+    w  <- numeric(length(QA)) #default zero
     
     w[QA <= 1] <- 1            #clear, good
     w[QA >= 2 & QA <=3] <- 0.5 #geometry problems or others
@@ -75,7 +75,7 @@ qc_NDVIv4 <- function(QA){
     # bit1-2: cloudy, cloud shadow
     QA <- bitwShiftR(bitwAnd(QA, 7), 1) 
     
-    w <- numeric(length(QA))
+    w  <- numeric(length(QA))
     w[QA == 0] <- 1   #clear, good
     w[QA == 2] <- 0.5 #cloud shadow
     return(w)

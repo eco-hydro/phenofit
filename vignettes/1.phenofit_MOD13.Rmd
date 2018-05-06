@@ -1,0 +1,139 @@
+---
+title: "phenology based on MOD13 products"
+author: "Dongdong Kong"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+Here, we illustrate how to use `phenofit` in the selected representative points. Regional analysis also can be conducted in the similar way.
+
+## 1. Preparing input data
+
+1.1 Preprocess remote sensing data and download in Google Earth Engine (GEE)  
+
+A 500m buffer was applied to aggregate vegetation index mean value. For a small region (e.g. the 500m buffer), we can consider remote sensing observing condition is same. So, quality control (QC) of point's central grid was used.
+
+1.2 Initial weights for input data. 
+
+For MOD13A1, MOD13A2 and MOD13Q1, Weights can by initialed by `SummaryQA` band.
+
+SummaryQA      | Pixel reliability summary QA | weight
+---------------| ---------------------------- | ------
+-1 Fill/No data| Not processed                | 0
+0 Good data    | Use with confidence          | 1
+1 Marginal data| Useful but look at detailed QA for more information | 0.5
+2 Snow/ice     | Pixel covered with snow/ice  | 0
+3 Cloudy       | Pixel is cloudy              | 0
+
+```{r}
+qc_summary <- function(QA){
+    w <- numeric(length(QA)) #default zero
+    
+    w[QA == 0] <- 1    #clear, good
+    w[QA == 1] <- 0.5  #margin
+    
+    w[QA >= 2 & QA <=3] <- 0 #cloud shadow
+    return(w)
+}
+```
+
+```{r,eval=FALSE}
+df_MOD13A1 = fread(paste0(indir, 'flux212_MOD13A1.csv')) #16DAY
+MOD13A1[, w := qc_summary(SummaryQA)]
+```
+
+### 2. Divide growing seasons
+
+Simply treating calendar year as a complete growing season will induce a considerable error for phenology extraction. A simple growing season dividing method was proposed in `phenofit`.
+
+The growing season dividing method rely on heavily in Whittaker smoother. 
+
+
+initial parameters for phenofit
+```{r}
+lambda     <- 5    # The parameter for Whittaker
+ymax_min   <- 0.2  # For a growing season, the maximum ymax shoud be greater than `ymax_min` 
+nptperyear <- 23   # How many points for a single year
+wFUN       <- wTSM # Weights updating function, could be one of `wTSM`, 'wBisquare', `wChen` and `wSELF`. 
+
+# separate every procedure
+# t, y, w, nptperyear = 46, lambda, south = FALSE,
+INPUT <- check_input(t, y, w, trim = T, maxgap = nptperyear / 4, alpha = 0.02)
+
+# The detailed information of those parameters can be seen in `season`. 
+brks  <- season(INPUT, lambda, nptperyear, iters = 3, wFUN = wFUN, IsPlot = F,
+                south = south,
+                Aymin_less = 0.7,
+                max_MaxPeaksperyear =2.5, max_MinPeaksperyear = 3.5, ...) #, ...
+
+fit <- curvefit_site(d$date, d$y, 
+                     w = d$w,
+                     lambda =lambda,IsPlot = T, 
+                     methods = c("AG", "zhang", "beck", "elmore", 'Gu'), #,"klos"
+                     nptperyear = nptperyear, debug = F, wFUN = wTSM, 
+                     ymax_min = ymax_min, 
+                     south = d$lat[1] < 0)
+plot_phenofit(fit, d) # plot to check the curve fitting
+```
+
+```{r}
+params <- getparam(fit)
+print(params)
+```
+
+- Never uses retina figures
+- Has a smaller default figure size
+- Uses a custom CSS stylesheet instead of the default Twitter Bootstrap style
+
+## Vignette Info
+
+Note the various macros within the `vignette` section of the metadata block above. These are required in order to instruct R how to build the vignette. Note that you should change the `title` field and the `\VignetteIndexEntry` to match the title of your vignette.
+
+## Styles
+
+The `html_vignette` template includes a basic CSS theme. To override this theme you can specify your own CSS in the document metadata as follows:
+
+    output: 
+      rmarkdown::html_vignette:
+        css: mystyles.css
+
+## Figures
+
+The figure sizes have been customised so that you can easily put two images side-by-side. 
+
+```{r, fig.show='hold'}
+plot(1:10)
+plot(10:1)
+```
+
+You can enable figure captions by `fig_caption: yes` in YAML:
+
+    output:
+      rmarkdown::html_vignette:
+        fig_caption: yes
+
+Then you can use the chunk option `fig.cap = "Your figure caption."` in **knitr**.
+
+## More Examples
+
+You can write math expressions, e.g. $Y = X\beta + \epsilon$, footnotes^[A footnote here.], and tables, e.g. using `knitr::kable()`.
+
+```{r, echo=FALSE, results='asis'}
+knitr::kable(head(mtcars, 10))
+```
+
+Also a quote using `>`:
+
+> "He who gives up [code] safety for [code] speed deserves neither."
+([via](https://twitter.com/hadleywickham/status/504368538874703872))
