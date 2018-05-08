@@ -38,19 +38,40 @@ SummaryQA      | Pixel reliability summary QA | weight
 
 ```{r}
 qc_summary <- function(QA){
-    w <- numeric(length(QA)) #default zero
+    w <- numeric(length(QA)) # default weight is zero
     
-    w[QA == 0] <- 1    #clear, good
-    w[QA == 1] <- 0.5  #margin
+    w[QA == 0] <- 1          # clear, good
+    w[QA == 1] <- 0.5        # margin
     
-    w[QA >= 2 & QA <=3] <- 0 #cloud shadow
+    w[QA >= 2 & QA <=3] <- 0 # Snow/ice, or cloudy
     return(w)
 }
 ```
 
-```{r,eval=FALSE}
-df_MOD13A1 = fread(paste0(indir, 'flux212_MOD13A1.csv')) #16DAY
-MOD13A1[, w := qc_summary(SummaryQA)]
+```{r,eval=TRUE}
+library(phenofit) 
+library(data.table)
+library(magrittr)
+library(plyr) # for mapvalues
+
+data(dt_MOD13A1) # 16-day time-scale
+df <- dt_MOD13A1
+    
+df[, w := qc_summary(SummaryQA)]   # Initial weights
+
+# rename variable name as y
+varname <- "EVI_500m"
+I_var   <- which(colnames(df) == varname[1])
+colnames(df)[I_var] <- "y"
+
+# remap SummaryQA factor level, plot_phenofit also use this variable
+if ('SummaryQA' %in% colnames(df)){
+    df$SummaryQA %<>% factor() %>% mapvalues(c("0", "1", "2", "3"), c(" good", " margin", " snow&ice", " cloud"))
+}
+
+sites <- unique(df$site)        # all sites
+d     <- df[site == sites[2], ] # get the first site data
+knitr::kable(head(d, 10)) 
 ```
 
 ### 2. Divide growing seasons
@@ -59,27 +80,24 @@ Simply treating calendar year as a complete growing season will induce a conside
 
 The growing season dividing method rely on heavily in Whittaker smoother. 
 
+Procedures of initial weight, growing season dividing and curve fitting are separated. Phenology extraction and curve fitting are combined together.
 
-initial parameters for phenofit
 ```{r}
 lambda     <- 5    # The parameter for Whittaker
 ymax_min   <- 0.2  # For a growing season, the maximum ymax shoud be greater than `ymax_min` 
 nptperyear <- 23   # How many points for a single year
 wFUN       <- wTSM # Weights updating function, could be one of `wTSM`, 'wBisquare', `wChen` and `wSELF`. 
 
-# separate every procedure
-# t, y, w, nptperyear = 46, lambda, south = FALSE,
-INPUT <- check_input(t, y, w, trim = T, maxgap = nptperyear / 4, alpha = 0.02)
+# Check input data and initial parameters for phenofit
+INPUT <- check_input(d$date, d$y, d$w, trim = T, maxgap = nptperyear / 4, alpha = 0.02)
 
 # The detailed information of those parameters can be seen in `season`. 
-brks  <- season(INPUT, lambda, nptperyear, iters = 3, wFUN = wFUN, IsPlot = F,
-                south = south,
-                Aymin_less = 0.7,
-                max_MaxPeaksperyear =2.5, max_MinPeaksperyear = 3.5, ...) #, ...
+brks  <- season(INPUT, lambda, nptperyear, iters = 3, wFUN = wFUN, IsPlot = T,
+                south = d$lat[1] < 0,
+                Aymin_less = 0.6, ymax_min = ymax_min, 
+                max_MaxPeaksperyear =2.5, max_MinPeaksperyear = 3.5) #, ...
 
-fit <- curvefit_site(d$date, d$y, 
-                     w = d$w,
-                     lambda =lambda,IsPlot = T, 
+fit <- curvefits(INPUT, brks, lambda =lambda, IsPlot = T, 
                      methods = c("AG", "zhang", "beck", "elmore", 'Gu'), #,"klos"
                      nptperyear = nptperyear, debug = F, wFUN = wTSM, 
                      ymax_min = ymax_min, 
@@ -88,52 +106,17 @@ plot_phenofit(fit, d) # plot to check the curve fitting
 ```
 
 ```{r}
+fit <- curvefits2(d$date, d$y, w = d$w, lambda =lambda,
+                             methods = c("AG", "zhang", "beck", "elmore", 'Gu'), #,"klos"
+                             nptperyear = nptperyear, debug = F, wFUN = wTSM,
+                             ymax_min = ymax_min,
+                             south = x$lat[1] < 0)
+```
+
+
+```{r}
 params <- getparam(fit)
 print(params)
 ```
 
-- Never uses retina figures
-- Has a smaller default figure size
-- Uses a custom CSS stylesheet instead of the default Twitter Bootstrap style
-
-## Vignette Info
-
-Note the various macros within the `vignette` section of the metadata block above. These are required in order to instruct R how to build the vignette. Note that you should change the `title` field and the `\VignetteIndexEntry` to match the title of your vignette.
-
-## Styles
-
-The `html_vignette` template includes a basic CSS theme. To override this theme you can specify your own CSS in the document metadata as follows:
-
-    output: 
-      rmarkdown::html_vignette:
-        css: mystyles.css
-
-## Figures
-
-The figure sizes have been customised so that you can easily put two images side-by-side. 
-
-```{r, fig.show='hold'}
-plot(1:10)
-plot(10:1)
-```
-
-You can enable figure captions by `fig_caption: yes` in YAML:
-
-    output:
-      rmarkdown::html_vignette:
-        fig_caption: yes
-
-Then you can use the chunk option `fig.cap = "Your figure caption."` in **knitr**.
-
-## More Examples
-
 You can write math expressions, e.g. $Y = X\beta + \epsilon$, footnotes^[A footnote here.], and tables, e.g. using `knitr::kable()`.
-
-```{r, echo=FALSE, results='asis'}
-knitr::kable(head(mtcars, 10))
-```
-
-Also a quote using `>`:
-
-> "He who gives up [code] safety for [code] speed deserves neither."
-([via](https://twitter.com/hadleywickham/status/504368538874703872))

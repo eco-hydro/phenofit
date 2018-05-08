@@ -1,292 +1,105 @@
-# source('R/mainfunc/PhenoBrks.R', encoding = "utf-8")
-# ylab = expression(paste('GPP ( gC ', m^-2, d^-1, ')'))
-#' @export
-plotdata <- function(INPUT, nptperyear, ...){
-    t <- INPUT$t
-    y <- INPUT$y
-    ylu <- INPUT$ylu
+plot_phenofit <- function(fit, d, title = NULL, plotly = F){
+    #global variables
+    origin.date <- fit$INPUT$t[1] #
+    I   <- match(fit$tout, fit$INPUT$t)
+    org <- fit$INPUT[I, ]
 
-    npt <- length(y)
-    # show grid lines
-    par(mgp = c(1.5, 0.5, 0)) #oma = c(1, 2, 3, 1)
-    plot(t, y, xaxt = "s", xaxs = "i", type = "b",
-         xlab = 'date', ...)
-    # at <- t[seq(1, npt, nptperyear)]
-    # fmt <- ifelse(yday(at[1]) == 1, "%Y", "%Y/%m/%d")
-
-    # axis(side=1, at = at, labels = format(at, fmt))
-    grid(nx = NA, NULL)
-    abline(v=t[seq(1, npt, nptperyear)], col="grey60", lty=3)
-    if (!missing(ylu)) abline(h=ylu, col="red", lty=2) # show ylims
-}
-
-#' rm duplicated max or min values
-rm_duplicate <- function(d, y, threshold){
-    d <- d[, 1:5]
-    if (nrow(d) > 1){
-        type <- d$type[1] #1(-1) represent max(min)
-        # if range amplitude less than TRS, get median
-        if (diff(range(d$val)) < threshold){
-            I <- floor(median(d$pos))
-            data_frame(val = y[I], pos = I,
-                       left = min(d$left),
-                       right = max(d$right), type = type)
+    getFitVI <- function(fit_years){
+        map(fit_years, ~window(.x$pred, .x$data$t)) %>%
+            do.call(c, .) %>% set_names(NULL)
+    }
+    # fit_years: fits for one method, multiple years
+    getFitVI_iters <- function(fit_years){
+        if (is.null(fit_years[[1]]$fun)){
+            out <- getFitVI(fit_years) %>% as.numeric() %>% {tibble(iter1 = .)}
         }else{
-            # else, get the local extreme value
-            fun <- ifelse(type == 1, which.max, which.min)
-            d[fun(d$val), ]
+            out <- map(fit_years, function(fit){
+                I       <- match(fit$data$t, fit$tout)
+                d_iters <- map_df(fit$fits, ~.x[I])
+                d_iters$t <- fit$data$t
+                return(d_iters)
+            }) %>% bind_rows()
         }
+        # out
+        # # A tibble: 2,515 x 3
+        # iter1 iter2 t
+        # <dbl> <dbl> <date>
+        #     1 0.594 0.780 2005-02-06
+        # 2 0.595 0.780 2005-02-07
+        # 3 0.595 0.780 2005-02-08
+        out$t %<>% add(origin.date - 1)
+        left_join(org, out, by = "t")
+    }
+
+    fits_years <- map(fit$fits, getFitVI_iters)
+    pdat1 <- melt(fits_years, id.vars = c("t", "y")) %>%
+        set_names(c("t", "y","iters", "val", "meth"))
+    # fits_years <- map(fit$fits, getFitVI)
+
+    # t_fit <- index(fits_years[[1]]) + t[1] - 1
+    # new   <- as_tibble(c(list(t = t_fit), map(fits_years, unclass)))
+    # new   <- as_tibble(c(list(t = t_fit), fits_years))
+    # 1. curve fitting data
+    # pdat1 <- dplyr::full_join(fit$INPUT, new, by = "t") %>%
+    #     gather(meth, val, -t, -y) %>% group_by(meth)
+    # print(head(pdat1))
+
+    # 2. growing season breaks
+    # 3. phenology data
+    pdat2 <- fit$pheno$date %>% melt_list("meth") %>% as_tibble() %>%
+        gather(index, date, -flag, -origin, -meth) %>%
+        mutate(pmeth = str_extract(index, "\\w{1,}"))
+    # pdat2 <- pdat2[grep("TRS2", pdat2$index), ]
+    # 3. growing season breaks
+    # try to add whittaker smoother here
+    seasons <- fit$seasons
+    seasons$pos$type %<>% factor(labels = c("min", "max"))
+
+    p <- ggplot(pdat1, aes(t, val, color = iters)) +
+        geom_line (data = seasons$whit, aes(t, iter3), color = "black", size = 0.6) +
+        geom_vline(data = seasons$dt, aes(xintercept = as.numeric(beg)), size = 0.3, linetype=2, color = "blue") +
+        geom_vline(data = seasons$dt, aes(xintercept = as.numeric(end)), size = 0.3, linetype=2, color = "red") +
+        geom_point(data = subset(seasons$pos, type == "max"), aes(t, val), color= "red") +
+        geom_point(data = subset(seasons$pos, type == "min"), aes(t, val), color= "blue") +
+        # geom_line(size = 0.4) +
+        facet_grid(meth~.) +
+        scale_x_date(breaks = fit$seasons$dt$beg, date_labels = "%Y/%m")
+
+    if ('SummaryQA' %in% colnames(d)){
+        # p <- p + geom_point(data = x, aes(date, y, shape = SummaryQA, color = SummaryQA), size = 1, alpha = 0.7) +
+        #     scale_shape_manual(values = c(21,22, 24:25)) +
+        #     scale_fill_manual(values = c("grey40", "#7CAE00", "#F8766D", "#C77CFF")) +
+        #     guides(shape = guide_legend(override.aes = list(size = 2)))
+        p  <- p + geom_point(data = d, aes(date, y, shape = SummaryQA, color = SummaryQA), size = 2, alpha = 0.7) +
+            geom_line(aes(color = iters), size = 1, alpha = 0.7) +
+            scale_color_manual(values = c(" good" = "grey60", " margin" = "#00BFC4",
+                                          " snow&ice" = "#F8766D", " cloud" = "#C77CFF",
+                                          "iter1" = "blue", "iter2" = "red"), drop = F) +
+            scale_shape_manual(values = c(19, 15, 4, 17), drop = F) +
+            guides(shape = FALSE,
+                   color = guide_legend(
+                       "legend",
+                       override.aes = list(
+                           shape = c(c(19, 15, 4, 17)[c(4, 1, 2, 3)], NA, NA),
+                           linetype = c(0, 0, 0, 0, 1, 1),
+                           # color = c(" good" = "grey60", " margin" = "#00BFC4",
+                           #           " snow&ice" = "#F8766D", " cloud" = "#C77CFF",
+                           #           "iter1" = "blue", "iter2" = "red"),
+                           name = letters[1:6],
+                           size = 1.2
+                       )
+                   ))
     }else{
-        d
+        p <- p + geom_point(aes(t, y), size = 2, alpha = 0.5, color = "grey60") +
+            geom_line(aes(color = iters), size = 1)
     }
-}
-
-#' fix across multi-year breaks points, when whole year data are missing
-fix_di <- function(di, t){
-    for (i in 1:nrow(di)){
-        I    <- di$beg[i]:di$end[i]
-        # Try to remove NA values at head and tail. Fialed, Na value may not
-        # at head or tail.
-        # I_nona <- which(!is.na(y[I])) %>% {I[first(.):last(.)]}
-        I_nona <- I#checking year brk is enough
-        ti     <- t[I_nona]
-
-        # check year brokens
-        I_brkyear <- which(diff(ti) >= 365)
-        nbrk      <- length(I_brkyear)
-
-        if (nbrk > 0 & nbrk <= 2){
-            if (nbrk == 1) {
-                I_1 <- I_nona[1:I_brkyear]
-                I_2 <- I_nona[(I_brkyear + 1):length(I_nona)]
-
-                lst <- list(I_1, I_2)
-            } else if (nbrk == 2) {
-                I_1 <- I_nona[1:I_brkyear[1]]
-                I_2 <- I_nona[(I_brkyear[1]+1):I_brkyear[2]]
-                I_3 <- I_nona[(I_brkyear[2]+1):length(I_nona)]
-
-                lst <- list(I_1, I_2, I_3)
-            }
-            #select the longest segment
-            I_nona <- lst[[which.max(sapply(lst, length))]]
-            di$beg[i] <- first(I_nona)
-            di$end[i] <- last(I_nona)
-        }
+    # geom_vline(data = pdat2, aes(xintercept=date, linetype = pmeth, color = pmeth), size = 0.4, alpha = 1) +
+    # scale_linetype_manual(values=c(2, 3, 1, 1, 1, 4))
+    # p + facet_grid(meth~pmeth)
+    #return
+    if (plotly){
+        plotly::ggplotly(p)
+    }else{
+        p + ggtitle(title)
     }
-    di#quickly return
-}
-
-#' season
-#'
-#' First smooth VI timeseries by weighted whittaker, then use findpeak function
-#' to get the local maximum and local minimum values. Two local minimum defined
-#' a growing season. If two local minimum(maximum) was adjacent, then only the
-#' smaller(biger) is left.
-#'
-#' Then according to season pos, based to local maximum position divide yearly
-#' growing season. lambda need to set carefully.
-#'
-#' divide growing season circle just like TIMESAT season function
-#' @param INPUT returned list(t, y, w, ylu) object from `check_input`
-#' @param ... Other parameters passed to findpeaks, e.g. 'threshold',
-#' 'minpeakheight', 'minpeakdistance'
-#' @param TRS multiply A (diff(ylu)) becomes the threshold parameter of
-#' `findpeak` function
-#' @export
-#' @return list(dt, di)
-#' $whit
-# # A tibble: 574 x 5
-#    t              y     w iter1 iter2
-#    <date>     <dbl> <dbl> <dbl> <dbl>
-#  1 2002-07-04  9.43 0.149 10.1  10.5
-#  2 2002-07-12  9.06 0.137  9.81 10.2
-#  3 2002-07-20 10.2  1.00   9.56  9.86
-#   $dt
-# # A tibble: 11 x 7
-# # Groups:   year [11]
-#    beg        peak       end        len     year season flag
-#    <date>     <date>     <date>     <time> <dbl>  <int> <chr>
-#  1 2003-01-09 2003-07-12 2004-02-18 406     2003      1 2003_1
-#  2 2004-02-26 2004-07-11 2005-02-10 351     2004      1 2004_1
-#  3 2005-02-18 2005-07-12 2006-01-09 326     2005      1 2005_1
-#   $di
-# # A tibble: 11 x 3
-#      beg  peak   end
-#    <dbl> <dbl> <dbl>
-#  1  25.0  48.0  76.0
-#  2  77.0  94.0 121
-#  3 122   140   163
-# if more than one continuous maximum(minimum) values, only kept the bigger
-# (smaller) one
-season <- function(INPUT, lambda, nptperyear = 46, south = FALSE,
-                   iters = 2, wFUN = wTSM, IsPlot = TRUE,
-                   minpeakdistance = nptperyear/6,
-                   ymax_min = 0.5,
-                   Aymin_less = 0.6, #ymin < Aymin_less * A
-                   TRS = 0.05, meth = c('whit', 'sg'), ...,
-                   max_MaxPeaksperyear = 2, max_MinPeaksperyear = 3)
-{
-    t   <- INPUT$t
-    y   <- INPUT$y
-
-    if (all(is.na(y))) return(NULL)
-    # npt   <- length(y)
-    npt   <- sum(INPUT$w > 0)
-    nyear <- ceiling(npt/nptperyear)
-    # if (nyear <= 3) nyear <- ceiling(nyear)
-
-    frame <- floor(nptperyear/7) * 2 + 1 #13, reference by TSM SG filter
-
-    if (missing(lambda)) lambda <- max(nyear*frame, 15)
-
-    ## 3. weighted whittaker curve fitting
-    # wfun <- wTSM#wTSM, bisquare
-    iloop <- 1
-    while (iloop <= 3){
-        # if (meth[1] == 'sg'){
-        #     yfits <- sgfitw(INPUT$y, INPUT$w, nptperyear, INPUT$ylu, wFUN, iters, frame, d=2)
-        # }else if(meth[1] == 'whit'){
-        # whitsmw(y, w, ylu, wFUN, iters = 1, lambda = 100, ..., d = 2, missval)
-        yfits <- whitsmw2(INPUT$y, INPUT$w, INPUT$ylu, nptperyear, wFUN, iters, lambda)$data
-        # }else{
-        #     stop('Invalid method input! Should be "sg" or "whit".')
-        # }
-
-        ## 4. find local extreme values
-        ypred <- yfits[, ncol(yfits), drop = T]
-        # ypred <- as.numeric(runmed(ypred, frame))
-        alpha <- 0.01
-        ylu <- c(pmax(quantile(ypred, alpha/2), INPUT$ylu[1]),
-                 pmin(max(ypred)              , INPUT$ylu[2]))
-        # ylu   <- quantile(ypred, c(alpha/2, 1 - alpha), na.rm = T)
-        # ylu[1] <- pmax(ylu[1], INPUT$ylu[1])
-        # ylu[2] <- pmax(ylu[2], INPUT$ylu[2])
-
-        A         <- diff(ylu)
-        threshold <- TRS*A
-
-        # For avoid fluctuating in peak of growing season or flat peak growing season,
-        # like fluxsite: ZM-Mon
-        # max_slp <- 2*A/nptperyear
-        # pek_slp <- abs(coefficients(lm(ypred[I]~I))[[2]])
-        I <- which(ypred > (0.8*A + ylu[1]))
-        if (length(I)/length(y) > 0.3){
-            ypred[I] <- median(ypred[I])
-        }
-        # local minimum values
-        # threshold for local extreme values
-        # peak values is small for minimum values, so can't use threshold here
-        peaks <- findpeaks(-ypred,
-                           threshold_max = 0.2*A,
-                           minpeakdistance = minpeakdistance, zero = "-", nups = 0)
-        pos_min   <- peaks$X
-        pos_min[, 1] %<>% multiply_by(-1)
-        npeak_MinPerYear <- length(peaks$gregexpr)/nyear#max peaks
-        # local maximum values,
-        peaks <- findpeaks(ypred, zero = "+",
-                           threshold_max = 0.2*A,
-                           threshold_min = 0*A,
-                           minpeakdistance = minpeakdistance,
-                           minpeakheight = max(0.2*A + ylu[1], ymax_min), nups = 1)
-        pos_max <- peaks$X
-        npeak_MaxPerYear <- length(peaks$gregexpr)/nyear#max peaks
-
-        cat(sprintf('iloop = %d: lambda = %.1f, npeak_MinPerYear = %.2f, npeak_MaxPerYear = %.2f\n',
-                    iloop, lambda, npeak_MinPerYear, npeak_MaxPerYear))
-
-        # maxpeaksperyear <- 2
-        if (npeak_MaxPerYear > max_MaxPeaksperyear | npeak_MinPerYear > max_MinPeaksperyear){
-            lambda <- lambda*2
-        }else if (npeak_MaxPerYear < 1  | npeak_MinPerYear < 1){
-            lambda <- lambda/2
-        }else{
-            break
-        }
-        iloop <- iloop + 1
-    }
-
-    # plot curve fitting time-series
-    if (IsPlot){
-        plotdata(INPUT, nptperyear)
-        colors <- c("red", "blue", "green")
-        for (i in 1:(ncol(yfits) - 1)){
-            lines(INPUT$t, yfits[, i+1, drop = T], col = colors[i], lwd = 2)
-        }
-    }
-    # plot(ypred, type = "b"); grid()
-
-    if (is.null(pos_max) || is.null(pos_min)){
-        stop("Can't find a complete growing season before trim!")
-    }
-    # 1.1 the local minimum value should small than Aymin_less * A
-    pos_min %<>% subset((val - ylu[1]) <= Aymin_less *A)
-    # add column type: max is 1; min is -1.
-    # pos column: c("val", "pos", "left", "right", "type")
-    pos <- rbind(add_column(pos_max, type = 1), add_column(pos_min, type = -1))
-    pos <- pos[order(pos$pos), ]
-
-    # 1.2 remove both points (date or value of min and max too close)
-    I_date  <- which(diff(pos$pos) < (nptperyear/12*1)) #15
-    I_val   <- which(abs(diff(pos$val)) < 0.1*A) #0.15
-
-    # I_del <- union(I_date, I_date+1)
-    I_del <- union(I_date + 1, I_val + 1)
-    if (length(I_del) > 0) pos <- pos[-I_del, ]
-    pos$flag <- cumsum(c(1, diff(pos$type) != 0))
-
-    # 1.3 remove replicated
-    pos   <- ddply(pos, .(flag), rm_duplicate, y = ypred, threshold = threshold)[, 2:6]
-    pos$t <- t[pos$pos]
-
-    ############################################################################
-    ## 5. check head and tail break point, and reform breaks
-    locals <- pos[, c("pos", "type")]
-    ns <- nrow(locals)
-    # check the head and tail minimum values
-    minlen <- nptperyear/3 #distance from peak point
-    if (last(pos$type) == 1 && (npt - nth(pos$pos, -2)) > minlen &&
-        abs(last(ypred) - nth(pos$val, -2)) < 0.15*A )
-        locals %<>% rbind.data.frame(., data.frame(pos = npt, type = -1))
-    if (pos$type[1] == 1 && pos$pos[2] > minlen && abs(ypred[1] - pos$val[2]) < 0.15*A)
-        locals %<>% rbind.data.frame(data.frame(pos = 1, type = -1), .)
-
-    # a complete growing season, from minimum to minimum
-    I      <- which(locals$type == -1)
-    locals <- locals[I[1]:I[length(I)], ]
-
-    s  <- locals$pos
-    ns <- length(s)
-    if (ns < 3) stop("Can't find a complete growing season!")
-    locals %<>% mutate(val = ypred[pos], t = t[pos])
-
-    pos_max <- subset(locals, type == 1)
-    pos_min <- subset(locals, type == -1)
-    ## 6. divide into multiple growing seasons
-    di <- data_frame(beg  = s[seq(1, ns-1, 2)]+1,
-                     peak = s[seq(2, ns, 2)],
-                     end  = s[seq(3, ns, 2)])
-    di %<>% fix_di(t = t) #fix whole year data missing
-
-    dt <- map_df(di, ~t[.x]) %>%
-        mutate(len = difftime(end, beg, units = "days") + 1, year = year(peak)) %>%
-        bind_cols(mval = ypred[di$peak], .)
-    # get the growing season year, not only the calendar year
-    if (south){
-        dt %<>% mutate(year = year + as.integer(peak > ymd(sprintf('%d0701', year))) - 1L)
-    }
-    dt %<>% group_by(year) %>% dplyr::mutate(season = 1:n(), flag = sprintf("%d_%d", year, season))
-
-    I_max <- di$peak
-    I_min <- union(di$beg, di$end)
-    ## 7. plot
-    if (IsPlot){
-        points(t[I_max], ypred[I_max], pch=20, cex = 1.5, col="red")
-        points(t[I_min], ypred[I_min], pch=20, cex = 1.5, col="blue")
-    }
-    # Then curve fitting VI index in every segment, according to local minimum values
-    # If begin at maximum value, then add the 1th point as min value. Or just begin
-    # from the original the first minimum value.
-    return(list(whit = bind_cols(data_frame(t, y), yfits),
-                pos = pos, dt = dt, di = di))
 }

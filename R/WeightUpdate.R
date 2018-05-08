@@ -84,8 +84,8 @@ wChen <- function(y, yfit, w, ...){
 #'      A new method using MODIS NDVI. Remote Sens. Environ. 
 #'      https://doi.org/10.1016/j.rse.2005.10.021 \cr
 #' [2]. https://github.com/kongdd/phenopix/blob/master/R/FitDoubleLogBeck.R
-#' @export
-wBECK <- function(y, yfit, w, ...){
+# ' @export
+wBeck <- function(y, yfit, w, ...){ #Not finished yet.
     # get optimized parameters
     t   <- seq_along(y)
     sos <- opt$par[3]

@@ -17,12 +17,24 @@ nptperyear <- 365
 indir <- "Y:/R/phenofit/data/"
 # load(paste0(indir, "phenofit_INPUT_flux136_obs.rda"))
 load(paste0(indir, "phenofit_MultipleINPUT_flux136.rda"))
+load(paste0(indir, "phenofit_MultipleINPUT_flux212.rda"))
 
 var <- "EVI_500m"
-df  <- INPUT_lst$MOD13A1
+df  <- lst$MOD13A1
+
+stations212 <- fread("C:/Users/kon055/Google Drive/Github/data/phenology/station/flux-212.txt")
+
+
+sites   <- c('DE-Obe', 'IT-Col', 'CN-Cha', 'AT-Neu', 'ZA-Kru', 'AU-How', 
+           'CA-NS6', 'US-KS2', 'CH-Oe2', 'CZ-wet')
+df_show <- df[site %in% sites, ]
+
+dt_MOD13A1 <- merge(df_show, stations212[, .(site, IGBP, lat, long)], "site") %>% reorder_name(c("site", "IGBP", "lat", "long"))
+
 
 if ('SummaryQA' %in% colnames(df)){
-        df$SummaryQA %<>% factor() %>% mapvalues(c("0", "1", "2", "3"), c(" good", " margin", " snow&ice", " cloud"))
+    df$SummaryQA %<>% factor() %>% 
+        mapvalues(c("0", "1", "2", "3"), c(" good", " margin", " snow&ice", " cloud"))
 }
 
 I_var <- which(colnames(df) == var[1])
@@ -54,9 +66,6 @@ lambda     <- 2
 ymax_min   <- 0.1
 nptperyear <- 23
 
-sites   <- c('DE-Obe', 'IT-Col', 'CN-Cha', 'AT-Neu', 'ZA-Kru', 'AU-How', 
-           'CA-NS6', 'US-KS2', 'CH-Oe2', 'CZ-wet')
-df_show <- df[site %in% sites, ]
 
 
 CairoPDF("phenofit_MOD13A1_2.pdf", width = 11, height = 6)

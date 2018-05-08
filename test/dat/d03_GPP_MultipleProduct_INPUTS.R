@@ -9,9 +9,11 @@ df    <- fread(files)
 # LST_Night_1km: scale factor, 0.02
 df[, `:=`(date = ymd(date),
           Tn = LST_Night_1km*0.02 - 273.15)] #the real value of temperature
+
 df_Tn <- df[, .(date, site, Tn)] %>% add_dn
 df_Tn[, c("date", "doy"):=NULL]
 df_Tn_16d <- df_Tn[, .(Tn = mean(Tn, na.rm = T)), .(site, year, d16)]
+
 #
 indir <- 'C:/Users/kon055/Google Drive/Github/data/phenology/'
 df_NDVIv4  = fread(paste0(indir, 'fluxsites_NDVIv4_0m_buffer_1998-2017.csv')) #16DAY

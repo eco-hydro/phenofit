@@ -49,13 +49,31 @@
 # 13: RHO3 value is invalid
 # 14: BRDF correction is invalid
 # 15: Polar flag, latitude over 60 degrees (land) or 50 degrees (ocean)
+
+#' Extract bitcoded QA information from bin value
+#' 
+#' @param x Binary value
+#' @param start Bit starting position
+#' @param end Bit ending position
+#' @return decimal value
+#' @export
+getBits <- function(x, start, end = start){
+    # Geometric progression Sn = a1*(1 - q^n)/(1-q)
+    n   <- end - start + 1
+    a1  <- 2^start; q <- 2
+    Sn  <- a1*(1 - q^n)/(1-q)
+    
+    bitwAnd(x, Sn) %>% bitwShiftR(start) #quickly return
+}
+
+#' @export
 qc_summary <- function(QA){
-    w <- numeric(length(QA)) #default zero
+    w <- numeric(length(QA)) # default weight is zero
     
-    w[QA == 0] <- 1    #clear, good
-    w[QA == 1] <- 0.5  #margin
+    w[QA == 0] <- 1          # clear, good
+    w[QA == 1] <- 0.5        # margin
     
-    w[QA >= 2 & QA <=3] <- 0 #cloud shadow
+    w[QA >= 2 & QA <=3] <- 0 # Snow/ice, or cloudy
     return(w)
 }
 #' qc_5l

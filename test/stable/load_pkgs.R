@@ -17,7 +17,7 @@ library(Cairo)
 library(jsonlite)
 library(openxlsx)
 
-library(rTIMESAT)
+# library(rTIMESAT)
 
 # rename phenofit phenology metrics names
 fix_level <- function(x){
@@ -71,20 +71,7 @@ sites_rm2 <- c("GF-Guy", "BR-Sa3", "US-Whs")
 # source('R/PhenoBrks.R', encoding = "utf-8")
 # source('R/pkg_smooth.R', encoding = "utf-8")
 # source("F:/Github/PML_v2/fluxsites_tidy/R/mainfunc/load_pkgs.R", encoding = "utf-8")
-# stations212 <- fread("F:/Github/MATLAB/PML/MATLAB/LAI/flux-212.txt")
-
-#' @param fit object returned by phenofit_site
-#' @export
-getparams <- function(fit){
-    llply(fit$fits, function(x){
-        ldply(x, . %>% .$par, .id = "flag") %>% as_tibble()
-    })
-}
-getparams_sites <- function(fits){
-    pars <- map(fits, getparams) %>% purrr::transpose() %>%
-        map(~melt_list(.x, "site") %>% as_tibble())
-    return(pars)
-}
+# stations212 <- fread("C:/Users/kon055/Google Drive/Github/data/phenology/station/flux-212.txt")
 
 tidy_pheno <- function(RES){
     id.vars <- colnames(RES[[1]]$pheno$doy$AG)
