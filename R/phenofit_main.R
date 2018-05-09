@@ -21,7 +21,6 @@
 curvefits <- function(INPUT, brks, nptperyear = 46,
                           wFUN = wTSM, iters = 2,
                           lambda, south = FALSE,
-                          IsPlot = FALSE,
                           methods = c('AG', 'zhang', 'beck', 'elmore', 'Gu'),
                           debug = FALSE, ...)
 {
@@ -71,7 +70,6 @@ curvefits <- function(INPUT, brks, nptperyear = 46,
                 })
             }
             fits[[i]] <- fit
-            # p <- getFits_pheno(fits[[i]], IsPlot = IsPlot)
         }
         # L1:curve fitting method, L2:yearly flag
         fits %<>% set_names(brks$dt$flag) %>% purrr::transpose()
@@ -80,17 +78,11 @@ curvefits <- function(INPUT, brks, nptperyear = 46,
         stat  <- ldply(fits, function(fits_meth){
             ldply(fits_meth, statistic.phenofit, .id = "flag")
         }, .id = "meth")
-
-        # 3. phenology
-        p <- lapply(fits, getFits_pheno)
-        # pheno: list(p_date, p_doy)
-        pheno  <- map(p, tidyFits_pheno, origin = t[1]) %>% purrr::transpose()
     }
     return(list(INPUT = tibble(t, y = INPUT$y),
                 seasons = brks,
                 tout = t[first(di$beg):last(di$end)],  #dates for OUTPUT curve fitting VI
-                fits = fits, stat = stat,
-                pheno = pheno))
+                fits = fits, stat = stat))
 }
 
 #' 
@@ -109,18 +101,25 @@ curvefits2 <- function(t, y, w, nptperyear = 46,
                           methods = c('AG', 'zhang', 'beck', 'elmore', 'Gu'),
                           debug = FALSE, ...)
 {
-    # Check input data and initial parameters for phenofit
+    # 1. Check input data and initial parameters for phenofit
     INPUT <- check_input(t, y, w, trim = T, maxgap = nptperyear / 4, alpha = 0.02)
 
-    # The detailed information of those parameters can be seen in `season`. 
-    brks  <- season(INPUT, lambda, nptperyear, iters = 3, wFUN = wFUN, IsPlot = T,
-                    south = south,
+    # 2. The detailed information of those parameters can be seen in `season`. 
+    brks  <- season(INPUT, lambda, nptperyear, iters = 3, wFUN = wFUN, 
+                    IsPlot = IsPlot, south = south,
                     Aymin_less = Aymin_less, ymax_min = ymax_min, 
                     max_MaxPeaksperyear=2.5, max_MinPeaksperyear=3.5, ...)
-
-    fit <- curvefits(INPUT, brks, lambda =lambda, IsPlot = T, 
+    # 3. curve fitting
+    fit <- curvefits(INPUT, brks, lambda =lambda, 
                          methods = c("AG", "zhang", "beck", "elmore", 'Gu'), #,"klos"
                          nptperyear = nptperyear, debug = F, wFUN = wTSM, ...)
+
+    # 4. extract phenology
+    p <- lapply(fit$fits, ExtractPheno)
+    # pheno: list(p_date, p_doy)
+    pheno  <- map(p, tidyFitPheno, origin = t[1]) %>% purrr::transpose()
+
+    fit$pheno <- pheno
     return(fit)
 }
 #' 
@@ -143,4 +142,51 @@ getparams <- function(fits){
     pars <- map(fits, getparams) %>% purrr::transpose() %>%
         map(~melt_list(.x, "site") %>% as_tibble())
     return(pars)
+}
+
+#' ExtractPheno
+#'
+#' Get yearly vegetation phenological metrics of a curve fitting method
+#'
+#' @param outdir save calculated phenology in oudir txts
+#' @export
+ExtractPheno <- function(fits, TRS = c(0.1, 0.2, 0.5, 0.6), IsPlot = FALSE){
+    names <- names(fits)
+    pheno_list <- list()
+    methods    <- c(paste0("TRS", TRS*10),"DER","GU", "ZHANG")
+    if (IsPlot)
+        op <- par(mfrow = c(length(fits), 5),
+            oma = c(1, 2, 3, 1), mar = rep(0, 4), yaxt = "n", xaxt = "n")
+    for (i in seq_along(fits)){
+        fit    <- fits[[i]]
+        # 1. show curve fitting RMSE
+        # need to fix here, about status variable. 31 Jan, 2018
+        if (IsPlot){
+            PhenoPlot(index(fit$pred), fit$pred)
+            lines(fit$data$t, fit$data$x, type = "b")
+            legend(min(fit$data$t) - 40, max(fit$pred),
+                sprintf("rmse = %.2e\nnash = %.2f\nR=%.2f, p = %.3f",
+                    status$rmse, status$nash, status$r, status$pvalue),
+                adj = c(0, 0), bty='n', text.col = "red")
+            mtext(names[i], side = 2)
+        }
+        if (i == 1 && IsPlot) mtext("Fitting")
+
+        p_TRS <- map(TRS, function(trs) {
+            PhenoTrs(fit, approach = "White", trs = trs, IsPlot = FALSE)
+        })
+
+        if (i == 1 && IsPlot) {
+            trs  <- last(TRS)
+            trs6 <- PhenoTrs(fit, approach="White", trs=trs, IsPlot = IsPlot)
+            mtext(sprintf('TRS%d', trs*10))
+        }
+
+        der   <- PhenoDeriv(fit, IsPlot);    if (i == 1 && IsPlot) mtext("DER")
+        gu    <- PhenoGu(fit, IsPlot)[1:4];  if (i == 1 && IsPlot) mtext("GU")
+        zhang <- PhenoKl(fit, IsPlot);       if (i == 1 && IsPlot) mtext("ZHANG")
+        pheno_list[[i]] <- c(p_TRS, list(der, gu, zhang)) %>% set_names(methods)
+    }
+    pheno_list %<>% set_names(names)
+    return(pheno_list)
 }

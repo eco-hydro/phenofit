@@ -70,8 +70,24 @@ if ('SummaryQA' %in% colnames(df)){
 }
 
 sites <- unique(df$site)        # all sites
-d     <- df[site == sites[2], ] # get the first site data
+d     <- df[site == sites[7], ] # get the first site data
 knitr::kable(head(d, 10)) 
+```
+
+Global parameters for `phenofit`:   
+```{r}
+lambda     <- 5    # The parameter for Whittaker
+ymax_min   <- 0.2  # For a growing season, the maximum ymax shoud be greater than `ymax_min` 
+nptperyear <- 23   # How many points for a single year
+wFUN       <- wTSM # Weights updating function, could be one of `wTSM`, 'wBisquare', `wChen` and `wSELF`. 
+```
+### 1. Backgroud value
+```{r}
+d$Tn %<>% na.approx(maxgap = 4)
+
+plot(d$Tn, type = "l")
+abline(a = 5, b = 0, col = "red")
+
 ```
 
 ### 2. Divide growing seasons
@@ -82,22 +98,18 @@ The growing season dividing method rely on heavily in Whittaker smoother.
 
 Procedures of initial weight, growing season dividing and curve fitting are separated. Phenology extraction and curve fitting are combined together.
 
-```{r}
-lambda     <- 5    # The parameter for Whittaker
-ymax_min   <- 0.2  # For a growing season, the maximum ymax shoud be greater than `ymax_min` 
-nptperyear <- 23   # How many points for a single year
-wFUN       <- wTSM # Weights updating function, could be one of `wTSM`, 'wBisquare', `wChen` and `wSELF`. 
 
+```{r}
 # Check input data and initial parameters for phenofit
 INPUT <- check_input(d$date, d$y, d$w, trim = T, maxgap = nptperyear / 4, alpha = 0.02)
 
 # The detailed information of those parameters can be seen in `season`. 
-brks  <- season(INPUT, lambda, nptperyear, iters = 3, wFUN = wFUN, IsPlot = T,
+brks <- season(INPUT, lambda, nptperyear, iters = 3, wFUN = wFUN, IsPlot = T,
                 south = d$lat[1] < 0,
                 Aymin_less = 0.6, ymax_min = ymax_min, 
                 max_MaxPeaksperyear =2.5, max_MinPeaksperyear = 3.5) #, ...
 
-fit <- curvefits(INPUT, brks, lambda =lambda, IsPlot = T, 
+fit  <- curvefits(INPUT, brks, lambda =lambda, IsPlot = T, 
                      methods = c("AG", "zhang", "beck", "elmore", 'Gu'), #,"klos"
                      nptperyear = nptperyear, debug = F, wFUN = wTSM, 
                      ymax_min = ymax_min, 
@@ -105,12 +117,84 @@ fit <- curvefits(INPUT, brks, lambda =lambda, IsPlot = T,
 plot_phenofit(fit, d) # plot to check the curve fitting
 ```
 
+You can also call `curvefits2`, which combines all the procedures.   
 ```{r}
-fit <- curvefits2(d$date, d$y, w = d$w, lambda =lambda,
-                             methods = c("AG", "zhang", "beck", "elmore", 'Gu'), #,"klos"
-                             nptperyear = nptperyear, debug = F, wFUN = wTSM,
-                             ymax_min = ymax_min,
-                             south = x$lat[1] < 0)
+south <- d$lat[1] < 0
+fit <- curvefits2(d$date, d$y, d$w, nptperyear = nptperyear,
+           wFUN = wFUN, iters = 2,
+           lambda = lambda, south = FALSE,
+           IsPlot = FALSE,
+           Aymin_less = 0.6, ymax_min = ymax_min, 
+           methods = c('AG', 'zhang', 'beck', 'elmore', 'Gu'),
+           debug = FALSE)
+```
+
+Calculate all sites in a time.
+```{r}
+ratio <- 1.8
+CairoPDF("phenofit_10st.pdf", 10*ratio, 6*ratio)
+fits <- dlply(df, .(site), function(d){
+    fit <- NA
+    tryCatch({
+        south <- d$lat[1] < 0
+        fit <- curvefits2(d$date, d$y, d$w, nptperyear = nptperyear,
+                   wFUN = wFUN, iters = 2,
+                   lambda = lambda, south = FALSE,
+                   IsPlot = FALSE,
+                   Aymin_less = 0.6, ymax_min = ymax_min, 
+                   methods = c('AG', 'zhang', 'beck', 'elmore', 'Gu'),
+                   debug = FALSE)
+        titlename <- sprintf('[%s] %s', d$IGBP[1], d$site[1])
+        p <- plot_phenofit(fit, d, titlename)
+        print(p)
+    }, error = function(e){
+        message(sprintf("[e] %s:%s", e$message, d$site[1]))
+    })
+    return(fit)
+})
+dev.off()
+```
+
+Test backgroud value function here
+```{r}
+IsPlot = FALSE
+
+ratio <- 1.8
+if (IsPlot) CairoPDF("phenofit_10st.pdf", 10*ratio, 6*ratio)
+fits <- dlply(df, .(site), function(d){
+    fit <- NA
+    tryCatch({
+        south <- d$lat[1] < 0
+        fit <- curvefits2(d$date, d$y, d$w, nptperyear = nptperyear,
+                   wFUN = wFUN, iters = 2,
+                   lambda = lambda, south = FALSE,
+                   IsPlot = FALSE,
+                   Aymin_less = 0.6, ymax_min = ymax_min, 
+                   methods = c('AG', 'zhang', 'beck', 'elmore', 'Gu')[4],
+                   debug = FALSE)
+        if (IsPlot){
+            titlename <- sprintf('[%s] %s', d$IGBP[1], d$site[1])
+            p <- plot_phenofit(fit, d, titlename)
+            print(p)  
+        }
+    }, error = function(e){
+        message(sprintf("[e] %s:%s", e$message, d$site[1]))
+    })
+    return(fit)
+})
+if (IsPlot) dev.off()
+```
+
+```{r}
+profvis::profvis({
+        fit <- curvefits2(d$date, d$y, d$w, nptperyear = nptperyear,
+                   wFUN = wFUN, iters = 2,
+                   lambda = lambda, south = FALSE,
+                   IsPlot = FALSE,
+                   Aymin_less = 0.6, ymax_min = ymax_min, 
+                   methods = c('AG', 'zhang', 'beck', 'elmore', 'Gu')[4],
+                   debug = FALSE)
+})
 ```
 
 

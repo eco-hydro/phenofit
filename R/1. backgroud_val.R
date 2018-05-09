@@ -1,0 +1,91 @@
+#' backval
+#' 
+#' Calculate backgroud values for vegetation index.
+#' 
+#' Night temperature Tn >= 5 defined as raw growing season.  
+#' Background value is determined from two neighboring vegetation in raw growing 
+#' season by assuming that the background and vegetation abundance could remain 
+#' the same during a consecutive two yearperiod.
+#' 
+#' @param y A numeric vector, NA values are not allowed in y
+#' @param t A date vector, corresponding data of y
+#' @param w 
+#' @param Tn Night Temperature, unit: degree
+#' @return back
+#' If back value is NA, it is impossible to extract phenology here.
+#' 
+#' @references
+#' [1]. Zhang, X., 2015. Reconstruction of a complete global time series of daily 
+#'      vegetation index trajectory from long-term AVHRR data. Remote Sens. Environ. 
+#'      156, 457–472. https://doi.org/10.1016/j.rse.2014.10.012 \cr
+#' [2]. Zhang, Y., Xiao, X., Jin, C., Dong, J., Zhou, S., Wagle, P., Joiner, 
+#'      J., Guanter, L., Zhang, Y., Zhang, G., Qin, Y., Wang, J., Moore, B., 2016. 
+#'      Consistency between sun-induced chlorophyll fluorescence and gross primary 
+#'      production of vegetation in North America. Remote Sens. Environ. 
+#'      183, 154–169. https://doi.org/10.1016/j.rse.2016.05.015
+#' @export
+#' @examples
+#' backval(y, t, w, Tn, nptperyear)
+backval <- function(y, t, w, Tn, nptperyear){
+    # get median of 5 smallest values in y[index]
+    getBack <- function(y, index){
+        yi <- y[index]
+        n  <- length(yi)
+        i_end <- ifelse(n <= 5, n, 5)
+
+        # if i_end = 0, yi[1:0] = NA
+        return( median(yi[1:i_end]) )
+    }
+
+    n <- length(y)
+    i_lowT <- (Tn < 5)
+    n_lowT <- length(which(i_lowT))
+
+    i_good    <- w >= 1
+    i_margin  <- w >= 0.5
+    
+    if (n_lowT == 0){ 
+        # Low latitude region, no winter identified, backval = averaging the five 
+        # smallest EVI2 values with good quality during a period of two years
+        # (Zhang, 2015).
+        back <- getBack(y, i_good)
+    } else if (n - n_lowT < max(5, nptperyear/12*2)){ 
+        # Warming temperature less 2 month (e.g. high latitude, boreal region)
+        # If nighttimetemperature is always below10°C, the growing season is 
+        # set to be June to August (Zhang et al., 2016)
+        month    <- month(t)
+        i_summer <- month %in% c(6, 7, 8)
+        
+        # In the so cold region, good values also should be very limited.
+        I <- i_summer & i_good
+        if (sum(I) < 5) I <- i_summer & i_margin
+        # if (sum(I) < 5) I <- i_summer
+        back <- getBack(y, I)
+    } else {
+        i_goodT   <- i_good & (!i_lowT) # need to search the nearest value
+        # if no enough good values, consider margin values
+        if (sum(i_goodT) < 5) {
+            i_marginT <- i_margin & (!i_lowT) # need to search the nearest value
+            i_goodT   <- i_marginT 
+        }
+
+        # enough good values to select
+        back <- getBack(y, i_goodT)
+    }
+    
+    return(back)
+    # # update data
+    # y[y < back] <- back
+    # w[y < back] <- 1
+}
+
+#' ternary operator just like java `test ? yes : no`
+#' 
+#' @export
+ifelse2 <- function(test, yes, no){
+    if (test){
+        yes
+    } else{
+        no
+    }
+}

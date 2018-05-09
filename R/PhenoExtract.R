@@ -14,40 +14,42 @@ PhenoPlot <- function(t, x, main = "", ...){
 #' @export
 .Greenup <- function(x, ...) {
     ratio.deriv <- c(NA, diff(x))
-    greenup <- rep(NA, length(x))
+    greenup     <- rep(NA, length(x))
     greenup[ratio.deriv > 0] <- TRUE
     greenup[ratio.deriv < 0] <- FALSE
     return(greenup)
 }
 
 #' @export
-PhenoTrs <- function(x, approach = c("White", "Trs"), trs = 0.5, min.mean = 0.1,
+PhenoTrs <- function(fit, approach = c("White", "Trs"), trs = 0.5, min.mean = 0.1,
     IsPlot = TRUE, ...) {
-    if (all(is.na(x))) return(c(sos = NA, eos = NA))
+    t      <- fit$tout
+    values <- last(fit$fits)
 
-    t <- index(x)
+    if (all(is.na(values))) return(c(sos = NA, eos = NA))
+
     # get statistical values
-    n    <- t[length(x)]
+    # n    <- t[length(t)]
     # avg  <- mean(x, na.rm = TRUE)
-    x2   <- na.omit(x)
+    x2   <- na.omit(values)
     # avg2 <- mean(x2[x2 > min.mean], na.rm = TRUE)
     peak <- max(x2)
     mn   <- min(x2)
     ampl <- peak - mn
 
     # get peak of season position
-    pop <- median(t[which.max(x)])
+    pop <- median(t[which.max(values)])
     # select (or scale) values and thresholds for different methods
     approach <- approach[1]
     if (approach == "White") {
         # scale annual time series to 0-1
-        ratio   <- (x - mn)/ampl
+        ratio   <- (values - mn)/ampl
         # trs   <- 0.5
         trs.low <- trs - 0.05
         trs.up  <- trs + 0.05
     }
     if (approach == "Trs") {
-        ratio   <- x
+        ratio   <- values
         a       <- diff(range(ratio, na.rm = TRUE)) * 0.05
         trs.low <- trs - a
         trs.up  <- trs + a

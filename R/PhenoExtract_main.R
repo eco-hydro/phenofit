@@ -150,7 +150,7 @@ plot_phenofit <- function(fit, d, title = NULL, plotly = F){
 #'
 #' Tidy for every method with multiple years phenology data
 #' @export
-tidyFits_pheno <- function(pheno, origin){
+tidyFitPheno <- function(pheno, origin){
     tidToDate <- function(datenum)  origin - 1 + unlist(datenum)
     # phenonames <- c('TRS2.sos', 'TRS2.eos', 'TRS5.sos', 'TRS5.eos', 'TRS6.sos', 'TRS6.eos',
     #                 'DER.sos', 'DER.pop', 'DER.eos',
