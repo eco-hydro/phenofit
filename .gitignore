@@ -18,12 +18,7 @@ octave-workspace
 *.nc
 tmp
 *.mat
-debug
-txt
-data/mongo
-MODIS
 # R data files
-*.rda
 .Rproj.user
 .RData
 .Rhistory
@@ -37,15 +32,12 @@ MODIS
 *.ndx
 *.csv
 *.xlsx
-MATLAB\TSM\phenofit\stl
-meansd.lst.rda
 # figures
 *.emf
 *.pdf
 *.png
 *.avi
 *.mp4
-*.Rd
 *.o
 *.dll
 *.zip
