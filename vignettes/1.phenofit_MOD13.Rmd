@@ -54,6 +54,13 @@ library(data.table)
 library(magrittr)
 library(plyr) # for mapvalues
 
+# Global parameters for MOD13A1: 
+lambda     <- 5    # The parameter for Whittaker
+ymax_min   <- 0.2  # For a growing season, the maximum ymax shoud be greater than `ymax_min` 
+nptperyear <- 23   # How many points for a single year
+wFUN       <- wTSM # Weights updating function, could be one of `wTSM`, 'wBisquare', `wChen` and `wSELF`. 
+
+# load data
 data(dt_MOD13A1) # 16-day time-scale
 df <- dt_MOD13A1
     
@@ -70,17 +77,10 @@ if ('SummaryQA' %in% colnames(df)){
 }
 
 sites <- unique(df$site)        # all sites
-d     <- df[site == sites[7], ] # get the first site data
-knitr::kable(head(d, 10)) 
+d     <- df[site == sites[2], ] # get the first site data
+# knitr::kable(head(d, 10)) 
 ```
 
-Global parameters for `phenofit`:   
-```{r}
-lambda     <- 5    # The parameter for Whittaker
-ymax_min   <- 0.2  # For a growing season, the maximum ymax shoud be greater than `ymax_min` 
-nptperyear <- 23   # How many points for a single year
-wFUN       <- wTSM # Weights updating function, could be one of `wTSM`, 'wBisquare', `wChen` and `wSELF`. 
-```
 ### 1. Backgroud value
 ```{r}
 d$Tn %<>% na.approx(maxgap = 4)
@@ -114,7 +114,23 @@ fit  <- curvefits(INPUT, brks, lambda =lambda, IsPlot = T,
                      nptperyear = nptperyear, debug = F, wFUN = wTSM, 
                      ymax_min = ymax_min, 
                      south = d$lat[1] < 0)
+fit$INPUT   <- INPUT
+fit$seasons <- brks
+
 plot_phenofit(fit, d) # plot to check the curve fitting
+
+## 3.2 Get GOF information
+stat  <- ldply(fit$fits, function(fits_meth){
+    ldply(fits_meth, statistic.phenofit, .id = "flag")
+}, .id = "meth")
+
+# 4. extract phenology
+# pheno: list(p_date, p_doy)
+p <- lapply(fit$fits, ExtractPheno)
+pheno  <- map(p, tidyFitPheno, origin = t[1]) %>% purrr::transpose()
+
+fit$stat   <- stat
+fit$pheno  <- pheno
 ```
 
 You can also call `curvefits2`, which combines all the procedures.   
@@ -132,18 +148,27 @@ fit <- curvefits2(d$date, d$y, d$w, nptperyear = nptperyear,
 Calculate all sites in a time.
 ```{r}
 ratio <- 1.8
-CairoPDF("phenofit_10st.pdf", 10*ratio, 6*ratio)
+CairoPDF("phenofit_10st_v2.pdf", 10*ratio, 6*ratio)
 fits <- dlply(df, .(site), function(d){
     fit <- NA
     tryCatch({
-        south <- d$lat[1] < 0
-        fit <- curvefits2(d$date, d$y, d$w, nptperyear = nptperyear,
-                   wFUN = wFUN, iters = 2,
-                   lambda = lambda, south = FALSE,
-                   IsPlot = FALSE,
-                   Aymin_less = 0.6, ymax_min = ymax_min, 
-                   methods = c('AG', 'zhang', 'beck', 'elmore', 'Gu'),
-                   debug = FALSE)
+        # Check input data and initial parameters for phenofit
+        INPUT <- check_input(d$date, d$y, d$w, trim = T, maxgap = nptperyear / 4, alpha = 0.02)
+        
+        # The detailed information of those parameters can be seen in `season`. 
+        brks <- season(INPUT, lambda, nptperyear, iters = 3, wFUN = wFUN, IsPlot = T,
+                        south = d$lat[1] < 0,
+                        Aymin_less = 0.6, ymax_min = ymax_min, 
+                        max_MaxPeaksperyear =2.5, max_MinPeaksperyear = 3.5) #, ...
+        
+        fit  <- curvefits(INPUT, brks, lambda =lambda, IsPlot = T, 
+                             methods = c("AG", "zhang", "beck", "elmore", 'Gu'), #,"klos"
+                             nptperyear = nptperyear, debug = F, wFUN = wTSM, 
+                             ymax_min = ymax_min, 
+                             south = d$lat[1] < 0)
+        fit$INPUT   <- INPUT
+        fit$seasons <- brks
+
         titlename <- sprintf('[%s] %s', d$IGBP[1], d$site[1])
         p <- plot_phenofit(fit, d, titlename)
         print(p)

@@ -39,11 +39,12 @@ curvefit <- function(x, t = index(x), tout = t, meth = 'BFGS',
 #' @param fit data from phenofit_site
 #' @importFrom dplyr left_join
 #' @export
+
 plot_phenofit <- function(fit, d, title = NULL, plotly = F){
     #global variables
     origin.date <- fit$INPUT$t[1] #
     I   <- match(fit$tout, fit$INPUT$t)
-    org <- fit$INPUT[I, ]
+    org <- as_tibble(fit$INPUT[c('t', 'y', 'w')])[I, ]
 
     getFitVI <- function(fit_years){
         map(fit_years, ~window(.x$pred, .x$data$t)) %>%
@@ -67,15 +68,13 @@ plot_phenofit <- function(fit, d, title = NULL, plotly = F){
         # <dbl> <dbl> <date>
         # 1 0.594 0.780 2005-02-06
         # 2 0.595 0.780 2005-02-07
-        # 3 0.595 0.780 2005-02-08
         out$t %<>% add(origin.date - 1)
         left_join(org, out, by = "t")
     }
 
     fits_years <- map(fit$fits, getFitVI_iters)
-    pdat1 <- melt(fits_years, id.vars = c("t", "y")) %>%
-        set_names(c("t", "y","iters", "val", "meth"))
-    # fits_years <- map(fit$fits, getFitVI)
+    pdat1 <- melt(fits_years, id.vars = colnames(org)) %>%
+        set_names(c(colnames(org), "iters", "val", "meth"))
 
     # t_fit <- index(fits_years[[1]]) + t[1] - 1
     # new   <- as_tibble(c(list(t = t_fit), map(fits_years, unclass)))
@@ -85,11 +84,10 @@ plot_phenofit <- function(fit, d, title = NULL, plotly = F){
     #     gather(meth, val, -t, -y) %>% group_by(meth)
     # print(head(pdat1))
 
-    # 2. growing season breaks
     # 3. phenology data
-    pdat2 <- fit$pheno$date %>% melt_list("meth") %>% as_tibble() %>%
-        gather(index, date, -flag, -origin, -meth) %>%
-        mutate(pmeth = str_extract(index, "\\w{1,}"))
+    # pdat2 <- fit$pheno$date %>% melt_list("meth") %>% as_tibble() %>%
+    #     gather(index, date, -flag, -origin, -meth) %>%
+    #     mutate(pmeth = str_extract(index, "\\w{1,}"))
     # pdat2 <- pdat2[grep("TRS2", pdat2$index), ]
     # 3. growing season breaks
     # try to add whittaker smoother here
@@ -144,7 +142,6 @@ plot_phenofit <- function(fit, d, title = NULL, plotly = F){
         p + ggtitle(title)
     }
 }
-
 
 #' tidyFits_pheno
 #'

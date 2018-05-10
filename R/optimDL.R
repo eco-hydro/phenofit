@@ -104,12 +104,17 @@ optim_pheno <- function(prior, FUN, x, t, tout, optimFUN = I_optim, method,
     }
     fits %<>% set_names(paste0('iter', 1:iters))
     ws   %<>% set_names(paste0('iter', 1:iters)) %>% as_tibble()
-    # print(ws)
-    xpred.out <- zoo(xpred, order.by = tout)
+    
     # 02. uncertain part also could add here
-    structure(list(data = list(x = x, t = t),
-      tout = tout, fits = fits, ws = ws,
-      pred = xpred.out, par = par, fun = FUN), class = 'phenofit')
+    # returned object FUN need to be futher optimized
+    
+    # constrain that ranges of t and tout are same. 
+    t_com <- intersect(t, tout)
+    I_org <- match(t_com, t)
+
+    structure(list(data = tibble(x = x[I_org], t = t_com),
+        tout = tout, fits = fits, ws = ws,
+        par  = par, fun = FUN), class = 'phenofit')
 }
 
 

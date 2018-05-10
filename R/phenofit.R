@@ -6,14 +6,21 @@
 #' @export
 #'
 statistic.phenofit <- function(fit){
-    x <- fit$data$x
-    t <- fit$data$t
-    xpred <- window(fit$pred, t)
+    t     <- fit$data$t
+    tout  <- fit$tout
+    ti    <- intersect(t, tout)
+    I_org <- match(ti, t)
+    I_sim <- match(ti, tout)
+
+    x     <- fit$data$x[I_org]
+    xpred <- last(fit$fits)[I_sim]
 
     R      <- NA
     pvalue <- NA
+    n      <- length(x)
+
     tryCatch({
-        cor.obj <- cor.test(x, as.numeric(xpred), use = "complete.obs")
+        cor.obj <- cor.test(x, xpred, use = "complete.obs")
         R       <- cor.obj$estimate[[1]]
         pvalue  <- cor.obj$p.value
     }, error = function(e){
@@ -22,8 +29,9 @@ statistic.phenofit <- function(fit){
 
     rmse  <- sqrt(sum((x - xpred)^2)/length(xpred))
     nash  <- 1 - sum((xpred - x)^2) / sum((x - mean(x))^2)
-    return(c(rmse = rmse, nash = nash, R = R, pvalue = pvalue))
+    return(c(rmse = rmse, nash = nash, R = R, pvalue = pvalue, n = n))
 }
+
 
 #' grad and hess according to numDeriv package
 #' @export

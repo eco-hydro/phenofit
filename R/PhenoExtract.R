@@ -122,11 +122,19 @@ PhenoDeriv <- function(fit, IsPlot = TRUE, smspline = TRUE, ...){
     pop <- t[half.season]
 
     # get SOS and EOS according to first order derivative
-    sos.index <- median(which.max(der1[1:half.season]))
-    eos.index <- median(which.min(der1[(half.season+1):length(der1)])) + half.season
+    # fixed 20180510, ±5 to make sure sos and eos are not in the POP.
+    # I_sos <- median(which.max(der1[1:(half.season - 5)]))
+    # I_eos <- median(which.min(der1[(half.season+5):length(der1)])) + half.season
+
+    nmin  <- 5
+    I_sos <- findpeaks( der1[1:(half.season - 5)]         , nups=nmin, ndowns=nmin, npeaks=1, sortstr=TRUE)$X$pos
+    I_eos <- findpeaks(-der1[(half.season+5):length(der1)], nups=nmin, ndowns=nmin, npeaks=1, sortstr=TRUE)$X$pos + half.season
+
     # if half.season > length(der1), error will be occur
-    sos <- t[sos.index]
-    eos <- t[eos.index]
+    sos <- t[I_sos]
+    eos <- t[I_eos]
+    if (is_empty(sos)) sos <- NA
+    if (is_empty(eos)) eos <- NA
 
     if (IsPlot){
         main  <- ifelse(all(par("mar") == 0), "", "DER")
@@ -158,8 +166,8 @@ PhenoGu <- function(fit, IsPlot = TRUE, smspline = TRUE, ...) {
     if (half.season >= length(der1)) return(metrics)
 
     # get SOS and EOS according to first order derivative
-    sos.index <- median(which.max(der1[1:half.season]))
-    eos.index <- median(which.min(der1[(half.season+1):length(der1)])) + half.season
+    sos.index <- median(which.max(der1[1:(half.season-5)]))
+    eos.index <- median(which.min(der1[(half.season+5):length(der1)])) + half.season
     sos <- t[sos.index]
     eos <- t[eos.index]
 
@@ -169,24 +177,21 @@ PhenoGu <- function(fit, IsPlot = TRUE, smspline = TRUE, ...) {
     VI.rau <- values[eos.index]
 
     # Gu Phenology Extraction method also quite rely on first order derivative
-    rl.y  <- rsp * (t - sos) + VI.rsp
-    rl.eq <- lm(rl.y ~ t)                        # recovery line
-
-    sl.y  <- rau * (t - eos) + VI.rau
-    sl.eq <- lm(sl.y ~ t)                     # senenscence line
-
+    rl.b <- VI.rsp - rsp*sos # interception of recovery line
+    sl.b <- VI.rau - rau*eos # interception of recovery line
+    
     baseline <- min(values, na.rm = T)
     maxline  <- max(values, na.rm = T)
 
     ## y = kx + b; x = (y - b)/k
-    #  upturn day is the intersection between rl and x axis
-    UD <- (baseline - rl.eq$coefficients[[1]])/rl.eq$coefficients[[2]]
-    #  stabilization day, intersection between maxline and rl
-    SD <- (maxline  - rl.eq$coefficients[[1]])/rl.eq$coefficients[[2]]
-    #  downturn day, intersection between maxline and sl
-    DD <- (maxline  - sl.eq$coefficients[[1]])/sl.eq$coefficients[[2]]
-    #  recession day is the intersection between sl and x axis
-    RD <- (baseline - sl.eq$coefficients[[1]])/sl.eq$coefficients[[2]]
+    #  upturn day, intersection of rl and x axis
+    UD <- (baseline - rl.b)/rsp
+    #  stabilization day, intersection of maxline and rl
+    SD <- (maxline  - rl.b)/rsp
+    #  downturn day, intersection of maxline and sl
+    DD <- (maxline  - sl.b)/rau
+    #  recession day, intersection of sl and x axis
+    RD <- (baseline - sl.b)/rau
 
     ## subset data between SD and DD
     sub.time <- t[t >= SD & t <= DD]
@@ -194,13 +199,15 @@ PhenoGu <- function(fit, IsPlot = TRUE, smspline = TRUE, ...) {
 
     ## compute a linear fit
     if (length(sub.time) > 3) {
-        plateau.lm   <- lm(sub.gcc ~ sub.time)
-        M            <- matrix(c(coef(plateau.lm)[2], coef(sl.eq)[2], -1, -1), nrow = 2, ncol = 2)
-        intercepts   <- as.matrix(c(coef(plateau.lm)[1], coef(sl.eq)[1]))
-        interception <- -solve(M) %*% intercepts
-        DD           <- interception[1, 1]
+        X <- cbind(1, sub.time)
+        plateau.lm        <- .lm.fit(X, sub.gcc)
         plateau.slope     <- plateau.lm$coefficients[2]
         plateau.intercept <- plateau.lm$coefficients[1]
+
+        # y1 = rau*t + sl.b
+        # y2 = k2t + b2
+        # so, t = (sl.b - b2)/(k2 -rau)
+        DD <- (sl.b - plateau.intercept) / (plateau.slope - rau)        
     }else{
         plateau.slope     <- NA
         plateau.intercept <- NA
@@ -209,7 +216,6 @@ PhenoGu <- function(fit, IsPlot = TRUE, smspline = TRUE, ...) {
     # cut.x <- days[which(days>=UD & days<=RD)]
     # cut.y <- offset.y[which(days>=UD & days<=RD)]
     # the.fun <- function(t) {eval(retrieved.formula, envir=as.list(params))}
-    #
     metrics   <- round(c(UD, SD, DD, RD)) %>%
         sapply(function(x){ ifelse(x < min(t) || x > max(t), NA, x) }) %>%
         setNames(., c("UD", "SD", "DD", "RD"))
@@ -220,8 +226,8 @@ PhenoGu <- function(fit, IsPlot = TRUE, smspline = TRUE, ...) {
         main   <- ifelse(all(par("mar") == 0), "", "Gu")
         PhenoPlot(t, values, main = main)
 
-        abline(rl.eq, col = "blue", lty=  2)
-        abline(sl.eq, col = "red" , lty=  2)
+        abline(rl.b, rsp, col = "blue", lty=  2)
+        abline(sl.b, rau, col = "red" , lty=  2)
         # any na values input to abline will lead to error
         if (all(!is.na(c(plateau.slope, plateau.intercept))))
             abline(a = plateau.intercept, b = plateau.slope, lty = 2, col = "darkgreen")
@@ -246,9 +252,10 @@ PhenoKl <- function(fit, IsPlot = TRUE, ...) {
     metrics <- setNames(rep(NA, 4), PhenoNames)
 
     t      <- fit$tout
-    values <- last(fit$fits)
     xlim   <- range(t)
-
+    values <- last(fit$fits)
+    half.season <- which.max(values)  # + 20, half season + 20 was unreasonable
+    
     if (all(is.na(values))) return(setNames(rep(NA, 4), PhenoNames))
 
     derivs <- curvature.phenofit(fit, smspline = TRUE)
@@ -265,15 +272,32 @@ PhenoKl <- function(fit, IsPlot = TRUE, ...) {
         der.k2   <- predict(spline.k, d = 2)$y
 
         ## find maxima of derivative of k ## split season
-        half.season    <- which.max(values)  # + 20, half season + 20 was unreasonable
-        asc.k   <- try(der.k[1:half.season]) # k   of first half year
-        asc.k.d <- try(t[1:half.season])
+        asc.k   <- try(der.k[1:(half.season-5)]) # k   of first half year
+        asc.k.d <- try(t[1:(half.season-5)])
         # doy of first half year
-        des.k   <- try(der.k[half.season:length(k)])
-        des.k.d <- try(t[half.season:length(k)])
+        des.k   <- try(der.k[(half.season+5):length(k)])
+        des.k.d <- try(t[(half.season+5):length(k)])
 
-        I_asc <- asc.k.d[localMinMax(asc.k, 'max')]
-        I_dec <- des.k.d[localMinMax(des.k, 'min')]
+        # first half minimum local values of k'
+        pos <- findpeaks(-asc.k, minpeakdistance = 15, npeaks = 2, sortstr = TRUE)$X$pos
+        pos <- sort(pos)
+        pos <- c(rep(NA, 2 - length(pos)), pos) #at least two values
+        I_asc <- asc.k.d[pos]
+        if (all(is.na(pos))){
+            I_asc <- pos
+        }else{
+            I_asc <- asc.k.d[pos]
+        }
+
+        # second half maximum local values of k'
+        pos <- findpeaks(des.k, minpeakdistance = 15, npeaks = 2, sortstr = TRUE)$X$pos
+        pos <- sort(pos);
+        pos <- c(pos, rep(NA, 2 - length(pos)))
+        if (all(is.na(pos))){
+            I_dec <- pos
+        }else{
+            I_dec <- des.k.d[pos]
+        }
         metrics <- c(I_asc, I_dec)
     }
     if (IsPlot){
@@ -284,8 +308,9 @@ PhenoKl <- function(fit, IsPlot = TRUE, ...) {
                     der.k[metrics[2]] + 0.1*A,
                     der.k[metrics[3]] - 0.1*A,
                     der.k[metrics[4]] - 0.1*A)
+
         xlons  <- metrics + c(-1, -1, 1, 1) * 5
-        xlons[xlons < min(t)]   <- min(t)
+        xlons[xlons < min(t)] <- min(t)
         xlons[xlons > max(t)] <- max(t)
         # plotrix::twoord.plot(t, values, t, der.k,
         #                      main = main, type= c("p", "b"), xlim = xlim,
@@ -295,9 +320,9 @@ PhenoKl <- function(fit, IsPlot = TRUE, ...) {
         op <- par(new = T)
         plot(t, der.k, xlim = xlim, type= "b", cex = 1, col = "black", pch = 16, axes = T) #pch = 20,
         legend('bottomleft', c("Fitting", "K'"), lty = c(0, 1), pch =c(20, 1),
-            col = c("grey60", "black"), bty='n')
+               col = c("grey60", "black"), bty='n')
 
-        pop     <- t[which.max(values)]
+        pop     <- t[half.season]
 
         abline(v = metrics, col = colors)
         abline(v = pop, col ="darkgreen", lty = 1)
@@ -306,79 +331,4 @@ PhenoKl <- function(fit, IsPlot = TRUE, ...) {
         text(xlons[3:4], ylons[3:4], PhenoNames[3:4], col = colors[3:4], adj = c(0, 0))
     }
     return(setNames(metrics, PhenoNames))
-}
-
-#'
-#' Local maxima and minima based on Tommy's solution. And only kept the best if
-#' two points was so close.
-#'
-#' maxval: f' = 0, f'_left > 0 & f'_right < 0
-#' minval: f' = 0, f'_left < 0 & f'_right > 0
-#'
-#' https://stackoverflow.com/questions/6836409/finding-local-maxima-and-minima
-#' If having NA values means phenology result was nquestionable.
-#'
-#' @param x numeric vector
-#' @param meth A string parameter, only can be 'min' or 'max'.
-#' @param MinSep The Minimum gap of two local minimum (maximum).
-#'
-#' @export
-localMinMax <- function(x, meth = c("min", "max"), MinSep = 15) {
-    if (length(x) < 3) return(c(NA, NA))
-    meth <- meth[1]
-    # 1. find the local values
-    # Use -Inf instead if x is numeric (non-integer)
-    val_begin <- ifelse(meth == "max", -1, 1) * .Machine$integer.max
-    y         <- diff(c(val_begin, x)) > 0L #& abs(x) > 1e-6
-    # rle(y)$lengths
-    run <- rle(y)
-    len <- cumsum(run$lengths)
-    if (meth == "max"){
-        I   <- len[run$values]
-        fun <- which.max
-        decreasing <- T
-    }else if (meth == "min"){
-        I   <- len[!run$values]
-        fun <- which.min
-        decreasing <- F
-    }
-    if (x[[1]] == x[[2]]) I <- I[-1]
-
-    # plot(x)
-    # abline(v = I, lty = 2)
-    # I <- c(1, 4, 6, 7, 10, 20,24, 28, 35)
-
-    #2. If two local extreme values too close, kept the best
-    if (length(I) >= 2){
-        run <- rle(diff(I) <= MinSep)
-        len <- run$length
-        Id <- c(0, cumsum(len)) # %>% {.[seq(1, length(.), 2)]}
-
-        I_opt <- list()
-        # I_dup <- which(run$values)
-        for (i in seq_along(run$values)){
-            Ii     <- (Id[i]+1):(Id[i+1]+1)
-            # If diff <= MinSep, then in those values select the best
-            if (run$values[i]) Ii <- Ii[ fun(x[I[Ii]]) ]
-            # If diff > MinSep, then accept those values
-            I_opt[[i]] <- Ii
-        }
-        I <- I[unlist(I_opt)]
-    }
-
-    I <- setdiff(I, c(1, length(x))) #remove lcoal minima and maxima value at tail and head
-    if (length(I) > 2) {
-        #if local values number large than 2, one the extremest first two kept
-        I <- sort(I[order(x[I], decreasing = decreasing)[1:2]])
-    }
-    if (length(I) < 2) {
-        # if local max value number less than 2, add NA at tail
-        # if local min value number less than 2, add NA at head
-        if (meth == "min"){
-            I <- c(rep(NA, 2 - length(I)), I) #at least two values
-        }else if (meth == "max"){
-            I <- c(I, rep(NA, 2 - length(I))) #at least two values
-        }
-    }
-    return(I)
 }

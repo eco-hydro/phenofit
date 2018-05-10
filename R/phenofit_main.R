@@ -19,12 +19,13 @@
 #' plot_phenofit(fit, d) # plot to check the curve fitting
 #' @export
 curvefits <- function(INPUT, brks, nptperyear = 46,
-                          wFUN = wTSM, iters = 2,
-                          lambda, south = FALSE,
-                          methods = c('AG', 'zhang', 'beck', 'elmore', 'Gu'),
-                          debug = FALSE, ...)
+                      wFUN = wTSM, iters = 2,
+                      lambda, south = FALSE,
+                      methods = c('AG', 'zhang', 'beck', 'elmore', 'Gu'),
+                      debug = FALSE, ...)
 {
     t    <- INPUT$t
+    n    <- length(t)
     doys <- as.numeric(difftime(t, t[1], units = "day") + 1)#days from origin
 
     # title(x$site[1])
@@ -53,9 +54,16 @@ curvefits <- function(INPUT, brks, nptperyear = 46,
         for (i in 1:nrow(di)){ #
             runningId(i)
             I    <- di$beg[i]:di$end[i]
-            ti   <- doys[I]
-            yi   <- INPUT$y[I]
-            wi   <- w[I]
+
+            # extend curve fitting period
+            period <- floor(nptperyear/12*2)
+            I_beg2 <- max(1, di$beg[i] - period)
+            I_end2 <- min(n, di$end[i] + period)
+            I_extend <- I_beg2:I_end2
+
+            ti   <- doys[I_extend]
+            yi   <- INPUT$y[I_extend]
+            wi   <- w[I_extend]
             tout <- doys[I] %>% {first(.):last(.)} # make sure return the same length result.
 
             fit <- curvefit(yi, ti, tout, nptperyear = nptperyear,
@@ -73,16 +81,9 @@ curvefits <- function(INPUT, brks, nptperyear = 46,
         }
         # L1:curve fitting method, L2:yearly flag
         fits %<>% set_names(brks$dt$flag) %>% purrr::transpose()
-
-        ## 2. GOF, try to give fitting informations for every curve fitting
-        stat  <- ldply(fits, function(fits_meth){
-            ldply(fits_meth, statistic.phenofit, .id = "flag")
-        }, .id = "meth")
     }
-    return(list(INPUT = tibble(t, y = INPUT$y),
-                seasons = brks,
-                tout = t[first(di$beg):last(di$end)],  #dates for OUTPUT curve fitting VI
-                fits = fits, stat = stat))
+    return(list(tout = t[first(di$beg):last(di$end)],  #dates for OUTPUT curve fitting VI
+                fits = fits))
 }
 
 #' 
@@ -109,17 +110,24 @@ curvefits2 <- function(t, y, w, nptperyear = 46,
                     IsPlot = IsPlot, south = south,
                     Aymin_less = Aymin_less, ymax_min = ymax_min, 
                     max_MaxPeaksperyear=2.5, max_MinPeaksperyear=3.5, ...)
-    # 3. curve fitting
+    ## 3.1. curve fitting
     fit <- curvefits(INPUT, brks, lambda =lambda, 
                          methods = c("AG", "zhang", "beck", "elmore", 'Gu'), #,"klos"
                          nptperyear = nptperyear, debug = F, wFUN = wTSM, ...)
+    ## 3.2 Get GOF information
+    stat  <- ldply(fit$fits, function(fits_meth){
+        ldply(fits_meth, statistic.phenofit, .id = "flag")
+    }, .id = "meth")
 
     # 4. extract phenology
-    p <- lapply(fit$fits, ExtractPheno)
     # pheno: list(p_date, p_doy)
+    p <- lapply(fit$fits, ExtractPheno)
     pheno  <- map(p, tidyFitPheno, origin = t[1]) %>% purrr::transpose()
 
-    fit$pheno <- pheno
+    fit$INPUT   <- INPUT
+    fit$seasons <- brks
+    fit$stat    <- stat
+    fit$pheno   <- pheno
     return(fit)
 }
 #' 
@@ -154,20 +162,24 @@ ExtractPheno <- function(fits, TRS = c(0.1, 0.2, 0.5, 0.6), IsPlot = FALSE){
     names <- names(fits)
     pheno_list <- list()
     methods    <- c(paste0("TRS", TRS*10),"DER","GU", "ZHANG")
+    TRS_last   <- last(TRS) # only display last threshold figure
+            
     if (IsPlot)
         op <- par(mfrow = c(length(fits), 5),
             oma = c(1, 2, 3, 1), mar = rep(0, 4), yaxt = "n", xaxt = "n")
     for (i in seq_along(fits)){
         fit    <- fits[[i]]
+        ypred  <- last(fit$fits)
+        all_na <- all(is.na(ypred))
         # 1. show curve fitting RMSE
         # need to fix here, about status variable. 31 Jan, 2018
-        if (IsPlot){
-            PhenoPlot(index(fit$pred), fit$pred)
+        if (IsPlot && !all_na){
+            PhenoPlot(fit$tout, ypred)
             lines(fit$data$t, fit$data$x, type = "b")
-            legend(min(fit$data$t) - 40, max(fit$pred),
-                sprintf("rmse = %.2e\nnash = %.2f\nR=%.2f, p = %.3f",
-                    status$rmse, status$nash, status$r, status$pvalue),
-                adj = c(0, 0), bty='n', text.col = "red")
+            # legend(min(fit$data$t) - 40, max(fit$pred),
+            #     sprintf("rmse = %.2e\nnash = %.2f\nR=%.2f, p = %.3f",
+            #         status$rmse, status$nash, status$r, status$pvalue),
+            #     adj = c(0, 0), bty='n', text.col = "red")
             mtext(names[i], side = 2)
         }
         if (i == 1 && IsPlot) mtext("Fitting")
@@ -176,10 +188,9 @@ ExtractPheno <- function(fits, TRS = c(0.1, 0.2, 0.5, 0.6), IsPlot = FALSE){
             PhenoTrs(fit, approach = "White", trs = trs, IsPlot = FALSE)
         })
 
-        if (i == 1 && IsPlot) {
-            trs  <- last(TRS)
-            trs6 <- PhenoTrs(fit, approach="White", trs=trs, IsPlot = IsPlot)
-            mtext(sprintf('TRS%d', trs*10))
+        if (IsPlot && !all_na) {
+            trs6 <- PhenoTrs(fit, approach="White", trs=TRS_last, IsPlot = IsPlot)
+            if (i == 1) mtext(sprintf('TRS%d', TRS_last*10))
         }
 
         der   <- PhenoDeriv(fit, IsPlot);    if (i == 1 && IsPlot) mtext("DER")
