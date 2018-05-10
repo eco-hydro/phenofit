@@ -47,15 +47,3 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-
-static const R_CallMethodDef CallEntries[] = {
-    {"_phenofit_sgolayB", (DL_FUNC) &_phenofit_sgolayB, 2},
-    {"_phenofit_sgfitw_rcpp", (DL_FUNC) &_phenofit_sgfitw_rcpp, 3},
-    {"_phenofit_wTSM_cpp", (DL_FUNC) &_phenofit_wTSM_cpp, 6},
-    {NULL, NULL, 0}
-};
-
-RcppExport void R_init_phenofit(DllInfo *dll) {
-    R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
-    R_useDynamicSymbols(dll, FALSE);
-}

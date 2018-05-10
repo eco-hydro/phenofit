@@ -5,7 +5,7 @@
 \title{Fitting double logistics, asymmetric gaussian functions}
 \usage{
 FitDL.Beck(x, t = index(x), tout = t, optimFUN = I_optimx,
-  method = "nlminb", ...)
+  method = "nlminb", w, ...)
 }
 \arguments{
 \item{x}{input vegetation index time-series.}

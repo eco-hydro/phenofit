@@ -4,7 +4,7 @@
 \alias{plot_phenofit}
 \title{plot_phenofit}
 \usage{
-plot_phenofit(fit, d, plotly = F)
+plot_phenofit(fit, d, title = NULL, plotly = F)
 }
 \arguments{
 \item{fit}{data from phenofit_site}

@@ -8,6 +8,55 @@ findpeaks(x, nups = 1, ndowns = nups, zero = "0", peakpat = NULL,
   minpeakheight = -Inf, minpeakdistance = 1, threshold_min = 0,
   threshold_max = 0, npeaks = 0, sortstr = FALSE)
 }
+\arguments{
+\item{nups}{minimum number of increasing steps before a peak is reached}
+
+\item{ndowns}{minimum number of decreasing steps after the peak}
+
+\item{zero}{can be `+', `-', or `0'; how to interprete succeeding steps
+of the same value: increasing, decreasing, or special}
+
+\item{peakpat}{define a peak as a regular pattern, such as the default
+pattern ``[+]{1,}[-]{1,}''; if a pattern is provided, the parameters
+\code{nups} and \code{ndowns} are not taken into account}
+
+\item{minpeakheight}{The minimum (absolute) height a peak has to have
+to be recognized as such}
+
+\item{minpeakdistance}{The minimum distance (in indices) peaks have to have
+to be counted. If the distance of two maximum extreme value less than
+`minpeakdistance`, only the real maximum value will be left.}
+
+\item{threshold_min}{Threshold is defined as the difference of peak value with
+trough value. There are two threshold (left and right). The minimum threshold
+should be greater than threshold_min.}
+
+\item{threshold_max}{Similar as `threshold_min`, The maximum threshold should
+be greater than `threshold_max`.}
+
+\item{npeaks}{the number of peaks to return. If \code{sortstr} = true, the 
+largest npeaks maximum values will be returned; If \code{sortstr} = false, 
+just the first npeaks are returned in the order of index.}
+
+\item{sortstr}{Boolean, Should the peaks be returned sorted in decreasing oreder of 
+their maximum value?}
+}
 \description{
-findpeaks
+Find peaks (maxima) in a time series. This function is modified from
+\code{pracma::findpeaks}.
+}
+\examples{
+x <- seq(0, 1, len = 1024)
+pos <- c(0.1, 0.13, 0.15, 0.23, 0.25, 0.40, 0.44, 0.65, 0.76, 0.78, 0.81)
+hgt <- c(4, 5, 3, 4, 5, 4.2, 2.1, 4.3, 3.1, 5.1, 4.2)
+wdt <- c(0.005, 0.005, 0.006, 0.01, 0.01, 0.03, 0.01, 0.01, 0.005, 0.008, 0.005)
+pSignal <- numeric(length(x))
+for (i in seq(along=pos)) {
+    pSignal <- pSignal + hgt[i]/(1 + abs((x - pos[i])/wdt[i]))^4
+}
+
+plot(pSignal, type="l", col="navy"); grid()
+x <- findpeaks(pSignal, npeaks=3, threshold_min=4, sortstr=TRUE)
+points(x[, 2], x[, 1], pch=20, col="maroon")
+
 }

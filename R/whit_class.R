@@ -1,10 +1,50 @@
+#' Weighted Whittaker smoothing with a second order finite difference penalty
+#'
+#' This function smoothes signals with a finite difference penalty of order 2. 
+#' 
+#' @param y signal to be smoothed: a vector
+#' @param lambda smoothing parameter: larger values lead to more smoothing
+#' @param w weights: a vector of same length as y. Default weights are equal to one
+#' 
+#' @return A numeric vector, smoothed signal.
+#' 
+#' @references 
+#' [1]. Eilers, P.H.C. (2004) "Parametric Time Warping", Analytical Chemistry, 
+#' \bold{76} (2), 404 -- 411. \cr
+#' [2]. Eilers, P.H.C. (2003) "A perfect smoother", Analytical Chemistry, 
+#' \bold{75}, 3631 -- 3636.
+#' 
+#' @author Paul Eilers, Jan Gerretzen
+#' @examples
+#' data(gaschrom)
+#' plot(gaschrom[1,], type = "l", ylim = c(0, 100))
+#' lines(whit2(gaschrom[1,], lambda = 1e5), col = 2)
+#' lines(whit2(gaschrom[1,], lambda = 1e6), col = 3)
+#' lines(whit2(gaschrom[1,], lambda = 1e7), col = 4)
+#' @export
+whit2 <- function(y, lambda, w = rep(1, ny))
+{
+    ny <- length(y)
+    z <- d <- c <- e <- rep(0, length(y))
+
+    # smooth2(
+    .C("smooth2", 
+         w = as.double(w),
+         y = as.double(y),
+         z = as.double(z),
+         lamb = as.double(lambda),
+         mm = as.integer(length(y)),
+         d = as.double(d),
+         c = as.double(c),
+         e = as.double(e))$z
+}
+
 #' Weigthed Whittaker Smoother
 #'
 #' @references
 #' [1]. Eilers, P.H.C., 2003. A perfect smoother. Anal. Chem. https://doi.org/10.1021/ac034173t
 #' [2]. Frasso, G., Eilers, P.H.C., 2015. L- and V-curves for optimal smoothing. Stat. 
 #'      Modelling 15, 91–111. https://doi.org/10.1177/1471082X14549288
-#' @importFrom ptw whit2
 #' @export
 whitsmw2 <- function(y, w, ylu, nptperyear, wFUN = wTSM, iters=1, lambdas=1000,
     df = NULL, ...)

@@ -5,7 +5,6 @@ using namespace Rcpp;
 //   http://adv-r.had.co.nz/Rcpp.html
 //   http://gallery.rcpp.org/
 
-
 // Weight updating method in TIMESAT.
 // [[Rcpp::export]]
 NumericVector wTSM_cpp(NumericVector y, NumericVector yfit, NumericVector w,
