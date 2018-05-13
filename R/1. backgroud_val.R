@@ -26,7 +26,7 @@
 #' @export
 #' @examples
 #' backval(y, t, w, Tn, nptperyear)
-backval <- function(y, t, w, Tn, nptperyear){
+backval <- function(y, t, w, Tn, minT = 5, nptperyear, ...){
     # get median of 5 smallest values in y[index]
     getBack <- function(y, index){
         yi <- y[index]
@@ -38,7 +38,7 @@ backval <- function(y, t, w, Tn, nptperyear){
     }
 
     n <- length(y)
-    i_lowT <- (Tn < 5)
+    i_lowT <- (Tn < minT)
     n_lowT <- length(which(i_lowT))
 
     i_good    <- w >= 1

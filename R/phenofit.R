@@ -66,8 +66,8 @@ print.phenofit <- function(fit){
 #'                 it will use smooth.spline to get der1 and der2.
 #' @export
 D1.phenofit <- function(fit, numDeriv = FALSE, smspline = FALSE, ...){
-    pred <- fit$pred                 #zoo obj
-    t    <- index(pred)
+    pred <- last(fit$fits)                 #zoo obj
+    t    <- fit$tout
     par  <- fit$par
     D1   <- attr(fit$fun, 'gradient')# first order derivative, D1 was 6 times faster
                                      # than grad, and 20 times faster then diff
@@ -92,12 +92,12 @@ D1.phenofit <- function(fit, numDeriv = FALSE, smspline = FALSE, ...){
 
 #' @export
 D2.phenofit <- function(fit, numDeriv = FALSE, smspline = FALSE, ...){
-    pred <- fit$pred                 #zoo obj
-    t   <- index(pred)
-    par <- fit$par
-    D1  <- attr(fit$fun, 'gradient') # first order derivative, D1 was 6 times faster
-                                     # than grad, and 20 times faster then diff
-    D2  <- attr(fit$fun, 'hessian')  # second order derivative
+    pred <- last(fit$fits)                 #zoo obj
+    t    <- fit$tout
+    par  <- fit$par
+    D1   <- attr(fit$fun, 'gradient') # first order derivative, D1 was 6 times faster
+                                      # than grad, and 20 times faster then diff
+    D2   <- attr(fit$fun, 'hessian')  # second order derivative
 
     if (numDeriv){
         der1 <- grad.phenofit(fit, t)
@@ -139,10 +139,10 @@ curvature.phenofit <- function(fit, numDeriv = FALSE, smspline = FALSE, ...){
 plot.phenofit <- function(fit){
     name <- deparse(substitute(fit))
 
-    pred   <- fit$pred
-    t      <- index(pred)
-    values <- as.vector(pred)
-    pop    <- t[which.max(values)]
+    pred <- last(fit$fits)                 #zoo obj
+    t    <- fit$tout
+
+    pop    <- t[which.max(pred)]
     derivs <- curvature(fit)
 
     # e <- environment(D1)
@@ -174,7 +174,6 @@ plot.phenofit <- function(fit){
     abline(v = pop, col ="green")
 
     plot(t, derivs$der2, main = "D2"); grid()
-
     plot(t, derivs$k, main = "k")    ; grid()
     abline(v = maxd_der1, col ="blue")
     abline(v = mind_der1, col ="red")
@@ -183,8 +182,8 @@ plot.phenofit <- function(fit){
     # plot(diff(der1_diff), main = "diff2")
 
     # k <- derivs$k
-    PhenoTrs(fit$pred, IsPlot = TRUE, trs = 0.2)
-    PhenoTrs(fit$pred, IsPlot = TRUE, trs = 0.5)
+    PhenoTrs(fit, IsPlot = TRUE, trs = 0.2)
+    PhenoTrs(fit, IsPlot = TRUE, trs = 0.5)
     metrics <- PhenoGu(fit, IsPlot = TRUE)
     metrics <- PhenoKl(fit, IsPlot = TRUE)
 

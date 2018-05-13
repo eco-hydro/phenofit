@@ -21,12 +21,17 @@
 curvefits <- function(INPUT, brks, nptperyear = 46,
                       wFUN = wTSM, iters = 2,
                       lambda, south = FALSE,
+                      minT = 0,
                       methods = c('AG', 'zhang', 'beck', 'elmore', 'Gu'),
                       debug = FALSE, ...)
 {
     t    <- INPUT$t
     n    <- length(t)
     doys <- as.numeric(difftime(t, t[1], units = "day") + 1)#days from origin
+
+    # Tn for background module
+    Tn <- INPUT$Tn #if has no Tn, NULL will be return
+    has_Tn <- ifelse(is_empty(Tn), F, T)
 
     # title(x$site[1])
     if (all(is.na(INPUT$y))) return(NULL)
@@ -56,7 +61,7 @@ curvefits <- function(INPUT, brks, nptperyear = 46,
             I    <- di$beg[i]:di$end[i]
 
             # extend curve fitting period
-            period <- floor(nptperyear/12*2)
+            period <- floor(nptperyear/12*3)
             I_beg2 <- max(1, di$beg[i] - period)
             I_end2 <- min(n, di$end[i] + period)
             I_extend <- I_beg2:I_end2
@@ -64,8 +69,19 @@ curvefits <- function(INPUT, brks, nptperyear = 46,
             ti   <- doys[I_extend]
             yi   <- INPUT$y[I_extend]
             wi   <- w[I_extend]
-            tout <- doys[I] %>% {first(.):last(.)} # make sure return the same length result.
 
+            # add background module here, 20180513
+            if (has_Tn){
+                Tni        <- Tn[I_extend]
+                back_value <- backval(yi, ti, wi, Tni, minT, nptperyear)
+                if (!is.na(back_value)){
+                    I_back     <- yi < back_value
+                    yi[I_back] <- back_value
+                    wi[I_back] <- 0.5
+                }
+            }
+
+            tout <- doys[I] %>% {first(.):last(.)} # make sure return the same length result.
             fit <- curvefit(yi, ti, tout, nptperyear = nptperyear,
                             w = wi, ylu = INPUT$ylu, iters = iters,
                             methods = methods, meth = 'BFGS', wFUN = wFUN, ...)
@@ -86,7 +102,7 @@ curvefits <- function(INPUT, brks, nptperyear = 46,
                 fits = fits))
 }
 
-#' 
+#'
 #' curvefits2
 #'
 #' @param t A date vector
@@ -98,20 +114,20 @@ curvefits2 <- function(t, y, w, nptperyear = 46,
                           wFUN = wTSM, iters = 2,
                           lambda, south = FALSE,
                           IsPlot = FALSE,
-                          Aymin_less = 0.6, ymax_min = 0.1, 
+                          Aymin_less = 0.6, ymax_min = 0.1,
                           methods = c('AG', 'zhang', 'beck', 'elmore', 'Gu'),
                           debug = FALSE, ...)
 {
     # 1. Check input data and initial parameters for phenofit
     INPUT <- check_input(t, y, w, trim = T, maxgap = nptperyear / 4, alpha = 0.02)
 
-    # 2. The detailed information of those parameters can be seen in `season`. 
-    brks  <- season(INPUT, lambda, nptperyear, iters = 3, wFUN = wFUN, 
+    # 2. The detailed information of those parameters can be seen in `season`.
+    brks  <- season(INPUT, lambda, nptperyear, iters = 3, wFUN = wFUN,
                     IsPlot = IsPlot, south = south,
-                    Aymin_less = Aymin_less, ymax_min = ymax_min, 
+                    Aymin_less = Aymin_less, ymax_min = ymax_min,
                     max_MaxPeaksperyear=2.5, max_MinPeaksperyear=3.5, ...)
     ## 3.1. curve fitting
-    fit <- curvefits(INPUT, brks, lambda =lambda, 
+    fit <- curvefits(INPUT, brks, lambda =lambda,
                          methods = c("AG", "zhang", "beck", "elmore", 'Gu'), #,"klos"
                          nptperyear = nptperyear, debug = F, wFUN = wTSM, ...)
     ## 3.2 Get GOF information
@@ -130,9 +146,9 @@ curvefits2 <- function(t, y, w, nptperyear = 46,
     fit$pheno   <- pheno
     return(fit)
 }
-#' 
+#'
 #' Get parameters from curve fitting result
-#'  
+#'
 #' @param fit Object returned by curvefits
 #' @export
 getparam <- function(fit){
@@ -141,9 +157,9 @@ getparam <- function(fit){
     })
 }
 
-#' 
+#'
 #' Get parameters from multiple curve fitting results
-#' 
+#'
 #' @param fits List Object of curvefits returned
 #' @export
 getparams <- function(fits){
@@ -163,7 +179,7 @@ ExtractPheno <- function(fits, TRS = c(0.1, 0.2, 0.5, 0.6), IsPlot = FALSE){
     pheno_list <- list()
     methods    <- c(paste0("TRS", TRS*10),"DER","GU", "ZHANG")
     TRS_last   <- last(TRS) # only display last threshold figure
-            
+
     if (IsPlot)
         op <- par(mfrow = c(length(fits), 5),
             oma = c(1, 2, 3, 1), mar = rep(0, 4), yaxt = "n", xaxt = "n")

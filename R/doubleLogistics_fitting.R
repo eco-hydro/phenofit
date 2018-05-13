@@ -20,7 +20,7 @@
 #' `ylu[1]`
 #'
 #' @export
-check_input <- function(t, y, w, missval, maxgap = 10, trim = TRUE, alpha = 0.01){
+check_input <- function(t, y, w, Tn = NULL, missval, maxgap = 10, trim = TRUE, alpha = 0.01){
     if (missing(w)) w <- rep(1, length(y))
     w[is.na(y)] <- 0
     
@@ -44,9 +44,13 @@ check_input <- function(t, y, w, missval, maxgap = 10, trim = TRUE, alpha = 0.01
     }
 
     y <- na.approx(y, maxgap = maxgap, na.rm = FALSE) 
+    if (!is_empty(Tn)){
+        Tn <- na.approx(Tn, maxgap = maxgap, na.rm = FALSE)     
+    }
     # If still have na values after na.approx, just replace it with `missval`.
     y[is.na(y)] <- missval
-    list(t = t, y = y, w = w, ylu = ylu)#quickly return
+    list(t = t, 
+        y = y, w = w, Tn = Tn, ylu = ylu)#quickly return
 }
 
 #' check_fit
