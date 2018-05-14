@@ -334,18 +334,29 @@ season <- function(INPUT, lambda, nptperyear = 46, south = FALSE,
 #' points(x[, 2], x[, 1], pch=20, col="maroon")
 #'
 #' @export
-findpeaks <- function (x, nups = 1, ndowns = nups, zero = "0", peakpat = NULL,
+findpeaks <- function (x, IsDiff = TRUE, nups = 1, ndowns = nups, zero = "0", peakpat = NULL,
                        minpeakheight = -Inf, minpeakdistance = 1,
                        threshold_min = 0, threshold_max = 0,
                        npeaks = 0, sortstr = FALSE)
 {
-    stopifnot(is.vector(x, mode = "numeric") || length(is.na(x)) == 0)
+    stopifnot(is.vector(x, mode = "numeric") ||
+                  is.vector(x, mode = "logical") || length(is.na(x)) == 0)
+
     if (minpeakdistance < 1)
         warning("Handling 'minpeakdistance < 1' is logically not possible.")
     if (!zero %in% c("0", "+", "-"))
         stop("Argument 'zero' can only be '0', '+', or '-'.")
 
-    xc <- paste(as.character(sign(diff(x))), collapse = "")
+    # extend the use of findpeaks:
+    # If want to find extreme values, `IsDiff` should be true;
+    # If just want to find the continue negative or positive values, just set
+    # `IsDiff` as false.
+    if (IsDiff){
+        xc <- sign(diff(x))
+    }else{
+        xc <- x
+    }
+    xc <- paste(as.character(sign(xc)), collapse = "")
     xc <- gsub("1", "+", gsub("-1", "-", xc))
     if (zero != "0")      xc      <- gsub("0", zero, xc)
     if (is.null(peakpat)) peakpat <- sprintf("[+]{%d,}[-]{%d,}", nups, ndowns)
@@ -354,7 +365,7 @@ findpeaks <- function (x, nups = 1, ndowns = nups, zero = "0", peakpat = NULL,
 
     if (rc[1] < 0) return(NULL)
     x1 <- rc
-    x2 <- rc + attr(rc, "match.length")
+    x2 <- rc + attr(rc, "match.length") - 1
     attributes(x1) <- NULL
     attributes(x2) <- NULL
     n <- length(x1)
@@ -400,4 +411,3 @@ findpeaks <- function (x, nups = 1, ndowns = nups, zero = "0", peakpat = NULL,
     X <- setNames(as_tibble(X), c("val", "pos", "left", "right"))
     return(list(gregexpr = rc, X = X))
 }
-

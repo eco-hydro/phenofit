@@ -20,7 +20,7 @@
 #' `ylu[1]`
 #'
 #' @export
-check_input <- function(t, y, w, Tn = NULL, missval, maxgap = 10, trim = TRUE, alpha = 0.01){
+check_input <- function(t, y, w, Tn = NULL, minT= 0, missval, maxgap = 10, trim = TRUE, alpha = 0.01){
     if (missing(w)) w <- rep(1, length(y))
     w[is.na(y)] <- 0
     

@@ -4,7 +4,7 @@
 \alias{backval}
 \title{backval}
 \usage{
-backval(y, t, w, Tn, nptperyear)
+backval(y, t, w, Tn, minT = 5, nptperyear, ...)
 }
 \arguments{
 \item{y}{A numeric vector, NA values are not allowed in y}
@@ -23,10 +23,10 @@ If back value is NA, it is impossible to extract phenology here.
 Calculate backgroud values for vegetation index.
 }
 \details{
-Night temperature Tn >= 5 defined as raw growing season.  
+Night temperature Tn >= Tmin (default 5 degree) defined as raw growing season.  
 Background value is determined from two neighboring vegetation in raw growing 
 season by assuming that the background and vegetation abundance could remain 
-the same during a consecutive two yearperiod.
+the same during a consecutive two yearperiod. Details can be seen in Zhang et al., (2015).
 }
 \examples{
 backval(y, t, w, Tn, nptperyear)

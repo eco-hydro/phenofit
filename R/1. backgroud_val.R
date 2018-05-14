@@ -2,10 +2,10 @@
 #' 
 #' Calculate backgroud values for vegetation index.
 #' 
-#' Night temperature Tn >= 5 defined as raw growing season.  
+#' Night temperature Tn >= Tmin (default 5 degree) defined as raw growing season.  
 #' Background value is determined from two neighboring vegetation in raw growing 
 #' season by assuming that the background and vegetation abundance could remain 
-#' the same during a consecutive two yearperiod.
+#' the same during a consecutive two yearperiod. Details can be seen in Zhang et al., (2015).
 #' 
 #' @param y A numeric vector, NA values are not allowed in y
 #' @param t A date vector, corresponding data of y
@@ -89,3 +89,32 @@ ifelse2 <- function(test, yes, no){
         no
     }
 }
+
+
+nogrowthPolygon <- function(d, Tmin){
+    x <- d$Tn#[100:400]
+    I_ends   <- findBrks(x > Tmin, zero = "-", nups = 1)
+    I_begins <- findBrks(x < Tmin, zero = "-", nups = 1) - 1
+
+    plot(type = "b", x); grid(); abline(a = Tmin, b = 0, col = "red")
+    points(I_ends, x[I_ends], col = "red", pch = 19)
+    points(I_begins, x[I_begins], col = "blue", pch = 19)
+
+    nptperyear <- 23
+    polygons <- list()
+    for (i in seq_along(I_ends)){
+        i_beg <- I_ends[i]
+        i_end <- I_begins[which(I_begins > i_beg & I_begins < i_beg + nptperyear*2/3)]
+
+        if (!is_empty(i_end)){
+            polygons[[i]] <- c(i_beg, -Inf, i_end, -Inf, i_end, Inf,i_beg, Inf,i_beg, -Inf) %>%
+                matrix(ncol = 2, byrow = T) %>%
+                set_colnames(c("x", "y")) %>% as.data.frame()
+        }
+    }
+    polygons %<>% set_names(seq_along(.))
+    df_polygon <- melt_list(polygons, "id")
+    df_polygon$date <- d$date[df_polygon$x]
+    return(df_polygon)
+}
+

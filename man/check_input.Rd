@@ -4,7 +4,8 @@
 \alias{check_input}
 \title{check_input}
 \usage{
-check_input(t, y, w, missval, maxgap = 10, trim = TRUE, alpha = 0.01)
+check_input(t, y, w, Tn = NULL, minT = 0, missval, maxgap = 10,
+  trim = TRUE, alpha = 0.01)
 }
 \arguments{
 \item{t}{A numeric vector}

@@ -32,7 +32,6 @@ statistic.phenofit <- function(fit){
     return(c(rmse = rmse, nash = nash, R = R, pvalue = pvalue, n = n))
 }
 
-
 #' grad and hess according to numDeriv package
 #' @export
 grad.phenofit <- function(fit, tout){

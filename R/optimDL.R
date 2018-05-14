@@ -8,9 +8,6 @@
 # Optimization function for original `phenopix` package. The format of its kenal
 #   double logistics function have been modified and unified.
 #
-# Writed by Dongdong Kong, 2017-11-19
-# Update by Dongdong Kong, 27 Jan, 2018
-#
 #' optim_pheno
 #'
 #' Interface of optimization functions for double logistics and many other
@@ -83,7 +80,6 @@ optim_pheno <- function(prior, FUN, x, t, tout, optimFUN = I_optim, method,
                 par   <- opt[, parnames] %>% unlist()
                 # put opt par into prior for the next iteration
                 prior <- rbind(prior[1:(nrow(prior)-1), ], par, deparse.level = 0)
-
                 xpred <- FUN(par, tout)
                 # too much missing values
                 # if (sum(w == 0)/length(w) > 0.5) xpred <- xpred*NA

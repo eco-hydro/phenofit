@@ -5,8 +5,12 @@
 \title{curvefits}
 \usage{
 curvefits(INPUT, brks, nptperyear = 46, wFUN = wTSM, iters = 2, lambda,
-  south = FALSE, methods = c("AG", "zhang", "beck", "elmore", "Gu"),
-  debug = FALSE, ...)
+  south = FALSE, extend_month = 3, minT = 0, methods = c("AG", "zhang",
+  "beck", "elmore", "Gu"), debug = FALSE, ...)
+}
+\arguments{
+\item{extend_month}{For every growing season, previous and afterwards 
+`extend_month` are added to fitting daily time-series. In order to}
 }
 \description{
 Curve fitting for INPUT time-series. Procedures of initial weight, growing

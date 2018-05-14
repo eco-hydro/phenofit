@@ -4,7 +4,7 @@
 \alias{PhenoDeriv}
 \title{PhenoDeriv}
 \usage{
-PhenoDeriv(fit, IsPlot = TRUE, smspline = TRUE, ...)
+PhenoDeriv(fit, IsPlot = TRUE, smspline = TRUE, show.lgd = T, ...)
 }
 \description{
 rechecked in 2017-11-17, with no problems

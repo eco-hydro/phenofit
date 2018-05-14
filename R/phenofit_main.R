@@ -2,7 +2,10 @@
 #'
 #' Curve fitting for INPUT time-series. Procedures of initial weight, growing
 #' season dividing and curve fitting are separated.
-#'
+#' 
+#' @param extend_month For every growing season, previous and afterwards 
+#' `extend_month` are added to fitting daily time-series. In order to 
+#' 
 #' @examples
 #' INPUT <- check_input(d$date, d$EVI_500m, d$w, trim = T, maxgap = nptperyear / 4, alpha = 0.02)
 #' # The detailed information of those parameters can be seen in `season`.
@@ -21,7 +24,7 @@
 curvefits <- function(INPUT, brks, nptperyear = 46,
                       wFUN = wTSM, iters = 2,
                       lambda, south = FALSE,
-                      minT = 0,
+                      extend_month = 3, minT = 0, 
                       methods = c('AG', 'zhang', 'beck', 'elmore', 'Gu'),
                       debug = FALSE, ...)
 {
@@ -37,7 +40,6 @@ curvefits <- function(INPUT, brks, nptperyear = 46,
     if (all(is.na(INPUT$y))) return(NULL)
     # also constrained in `optim_pheno` function
     # if (sum(INPUT$w == 0)/length(INPUT$w) > 0.5) return(NULL) #much rigorous than all is.na
-
     w  <- brks$whit$w
     di <- brks$di
 
@@ -48,7 +50,6 @@ curvefits <- function(INPUT, brks, nptperyear = 46,
     # plot(y, type = "b"); grid()
     # lines(brks$whit$iter3, col = "blue")
     # lines(INPUT$y        , col = "red")
-
     w[I_fix]       <- 0.2 #exert the function of whitaker smoother
 
     if (debug){
@@ -61,7 +62,7 @@ curvefits <- function(INPUT, brks, nptperyear = 46,
             I    <- di$beg[i]:di$end[i]
 
             # extend curve fitting period
-            period <- floor(nptperyear/12*3)
+            period <- floor(nptperyear/12*extend_month)
             I_beg2 <- max(1, di$beg[i] - period)
             I_end2 <- min(n, di$end[i] + period)
             I_extend <- I_beg2:I_end2
@@ -166,54 +167,4 @@ getparams <- function(fits){
     pars <- map(fits, getparams) %>% purrr::transpose() %>%
         map(~melt_list(.x, "site") %>% as_tibble())
     return(pars)
-}
-
-#' ExtractPheno
-#'
-#' Get yearly vegetation phenological metrics of a curve fitting method
-#'
-#' @param outdir save calculated phenology in oudir txts
-#' @export
-ExtractPheno <- function(fits, TRS = c(0.1, 0.2, 0.5, 0.6), IsPlot = FALSE){
-    names <- names(fits)
-    pheno_list <- list()
-    methods    <- c(paste0("TRS", TRS*10),"DER","GU", "ZHANG")
-    TRS_last   <- last(TRS) # only display last threshold figure
-
-    if (IsPlot)
-        op <- par(mfrow = c(length(fits), 5),
-            oma = c(1, 2, 3, 1), mar = rep(0, 4), yaxt = "n", xaxt = "n")
-    for (i in seq_along(fits)){
-        fit    <- fits[[i]]
-        ypred  <- last(fit$fits)
-        all_na <- all(is.na(ypred))
-        # 1. show curve fitting RMSE
-        # need to fix here, about status variable. 31 Jan, 2018
-        if (IsPlot && !all_na){
-            PhenoPlot(fit$tout, ypred)
-            lines(fit$data$t, fit$data$x, type = "b")
-            # legend(min(fit$data$t) - 40, max(fit$pred),
-            #     sprintf("rmse = %.2e\nnash = %.2f\nR=%.2f, p = %.3f",
-            #         status$rmse, status$nash, status$r, status$pvalue),
-            #     adj = c(0, 0), bty='n', text.col = "red")
-            mtext(names[i], side = 2)
-        }
-        if (i == 1 && IsPlot) mtext("Fitting")
-
-        p_TRS <- map(TRS, function(trs) {
-            PhenoTrs(fit, approach = "White", trs = trs, IsPlot = FALSE)
-        })
-
-        if (IsPlot && !all_na) {
-            trs6 <- PhenoTrs(fit, approach="White", trs=TRS_last, IsPlot = IsPlot)
-            if (i == 1) mtext(sprintf('TRS%d', TRS_last*10))
-        }
-
-        der   <- PhenoDeriv(fit, IsPlot);    if (i == 1 && IsPlot) mtext("DER")
-        gu    <- PhenoGu(fit, IsPlot)[1:4];  if (i == 1 && IsPlot) mtext("GU")
-        zhang <- PhenoKl(fit, IsPlot);       if (i == 1 && IsPlot) mtext("ZHANG")
-        pheno_list[[i]] <- c(p_TRS, list(der, gu, zhang)) %>% set_names(methods)
-    }
-    pheno_list %<>% set_names(names)
-    return(pheno_list)
 }

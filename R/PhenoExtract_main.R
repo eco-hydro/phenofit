@@ -39,7 +39,6 @@ curvefit <- function(x, t = index(x), tout = t, meth = 'BFGS',
 #' @param fit data from phenofit_site
 #' @importFrom dplyr left_join
 #' @export
-
 plot_phenofit <- function(fit, d, title = NULL, plotly = F){
     #global variables
     origin.date <- fit$INPUT$t[1] #

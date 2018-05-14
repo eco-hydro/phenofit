@@ -4,9 +4,9 @@
 \alias{findpeaks}
 \title{findpeaks}
 \usage{
-findpeaks(x, nups = 1, ndowns = nups, zero = "0", peakpat = NULL,
-  minpeakheight = -Inf, minpeakdistance = 1, threshold_min = 0,
-  threshold_max = 0, npeaks = 0, sortstr = FALSE)
+findpeaks(x, IsDiff = TRUE, nups = 1, ndowns = nups, zero = "0",
+  peakpat = NULL, minpeakheight = -Inf, minpeakdistance = 1,
+  threshold_min = 0, threshold_max = 0, npeaks = 0, sortstr = FALSE)
 }
 \arguments{
 \item{nups}{minimum number of increasing steps before a peak is reached}

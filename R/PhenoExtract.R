@@ -1,13 +1,13 @@
-colors <- c("blue", "green3", "orange", "red")
-
+colors    <- c("blue", "green3", "orange", "red")
+linewidth <- 1.2
 #' PhenoPlot
 #' @examples
 #' PhenoPlot(t, x, main = main)
 #' @export
 PhenoPlot <- function(t, x, main = "", ...){
     plot(t, x, main = main, ...,
-             type= "p", cex = 1.4, col = "grey60", pch = 20) #pch = 20,
-    grid()
+             type= "l", cex = 2, col = "black", lwd = linewidth) #pch = 20,
+    #grid()
 }
 
 # identify greenup or dormancy(brown) period
@@ -96,9 +96,9 @@ PhenoTrs <- function(fit, approach = c("White", "Trs"), trs = 0.5, min.mean = 0.
         main   <- ifelse(all(par("mar") == 0), "", sprintf("TRS%d", trs*10))
         PhenoPlot(t, ratio, main = main)
 
-        abline(h = trs)
-        abline(h = c(trs.low, trs.up), lty = 2)
-        abline(v = metrics, col = colors[c(1, 4)])
+        abline(h = trs, lwd = linewidth)
+        abline(h = c(trs.low, trs.up), lty = 2, lwd = linewidth)
+        abline(v = metrics, col = colors[c(1, 4)], lwd = linewidth)
         text(metrics + c(-1, 1)*24, min(trs + 0.15, 1), c("SOS", "EOS"), col = colors)
     }
     return(metrics)
@@ -109,9 +109,10 @@ PhenoTrs <- function(fit, approach = c("White", "Trs"), trs = 0.5, min.mean = 0.
 #' PhenoDeriv
 #' @description rechecked in 2017-11-17, with no problems
 #' @export
-PhenoDeriv <- function(fit, IsPlot = TRUE, smspline = TRUE, ...){
+PhenoDeriv <- function(fit, IsPlot = TRUE, smspline = TRUE, show.lgd = T, ...){
     t      <- fit$tout
     values <- last(fit$fits)
+    PhenoNames <- c("SOS", "POP", "EOS")
 
     if (all(is.na(values))) return( setNames(rep(NA, 3), c("sos", "pop", "eos")) )
 
@@ -126,9 +127,10 @@ PhenoDeriv <- function(fit, IsPlot = TRUE, smspline = TRUE, ...){
     # I_sos <- median(which.max(der1[1:(half.season - 5)]))
     # I_eos <- median(which.min(der1[(half.season+5):length(der1)])) + half.season
 
+    # der.sos (eos) is impossible to occur near the pop.
     nmin  <- 5
     I_sos <- findpeaks( der1[1:(half.season - 5)]         , nups=nmin, ndowns=nmin, npeaks=1, sortstr=TRUE)$X$pos
-    I_eos <- findpeaks(-der1[(half.season+5):length(der1)], nups=nmin, ndowns=nmin, npeaks=1, sortstr=TRUE)$X$pos + half.season
+    I_eos <- findpeaks(-der1[(half.season+5):length(der1)], nups=nmin, ndowns=nmin, npeaks=1, sortstr=TRUE)$X$pos + half.season + 4
 
     # if half.season > length(der1), error will be occur
     sos <- t[I_sos]
@@ -136,18 +138,38 @@ PhenoDeriv <- function(fit, IsPlot = TRUE, smspline = TRUE, ...){
     if (is_empty(sos)) sos <- NA
     if (is_empty(eos)) eos <- NA
 
+    metrics <- c(sos = sos, pop = pop, eos = eos)#, los = los
+
     if (IsPlot){
         main  <- ifelse(all(par("mar") == 0), "", "DER")
         PhenoPlot(t, values, main = main)
+        if (show.lgd) legend('topright', c("f(t)'"), lty = 2, col = "black", bty='n')
+
+        abline(v = c(sos, eos), col = colors[c(1, 4)], lwd = linewidth)
+        abline(v = pop, col ="darkgreen", lty = 1, lwd = linewidth)
+
+        A <- diff(range(values))
+        I_metrics <- match(metrics, t)
+        if (all(is.na(I_metrics))) {
+            ylons <- I_metrics
+        }else{
+            ylons <- values[I_metrics] + c(1, -1, 1)*0.1*A
+        }
+        xlons <- metrics + c(-1, 1, 1)*5
+        xlons[xlons < min(t)] <- min(t)
+        xlons[xlons > max(t)] <- max(t)
+
+        I <- c(1); text(xlons[I], ylons[I], PhenoNames[I], col = colors[I], adj = c(1, 0))
+        I <- 2:3 ; text(xlons[I], ylons[I], PhenoNames[I], col = c("darkgreen", colors[3]), adj = c(0, 0))
+
+        #der1 last plot
         op <- par(new = T)
-        plot(t, der1, type= "b", cex = 1, col = "black", axes = FALSE, pch = 16) #pch = 20,
-        legend('bottomleft', c("Fitting", "f'"), lty = c(0, 1), pch =c(20, 1),
-            col = c("grey60", "black"), bty='n')
-        abline(v = c(sos, eos), col = colors[c(1, 4)])
+        plot(t, der1, type= "l", lty = 2, lwd = linewidth,
+             col = "black", axes = FALSE)
     }
-    metrics <- c(sos = sos, pop = pop, eos = eos)#, los = los
     return(metrics)
 }
+
 
 #' PhenoGu
 #' @export
@@ -155,7 +177,7 @@ PhenoDeriv <- function(fit, IsPlot = TRUE, smspline = TRUE, ...){
 PhenoGu <- function(fit, IsPlot = TRUE, smspline = TRUE, ...) {
     t      <- fit$tout
     values <- last(fit$fits)
-
+    PhenoNames <- c("UD", "SD", "DD", "RD")
     metrics <- setNames(rep(NA, 4), c("UD", "SD", "DD", "RD"))
     if (all(is.na(values))) return(metrics)
 
@@ -184,14 +206,10 @@ PhenoGu <- function(fit, IsPlot = TRUE, smspline = TRUE, ...) {
     maxline  <- max(values, na.rm = T)
 
     ## y = kx + b; x = (y - b)/k
-    #  upturn day, intersection of rl and x axis
-    UD <- (baseline - rl.b)/rsp
-    #  stabilization day, intersection of maxline and rl
-    SD <- (maxline  - rl.b)/rsp
-    #  downturn day, intersection of maxline and sl
-    DD <- (maxline  - sl.b)/rau
-    #  recession day, intersection of sl and x axis
-    RD <- (baseline - sl.b)/rau
+    UD <- (baseline - rl.b)/rsp # upturn day, intersection of rl and x axis
+    SD <- (maxline  - rl.b)/rsp # stabilization day, intersection of maxline and rl
+    DD <- (maxline  - sl.b)/rau # downturn day, intersection of maxline and sl
+    RD <- (baseline - sl.b)/rau # recession day, intersection of sl and x axis
 
     ## subset data between SD and DD
     sub.time <- t[t >= SD & t <= DD]
@@ -203,7 +221,6 @@ PhenoGu <- function(fit, IsPlot = TRUE, smspline = TRUE, ...) {
         plateau.lm        <- .lm.fit(X, sub.gcc)
         plateau.slope     <- plateau.lm$coefficients[2]
         plateau.intercept <- plateau.lm$coefficients[1]
-
         # y1 = rau*t + sl.b
         # y2 = k2t + b2
         # so, t = (sl.b - b2)/(k2 -rau)
@@ -218,7 +235,7 @@ PhenoGu <- function(fit, IsPlot = TRUE, smspline = TRUE, ...) {
     # the.fun <- function(t) {eval(retrieved.formula, envir=as.list(params))}
     metrics   <- round(c(UD, SD, DD, RD)) %>%
         sapply(function(x){ ifelse(x < min(t) || x > max(t), NA, x) }) %>%
-        setNames(., c("UD", "SD", "DD", "RD"))
+        set_names(PhenoNames)
     # c("UD", "SD", "DD", "RD", "maxline", "baseline", "rsp", "rau", "plateau.slope")
     # c(pheno, maxline, baseline, rsp, rau, plateau.slope)
 
@@ -226,28 +243,35 @@ PhenoGu <- function(fit, IsPlot = TRUE, smspline = TRUE, ...) {
         main   <- ifelse(all(par("mar") == 0), "", "Gu")
         PhenoPlot(t, values, main = main)
 
-        abline(rl.b, rsp, col = "blue", lty=  2)
-        abline(sl.b, rau, col = "red" , lty=  2)
+        abline(rl.b, rsp, col = "blue", lty=  2, lwd = linewidth,)
+        abline(sl.b, rau, col = "red" , lty=  2, lwd = linewidth,)
         # any na values input to abline will lead to error
         if (all(!is.na(c(plateau.slope, plateau.intercept))))
-            abline(a = plateau.intercept, b = plateau.slope, lty = 2, col = "darkgreen")
+            abline(a = plateau.intercept, b = plateau.slope, 
+                lty = 2, lwd = linewidth, col = "darkgreen")
 
-        abline(h = c(maxline, baseline), lty = 2)
-        abline(v = metrics[1:4],  col = colors)
+        abline(h = c(maxline, baseline), lty = 2, lwd = linewidth,)
+        abline(v = metrics[1:4],  col = colors, lwd = linewidth,)
 
         A <- diff(range(values))
-        ylons  <- c(values[metrics[1]] + 0.1*A,
-                    values[metrics[2]] - 0.3*A,
-                    values[metrics[2]] - 0.3*A, #pred[p3] - 0.3*A,
-                    values[metrics[4]] + 0.1*A)
-        text(metrics[1:4] + c(-1, 1, -1, 1)*15, ylons, c("UD", "SD", "DD", "RD"),
-            col = colors, offset = 0)
+        I_metrics <- match(metrics, t)
+        if (all(is.na(I_metrics))) {
+            ylons <- I_metrics
+        }else{
+            ylons <- values[I_metrics] + c(1, -3, -3, 1)*0.1*A
+        }
+
+        xlons <- metrics[1:4] + c(-1, -1, 1, 1)*5
+        xlons[xlons < min(t)] <- min(t)
+        xlons[xlons > max(t)] <- max(t)
+        I <- c(1, 2); text(xlons[I], ylons[I], PhenoNames[I], col = colors[I], adj = c(1, 0))
+        I <- c(3, 4); text(xlons[I], ylons[I], PhenoNames[I], col = colors[I], adj = c(0, 0))
     }
     return(metrics)
 }
 
 #' @export
-PhenoKl <- function(fit, IsPlot = TRUE, ...) {
+PhenoKl <- function(fit, IsPlot = TRUE, show.lgd = T, ...) {
     PhenoNames <- c("Greenup", "Maturity", "Senescence", "Dormancy")
     metrics <- setNames(rep(NA, 4), PhenoNames)
 
@@ -255,7 +279,7 @@ PhenoKl <- function(fit, IsPlot = TRUE, ...) {
     xlim   <- range(t)
     values <- last(fit$fits)
     half.season <- which.max(values)  # + 20, half season + 20 was unreasonable
-    
+
     if (all(is.na(values))) return(setNames(rep(NA, 4), PhenoNames))
 
     derivs <- curvature.phenofit(fit, smspline = TRUE)
@@ -303,13 +327,14 @@ PhenoKl <- function(fit, IsPlot = TRUE, ...) {
     if (IsPlot){
         main   <- ifelse(all(par("mar") == 0), "", "Zhang (Curvature Rate)")
 
-        A      <- diff(range(der.k))
-        ylons  <- c(der.k[metrics[1]] + 0.1*A,
-                    der.k[metrics[2]] + 0.1*A,
-                    der.k[metrics[3]] - 0.1*A,
-                    der.k[metrics[4]] - 0.1*A)
-
-        xlons  <- metrics + c(-1, -1, 1, 1) * 5
+        A          <- diff(range(der.k))
+        I_metrics <- match(metrics, t)
+        if (all(is.na(I_metrics))) {
+            ylons <- I_metrics
+        }else{
+            ylons <- values[I_metrics] + c(1, -1, -1, 1)*0.2*A
+        }
+        xlons  <- metrics + c(1, -1, 1, -1) * 5
         xlons[xlons < min(t)] <- min(t)
         xlons[xlons > max(t)] <- max(t)
         # plotrix::twoord.plot(t, values, t, der.k,
@@ -317,18 +342,81 @@ PhenoKl <- function(fit, IsPlot = TRUE, ...) {
         #                      rcol = "black", lcol = "grey60", lpch = 20, rpch = 1,
         #                      rytickpos = NULL)
         PhenoPlot(t, values, main = main, xlim = xlim)
-        op <- par(new = T)
-        plot(t, der.k, xlim = xlim, type= "b", cex = 1, col = "black", pch = 16, axes = T) #pch = 20,
-        legend('bottomleft', c("Fitting", "K'"), lty = c(0, 1), pch =c(20, 1),
-               col = c("grey60", "black"), bty='n')
+        if (show.lgd){
+            legend('topright', c("K'"), lty = c(3), col = c("black"), bty='n') ##pch =c(20, 1),
+        }
 
         pop     <- t[half.season]
-
-        abline(v = metrics, col = colors)
-        abline(v = pop, col ="darkgreen", lty = 1)
-        abline(v = pop + 20, col ="darkgreen", lty = 2)
-        text(xlons[1:2], ylons[1:2], PhenoNames[1:2], col = colors[1:2], adj = c(1, 0))
-        text(xlons[3:4], ylons[3:4], PhenoNames[3:4], col = colors[3:4], adj = c(0, 0))
+        abline(v = metrics, col = colors, lwd = linewidth)
+        abline(v = pop, col ="darkgreen", lty = 1, lwd = linewidth)
+        abline(v = pop + 20, col ="darkgreen", lty = 2, lwd = linewidth)
+        I <- c(1, 3); text(xlons[I], ylons[I], PhenoNames[I], col = colors[I], adj = c(0, 0))
+        I <- c(2, 4); text(xlons[I], ylons[I], PhenoNames[I], col = colors[I], adj = c(1, 0))
+        # der.k last plot
+        op <- par(new = T)
+        plot(t, der.k, xlim = xlim, type= "l",
+             lty = 3, lwd = linewidth, col = "black", axes = T) # cex = 1, pch = 20,
     }
     return(setNames(metrics, PhenoNames))
+}
+
+
+
+#' ExtractPheno
+#'
+#' Get yearly vegetation phenological metrics of a curve fitting method
+#'
+#' @param outdir save calculated phenology in oudir txts
+#' @export
+ExtractPheno <- function(fits, TRS = c(0.1, 0.2, 0.5, 0.6), IsPlot = FALSE){
+    names <- names(fits)
+    pheno_list <- list()
+    methods    <- c(paste0("TRS", TRS*10),"DER","GU", "ZHANG")
+    TRS_last   <- last(TRS) # only display last threshold figure
+
+    if (IsPlot)
+        op <- par(mfrow = c(length(fits), 5),
+                  oma = c(1, 2, 3, 1), mar = rep(0, 4), yaxt = "n", xaxt = "n")
+    for (i in seq_along(fits)){
+        fit    <- fits[[i]]
+        ypred  <- last(fit$fits)
+        all_na <- all(is.na(ypred))
+        # 1. show curve fitting RMSE
+        # need to fix here, about status variable. 31 Jan, 2018
+        show.lgd = FALSE
+        if (IsPlot && !all_na){
+            PhenoPlot(fit$tout, ypred)
+            lines(fit$data$t, fit$data$x, type = "b", lwd = 1)
+
+            if (i == 1){
+                show.lgd = TRUE
+                legend('topright', c('y', "f(t)"), lty = c(1, 1),
+                       pch =c(1, NA),
+                       # col = c("grey60", "black"),
+                       bty='n')
+            }
+            stat     <- statistic.phenofit(fit)
+            stat_txt <- sprintf("  R=%.2f, p=%.3f\n RMSE=%.3f\nNSE=%.2f\n",
+                                stat[['rmse']], stat[['nash']], stat[['R']], stat[['pvalue']])
+            legend('topleft', stat_txt, adj = c(0.2, 0.2), bty='n', text.col = "red")
+            mtext(names[i], side = 2)
+        }
+        if (i == 1 && IsPlot) mtext("fitting")
+
+        p_TRS <- map(TRS, function(trs) {
+            PhenoTrs(fit, approach = "White", trs = trs, IsPlot = FALSE)
+        })
+
+        if (IsPlot && !all_na) {
+            trs6 <- PhenoTrs(fit, approach="White", trs=TRS_last, IsPlot = IsPlot)
+            if (i == 1) mtext(sprintf('TRS%d', TRS_last*10))
+        }
+
+        der   <- PhenoDeriv(fit, IsPlot, show.lgd=show.lgd);    if (i == 1 && IsPlot) mtext("DER")
+        gu    <- PhenoGu(fit, IsPlot, show.lgd=show.lgd)[1:4];  if (i == 1 && IsPlot) mtext("GU")
+        zhang <- PhenoKl(fit, IsPlot, show.lgd=show.lgd);       if (i == 1 && IsPlot) mtext("ZHANG")
+        pheno_list[[i]] <- c(p_TRS, list(der, gu, zhang)) %>% set_names(methods)
+    }
+    pheno_list %<>% set_names(names)
+    return(pheno_list)
 }
