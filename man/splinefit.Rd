@@ -5,7 +5,7 @@
 \title{using cubic spline function to avoid the difficult in setting parameter
 lambda in smooth.spline}
 \usage{
-splinefit(x, t = index(x), tout = t, plot = FALSE, df.factor = 0.06,
+splinefit(y, t = index(y), tout = t, plot = FALSE, df.factor = 0.06,
   ...)
 }
 \description{

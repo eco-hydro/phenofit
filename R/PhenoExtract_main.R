@@ -3,21 +3,21 @@
 #'
 #' curve fit VI using 'spline', 'beck', 'elmore', 'klos', 'AG', 'Gu', 'zhang' methods
 #'
-#' @param x Vegetation time-series index, numeric vector
+#' @param y Vegetation time-series index, numeric vector
 #' @param t The corresponding doy of x
 #' @param tout The output interpolated time.
 #'
 #' @export
-curvefit <- function(x, t = index(x), tout = t, meth = 'BFGS',
+curvefit <- function(y, t = index(y), tout = t, meth = 'BFGS',
     methods = c('spline', 'beck', 'elmore', 'klos', 'AG', 'zhang'), ...)
 {
-    if (all(is.na(x))) return(NULL)
+    if (all(is.na(y))) return(NULL)
     if (length(methods) == 1 && methods == 'all')
         methods <- c('spline', 'beck', 'elmore', 'klos', 'AG', 'Gu', 'zhang')
 
-    params <- list(x, t, tout, optimFUN = I_optim, method = meth, ...)
+    params <- list(y, t, tout, optimFUN = I_optim, method = meth, ...)
 
-    if ('spline' %in% methods) fit.spline <- splinefit(x, t, tout)
+    if ('spline' %in% methods) fit.spline <- splinefit(y, t, tout)
 
     if ('beck'   %in% methods) fit.beck   <- do.call(FitDL.Beck,  c(params, pfun = p_nlminb))  #nlminb
     if ('elmore' %in% methods) fit.elmore <- do.call(FitDL.Elmore,c(params, pfun = p_nlminb))  #nlminb
@@ -34,35 +34,63 @@ curvefit <- function(x, t = index(x), tout = t, meth = 'BFGS',
     return(fits)
 }
 
+
+#' make_legend
+make_legend <- function(){
+    labels <- c(" good", " margin", " snow&ice", " cloud", "iter1", "iter2", "whit")
+    colors <- c("grey60", "#00BFC4", "#F8766D", "#C77CFF", "blue", "red", "black")
+    pch <- c(19, 15, 4, 17, NA, NA, NA)
+    lty <- c(0, 0, 1, 0, rep(1, 3))
+    lwd <- c(1, 1, 0, 1, 3, 3, 3)
+
+    I <- 1:7
+    lgd <- grid::legendGrob(labels[I], pch = pch[I], nrow = 1,
+                       # do.lines = T,
+                       gp=grid::gpar(lty = lty[I], lwd = lwd[I],
+                               col = colors[I], fill = colors[I]))
+    return(lgd)
+}
+lgd <- make_legend()
+
+
+getFitValueYear <- function(fit_year){
+    t         <- fit_year$data$t
+    I         <- match(t, fit_year$tout)
+    d_iters   <- map_df(fit_year$fits, ~.x[I])
+    d_iters$t <- t
+    return(d_iters)
+}
+
+#' getFitValueYears
+#' @examples
+#' origin.date <- fit$INPUT$t[1]
+#' out$t %<>% add(origin.date - 1)
+getFitValueYears <- function(fit_years){
+    map_df(fit_years, getFitValueYear)
+}
+
 #' plot_phenofit
 #'
 #' @param fit data from phenofit_site
 #' @importFrom dplyr left_join
 #' @export
-plot_phenofit <- function(fit, d, title = NULL, plotly = F){
+plot_phenofit <- function(fit, d, title = NULL, show.legend = T, plotly = F){
     #global variables
     origin.date <- fit$INPUT$t[1] #
     I   <- match(fit$tout, fit$INPUT$t)
     org <- as_tibble(fit$INPUT[c('t', 'y', 'w')])[I, ]
 
     getFitVI <- function(fit_years){
-        map(fit_years, ~window(.x$pred, .x$data$t)) %>%
-            do.call(c, .) %>% set_names(NULL)
+        map(fit_years, ~window(.x$pred, .x$data$t)) %>% do.call(c, .) %>% set_names(NULL)
     }
     # fit_years: fits for one method, multiple years
     getFitVI_iters <- function(fit_years){
         if (is.null(fit_years[[1]]$fun)){
             out <- getFitVI(fit_years) %>% as.numeric() %>% {tibble(iter1 = .)}
         }else{
-            out <- map(fit_years, function(fit){
-                I       <- match(fit$data$t, fit$tout)
-                d_iters <- map_df(fit$fits, ~.x[I])
-                d_iters$t <- fit$data$t
-                return(d_iters)
-            }) %>% bind_rows()
+            out <- getFitValueYears(fit_years)
         }
         # out
-        # # A tibble: 2,515 x 3
         # iter1 iter2 t
         # <dbl> <dbl> <date>
         # 1 0.594 0.780 2005-02-06
@@ -74,15 +102,12 @@ plot_phenofit <- function(fit, d, title = NULL, plotly = F){
     fits_years <- map(fit$fits, getFitVI_iters)
     pdat1 <- melt(fits_years, id.vars = colnames(org)) %>%
         set_names(c(colnames(org), "iters", "val", "meth"))
-
     # t_fit <- index(fits_years[[1]]) + t[1] - 1
-    # new   <- as_tibble(c(list(t = t_fit), map(fits_years, unclass)))
-    # new   <- as_tibble(c(list(t = t_fit), fits_years))
     # 1. curve fitting data
     # pdat1 <- dplyr::full_join(fit$INPUT, new, by = "t") %>%
     #     gather(meth, val, -t, -y) %>% group_by(meth)
     # print(head(pdat1))
-
+    
     # 3. phenology data
     # pdat2 <- fit$pheno$date %>% melt_list("meth") %>% as_tibble() %>%
     #     gather(index, date, -flag, -origin, -meth) %>%
@@ -94,14 +119,14 @@ plot_phenofit <- function(fit, d, title = NULL, plotly = F){
     seasons$pos$type %<>% factor(labels = c("min", "max"))
 
     p <- ggplot(pdat1, aes(t, val, color = iters)) +
-        geom_line (data = seasons$whit, aes(t, iter3), color = "black", size = 0.6) +
-        geom_vline(data = seasons$dt, aes(xintercept = as.numeric(beg)), size = 0.3, linetype=2, color = "blue") +
-        geom_vline(data = seasons$dt, aes(xintercept = as.numeric(end)), size = 0.3, linetype=2, color = "red") +
+        geom_line (data = seasons$whit, aes(t, iter3), color = "black", size = 0.8) +
+        geom_vline(data = seasons$dt, aes(xintercept = as.numeric(beg)), size = 0.4, linetype=2, color = "blue") +
+        geom_vline(data = seasons$dt, aes(xintercept = as.numeric(end)), size = 0.4, linetype=2, color = "red") +
         geom_point(data = subset(seasons$pos, type == "max"), aes(t, val), color= "red") +
         geom_point(data = subset(seasons$pos, type == "min"), aes(t, val), color= "blue") +
         # geom_line(size = 0.4) +
         facet_grid(meth~.) +
-        scale_x_date(breaks = fit$seasons$dt$beg, date_labels = "%Y/%m")
+        scale_x_date(breaks = fit$seasons$dt$beg, date_labels = "%Y/%m") + ggtitle(title)
 
     if ('SummaryQA' %in% colnames(d)){
         # p <- p + geom_point(data = x, aes(date, y, shape = SummaryQA, color = SummaryQA), size = 1, alpha = 0.7) +
@@ -109,36 +134,42 @@ plot_phenofit <- function(fit, d, title = NULL, plotly = F){
         #     scale_fill_manual(values = c("grey40", "#7CAE00", "#F8766D", "#C77CFF")) +
         #     guides(shape = guide_legend(override.aes = list(size = 2)))
         p  <- p + geom_point(data = d, aes(date, y, shape = SummaryQA, color = SummaryQA), size = 2, alpha = 0.7) +
-            geom_line(aes(color = iters), size = 1, alpha = 0.7) +
+            geom_line(aes(color = iters), size = 0.8, alpha = 0.7) +
             scale_color_manual(values = c(" good" = "grey60", " margin" = "#00BFC4",
                                           " snow&ice" = "#F8766D", " cloud" = "#C77CFF",
                                           "iter1" = "blue", "iter2" = "red"), drop = F) +
-            scale_shape_manual(values = c(19, 15, 4, 17), drop = F) +
-            guides(shape = FALSE,
-                   color = guide_legend(
-                       "legend",
-                       override.aes = list(
-                           shape = c(c(19, 15, 4, 17)[c(4, 1, 2, 3)], NA, NA),
-                           linetype = c(0, 0, 0, 0, 1, 1),
-                           # color = c(" good" = "grey60", " margin" = "#00BFC4",
-                           #           " snow&ice" = "#F8766D", " cloud" = "#C77CFF",
-                           #           "iter1" = "blue", "iter2" = "red"),
-                           name = letters[1:6],
-                           size = 1.2
-                       )
-                   ))
+            scale_shape_manual(values = c(19, 15, 4, 17), drop = F)# +
+            # guides(shape = FALSE,
+            #        color = guide_legend(
+            #            "legend",
+            #            override.aes = list(
+            #                shape = c(c(19, 15, 4, 17)[c(4, 1, 2, 3)], NA, NA),
+            #                linetype = c(0, 0, 0, 0, 1, 1),
+            #                # color = c(" good" = "grey60", " margin" = "#00BFC4",
+            #                #           " snow&ice" = "#F8766D", " cloud" = "#C77CFF",
+            #                #           "iter1" = "blue", "iter2" = "red"),
+            #                name = letters[1:6],
+            #                size = 1.2
+            #            )
+            #        ))
     }else{
         p <- p + geom_point(aes(t, y), size = 2, alpha = 0.5, color = "grey60") +
             geom_line(aes(color = iters), size = 1)
     }
+
     # geom_vline(data = pdat2, aes(xintercept=date, linetype = pmeth, color = pmeth), size = 0.4, alpha = 1) +
     # scale_linetype_manual(values=c(2, 3, 1, 1, 1, 4))
     # p + facet_grid(meth~pmeth)
     #return
+    
     if (plotly){
         plotly::ggplotly(p)
     }else{
-        p + ggtitle(title)
+        if (show.legend){
+            p <- p + theme(legend.position="none")
+            p <- arrangeGrob(p, lgd,nrow = 2, heights = c(15, 1), padding = unit(0, "line")) #return
+        }
+        return(p)
     }
 }
 

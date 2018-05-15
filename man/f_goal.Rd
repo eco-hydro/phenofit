@@ -4,7 +4,7 @@
 \alias{f_goal}
 \title{Common goal function of those curve fitting methods}
 \usage{
-f_goal(par, x, t, fun = c(doubleLog.elmore, doubleLog.beck, doubleLog.klos,
+f_goal(par, y, t, fun = c(doubleLog.elmore, doubleLog.beck, doubleLog.klos,
   doubleLog.gu, doubleLog.zhang, doubleAG), w, ylu, ...)
 }
 \description{

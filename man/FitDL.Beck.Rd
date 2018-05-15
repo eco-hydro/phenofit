@@ -4,13 +4,13 @@
 \alias{FitDL.Beck}
 \title{Fitting double logistics, asymmetric gaussian functions}
 \usage{
-FitDL.Beck(x, t = index(x), tout = t, optimFUN = I_optimx,
+FitDL.Beck(y, t = index(y), tout = t, optimFUN = I_optimx,
   method = "nlminb", w, ...)
 }
 \arguments{
-\item{x}{input vegetation index time-series.}
+\item{y}{input vegetation index time-series.}
 
-\item{t}{the corresponding doy(day of year) of x.}
+\item{t}{the corresponding doy(day of year) of y.}
 
 \item{tout}{the output curve fitting time-series time steps.}
 
@@ -28,13 +28,13 @@ list(pred, par, fun)
 Fitting double logistics, asymmetric gaussian functions
 }
 \examples{
-FitDL.Beck  (x, t, tout, optimFUN = optim_p, pfun = p_nlminb)
-FitDL.Elmore(x, t, tout, optimFUN = optim_p, pfun = p_nlminb)
-FitDL.Gu    (x, t, tout, optimFUN = optim_p, pfun = p_nlminb)
-FitDL.Klos  (x, t, tout, optimFUN = optim_p, pfun = p_optim, method = 'BFGS')
+FitDL.Beck  (y, t, tout, optimFUN = optim_p, pfun = p_nlminb)
+FitDL.Elmore(y, t, tout, optimFUN = optim_p, pfun = p_nlminb)
+FitDL.Gu    (y, t, tout, optimFUN = optim_p, pfun = p_nlminb)
+FitDL.Klos  (y, t, tout, optimFUN = optim_p, pfun = p_optim, method = 'BFGS')
 
-FitDL.Zhang (x, t, tout, optimFUN = optim_p, pfun = p_nlm)
-FitAG (x, t, tout, optimFUN = optim_p, pfun = p_nlminb)
+FitDL.Zhang (y, t, tout, optimFUN = optim_p, pfun = p_nlm)
+FitAG (y, t, tout, optimFUN = optim_p, pfun = p_nlminb)
 }
 \references{
 [1]. Beck, P.S.A., Atzberger, C., Hogda, K.A., Johansen, B., Skidmore, A.K., 

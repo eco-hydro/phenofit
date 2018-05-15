@@ -16,13 +16,13 @@
 #' only fit part of growing season NDVI, before or after peak NDVI
 #' @export
 Log.zhang <- function(par, t){
-    mn <- par[1]
-    mx <- par[2]
-    sos <- par[3]
-    rsp <- par[4]
-    xpred <- (mx - mn)/(1 + exp(-rsp*(t - sos))) + mn
-    # xpred <- c/(1 + exp(a + b * t)) + d
-    return(xpred)
+    mn   <- par[1]
+    mx   <- par[2]
+    sos  <- par[3]
+    rsp  <- par[4]
+    pred <- (mx - mn)/(1 + exp(-rsp*(t - sos))) + mn
+    # pred <- c/(1 + exp(a + b * t)) + d
+    return(pred)
 }
 attr(Log.zhang, 'name')    <- 'Log.zhang'
 attr(Log.zhang, 'par')     <- c("mn", "mx", "sos", "rsp")
@@ -36,9 +36,9 @@ attr(Log.zhang, 'formula') <- expression((mx - mn)/(1 + exp(-rsp*(t - sos))) + m
 #'
 #' @export
 doubleLog.zhang <- function(par, t){
-    t0 <- par[1]
-    mn <- par[2]
-    mx <- par[3]
+    t0  <- par[1]
+    mn  <- par[2]
+    mx  <- par[3]
     sos <- par[4]
     rsp <- par[5]
     eos <- par[6]
@@ -50,12 +50,12 @@ doubleLog.zhang <- function(par, t){
     
     # xpred1 <- (mx - mn)/(1 + exp(-rsp*(t - sos))) + mn
     # xpred2 <- (mx - mn)/(1 + exp(rau*(t - eos))) + mn
-    # xpred  <- xpred1*(t <= t0) + xpred2*(t > t0)
+    # pred  <- xpred1*(t <= t0) + xpred2*(t > t0)
 
     # above expressions cost 1.5 times as the below
-    xpred <- (mx - mn)/c(1 + exp(-rsp*(t[t <= t0] - sos)),
+    pred <- (mx - mn)/c(1 + exp(-rsp*(t[t <= t0] - sos)),
                          1 + exp( rau*(t[t >  t0] - eos))) + mn
-    return(xpred)
+    return(pred)
 }
 attr(doubleLog.zhang, 'name')    <- 'doubleLog.zhang'
 attr(doubleLog.zhang, 'par')     <- c("t0", "mn", "mx", "sos", "rsp", "eos", "rau")
@@ -76,10 +76,10 @@ doubleAG <- function(par, t){
     a4 <- par[6]
     a5 <- par[7]
 
-    xpred <- mn + (mx - mn)*exp(- c( ((t0 - t[t <= t0])/a2) ^a3,
+    pred <- mn + (mx - mn)*exp(- c( ((t0 - t[t <= t0])/a2) ^a3,
                     ((t[t >  t0] - t0)/a4) ^a5) )
-    return(xpred)
-    # xpred <- (mx - mn)/c(1 + exp(-rsp*(t[t <= t0] - sos)),
+    return(pred)
+    # pred <- (mx - mn)/c(1 + exp(-rsp*(t[t <= t0] - sos)),
     #     1 + exp(-rau*(t[t >  t0] - eos))) + mn
 }
 # a3, a5 should be greater than 1
@@ -99,8 +99,8 @@ doubleLog.beck <- function(par, t) {
     rau <- par[6]
     # if (sos >= eos) return(rep(9999, length(t)))
     # try(if (eos < sos) return(rep(99, length(t))), silent = T)
-    xpred <- mn + (mx - mn)*(1/(1 + exp(-rsp*(t - sos))) + 1/(1 + exp(rau*(t - eos))) - 1)
-    return(xpred)
+    pred <- mn + (mx - mn)*(1/(1 + exp(-rsp*(t - sos))) + 1/(1 + exp(rau*(t - eos))) - 1)
+    return(pred)
 }
 attr(doubleLog.beck, 'name') <- 'doubleLog.beck'
 attr(doubleLog.beck, 'par') <- c("mn", "mx", "sos", "rsp", "eos", "rau")
@@ -124,8 +124,8 @@ doubleLog.elmore <- function(par, t) {
     eos  <- par[5] # EOS
     rau  <- par[6] # 1/rau
     m7   <- par[7]
-    xpred <- mn + (mx - m7*t)*( 1/(1 + exp(-rsp*(t-sos))) - 1/(1 + exp(-rau*(t-eos))) )
-    return(xpred)
+    pred <- mn + (mx - m7*t)*( 1/(1 + exp(-rsp*(t-sos))) - 1/(1 + exp(-rau*(t-eos))) )
+    return(pred)
 }
 
 attr(doubleLog.elmore, 'name')    <- 'doubleLog.elmore'
@@ -137,19 +137,19 @@ doubleLog.gu <- function(par, t) {
     y0  <- par[1]
     a1  <- par[2]
     a2  <- par[3]
-    sos  <- par[4]
-    rsp  <- par[5]
-    eos  <- par[6]
-    rau  <- par[7]
+    sos <- par[4]
+    rsp <- par[5]
+    eos <- par[6]
+    rau <- par[7]
     # t1  <- par[4]
     # t2  <- par[5]
     # b1  <- par[6]
     # b2  <- par[7]
     c1  <- par[8]
     c2  <- par[9]
-    # xpred <- y0 + (a1/(1 + exp(-(t - t1)/b1))^c1) - (a2/(1 + exp(-(t - t2)/b2))^c2)
-    xpred <- y0 + (a1/(1 + exp(-rsp*(t - sos)))^c1) - (a2/(1 + exp(-rau*(t - eos)))^c2)
-    return(xpred)
+    # pred <- y0 + (a1/(1 + exp(-(t - t1)/b1))^c1) - (a2/(1 + exp(-(t - t2)/b2))^c2)
+    pred <- y0 + (a1/(1 + exp(-rsp*(t - sos)))^c1) - (a2/(1 + exp(-rau*(t - eos)))^c2)
+    return(pred)
 }
 attr(doubleLog.gu, 'name')    <- 'doubleLog.gu'
 attr(doubleLog.gu, 'par')     <- c('y0', 'a1', 'a2', 'sos', 'rsp', 'eos', 'rau', 'c1', 'c2')
@@ -170,9 +170,9 @@ doubleLog.klos <- function(par, t) {
     q2 <- par[11]
     v1 <- par[12]
     v2 <- par[13]
-    xpred <- (a1*t + b1) + (a2*t^2 + b2*t + c) * (1/(1 + q1 * exp(-B1 * (t - m1)))^v1
+    pred <- (a1*t + b1) + (a2*t^2 + b2*t + c) * (1/(1 + q1 * exp(-B1 * (t - m1)))^v1
         - 1/(1 + q2 * exp(-B2 * (t - m2)))^v2)
-    return(xpred)
+    return(pred)
 }
 attr(doubleLog.klos, 'name')    <- 'doubleLog.klos'
 attr(doubleLog.klos, 'par')     <- c('a1', 'a2', 'b1', 'b2', 'c', 'B1', 'B2',
@@ -203,7 +203,7 @@ attr(doubleLog.klos, 'formula') <- expression((a1*t + b1) + (a2*t^2 + b2*t + c) 
 #' 
 #' @export
 f_goal <- function(
-    par, x, t,
+    par, y, t,
     fun = c(doubleLog.elmore,
            doubleLog.beck,
            doubleLog.klos,
@@ -214,35 +214,35 @@ f_goal <- function(
     # FUN <- match.fun(fun)
     if (!all(is.finite(par))) return(9999)
 
-    xpred <- fun(par, t = t)
+    pred <- fun(par, t = t)
     # If have no finite values, return 9999
-    if (!all(is.finite(xpred))) return(9999) # for Klos fitting
-    if (missing(w)) w <- rep(1, length(x))
+    if (!all(is.finite(pred))) return(9999) # for Klos fitting
+    if (missing(w)) w <- rep(1, length(y))
 
     if (!missing(ylu)){
         # points out of ylu should be punished!
-        w[xpred < ylu[1] | xpred > ylu[2]] <- 0
-        # xpred   <- check_fit(xpred, ylu)
+        w[pred < ylu[1] | pred > ylu[2]] <- 0
+        # pred   <- check_fit(pred, ylu)
     }
-    SSE  <- sum((x - xpred)^2 * w)
-    RMSE <- sqrt(SSE/length(x))
-    NSE  <- sum((x - xpred)^2 * w)/sum((x - mean(xpred))^2) 
+    SSE  <- sum((y - pred)^2 * w)
+    RMSE <- sqrt(SSE/length(y))
+    NSE  <- sum((y - pred)^2 * w)/sum((y - mean(pred))^2) 
 
     # 1. better handle low and high values simulation
     # xpred_2 <- sqrt(xpred_2)
     # x_2     <- sqrt(x_2)
     # xpred_2 <- log(xpred_2+1)
     # x_2     <- log(x_2+1)
-    # xpred_2 <- 1/xpred          # inverse NSE
-    # x_2     <- 1/x
+    # xpred_2 <- 1/pred          # inverse NSE
+    # x_2     <- 1/y
     
-    # xpred_2 <- xpred - mean(x)
-    # x_2     <- x - mean(x)
+    # xpred_2 <- pred - mean(y)
+    # x_2     <- y - mean(y)
     # NSE2 <- sum((x_2 - xpred_2)^2 * w)/sum((x_2 - mean(x_2))^2) #NSE
     
     # const <- ylu[2]
-    # xpred_2 <- xpred - ylu[1]; xpred_2[xpred_2 < 0] <- const
-    # x_2     <- x     - ylu[1]; x_2[x_2 < 0] <- const    
+    # xpred_2 <- pred - ylu[1]; xpred_2[xpred_2 < 0] <- const
+    # x_2     <- y     - ylu[1]; x_2[x_2 < 0] <- const    
     return(RMSE)
 }
 

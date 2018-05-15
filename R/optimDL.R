@@ -17,21 +17,23 @@
 #'
 #' @return list(pred, par, fun)
 #' @export
-optim_pheno <- function(prior, FUN, x, t, tout, optimFUN = I_optim, method,
-    w, ylu, iters = 2, wFUN = wTSM, nptperyear = 46, debug = FALSE, ...)
+optim_pheno <- function(prior, FUN, y, t, tout, optimFUN = I_optim, method,
+    w, w0, ylu, iters = 2, wFUN = wTSM, nptperyear = 46, debug = FALSE, ...)
 {
+    function_name <- attr(FUN, 'name') #curve fitting function name
     # add prior colnames
     parnames <- attr(FUN, 'par')
     colnames(prior) <- parnames
-    A <- diff(ylu) # x amplitude
+    A <- diff(ylu) # y amplitude
+
     # 1. nlfr package
     # start <- set_names(prior[1, ], attr(FUN, "par"))
     # # lower = lower, upper = upper
-    # f_nlf <- nlfb(start, resfn = function(par, t, x, fun, ...){
-    #     fun(par, t) - x
-    # }, trace = FALSE, x = x, t=t, w = w, fun = FUN, ...)
+    # f_nlf <- nlfb(start, resfn = function(par, t, y, fun, ...){
+    #     fun(par, t) - y
+    # }, trace = FALSE, y = y, t=t, w = w, fun = FUN, ...)
     # yfit  <- FUN(f_nlf$coefficients, t)
-    # plot(t, x, type = "b")
+    # plot(t, y, type = "b")
     # lines(t, yfit)
     # print(f_nlf)
 
@@ -51,7 +53,7 @@ optim_pheno <- function(prior, FUN, x, t, tout, optimFUN = I_optim, method,
     for (i in 1:iters){
         ws[[i]] <- w
         # pass debug for optimx optimization methods selection
-        opt.df  <- optimFUN(prior, FUN, x, t, tout, method, w = w, debug = debug, ...)
+        opt.df  <- optimFUN(prior, FUN, y, t, tout, method, w = w, debug = debug, ...)
         # colnames(opt.df) <- c(parnames, colnames(opt.df)[(length(parnames) + 1):ncol(opt.df)])
         if (debug){
             fprintf('Initial parameters:\n')
@@ -68,7 +70,7 @@ optim_pheno <- function(prior, FUN, x, t, tout, optimFUN = I_optim, method,
             if (opt.df$convcode[best] != 0) {
                 # repeat with more maximum iterations if it did not converge
                 par <- opt.df[best, parnames] %>% as.matrix #best par generally
-                opt <- optimFUN(par, FUN, x, t, tout, method, w = w, debug = debug, ...)
+                opt <- optimFUN(par, FUN, y, t, tout, method, w = w, debug = debug, ...)
             } else { #if (opt.df$convcode[best] == 0)
                 opt <- opt.df[best, ]
             }
@@ -86,10 +88,9 @@ optim_pheno <- function(prior, FUN, x, t, tout, optimFUN = I_optim, method,
 
                 # fixed 04 March, 2018; 
                 w <- tryCatch(
-                    wFUN(x, FUN(par, t), w, i, nptperyear, ...),
+                    wFUN(y, FUN(par, t), w, i, nptperyear, ...),
                     #nptperyear, wfact = 0.5)
                     error = function(e) {
-                        function_name <- attr(FUN, 'name')
                         message(sprintf('[%s]: %s', function_name, e$message))
                         return(w) #return original w
                     })
@@ -103,16 +104,9 @@ optim_pheno <- function(prior, FUN, x, t, tout, optimFUN = I_optim, method,
     
     # 02. uncertain part also could add here
     # returned object FUN need to be futher optimized
-    
-    # constrain that ranges of t and tout are same. 
-    t_com <- intersect(t, tout)
-    I_org <- match(t_com, t)
-
-    structure(list(data = tibble(x = x[I_org], t = t_com),
-        tout = tout, fits = fits, ws = ws,
+    structure(list(tout = tout, fits = fits, ws = ws,
         par  = par, fun = FUN), class = 'phenofit')
 }
-
 
 #' I_optim
 #'
@@ -123,9 +117,9 @@ optim_pheno <- function(prior, FUN, x, t, tout, optimFUN = I_optim, method,
 #' @param method was only used for `p_optim` function. Other pfun, e.g. p_nlm, p_nlminb
 #'  will ignore it.
 #' @export
-I_optim <- function(prior, FUN, x, t, tout, pfun = p_optim, method = "BFGS",...){
+I_optim <- function(prior, FUN, y, t, tout, pfun = p_optim, method = "BFGS",...){
     opt.lst <- alply(prior, 1, pfun, method = method,
-        objective = f_goal, fun = FUN, x = x, t = t, ...)
+        objective = f_goal, fun = FUN, y = y, t = t, ...)
     opt.df <- ldply(opt.lst, with, .id = NULL,
         expr = c(par, value = value,
             fevals = fevals, gevals = gevals, niter  = nitns,
@@ -149,10 +143,10 @@ methods <- c('BFGS','CG','Nelder-Mead','L-BFGS-B','nlm','nlminb',
 #' @return result same as what optimx function returned
 #' @import optimx
 #' @export
-I_optimx <- function(prior, FUN, x, t, tout, method, debug = FALSE, ...){
+I_optimx <- function(prior, FUN, y, t, tout, method, debug = FALSE, ...){
     # debug = TRUE
     opt.df <- adply(prior, 1, optimx, .id = NULL,
-        fn = f_goal, fun = FUN, x = x, t = t,
+        fn = f_goal, fun = FUN, y = y, t = t,
         method = method, ...,
         control = list(maxit = 1000, all.methods = debug, dowarn = FALSE)
     )
@@ -164,7 +158,7 @@ I_optimx <- function(prior, FUN, x, t, tout, method, debug = FALSE, ...){
         df <- opt.df[, c("method", "value", "xtimes", "convcode")]#
         # df %<>% reshape2::melt(id.vars = "method", variable.name = "index")
         # df$method %<>% as.factor()
-        # ggplot(df, aes(x = method, y = value*1000, fill = method)) +
+        # ggplot(df, aes(y = method, y = value*1000, fill = method)) +
         #     geom_point() +
         #     scale_y_log10() +
         #     geom_boxplot(outlier.size=2) +
@@ -260,7 +254,7 @@ p_nlm <- function(par0, objective, ...){
     npar <- length(par0)
     ans <- try(nlm(start = par0, resfn =objective, ..., iterlim=1000, print.level=0), silent=TRUE)
     # ans <- try(nlm(f=objective, p=par0, ..., iterlim=1000, print.level=0), silent=TRUE)
-    # ans <- nlm(f_goal, par0, x = x, t = t, fun = doubleLog.gu)
+    # ans <- nlm(f_goal, par0, y = y, t = t, fun = doubleLog.gu)
     if (class(ans)[1] != "try-error") {
         ans$convcode <- ans$code
         if (ans$convcode == 1 || ans$convcode == 2 || ans$convcode == 3)

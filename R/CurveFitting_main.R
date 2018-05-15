@@ -26,6 +26,7 @@ curvefits <- function(INPUT, brks, nptperyear = 46,
                       lambda, south = FALSE,
                       extend_month = 3, minT = 0, 
                       methods = c('AG', 'zhang', 'beck', 'elmore', 'Gu'),
+                      qc,
                       debug = FALSE, ...)
 {
     t    <- INPUT$t
@@ -35,7 +36,8 @@ curvefits <- function(INPUT, brks, nptperyear = 46,
     # Tn for background module
     Tn <- INPUT$Tn #if has no Tn, NULL will be return
     has_Tn <- ifelse(is_empty(Tn), F, T)
-
+    y0 <- INPUT$y #original y
+    
     # title(x$site[1])
     if (all(is.na(INPUT$y))) return(NULL)
     # also constrained in `optim_pheno` function
@@ -70,7 +72,8 @@ curvefits <- function(INPUT, brks, nptperyear = 46,
             ti   <- doys[I_extend]
             yi   <- INPUT$y[I_extend]
             wi   <- w[I_extend]
-
+            # original weights, put in w0 incurvefitting is unwisdom, but for plot
+            w0   <- qc[I_extend] #INPUT$w
             # add background module here, 20180513
             if (has_Tn){
                 Tni        <- Tn[I_extend]
@@ -83,9 +86,13 @@ curvefits <- function(INPUT, brks, nptperyear = 46,
             }
 
             tout <- doys[I] %>% {first(.):last(.)} # make sure return the same length result.
-            fit <- curvefit(yi, ti, tout, nptperyear = nptperyear,
-                            w = wi, ylu = INPUT$ylu, iters = iters,
-                            methods = methods, meth = 'BFGS', wFUN = wFUN, ...)
+            fit  <- curvefit(yi, ti, tout, nptperyear = nptperyear,
+                             w = wi, w0 = w0, ylu = INPUT$ylu, iters = iters,
+                             methods = methods, meth = 'BFGS', wFUN = wFUN, ...)
+            # add original input data here, global calculation can comment this line
+            data <- tibble(y = y0[I], t = doys[I], w = qc[I]) #INPUT$w[I]
+            for (j in seq_along(fit)) fit[[j]]$data <- data
+
             #if too much missing values
             if (sum(wi > 0.2)/length(wi) < 0.3){
                 fit %<>% map(function(x){

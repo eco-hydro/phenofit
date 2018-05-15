@@ -4,11 +4,11 @@
 \alias{curvefit}
 \title{curve fit vegetation index (VI) time-series}
 \usage{
-curvefit(x, t = index(x), tout = t, meth = "BFGS", methods = c("spline",
+curvefit(y, t = index(y), tout = t, meth = "BFGS", methods = c("spline",
   "beck", "elmore", "klos", "AG", "zhang"), ...)
 }
 \arguments{
-\item{x}{Vegetation time-series index, numeric vector}
+\item{y}{Vegetation time-series index, numeric vector}
 
 \item{t}{The corresponding doy of x}
 

@@ -6,7 +6,7 @@
 \usage{
 curvefits(INPUT, brks, nptperyear = 46, wFUN = wTSM, iters = 2, lambda,
   south = FALSE, extend_month = 3, minT = 0, methods = c("AG", "zhang",
-  "beck", "elmore", "Gu"), debug = FALSE, ...)
+  "beck", "elmore", "Gu"), qc, debug = FALSE, ...)
 }
 \arguments{
 \item{extend_month}{For every growing season, previous and afterwards 

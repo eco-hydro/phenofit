@@ -12,23 +12,23 @@ statistic.phenofit <- function(fit){
     I_org <- match(ti, t)
     I_sim <- match(ti, tout)
 
-    x     <- fit$data$x[I_org]
-    xpred <- last(fit$fits)[I_sim]
+    y     <- fit$data$y[I_org]
+    pred  <- last(fit$fits)[I_sim]
 
     R      <- NA
     pvalue <- NA
-    n      <- length(x)
+    n      <- length(y)
 
     tryCatch({
-        cor.obj <- cor.test(x, xpred, use = "complete.obs")
+        cor.obj <- cor.test(y, pred, use = "complete.obs")
         R       <- cor.obj$estimate[[1]]
         pvalue  <- cor.obj$p.value
     }, error = function(e){
         message(e$message)
     })
 
-    rmse  <- sqrt(sum((x - xpred)^2)/length(xpred))
-    nash  <- 1 - sum((xpred - x)^2) / sum((x - mean(x))^2)
+    rmse  <- sqrt(sum((y - pred)^2)/length(pred))
+    nash  <- 1 - sum((pred - y)^2) / sum((y - mean(y))^2)
     return(c(rmse = rmse, nash = nash, R = R, pvalue = pvalue, n = n))
 }
 
@@ -84,7 +84,7 @@ D1.phenofit <- function(fit, numDeriv = FALSE, smspline = FALSE, ...){
         }
     }
     der1[is.infinite(der1)] <- NA
-    #rule = 2, means x range out of xlim also could get a approximate value
+    #rule = 2, means y range out of xlim also could get a approximate value
     if (any(is.na(der1))) der1 %<>% na.approx(rule = 2)
     return(der1)
 }
@@ -158,7 +158,7 @@ plot.phenofit <- function(fit){
 
     multi_p <- max(par()$mfrow) == 1
     op <- ifelse(multi_p, par(mfrow = c(2, 4), oma = c(0, 0, 1, 0)), par())
-    plot(fit$data$t, fit$data$x,
+    plot(fit$data$t, fit$data$y,
         type= "b", pch = 20, cex = 1.3, col = "grey",
         main = "curve fitting VI", xlab = "Index", ylab = "VI")
     lines(t, pred); grid()

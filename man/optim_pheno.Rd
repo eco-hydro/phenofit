@@ -4,7 +4,7 @@
 \alias{optim_pheno}
 \title{optim_pheno}
 \usage{
-optim_pheno(prior, FUN, x, t, tout, optimFUN = I_optim, method, w, ylu,
+optim_pheno(prior, FUN, y, t, tout, optimFUN = I_optim, method, w, w0, ylu,
   iters = 2, wFUN = wTSM, nptperyear = 46, debug = FALSE, ...)
 }
 \value{

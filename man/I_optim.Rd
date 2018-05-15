@@ -4,7 +4,7 @@
 \alias{I_optim}
 \title{I_optim}
 \usage{
-I_optim(prior, FUN, x, t, tout, pfun = p_optim, method = "BFGS", ...)
+I_optim(prior, FUN, y, t, tout, pfun = p_optim, method = "BFGS", ...)
 }
 \arguments{
 \item{pfun}{with prefixion of 'p_', pfun was self modified and unified

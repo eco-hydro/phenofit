@@ -4,7 +4,7 @@
 \alias{I_optimx}
 \title{I_optimx}
 \usage{
-I_optimx(prior, FUN, x, t, tout, method, debug = FALSE, ...)
+I_optimx(prior, FUN, y, t, tout, method, debug = FALSE, ...)
 }
 \arguments{
 \item{method}{Method passed to optimx function, which can be one of:

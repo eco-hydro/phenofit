@@ -92,23 +92,23 @@ check_fit2 <- function(y, ylu){
 #' On the contrary, smooth.spline with a low freedom can smooth well.
 #'
 #' @export
-splinefit <- function(x, t = index(x), tout = t, plot = FALSE, df.factor = 0.06, ...){
-    # xpred.out <- spline(t, x, xout = tout)$y %>% zoo(., tout)
-    n <- length(x)
-    # if n < 40, means x was satellite VI
+splinefit <- function(y, t = index(y), tout = t, plot = FALSE, df.factor = 0.06, ...){
+    # xpred.out <- spline(t, y, xout = tout)$y %>% zoo(., tout)
+    n <- length(y)
+    # if n < 40, means y was satellite VI
     # if n > 40, means daily data
     df.factor <- ifelse (n <= 46, 1/3, df.factor)
     freedom   <- pmax(df.factor * n, 15)
-    fit       <- smooth.spline(t, x, df = freedom)
+    fit       <- smooth.spline(t, y, df = freedom)
     xpred.out <- predict(fit, tout)$y %>% zoo(., tout)
-    structure(list(data = list(x = x, t = t),
+    structure(list(data = list(y = y, t = t),
         pred = xpred.out, par = NULL, fun = NULL), class = "phenofit")
 }
 
 #' @export
-FitDL.Zhang <- function(x, t = index(x), tout = t, optimFUN = I_optimx,
+FitDL.Zhang <- function(y, t = index(y), tout = t, optimFUN = I_optimx,
                         method = 'nlm', w, ...){
-    e <- Init_param(x, t, w)
+    e <- Init_param(y, t, w)
 
     FUN    <- doubleLog.zhang
     prior  <- rbind(
@@ -120,13 +120,13 @@ FitDL.Zhang <- function(x, t = index(x), tout = t, optimFUN = I_optimx,
     lower  <- sapply(param_lims, `[`, 1)
     upper  <- sapply(param_lims, `[`, 2)
     
-    optim_pheno(prior, FUN, x, t, tout, optimFUN, method, w, lower = lower, upper = upper, ...)#quick return
+    optim_pheno(prior, FUN, y, t, tout, optimFUN, method, w, lower = lower, upper = upper, ...)#quick return
 }
 
 #' @export
-FitAG <- function(x, t = index(x), tout = t, FUN, optimFUN = I_optimx,
+FitAG <- function(y, t = index(y), tout = t, FUN, optimFUN = I_optimx,
     method = 'nlminb', w, ...){
-    e <- Init_param(x, t, w)
+    e <- Init_param(y, t, w)
     # print(ls.str(envir = e))
     
     FUN <- doubleAG
@@ -139,14 +139,14 @@ FitAG <- function(x, t = index(x), tout = t, FUN, optimFUN = I_optimx,
     
     lower  <- c(lims$t0[1], lims$mn[1], lims$mx[1], 0.1*half, 2, 0.1*half, 2)
     upper  <- c(lims$t0[2], lims$mn[2], lims$mx[2], 1.4*half, 8, 1.4*half, 8)
-    optim_pheno(prior, FUN, x, t, tout, optimFUN, method, w, lower = lower, upper = upper, ...)#quick return
+    optim_pheno(prior, FUN, y, t, tout, optimFUN, method, w, lower = lower, upper = upper, ...)#quick return
 }
 
 #'
 #' Fitting double logistics, asymmetric gaussian functions
 #'
-#' @param x input vegetation index time-series.
-#' @param t the corresponding doy(day of year) of x.
+#' @param y input vegetation index time-series.
+#' @param t the corresponding doy(day of year) of y.
 #' @param tout the output curve fitting time-series time steps.
 #' @param optimFUN optimization function to solve curve fitting functions'
 #' parameters. It's should be `optimx_fun`, or `optim_p`.
@@ -161,17 +161,17 @@ FitAG <- function(x, t = index(x), tout = t, FUN, optimFUN = I_optimx,
 #'      https://doi.org/10.1016/j.rse.2005.10.021
 #' 
 #' @examples
-#' FitDL.Beck  (x, t, tout, optimFUN = optim_p, pfun = p_nlminb)
-#' FitDL.Elmore(x, t, tout, optimFUN = optim_p, pfun = p_nlminb)
-#' FitDL.Gu    (x, t, tout, optimFUN = optim_p, pfun = p_nlminb)
-#' FitDL.Klos  (x, t, tout, optimFUN = optim_p, pfun = p_optim, method = 'BFGS')
+#' FitDL.Beck  (y, t, tout, optimFUN = optim_p, pfun = p_nlminb)
+#' FitDL.Elmore(y, t, tout, optimFUN = optim_p, pfun = p_nlminb)
+#' FitDL.Gu    (y, t, tout, optimFUN = optim_p, pfun = p_nlminb)
+#' FitDL.Klos  (y, t, tout, optimFUN = optim_p, pfun = p_optim, method = 'BFGS')
 #'
-#' FitDL.Zhang (x, t, tout, optimFUN = optim_p, pfun = p_nlm)
-#' FitAG (x, t, tout, optimFUN = optim_p, pfun = p_nlminb)
+#' FitDL.Zhang (y, t, tout, optimFUN = optim_p, pfun = p_nlm)
+#' FitAG (y, t, tout, optimFUN = optim_p, pfun = p_nlminb)
 #' @export
-FitDL.Beck <- function(x, t = index(x), tout = t, optimFUN = I_optimx,
+FitDL.Beck <- function(y, t = index(y), tout = t, optimFUN = I_optimx,
     method = 'nlminb', w, ...) {
-    e <- Init_param(x, t, w)
+    e <- Init_param(y, t, w)
 
     FUN   <- doubleLog.beck
     prior <- rbind(
@@ -182,7 +182,7 @@ FitDL.Beck <- function(x, t = index(x), tout = t, optimFUN = I_optimx,
     lower  <- sapply(param_lims, `[`, 1)
     upper  <- sapply(param_lims, `[`, 2)
 
-    optim_pheno(prior, FUN, x, t, tout, optimFUN, method, w, lower = lower, upper = upper, ...)#return
+    optim_pheno(prior, FUN, y, t, tout, optimFUN, method, w, lower = lower, upper = upper, ...)#return
 }
 # mn + (mx - mn)*(1/(1 + exp(-rsp*(t - sos))) + 1/(1 + exp(rau*(t - eos))))
 # attr(doubleLog.beck, 'par') <- c("mn", "mx", "sos", "rsp", "eos", "rau")
@@ -194,9 +194,9 @@ FitDL.Beck <- function(x, t = index(x), tout = t, optimFUN = I_optimx,
 #'      length in mid-Atlantic forests. Glob. Chang. Biol. 18, 656–674. 
 #'      https://doi.org/10.1111/j.1365-2486.2011.02521.x
 #' @export
-FitDL.Elmore <- function(x, t = index(x), tout = t, optimFUN = I_optimx,
+FitDL.Elmore <- function(y, t = index(y), tout = t, optimFUN = I_optimx,
     method = 'nlminb', w, ...) {
-    e <- Init_param(x, t, w)
+    e <- Init_param(y, t, w)
 
     # doy_q  <- quantile(t, c(0.1, 0.25, 0.5, 0.75, 0.9), na.rm = TRUE)
     FUN   <- doubleLog.elmore
@@ -210,7 +210,7 @@ FitDL.Elmore <- function(x, t = index(x), tout = t, optimFUN = I_optimx,
     lower  <- c(sapply(param_lims, `[`, 1), 0  )
     upper  <- c(sapply(param_lims, `[`, 2), Inf)
     
-    optim_pheno(prior, FUN, x, t, tout, optimFUN, method, w, lower = lower, upper = upper, ...)#return
+    optim_pheno(prior, FUN, y, t, tout, optimFUN, method, w, lower = lower, upper = upper, ...)#return
 }
 
 # c(mn, mx - mn, doy[2], half*0.1, doy[4], half*0.1, 0.002),
@@ -232,9 +232,9 @@ FitDL.Elmore <- function(x, t = index(x), tout = t, optimFUN = I_optimx,
 #' [2]. https://github.com/kongdd/phenopix/blob/master/R/FitDoubleLogGu.R
 #' 
 #' @export
-FitDL.Gu <- function(x, t = index(x), tout = t, optimFUN = I_optimx, 
+FitDL.Gu <- function(y, t = index(y), tout = t, optimFUN = I_optimx, 
     method = "nlminb", w, ...) {
-    e <- Init_param(x, t, w)
+    e <- Init_param(y, t, w)
 
     a  <- ampl
     b1 <- 0.1
@@ -255,21 +255,21 @@ FitDL.Gu <- function(x, t = index(x), tout = t, optimFUN = I_optimx,
     lower  <- c(sapply(param_lims, `[`, 1), 0  , 0)
     upper  <- c(sapply(param_lims, `[`, 2), Inf, Inf)
     
-    optim_pheno(prior, FUN, x, t, tout, optimFUN, method, w, lower = lower, upper = upper, ...)#return
+    optim_pheno(prior, FUN, y, t, tout, optimFUN, method, w, lower = lower, upper = upper, ...)#return
 }
 
 #' @export
-FitDL.Klos <- function(x, t = index(x), tout = t, optimFUN = I_optimx,
+FitDL.Klos <- function(y, t = index(y), tout = t, optimFUN = I_optimx,
     method = 'BFGS', w, ...) {
-    e <- Init_param(x, t, w)
+    e <- Init_param(y, t, w)
 
     a1 <- 0
     a2 <- 0  #ok
     b1 <- mn #ok
     b2 <- 0  #ok
-    c  <- 0.2 * max(x)  # ok
+    c  <- 0.2 * max(y)  # ok
     ## very slightly smoothed spline to get reliable maximum
-    # tmp <- smooth.spline(x, df = 0.5 * length(x))#, find error: 20161104, fix tomorrow
+    # tmp <- smooth.spline(y, df = 0.5 * length(y))#, find error: 20161104, fix tomorrow
 
     B1 <- 4/(doy.mx - doy[1])
     B2 <- 3.2/(doy[2] - doy.mx)
@@ -289,21 +289,21 @@ FitDL.Klos <- function(x, t = index(x), tout = t, optimFUN = I_optimx,
         c(a1, a2, b1, b2, c, B1, B2, m1.bis, m2, q1, q2, v1, v2),
         c(a1, a2, b1, b2, c, B1, B2, m1, m2.bis, q1, q2, v1, v2),
         c(a1, a2, b1, b2, c, B1, B2, m1.bis, m2, q1, q2, v1, v2))
-    optim_pheno(prior, FUN, x, t, tout, optimFUN, method, w, ...)#quickly return
+    optim_pheno(prior, FUN, y, t, tout, optimFUN, method, w, ...)#quickly return
 }
 
 #' @export
-Init_param <- function(x, t, w){
-    if (any(is.na(x)))
+Init_param <- function(y, t, w){
+    if (any(is.na(y)))
         stop("NA in the time series are not allowed: fill them with e.g. na.approx()")
-    if (missing(w)) w <- rep(1, length(x))
+    if (missing(w)) w <- rep(1, length(y))
 
     w_min  <- 0.5 # weights greater than w_min are treated as good values.
-    mx     <- max(x[w >= w_min], na.rm = TRUE)
-    mn     <- min(x[w >= w_min], na.rm = TRUE)
-    avg    <- mean(x, na.rm = TRUE)
+    mx     <- max(y[w >= w_min], na.rm = TRUE)
+    mn     <- min(y[w >= w_min], na.rm = TRUE)
+    avg    <- mean(y, na.rm = TRUE)
 
-    doy.mx <- t[which.max(x)]
+    doy.mx <- t[which.max(y)]
     # fixed 06 March, 2018; Avoid doy.mx not in the range of doy
     # doy    <- quantile(t, c(0.25, 0.75), na.rm = TRUE),
     doy  <- c((doy.mx + first(t))/2, (last(t) + doy.mx) /2)
