@@ -1,5 +1,28 @@
 library(lubridate)
+library(data.table)
+library(magrittr)
+library(phenofit)
+library(plyr)
+library(Cairo)
+load("Y:/R/phenofit/data/phenofit_MultipleINPUT_flux212.rda")
+stations212 <- fread("C:/Users/kon055/Google Drive/Github/data/phenology/station/flux-212.txt")
 
+df <- lst$MOD13A1 %>%
+    merge(stations212[, .(site, lat, IGBP)], by = "site") %>%
+    reorder_name(c("site", "IGBP", "lat", "long"))
+df <- df[date >= ymd(20010101), ]
+
+sites <- unique(df$site)
+# rename variable name as y
+varname <- "EVI_500m"
+I_var   <- which(colnames(df) == varname[1])
+colnames(df)[I_var] <- "y"
+
+# remap SummaryQA factor level, plot_phenofit also use this variable
+if ('SummaryQA' %in% colnames(df)){
+    df$SummaryQA %<>% factor() %>% mapvalues(c("0", "1", "2", "3"), c(" good", " margin", " snow&ice", " cloud"))
+}
+## -----------------------------------------------------------------------------
 ratio    <- 1.8
 lambda   <- 2
 sites_sm <- sites[c(1, 3, 4, 6, 9)]
@@ -9,15 +32,44 @@ lambda = 2
 ps   <- list()
 fits <- list()
 
+
+## test seasons
+library(Cairo)
+CairoPDF("test-season.pdf", 10, 6*2)
+
+op <- par(mfrow = c(6, 1),
+          oma = c(1, 2, 2, 1), mar = c(3, 2, 1, 1), xaxt = "n") #, yaxt = "n",
 for (i in seq_along(sites)){
     runningId(i)
     sitename <- sites[i]
 
     d <- df[site == sitename , ]
+    # d$w <- 1
     # Check input data and initial parameters for phenofit
     INPUT <- check_input(d$date, d$y, d$w, trim = T, maxgap = nptperyear / 4, alpha = 0.02)
     # The detailed information of those parameters can be seen in `season`.
-    brks <- season(INPUT, lambda, nptperyear, iters = 3, wFUN = wFUN, IsPlot = F,
+    brks <- season(INPUT, lambda, nptperyear, iters = 3, wFUN = wFUN, IsPlot = T,
+                   south = d$lat[1] < 0,
+                   Aymin_less = 0.6, ymax_min = ymax_min,
+                   max_MaxPeaksperyear =2.5, max_MinPeaksperyear = 3.5) #, ...
+    titlename <- sprintf('(%d) %s, %s', i, d$site[1], d$IGBP[1])
+    title(titlename)
+}
+dev.off()
+
+# test seasons end --------------------------------------------------------
+
+
+for (i in seq_along(sites)){
+    runningId(i)
+    sitename <- sites[i]
+
+    d <- df[site == sitename , ]
+    d$w <- 1
+    # Check input data and initial parameters for phenofit
+    INPUT <- check_input(d$date, d$y, d$w, trim = T, maxgap = nptperyear / 4, alpha = 0.02)
+    # The detailed information of those parameters can be seen in `season`.
+    brks <- season(INPUT, lambda, nptperyear, iters = 3, wFUN = wFUN, IsPlot = T,
                    south = d$lat[1] < 0,
                    Aymin_less = 0.6, ymax_min = ymax_min,
                    max_MaxPeaksperyear =2.5, max_MinPeaksperyear = 3.5) #, ...
@@ -47,12 +99,12 @@ for (i in seq_along(sites)){
               strip.text = element_blank()
               ) +
         coord_cartesian(xlim = c(ymd(20000101), ymd(20161231)))
-    if (i < length(sites)){
-        p <- p + theme(
-            axis.title.x = element_blank(),
-            axis.text.x  = element_blank()
-        )
-    }
+    # if (i < length(sites)){
+    #     p <- p + theme(
+    #         axis.title.x = element_blank(),
+    #         axis.text.x  = element_blank()
+    #     )
+    # }
     # temp <- ExtractPheno(fit$fits$ELMORE, IsPlot = T)
     ps[[i]] <- p
 }

@@ -1,6 +1,6 @@
-whitV <- function(x, IsPlot = TRUE){
+whitV <- function(d, nptperyear, IsPlot = TRUE){
     lambdas <- 10^(seq(0.1, 6, 0.1))
-    INPUT <- check_input(x$date, x$GPP_NT, trim = T, maxgap = nptperyear / 4)
+    INPUT <- check_input(d$date, d$y, d$w, trim = T, maxgap = nptperyear / 4)
     fits  <- whitsmw2(INPUT$y, INPUT$w, INPUT$ylu, nptperyear, iters=1, lambda=lambdas, validation = T)
 
     pen <- map_dbl(fits, "pen")

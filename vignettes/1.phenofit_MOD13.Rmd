@@ -46,7 +46,7 @@ library(plyr) # for mapvalues
 
 # Global parameters for MOD13A1: 
 lambda     <- 5    # The parameter for Whittaker
-ymax_min   <- 0.2  # For a growing season, the maximum ymax shoud be greater than `ymax_min` 
+ymax_min   <- 0.1  # For a growing season, the maximum ymax shoud be greater than `ymax_min` 
 nptperyear <- 23   # How many points for a single year
 wFUN       <- wTSM # Weights updating function, could be one of `wTSM`, 'wBisquare', `wChen` and `wSELF`. 
 
@@ -56,8 +56,8 @@ df <- dt_MOD13A1
 df[, w := qc_summary(SummaryQA)]   # Initial weights
 
 # rename variable name as y
-varname <- "EVI_500m"
-I_var   <- which(colnames(df) == varname[1])
+varnames <- c("date", "EVI")
+I_var    <- match(varnames,colnames(df))
 colnames(df)[I_var] <- "y"
 
 # remap SummaryQA factor level, plot_phenofit also use this variable

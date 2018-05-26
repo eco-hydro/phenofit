@@ -22,35 +22,57 @@
 #' @export
 check_input <- function(t, y, w, Tn = NULL, minT= 0, missval, maxgap = 10, trim = TRUE, alpha = 0.01){
     if (missing(w)) w <- rep(1, length(y))
-    w[is.na(y)] <- 0
     
     # ylu   <- quantile(y[w == 1], c(alpha/2, 1 - alpha), na.rm = T) #only consider good value
     # ylu    <- range(y, na.rm = T)
-    
+    wmin <- 0.1
     # only remove low values
-    ylu   <- c(pmax( quantile(y[w == 1], alpha/2), 0), 
-               max( y[w == 1], na.rm = T))
-
+    w_critical <- 0
+    if (sum(w == 1) >= length(y) * 0.2){
+        w_critical <- 1
+    }else if (sum(w >= 0.5) > length(y) * 0.1){
+        w_critical <- 0.5
+    }
+    y_good <- y[w >= w_critical & !is.na(y)]
+    ylu    <- c(pmax( quantile(y_good, alpha/2), 0), 
+               max ( y_good, na.rm = T))
     # adjust weights according to ylu
-    if (trim){
-        I_trim    <- y < ylu[1] #| y > ylu[2]
-        w[I_trim] <- 0
-    }
-
+    # if (trim){
+    #     I_trim    <- y < ylu[1] #| y > ylu[2]
+    #     w[I_trim] <- wmin
+    # }
     # NAN values check
-    if (missing(missval)){
+    # if (missing(missval)) 
         missval <- ylu[1] #- diff(ylu)/10
-        # missval <- -1
-    }
+    
+    # generally, w == 0 mainly occur in winter. So it's seasonable to be assigned as minval 
+    y[w <= wmin]  <- missval # na is much appropriate, na.approx will replace it. 
+    # values out of range are setted to wmin weight.
+    w[y < ylu[1] | y > ylu[2]] <- wmin 
+    # based on out test marginal extreme value also often occur in winter
+    y[y < ylu[1]]                  <- missval 
+    y[y > ylu[2] & w < w_critical] <- missval 
+    
+    ## 2. rm spike values
+    std   <- sd(y, na.rm = T)
+    ymean <- cbind(y[c(1, 1:(n - 2), n-1)], y[c(2, 3:n, n)]) %>% rowMeans(na.rm = T)
+    # y[abs(y - ymean) > std]
+    # which(abs(y - ymean) > std)
+    I_spike <- which(abs(y - ymean) > 2*std & w < w_critical) # 95.44% interval
+    y[I_spike] <- NA#missval
 
+    ## 3. gap-fill NA values
+    w[is.na(w) | is.na(y)] <- wmin
+    w[w <= wmin]  <- wmin
+    # left missing values were interpolated by `na.approx`
     y <- na.approx(y, maxgap = maxgap, na.rm = FALSE) 
+    # If still have na values after na.approx, just replace it with `missval`.
+    y[is.na(y)] <- missval
+
     if (!is_empty(Tn)){
         Tn <- na.approx(Tn, maxgap = maxgap, na.rm = FALSE)     
     }
-    # If still have na values after na.approx, just replace it with `missval`.
-    y[is.na(y)] <- missval
-    list(t = t, 
-        y = y, w = w, Tn = Tn, ylu = ylu)#quickly return
+    list(t = t, y = y, w = w, Tn = Tn, ylu = ylu)#quickly return
 }
 
 #' check_fit
