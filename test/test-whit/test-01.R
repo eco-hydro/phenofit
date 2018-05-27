@@ -9,7 +9,7 @@ for (i in seq_along(sites)){
     runningId(i)
     sitename <- sites[i]#; grp = 1
     d    <- df[site == sitename]
-    d <- d[1:(23*3), ]
+    d    <- d[1:(23*3), ]
     t    <- d$t
     y    <- d$y
     w    <- d$w
@@ -48,7 +48,6 @@ for (i in seq_along(sites)){
     } else{
         message(str_title)
     }
-
 }
 
 dev.off()

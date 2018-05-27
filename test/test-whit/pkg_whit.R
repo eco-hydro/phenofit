@@ -15,7 +15,6 @@ sites <- unique(df$site)
 
 IsPlot = TRUE
 
-
 x <- map_df(res, ~.x[c("site", "lat", "IGBP", "lambda")])
 x$lambda %<>% log10()
 
