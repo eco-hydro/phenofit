@@ -1,23 +1,23 @@
 #' Weighted HANTS SMOOTH
-#' 
+#'
 #' Modified by Dongdong Kong, 2018-05-29
-#' 
-#' @param ni nr. of images (total number of actual samples of the time
-#           series)
-#' @param nptperyear length of the base period, measured in virtual samples
-#           (days, dekads, months, etc.). nptperyear in timesat.
+#'
+#' @param ni nr. of images (total number of actual samples of the time series)
+#' @param periodlen length of the base period, measured in virtual samples
+#'           (days, dekads, months, etc.). nptperyear in timesat.
+#' @param nptperyear points per year
 #' @param nf number of frequencies to be considered above the zero frequency
 #' @param y  array of input sample values (e.g. NDVI values)
 #' @param ts array of size ni of time sample indicators
-#           (indicates virtual sample number relative to the base period)
-#           numbers in array ts maybe greater than nptperyear
-#           If no aux file is used (no time samples), we assume ts(i)= i,
-#           where i=1, ..., ni
+#'           (indicates virtual sample number relative to the base period)
+#'           numbers in array ts maybe greater than nptperyear
+#'           If no aux file is used (no time samples), we assume ts(i)= i,
+#'           where i=1, ..., ni
 #' @param ylu [low, high] of time-series y (values outside the valid range are rejeced
-#           right away)
+#'           right away)
 #' @usage
 #' HANTS(nptperyear,nf,y,ts,HiLo,low,high,fet,dod,delta)
-#' 
+#'
 #' @author
 #' Wout Verhoef, NLR, Remote Sensing Dept. June 1998
 #' Mohammad Abouali (2011), Converted to MATLAB
@@ -27,64 +27,69 @@
 #'         the curve
 #' phi returned array of phases, first element is zero
 #' yr array holding reconstructed time series
+#' @export
 # Modified:
 #   Apply suppression of high amplitudes for near-singular case by
 #   adding a number delta to the diagonal elements of matrix A,
 #   except element (1,1), because the average should not be affected
 #
 #   Output of reconstructed time series in array yr
-#   
+#
 #   Change call and input arguments to accommodate a base period length (nptperyear)
 #   All frequencies from 1 (base period) until nf are included
-HANTS2 <- function(y, ts, w, nf = 3, ylu, nptperyear, iters = 2, wFUN = wTSM, wmin = 0.1){
-    # [yr, amp, phi]
-    n <- length(y) 
+wHANTS <- function(y, t, w, nf = 3, ylu, periodlen = 365, nptperyear,
+                   iters = 2, wFUN = wTSM, wmin = 0.1, ...){
+    n    <- length(y)
     ncol <- min(2*nf+1, n)
 
     mat <- array(0, dim = c(n, ncol) )
     amp <- numeric(nf+1)
     phi <- numeric(nf+1)
     yz  <- numeric(n)
-    zr <- numeric(ni*2+1)
 
-    ang = 2.*pi*(0:nptperyear-1)/nptperyear
-    cs  = cos(ang)
-    sn  = sin(ang)
+    ang <- 2*pi*(0:(periodlen-1))/periodlen
+    cs  <- cos(ang)
+    sn  <- sin(ang)
 
-    mat[1, ] =1.0
+    mat[, 1] =1.0
     #  f*2*pi*[0:nptperyear-1]/nptperyear mod replace it
     for (i in 1:nf){
-        I = 1 + mod(i * (ts - 1), nptperyear)
-        mat[2*i  , ] = cs[I]
-        mat[2*i+1, ] = sn[I]
+        I = 1 + (i*(t - 1)) %% periodlen
+        mat[, 2*i  ] = cs[I]
+        mat[, 2*i+1] = sn[I]
     }
 
+    fits <- list()
     for (i in 1:iters){
         w[ y<ylu[1] | y>ylu[2] ] <- wmin
         za = t(mat) %*% (w*y)
-        
-        A = t(mat*w) * mat # mat' * diag(w) * mat
+
+        A = t(mat*w) %*% mat # mat' * diag(w) * mat
         # % A = A + diag(ones(nr,1))*delta
         # % A(1,1) = A(1,1) - delta
-        zr = solve(A, za)
-        ypred = mat %*% zr
-        w <- wFUN(y, ypred, w, iters, nptperyear, ...)
+        b <- solve(A, za) # coefficients
+        z <- mat %*% b; z <- z[, 1]
+        fits[[i]] <- z
+        wnew <- wFUN(y, z, w, 1, nptperyear, ...)
+        # print(unique(wnew - w))
+        w <- wnew
         # w = wFUN(y, yr, w, 0.5, i, nptperyear) #%wfact = 0.5
     }
 
-    amp[1]   = zr[1]
+    amp[1]   = b[1]
     phi[1]   = 0.0
-    # % zr(ni+1) = 0.0
-    i   <- t( seq(2,ncol, 2) )
-    ifr <-  (i+2)/2
-    ra  <- zr(i)
-    rb  <- zr(i+1)
-    amp[ifr] = sqrt(ra.*ra+rb.*rb)
+    i   <- seq(2, ncol, 2)
+    ifr <- (i+2)/2
+    ra  <- b[i]
+    rb  <- b[i+1]
+    amp[ifr] = sqrt(ra*ra+rb*rb)
 
     dg  <- 180.0/pi
     phase <- atan2(rb, ra)*dg
     phase[phase<0] = phase[phase<0] + 360
     phi[ifr] = phase
 
-    list(ypred = yr, amp = amp, phi = phi)
+    fits %<>% set_names(paste0('iter', 1:iters))
+    return(as_tibble(c(list(w = w), fits)))
+    # list(fit = fits, amp = amp, phi = phi) #quickly return
 }

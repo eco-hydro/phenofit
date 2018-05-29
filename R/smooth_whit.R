@@ -61,7 +61,7 @@ whitsmw2 <- function(y, w, ylu, nptperyear, wFUN = wTSM, iters=1, lambdas=1000,
         for (i in 1:iters){
             if (i > 1) {
                 # print('k1')
-                w <- wFUN(y, z, w, iters, nptperyear, ...)
+                w <- wFUN(y, z, w, i, nptperyear, ...)
                 # w <- phenofit:::wTSM_cpp(y, z, w, iters, nptperyear, 0.5)
             }
 

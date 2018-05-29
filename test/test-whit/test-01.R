@@ -47,3 +47,33 @@ dev.off()
 # res %<>% set_names(sites)
 
 file.show(file)
+
+library(phenofit)
+library(data.table)
+dt <- dt_MOD13A1
+sitename <- dt$site[1]
+d <- dt[site == sitename,]
+
+y <- d$EVI
+t <- as.numeric(d$date - ymd(20000101))
+w <- d$w
+nptperyear = 23
+INPUT <- check_input(t, y, w)
+
+pdat <- as.list(d[, .(y = EVI, t = date, w = w)])
+pdat$ylu <- INPUT$ylu
+
+##
+fit <- HANTS2(INPUT$y, INPUT$t, INPUT$w, nf = 3, ylu = INPUT$ylu,
+              nptperyear = 3, iters = 3, wFUN = wTSM, wmin = 0.1)
+plotdata(pdat, 23)
+colors <- c("red", "blue", "green")
+for (i in 1:(ncol(fit) - 1)){
+    lines(pdat$t, fit[[i+1]], col = colors[i], lwd = 2)
+}
+
+SI <- function(Y_obs, Y_sim, w){
+    y_mean <- mean(INPUT$y)
+    SSR <- sum((last(fit) - y_mean )^2 * w)
+    SST <- sum((INPUT$y - y_mean)^2 * w)
+}

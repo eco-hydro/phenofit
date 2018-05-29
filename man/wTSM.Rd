@@ -4,7 +4,7 @@
 \alias{wTSM}
 \title{wTSM}
 \usage{
-wTSM(y, yfit, w, iters = 2, nptperyear, wfact = 0.5, ...)
+wTSM(y, yfit, w, iter = 2, nptperyear, wfact = 0.5, ...)
 }
 \description{
 Weight updating method in TIMESAT

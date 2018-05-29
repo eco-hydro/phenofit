@@ -16,8 +16,8 @@ wSELF <- function(y, z, w, ...){w}
 #'     time-series of satellite sensor data. Comput. Geosci. 30, 833-845.
 #'     https://doi.org/10.1016/j.cageo.2004.05.006
 #' @export
-wTSM <- function(y, yfit, w, iters = 2, nptperyear, wfact = 0.5, ...){
-    wTSM_cpp(y, yfit, w, iters, nptperyear, wfact)
+wTSM <- function(y, yfit, w, iter = 2, nptperyear, wfact = 0.5, ...){
+    wTSM_cpp(y, yfit, w, iter, nptperyear, wfact)
 }
 
 #' Bisquare weight update method

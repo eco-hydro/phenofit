@@ -9,7 +9,7 @@ sgfitw_rcpp <- function(y, w, S) {
     .Call('_phenofit_sgfitw_rcpp', PACKAGE = 'phenofit', y, w, S)
 }
 
-wTSM_cpp <- function(y, yfit, w, iters, nptperyear, wfact) {
-    .Call('_phenofit_wTSM_cpp', PACKAGE = 'phenofit', y, yfit, w, iters, nptperyear, wfact)
+wTSM_cpp <- function(y, yfit, w, iter, nptperyear, wfact) {
+    .Call('_phenofit_wTSM_cpp', PACKAGE = 'phenofit', y, yfit, w, iter, nptperyear, wfact)
 }
 

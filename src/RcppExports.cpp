@@ -32,18 +32,18 @@ BEGIN_RCPP
 END_RCPP
 }
 // wTSM_cpp
-NumericVector wTSM_cpp(NumericVector y, NumericVector yfit, NumericVector w, int iters, int nptperyear, double wfact);
-RcppExport SEXP _phenofit_wTSM_cpp(SEXP ySEXP, SEXP yfitSEXP, SEXP wSEXP, SEXP itersSEXP, SEXP nptperyearSEXP, SEXP wfactSEXP) {
+NumericVector wTSM_cpp(NumericVector y, NumericVector yfit, NumericVector w, int iter, int nptperyear, double wfact);
+RcppExport SEXP _phenofit_wTSM_cpp(SEXP ySEXP, SEXP yfitSEXP, SEXP wSEXP, SEXP iterSEXP, SEXP nptperyearSEXP, SEXP wfactSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< NumericVector >::type y(ySEXP);
     Rcpp::traits::input_parameter< NumericVector >::type yfit(yfitSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type w(wSEXP);
-    Rcpp::traits::input_parameter< int >::type iters(itersSEXP);
+    Rcpp::traits::input_parameter< int >::type iter(iterSEXP);
     Rcpp::traits::input_parameter< int >::type nptperyear(nptperyearSEXP);
     Rcpp::traits::input_parameter< double >::type wfact(wfactSEXP);
-    rcpp_result_gen = Rcpp::wrap(wTSM_cpp(y, yfit, w, iters, nptperyear, wfact));
+    rcpp_result_gen = Rcpp::wrap(wTSM_cpp(y, yfit, w, iter, nptperyear, wfact));
     return rcpp_result_gen;
 END_RCPP
 }

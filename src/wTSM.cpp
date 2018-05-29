@@ -8,7 +8,7 @@ using namespace Rcpp;
 // Weight updating method in TIMESAT.
 // [[Rcpp::export]]
 NumericVector wTSM_cpp(NumericVector y, NumericVector yfit, NumericVector w,
-                   int iters, int nptperyear, double wfact) {
+                   int iter, int nptperyear, double wfact) {
   int n  = y.size();
   int m  = sum(w > 0.5); //valid length
 
@@ -19,6 +19,8 @@ NumericVector wTSM_cpp(NumericVector y, NumericVector yfit, NumericVector w,
   double yfitstd  = sqrt((double) sum(pow( (yfit - yfitmean) * w_ceil, 2)/(m - 1)));
 
   int deltaT = floor(nptperyear/7);
+  // Rprintf("deltaT:%d\n", deltaT);
+
   for (int i = 0; i < n; i++){
       int m1 = std::max(0    , i - deltaT);
       int m2 = std::min(n - 1, i + deltaT);
@@ -33,7 +35,7 @@ NumericVector wTSM_cpp(NumericVector y, NumericVector yfit, NumericVector w,
       // Adjust the weights dependent on if the values are above or below the
       // fitted values
       if (y[i] < yfit[i] - 1e-8){
-          if (yi_min > yfitmean || iters < 2){
+          if (yi_min > yfitmean || iter < 2){
             /**
              * If there is a low variation in an interval, i.e. if the interval
              * is at a peak or at a minima compute the normalized distance

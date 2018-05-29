@@ -182,3 +182,4 @@ season <- function(INPUT, lambda, nptperyear = 46, south = FALSE,
     return(list(whit = bind_cols(data_frame(t, y), yfits),
                 pos = pos, dt = dt, di = di))
 }
+
