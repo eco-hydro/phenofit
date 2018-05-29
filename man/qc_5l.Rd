@@ -5,7 +5,7 @@
 \title{qc_5l
 Quality control of five-level confidence score}
 \usage{
-qc_5l(QA)
+qc_5l(QA, wmin = 0.1)
 }
 \description{
 This function is suit for MCD15A3H(LAI) and MODGPP.

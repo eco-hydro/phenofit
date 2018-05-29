@@ -43,7 +43,6 @@ v_point = function(y, w = 0 * y + 1, lambda = 100, d = 2) {
     return(v)
 }
 
-
 # sometimes not converge
 v_opt = function(y, w = 0 * y + 1, d = 2, llas = c(0, 4), tol = 0.01) {
     # Locate the optimal value of log10(lambda) with optimizer
@@ -89,22 +88,59 @@ v_curve = function(y, w = 0 * y + 1, llas,  d = 2, show = F) {
   return(list(z = z, llas = lamids, lambda = lambda, v = v, vmin = v[k]))
 }
 
-bisquare <- function(re, w, ...){
-    re_abs <- abs(re)
-    sc <- 6 * median(re_abs, na.rm = T)
-
-    w_new <- (1 - (re/sc)^2)^2
-
-    if (!missing(w)){
-        I <- which(re > 0)
-        if (length(I) > 0){
-            w_new[I] <- w[I]#keep the original weights of positive bias points
-        }
-    }
-    w_new[re >= sc] <- 0
-    # constrain growing VI: enlarge the positive bias values, reduce the weights
-    #   of negative bias values, as TIMESAT
-    # diff = 2 * (yfit(i) - y(i)) / yfitstd;
-    # w <- wfact * wfit(i) * exp( - ydiff ^ 2);
-    return(w_new)
+#' Initial lambda value of whittaker taker
+init_lambda  <- function(y){
+    y        <- y[!is.na(y)] #rm NA values
+    mean     <- mean(y)
+    sd       <- sd(y)
+    kurtosis <- kurtosis(y, type = 2)
+    skewness <- skewness(y, type = 2)
+    # lambda   <- 0.555484 + 1.671514*mean - 3.434064*sd - 0.052609*skewness + 0.009057*kurtosis
+    lambda   <- 0.555465 + 1.501239*mean - 3.204295*sd - 0.031902*skewness # Just three year result
+    return(lambda)
 }
+
+## All year togather
+# Call:
+# lm(formula = lambda ~ kurtosis + mean + sd + skewness, data = stat)
+
+# Residuals:
+#      Min       1Q   Median       3Q      Max 
+# -2.33795 -0.33385  0.04024  0.37228  2.08361 
+
+# Coefficients:
+#              Estimate Std. Error t value Pr(>|t|)    
+# (Intercept)  0.555484   0.016632  33.399  < 2e-16 ***
+# kurtosis     0.009057   0.002746   3.299 0.000973 ***
+# mean         1.671514   0.038983  42.878  < 2e-16 ***
+# sd          -3.434064   0.118632 -28.947  < 2e-16 ***
+# skewness    -0.052609   0.008332  -6.314 2.79e-10 ***
+# ---
+# Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+# Residual standard error: 0.5506 on 15074 degrees of freedom
+# Multiple R-squared:  0.2118,  Adjusted R-squared:  0.2116 
+# F-statistic:  1013 on 4 and 15074 DF,  p-value: < 2.2e-16
+
+## Three year fitting result
+# Call:
+# lm(formula = lambda ~ mean + sd + skewness, data = stat, na.action = na.exclude)
+
+# Residuals:
+#      Min       1Q   Median       3Q      Max 
+# -2.77002 -0.40751  0.01012  0.42447  2.02898 
+
+# Coefficients:
+#              Estimate Std. Error t value Pr(>|t|)    
+# (Intercept)  0.555465   0.007000  79.357   <2e-16 ***
+# mean         1.501239   0.017132  87.628   <2e-16 ***
+# sd          -3.204295   0.044921 -71.332   <2e-16 ***
+# skewness    -0.031902   0.003406  -9.367   <2e-16 ***
+# ---
+# Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+# Residual standard error: 0.6188 on 90265 degrees of freedom
+#   (4 observations deleted due to missingness)
+# Multiple R-squared:  0.1441,  Adjusted R-squared:  0.144 
+# F-statistic:  5064 on 3 and 90265 DF,  p-value: < 2.2e-16
+ 

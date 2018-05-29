@@ -17,7 +17,10 @@ library(Cairo)
 library(jsonlite)
 library(openxlsx)
 
-# library(rTIMESAT)
+# MCD12Q1.006 land cover 1-17, IGBP scheme
+IGBPnames <- c("ENF", "EBF", "DNF", "DBF", "MF" , "CSH", 
+              "OSH", "WSA", "SAV", "GRA", "WET", "CRO", 
+              "URB", "CNV", "SNOW", "BSV", "water", "UNC")
 
 # rename phenofit phenology metrics names
 fix_level <- function(x){

@@ -37,7 +37,7 @@ wBisquare <- function(y, yfit, w, ...){
     re     <- yfit - y
     re_abs <- abs(re)
 
-    sc <- 6 * median(re_abs, na.rm = T)
+    sc     <- 6 * median(re_abs, na.rm = T)
 
     I_pos        <- which(re > 0 & re < sc)
     wnew[I_pos]  <- (1 - (re_abs[I_pos]/sc)^2)^2 * w[I_pos]
@@ -78,14 +78,15 @@ wChen <- function(y, yfit, w, ...){
 #' 
 #' Beck et al., (2006) weigths updating method
 #' 
+#' #Not finished yet.
 #' @references
 #' [1]. Beck, P.S.A., Atzberger, C., Hogda, K.A., Johansen, B., Skidmore, A.K., 
 #'      2006. Improved monitoring of vegetation dynamics at very high latitudes: 
 #'      A new method using MODIS NDVI. Remote Sens. Environ. 
 #'      https://doi.org/10.1016/j.rse.2005.10.021 \cr
 #' [2]. https://github.com/kongdd/phenopix/blob/master/R/FitDoubleLogBeck.R
-# ' @export
-wBeck <- function(y, yfit, w, ...){ #Not finished yet.
+# ' #@export
+wBeck <- function(y, yfit, w, ...){ 
     # get optimized parameters
     t   <- seq_along(y)
     sos <- opt$par[3]

@@ -7,7 +7,7 @@
 wBeck(y, yfit, w, ...)
 }
 \description{
-Beck et al., (2006) weigths updating method
+#Not finished yet.
 }
 \references{
 [1]. Beck, P.S.A., Atzberger, C., Hogda, K.A., Johansen, B., Skidmore, A.K., 

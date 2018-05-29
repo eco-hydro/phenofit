@@ -4,7 +4,7 @@
 #' [1]. Rimoldini, L., 2014. Weighted skewness and kurtosis unbiased by sample size 
 #' and Gaussian uncertainties. Astron. Comput. 5, 1–8. 
 #' https://doi.org/10.1016/j.ascom.2014.02.001
-kurtosis <- function(w, x){
+kurtosis <- function(x, w){
     # rm NA
     I <- !is.na(w) & !is.na(x)
     x <- x[I]

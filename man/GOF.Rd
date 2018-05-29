@@ -5,7 +5,7 @@
 \title{GOF
 Good of fitting}
 \usage{
-GOF(Y_obs, Y_sim)
+GOF(Y_obs, Y_sim, w)
 }
 \description{
 GOF

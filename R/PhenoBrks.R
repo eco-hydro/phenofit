@@ -11,7 +11,6 @@ plotdata <- function(INPUT, nptperyear, wmin = 0.1, ...){
     par(mgp = c(1.5, 0.5, 0)) #oma = c(1, 2, 3, 1)
     # at <- t[seq(1, npt, nptperyear)]
     # fmt <- ifelse(yday(at[1]) == 1, "%Y", "%Y/%m/%d")
-
     # axis(side=1, at = at, labels = format(at, fmt))
     
     wf <- 4 - findInterval(w, c(-Inf, wmin, 0.5, 1), left.open = T)

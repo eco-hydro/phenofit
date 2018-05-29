@@ -15,8 +15,8 @@ read_json_gee <- function(file){
     res <- ldply(temp, function(x){
         map(x$properties, first, default =NA) %>% unlist()
     }, .progress = "text")
-    res$site <- sites_raw
     res %<>% data.table()
+    res$site <- sites_raw
     res[, `:=`(IGBPcode= as.integer(CID) + 1,
                CID = NULL)]
     res %<>% reorder_name(c("site", "IGBPcode"))

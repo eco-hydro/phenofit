@@ -67,33 +67,34 @@ getBits <- function(x, start, end = start){
 }
 
 #' @export
-qc_summary <- function(QA){
-    w <- numeric(length(QA)) # default weight is zero
+qc_summary <- function(QA, wmin = 0.1){
+    w <- rep(NA, length(QA)) # default weight is zero
     
-    w[QA == 0] <- 1          # clear, good
-    w[QA == 1] <- 0.5        # margin
+    w[QA == 0] <- 1             # clear, good
+    w[QA == 1] <- 0.5           # margin
     
-    w[QA >= 2 & QA <=3] <- 0 # Snow/ice, or cloudy
+    w[QA >= 2 & QA <=3] <- wmin # Snow/ice, or cloudy
     return(w)
 }
 #' qc_5l
 #' Quality control of five-level confidence score
 #' 
 #' This function is suit for MCD15A3H(LAI) and MODGPP.
-qc_5l <- function(QA){
+qc_5l <- function(QA, wmin = 0.1){
     # bit5-7, five-level confidence score
     QA <- bitwShiftR(bitwAnd(QA, 224), 5) #1110 0000=224L
-    w  <- numeric(length(QA)) #default zero
+    w  <- rep(NA, length(QA)) #default zero
     
     w[QA <= 1] <- 1            #clear, good
     w[QA >= 2 & QA <=3] <- 0.5 #geometry problems or others
+    w[QA >  4] <- wmin
     return(w)
 }
 qc_NDVIv4 <- function(QA){
     # bit1-2: cloudy, cloud shadow
     QA <- bitwShiftR(bitwAnd(QA, 7), 1) 
     
-    w  <- numeric(length(QA))
+    w  <- rep(NA, length(QA))
     w[QA == 0] <- 1   #clear, good
     w[QA == 2] <- 0.5 #cloud shadow
     return(w)
@@ -102,5 +103,4 @@ qc_NDVIv4 <- function(QA){
 # fix_snow
 # Roughly assume growing season is Apr-Oct.
 fix_snow <- function(x){
-
 }

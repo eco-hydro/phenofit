@@ -6,17 +6,23 @@
 \usage{
 season(INPUT, lambda, nptperyear = 46, south = FALSE, iters = 2,
   wFUN = wTSM, IsPlot = TRUE, minpeakdistance = nptperyear/6,
-  ymax_min = 0.5, Aymin_less = 0.6, TRS = 0.05, meth = c("whit", "sg"),
-  ..., max_MaxPeaksperyear = 2, max_MinPeaksperyear = 3)
+  ymax_min = 0.5, rymin_less = 0.6, threshold_max = 0.2,
+  threshold_min = 0.05, max_MaxPeaksperyear = 2, max_MinPeaksperyear = 3,
+  plotdat = INPUT, ...)
 }
 \arguments{
 \item{INPUT}{returned list(t, y, w, ylu) object from `check_input`}
 
-\item{TRS}{multiply A (diff(ylu)) becomes the threshold parameter of
-`findpeak` function}
+\item{rymin_less}{y_tough < rymin_less * A}
+
+\item{plotdat}{Is IsPlot = true, plotdata need to be passed. 
+Since, y, w have been changed.}
 
 \item{...}{Other parameters passed to findpeaks, e.g. 'threshold',
 'minpeakheight', 'minpeakdistance'}
+
+\item{TRS}{multiply A (diff(ylu)) becomes the threshold parameter of
+`findpeak` function}
 }
 \value{
 list(dt, di)
