@@ -3,7 +3,6 @@ library(Cairo)
 library(tidyverse)
 library(e1071)
 
-source('test/test-whit/V-pack.r', echo=TRUE)
 load("Y:/R/phenofit/data/phenofit_MultipleINPUT_flux212.rda")
 stations212 <- fread("C:/Users/kon055/Google Drive/Github/data/phenology/station/flux-212.txt")
 
@@ -66,7 +65,7 @@ summary(lm1)
 par(mfrow = c(2, 2))
 plot(lm1)
 
-color=rgb(0,0,0,alpha=0.3) 
+color=rgb(0,0,0,alpha=0.3)
 # dplot = data_table(fitted = slm1$fitted.values, value = x$lambda)
 plot(slm1$fitted.values, x$lambda, col = color); grid()
 abline(a = 0, b = 1, col = "red", lwd = 1.5)

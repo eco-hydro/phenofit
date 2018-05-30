@@ -25,7 +25,7 @@ tidy_gee_MOD13A1 <- function(file){
     return(dt)
 }
 
-dt <- tidy_gee_MOD13A1("file:///C:/Users/kon055/Google Drive/Github/MOD13A1_st_20_0m_buffer.csv")
+dt <- tidy_gee_MOD13A1("file:///C:/Users/kon055/Google Drive/Github/data/MOD13A1_st_20_0m_buffer.csv")
 dt[, per := sum(!is.na(EVI))/.N, site]
 dt <- dt[per > 0.4, ]
 
@@ -35,5 +35,5 @@ dt <- dt[order(IGBPcode, site, t), ]
 sites      <- unique(dt$site)
 nptperyear <- 23
 # dt[all(is.na(EVI)), unique(site), .(site)]
-wFUN <- wTSM
+wFUN     <- wTSM
 ymax_min <- 0.1

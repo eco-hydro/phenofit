@@ -7,6 +7,13 @@ Good of fitting}
 \usage{
 GOF(Y_obs, Y_sim, w)
 }
+\arguments{
+\item{Y_obs}{Numeric vector, observations}
+
+\item{Y_sim}{Numeric vector, corresponding simulated values}
+
+\item{w}{Numeric vector, weights of every points}
+}
 \description{
 GOF
 Good of fitting

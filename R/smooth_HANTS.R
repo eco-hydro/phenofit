@@ -93,3 +93,27 @@ wHANTS <- function(y, t, w, nf = 3, ylu, periodlen = 365, nptperyear,
     return(as_tibble(c(list(w = w), fits)))
     # list(fit = fits, amp = amp, phi = phi) #quickly return
 }
+
+#' Check vegetation seasonality
+#' @export
+check_SI <- function(INPUT, IsPlot = F, pdat = INPUT, nf = 3, ...){
+    # y <- d$EVI
+    # t <- as.numeric(d$date - ymd(20000101))
+    # w <- d$w
+    # nptperyear = 23
+    # INPUT <- check_input(t, y, w)
+    #
+    # pdat <- as.list(d[, .(y = EVI, t = date, w = w)])
+    # pdat$ylu <- INPUT$ylu
+    fit <- wHANTS(INPUT$y, INPUT$t, INPUT$w, nf = nf, ylu = INPUT$ylu,
+                  nptperyear = 23, iters = 3, wFUN = wTSM, wmin = 0.1)
+    if (IsPlot){
+        plotdata(pdat, 23)
+        colors <- c("red", "blue", "green")
+        for (i in 1:(ncol(fit) - 1)){
+            lines(pdat$t, fit[[i+1]], col = colors[i], lwd = 2)
+        }
+    }
+    stat <- GOF(INPUT$y, dplyr::last(fit))
+    stat # quickly return
+}

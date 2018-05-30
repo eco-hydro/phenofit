@@ -17,7 +17,8 @@ whit2(y, lambda, w = rep(1, ny))
 A numeric vector, smoothed signal.
 }
 \description{
-This function smoothes signals with a finite difference penalty of order 2.
+This function smoothes signals with a finite difference penalty of order 2. 
+This function is modified from `ptw` package.
 }
 \examples{
 data(gaschrom)

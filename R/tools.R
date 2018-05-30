@@ -4,7 +4,7 @@
 fprintf <- function(fmt, ...) cat(sprintf(fmt, ...))
 
 #' print the running ID in the console
-#' 
+#'
 #' @export
 runningId <- function(i, step = 1) {
     if (mod(i, step) == 0) cat(sprintf("running %d ...\n", i))
@@ -29,10 +29,10 @@ retry <- function(expr, maxTimes = 3){
     return(out)
 }
 
-#' 
+#'
 #' melt_list
-#' 
-#' @importFrom reshape2 melt 
+#'
+#' @importFrom reshape2 melt
 #' @export
 melt_list <- function(list, var.name, na.rm = TRUE, ...){
     if (is.data.table(list[[1]])){
@@ -42,7 +42,7 @@ melt_list <- function(list, var.name, na.rm = TRUE, ...){
             eval(parse(text = sprintf("x$%s <- names[i]", var.name)))
             list[[i]] <- x
         }
-        res <- do.call(rbind, list)#return  
+        res <- do.call(rbind, list)#return
     } else{
         id.vars <- colnames(list[[1]])
         res <- reshape2::melt(list, ..., id.vars = id.vars, na.rm = na.rm)
@@ -81,7 +81,7 @@ list.rbind <- function(x) do.call(rbind.data.frame, x) %>% set_rownames(names(x)
 
 #' reorder_name
 #' @export
-reorder_name <- function(d, 
+reorder_name <- function(d,
                          headvars = c("site", "date", "year", "doy", "d8", "d16"),
                          tailvars = ""){
     headvars %<>% intersect(colnames(d))
@@ -89,7 +89,7 @@ reorder_name <- function(d,
     varnames <- c(headvars, setdiff(colnames(d), union(headvars, tailvars)), tailvars)
     if (is.data.table(d)){
         # d[, ..varnames]
-        d[, varnames, with = F] #return    
+        d[, varnames, with = F] #return
     }else{
         d[, varnames]
     }
@@ -108,11 +108,11 @@ rm_empty <- function(x){
 #' find assigned pattern variable names
 #' @export
 contain <- function(d, pattern = "NDVI|EVI") {
-    names(d) %>% .[grep(pattern, .)]   
+    names(d) %>% .[grep(pattern, .)]
 }
 
 #' merge_pdf
-#' 
+#'
 #' rely on python pdfmerge package, `pip install pdfmerge`
 #' @export
 merge_pdf <- function(outfile = "RPlot.pdf", indir = 'Figs/', pattern = "*.pdf", del = FALSE){
@@ -126,62 +126,58 @@ merge_pdf <- function(outfile = "RPlot.pdf", indir = 'Figs/', pattern = "*.pdf",
 
 #' GOF
 #' Good of fitting
+#'
+#' @param Y_obs Numeric vector, observations
+#' @param Y_sim Numeric vector, corresponding simulated values
+#' @param w Numeric vector, weights of every points
+#'
 #' @export
 GOF <- function(Y_obs, Y_sim, w){
     if (missing(w)) w <- rep(1, length(Y_obs))
 
-    # remove NA values in Y_sim and Y_obs
-    I <- which(!(is.na(Y_sim) | is.na(Y_obs)))
+    # remove NA values in Y_sim, Y_obs and w
+    I <- which(!(is.na(Y_sim) | is.na(Y_obs) | is.na(w)))
     # n_obs <- length(Y_obs)
     n_sim <- length(I)
-    
+
     Y_sim <- Y_sim[I]
     Y_obs <- Y_obs[I]
-    
+
     if (is_empty(Y_obs)){
-        return(c(Bias = NA, MAE = NA,RMSE = NA, NASH = NA, 
-             pvalue = NA, n_sim = NA, R = NA)) #R = R, 
+        return(c(Bias = NA, MAE = NA,RMSE = NA, NASH = NA, R2 = NA,
+             pvalue = NA, n_sim = NA, R = NA)) #R = R,
     }
-    RE    <- Y_sim - Y_obs
-    Bias  <- mean(RE)                                        # bias
-    MAE   <- mean(abs(RE))                                   # mean absolute error
-    RMSE  <- sqrt(sum((RE)^2) / length(Y_obs))               # root mean sqrt error
-    NASH  <- 1  - sum( (RE)^2 * w) / sum( (Y_obs - mean(Y_obs))^2 * w) # NASH coefficient
-    
+
+    # R2: the portion of regression explained variance, also known as
+    # coefficient of determination
+    #
+    # https://en.wikipedia.org/wiki/Coefficient_of_determination
+    # https://en.wikipedia.org/wiki/Explained_sum_of_squares
+    y_mean <- mean(Y_obs)
+    SSR    <- sum( (Y_sim - y_mean)^2 * w)
+    SST    <- sum( (Y_obs - y_mean)^2 * w)
+    R2     <- SSR / SST
+
+    RE     <- Y_sim - Y_obs
+    Bias   <- sum ( w*RE)     /sum(w)                     # bias
+    MAE    <- sum ( w*abs(RE))/sum(w)                     # mean absolute error
+    RMSE   <- sqrt( sum(w*(RE)^2)/sum(w) )                # root mean sqrt error
+
+    # https://en.wikipedia.org/wiki/Nash%E2%80%93Sutcliffe_model_efficiency_coefficient
+    NASH  <- 1  - sum( (RE)^2 * w) / SST # NASH coefficient
+
     # Observations number are not same, so comparing correlation coefficient
     # was meaningless.
+    # In the current, I have no idea how to add weights `R`.
     R      <- NA
     pvalue <- NA
     tryCatch({
         cor.obj <- cor.test(Y_obs, Y_sim, use = "complete.obs")
         R       <- cor.obj$estimate[[1]]
-        pvalue  <- cor.obj$p.value  
+        pvalue  <- cor.obj$p.value
     }, error = function(e){
         message(e$message)
     })
-    return(c(Bias = Bias, MAE = MAE,RMSE = RMSE, NASH = NASH, 
-             pvalue = pvalue, n_sim = n_sim, R = R)) #R = R, 
-}
-
-kurtosis <- function (x, na.rm = FALSE, type = 3) {
-    if (any(ina <- is.na(x))) {
-        if (na.rm) 
-            x <- x[!ina]
-        else return(NA)
-    }
-    if (!(type %in% (1:3))) 
-        stop("Invalid 'type' argument.")
-    n <- length(x)
-    x <- x - mean(x)
-    r <- n * sum(x^4)/(sum(x^2)^2)
-
-    y <- if (type == 1) {
-        r - 3
-    } else if (type == 2) {
-        if (n < 4) stop("Need at least 4 complete observations.")
-        ((n + 1) * (r - 3) + 6) * (n - 1)/((n - 2) * (n - 3))
-    } else{
-        r * (1 - 1/n)^2 - 3
-    }
-    y
+    return(c(Bias = Bias, MAE = MAE,RMSE = RMSE, NASH = NASH, R2 = R2,
+             pvalue = pvalue, n_sim = n_sim, R = R)) #R = R,
 }

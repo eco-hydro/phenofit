@@ -2,8 +2,8 @@ file <- sprintf("optim_lambda, nptperyear=%d_season_bad_4.pdf", nptperyear)
 CairoPDF(file, width = 10, height = 2*6)
 par(mfrow = c(6, 1), mar = c(2, 3, 2, 1), mgp = c(1.5, 0.6, 0))
 
-res <- list()
-stat <- list()
+res   <- list()
+stats <- list()
 for (i in seq_along(sites)){
     runningId(i)
     sitename <- sites[i]#; grp = 1
@@ -19,6 +19,8 @@ for (i in seq_along(sites)){
     if ( sum(d$w >= 0.5, na.rm = T) > nrow(d) * 0.3){
         INPUT <- check_input(d$t, d$y, d$w, trim = T, maxgap = nptperyear / 4, alpha = 0.02)
 
+        INPUT_SI <- INPUT
+        INPUT_SI$t %<>% {as.numeric(difftime(., ymd(20000101)))}
         # vc <- v_curve(INPUT$y, w = INPUT$w, llas = seq(-2, 2, by = 0.01), d = 2, show = F); lambda <- vc$lambda
         lambda <- init_lambda(INPUT$y)
         str_title <- sprintf("[%02d] %s, IGBP = %s, log10(lambda) = %.3f, lat = %.2f", i, sitename, IGBP_name, log10(lambda), lat)
@@ -30,14 +32,14 @@ for (i in seq_along(sites)){
 
         brks <- do.call(season, params) #, ...
         if (is.null(brks)) next()
-        stat <- GOF(d$y, brks$whit$iter3, INPUT$w)
-
+        stat       <- GOF(d$y, brks$whit$iter3) #, INPUT$w
+        stats[[i]] <- c(site = sitename, stat)
         if (stat[['NASH']] < 0.4){
             params$IsPlot <- T
             brks <- do.call(season, params)
             title(str_title)
         }
-        res[[i]]  <- listk(site = sitename, lat, IGBP, lambda = vc$lambda, vc)
+        res[[i]]  <- listk(site = sitename, lat, IGBP_name, lambda = lambda)#, vc$
     } else{
         message(str_title)
     }
@@ -47,33 +49,12 @@ dev.off()
 # res %<>% set_names(sites)
 
 file.show(file)
-
-library(phenofit)
-library(data.table)
-dt <- dt_MOD13A1
-sitename <- dt$site[1]
-d <- dt[site == sitename,]
-
-y <- d$EVI
-t <- as.numeric(d$date - ymd(20000101))
-w <- d$w
-nptperyear = 23
-INPUT <- check_input(t, y, w)
-
-pdat <- as.list(d[, .(y = EVI, t = date, w = w)])
-pdat$ylu <- INPUT$ylu
+info <- do.call(rbind, stats) %>% data.table()
+# library(phenofit)
+# library(data.table)
+# library(lubridate)
+# dt <- dt_MOD13A1
+# sitename <- dt$site[1]
+# d <- dt[site == sitename,]
 
 ##
-fit <- HANTS2(INPUT$y, INPUT$t, INPUT$w, nf = 3, ylu = INPUT$ylu,
-              nptperyear = 3, iters = 3, wFUN = wTSM, wmin = 0.1)
-plotdata(pdat, 23)
-colors <- c("red", "blue", "green")
-for (i in 1:(ncol(fit) - 1)){
-    lines(pdat$t, fit[[i+1]], col = colors[i], lwd = 2)
-}
-
-SI <- function(Y_obs, Y_sim, w){
-    y_mean <- mean(INPUT$y)
-    SSR <- sum((last(fit) - y_mean )^2 * w)
-    SST <- sum((INPUT$y - y_mean)^2 * w)
-}

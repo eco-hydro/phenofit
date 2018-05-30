@@ -1,6 +1,7 @@
 #' Weighted Whittaker smoothing with a second order finite difference penalty
 #'
 #' This function smoothes signals with a finite difference penalty of order 2. 
+#' This function is modified from `ptw` package.
 #' 
 #' @param y signal to be smoothed: a vector
 #' @param lambda smoothing parameter: larger values lead to more smoothing
@@ -26,7 +27,6 @@ whit2 <- function(y, lambda, w = rep(1, ny))
 {
     ny <- length(y)
     z <- d <- c <- e <- rep(0, length(y))
-
     # smooth2(
     .C("smooth2", 
          w = as.double(w),
@@ -60,11 +60,9 @@ whitsmw2 <- function(y, w, ylu, nptperyear, wFUN = wTSM, iters=1, lambdas=1000,
         fits <- list()
         for (i in 1:iters){
             if (i > 1) {
-                # print('k1')
                 w <- wFUN(y, z, w, i, nptperyear, ...)
                 # w <- phenofit:::wTSM_cpp(y, z, w, iters, nptperyear, 0.5)
             }
-
             # z_temp <- smooth_HdH(yiter, w, lambda=lambda)$z
             z_temp <- whit2(yiter, lambda, w)
             # If curve has been smoothed enough, it will not care about the
@@ -84,7 +82,6 @@ whitsmw2 <- function(y, w, ylu, nptperyear, wFUN = wTSM, iters=1, lambdas=1000,
         # # CROSS validation
         # if (validation){
         #     h   <- fit$dhat
-
         #     df  <- sum(h)
         #     r   <- (y - z)/(1 - h)
         #     cv  <- sqrt( sum( r^2*w ) /n )
