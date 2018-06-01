@@ -29,7 +29,6 @@ retry <- function(expr, maxTimes = 3){
     return(out)
 }
 
-#'
 #' melt_list
 #'
 #' @importFrom reshape2 melt
@@ -104,6 +103,7 @@ rm_empty <- function(x){
         x[!is.na(x)]
     }
 }
+
 #' contain
 #' find assigned pattern variable names
 #' @export
@@ -124,7 +124,17 @@ merge_pdf <- function(outfile = "RPlot.pdf", indir = 'Figs/', pattern = "*.pdf",
     if (del) shell(sprintf('del %s', pattern))
 }
 
+cv_coef <- function(x, w){
+    if (missing(w)) w <- rep(1, length(x))
+    mean <- sum(x * w) / sum(w)
+    sd   <- sqrt(sum((x  - mean)^2 * w) /sum(w))
+    cv   <- sd / mean
+    
+    c(mean = mean, sd = sd, cv = cv) # quickly return
+}
+
 #' GOF
+#' 
 #' Good of fitting
 #'
 #' @param Y_obs Numeric vector, observations
@@ -144,7 +154,7 @@ GOF <- function(Y_obs, Y_sim, w){
     Y_obs <- Y_obs[I]
 
     if (is_empty(Y_obs)){
-        return(c(Bias = NA, MAE = NA,RMSE = NA, NASH = NA, R2 = NA,
+        return(c(Bias = NA, MAE = NA,RMSE = NA, NSE = NA, R2 = NA,
              pvalue = NA, n_sim = NA, R = NA)) #R = R,
     }
 
@@ -153,7 +163,8 @@ GOF <- function(Y_obs, Y_sim, w){
     #
     # https://en.wikipedia.org/wiki/Coefficient_of_determination
     # https://en.wikipedia.org/wiki/Explained_sum_of_squares
-    y_mean <- mean(Y_obs)
+    y_mean <- sum(Y_obs * w) / sum(w)
+
     SSR    <- sum( (Y_sim - y_mean)^2 * w)
     SST    <- sum( (Y_obs - y_mean)^2 * w)
     R2     <- SSR / SST
@@ -164,7 +175,7 @@ GOF <- function(Y_obs, Y_sim, w){
     RMSE   <- sqrt( sum(w*(RE)^2)/sum(w) )                # root mean sqrt error
 
     # https://en.wikipedia.org/wiki/Nash%E2%80%93Sutcliffe_model_efficiency_coefficient
-    NASH  <- 1  - sum( (RE)^2 * w) / SST # NASH coefficient
+    NSE  <- 1  - sum( (RE)^2 * w) / SST # NSE coefficient
 
     # Observations number are not same, so comparing correlation coefficient
     # was meaningless.
@@ -178,6 +189,22 @@ GOF <- function(Y_obs, Y_sim, w){
     }, error = function(e){
         message(e$message)
     })
-    return(c(Bias = Bias, MAE = MAE,RMSE = RMSE, NASH = NASH, R2 = R2,
+    return(c(Bias = Bias, MAE = MAE,RMSE = RMSE, NSE = NSE, R2 = R2,
              pvalue = pvalue, n_sim = n_sim, R = R)) #R = R,
 }
+
+
+R2_sign <- function(n, NumberOfPredictor = 2, alpha = 0.05){
+    freedom_r = NumberOfPredictor - 1 # regression
+    freedom_e = n - NumberOfPredictor # error 
+
+    F  = qf(1 - alpha, freedom_r, freedom_e)
+    R2 = 1 - 1/(1 + F*freedom_r/freedom_e)
+    
+    # F = 485.1
+    # F = R2/freedom_r/((1-R2)/freedom_e)
+    # Rc = sqrt(/(qf(1 - alpha, 1, freedom) + freedom)) %T>% print  # 0.11215    
+    return(list(F = F, R2 = R2))
+}
+
+

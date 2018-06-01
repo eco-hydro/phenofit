@@ -9,9 +9,6 @@ for (i in seq_along(sites)){
     sitename <- sites[i]#; grp = 1
     d    <- dt[site == sitename]
     d    <- d[1:(23*3), ]
-    t    <- d$t
-    y    <- d$y
-    w    <- d$w
     lat  <- d$coords_x2[1] #d$lat[1]
     IGBP_code <- d$IGBPcode[1]#d$IGBP[1]
     IGBP_name <- IGBPnames[IGBP_code]
@@ -30,11 +27,11 @@ for (i in seq_along(sites)){
                        max_MaxPeaksperyear =2.5, max_MinPeaksperyear = 3.5,
                        south = lat < 0, plotdat = d)
 
-        brks <- do.call(season, params) #, ...
+        brks <- do.call(season, params)
         if (is.null(brks)) next()
-        stat       <- GOF(d$y, brks$whit$iter3) #, INPUT$w
+        stat       <- GOF(d$y, brks$whit$iter3, INPUT$w) #, INPUT$w
         stats[[i]] <- c(site = sitename, stat)
-        if (stat[['NASH']] < 0.4){
+        if (stat[['NSE']] < 0.4){
             params$IsPlot <- T
             brks <- do.call(season, params)
             title(str_title)

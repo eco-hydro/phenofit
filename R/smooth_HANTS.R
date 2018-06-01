@@ -114,6 +114,7 @@ check_SI <- function(INPUT, IsPlot = F, pdat = INPUT, nf = 3, ...){
             lines(pdat$t, fit[[i+1]], col = colors[i], lwd = 2)
         }
     }
-    stat <- GOF(INPUT$y, dplyr::last(fit))
-    stat # quickly return
+    stat  <- GOF(INPUT$y, dplyr::last(fit), INPUT$w)
+    stat2 <- cv_coef(dplyr::last(fit), INPUT$w)
+    c(stat, stat2) # quickly return
 }

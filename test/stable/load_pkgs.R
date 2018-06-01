@@ -1,4 +1,4 @@
-# source('test/load_pkgs.R')
+# source('test/stable/load_pkgs.R')
 
 library(Matrix)
 library(plyr)
@@ -39,6 +39,34 @@ fix_level <- function(x){
         'TRS5.EOS', 'TRS6.EOS','DER.EOS',
         rev(c('TRS1.EOS', 'TRS2.EOS', 'Dormancy', 'RD')))
     factor(x, phenophase) %>% mapvalues(phenophase, phenophase_spl)#return
+}
+
+
+siteorder <- function(sites){ factor(sites) %>% as.numeric() }
+
+#' tidy GEE exported MOD13A1 data
+tidy_gee_MOD13A1 <- function(file){
+    dt <- fread(file)
+    sites_raw <- substr(dt$`system:index`, 12, 100) %>% siteorder()
+    dt$site   <- sites_raw
+
+    dt[, `:=`(IGBPcode= as.integer(CID),
+              CID  = NULL,
+              y    = EVI/1e4,
+              t    = ymd(date),
+              w    = qc_summary(SummaryQA),
+              lat  = coords_x2,
+              lon  = coords_x1)]
+    dt[, `:=`( year = year(t), doy  = as.integer(yday(t)))]
+    ## renew data according to DayOfYear
+    dt[is.na(DayOfYear), DayOfYear := doy] #DayOfYear has missing value
+    # in case of last scene of year
+    dt[abs(DayOfYear - doy) >= 300, t := as.Date(sprintf("%d-%03d", year+1, DayOfYear), "%Y-%j")]
+    dt[abs(DayOfYear - doy) <  300, t := as.Date(sprintf("%d-%03d", year  , DayOfYear), "%Y-%j")]
+    # dt %<>% reorder_name(c("site", "IGBPcode"))
+    dt <- dt[, .(site, IGBPcode, y, t, w, lat, lon, SummaryQA)]
+    setkeyv(dt, c("site", "t"))
+    return(dt)
 }
 
 # nptperyear = 46
@@ -109,19 +137,4 @@ plotsites <- function(fits, file = 'Fig3_GPP_phenofit_flux112_v13.pdf'){
         })
     }
     dev.off()
-}
-
-GOF2 <- function(RE){
-    RE <- RE[!is.na(RE)] #discard(RE, is.na)
-    n_sim <- length(RE)
-
-    if (n_sim <= 1){
-        return(c(Bias = NA, MAE = NA,RMSE = NA, n_sim = NA)) #R = R,
-    }
-    Bias  <- mean(RE)                                        # bias
-    MAE   <- mean(abs(RE))                                   # mean absolute error
-    RMSE  <- sqrt(sum((RE)^2) / length(RE))               # root mean sqrt error
-    # NASH  <- 1  - sum((RE)^2) / sum((Y_obs - mean(Y_obs))^2) # NASH coefficient
-
-    return(c(Bias = Bias, MAE = MAE,RMSE = RMSE, n_sim = n_sim)) #R = R,
 }
