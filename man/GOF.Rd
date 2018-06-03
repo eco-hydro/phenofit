@@ -2,8 +2,7 @@
 % Please edit documentation in R/tools.R
 \name{GOF}
 \alias{GOF}
-\title{GOF
-Good of fitting}
+\title{GOF}
 \usage{
 GOF(Y_obs, Y_sim, w)
 }
@@ -15,6 +14,5 @@ GOF(Y_obs, Y_sim, w)
 \item{w}{Numeric vector, weights of every points}
 }
 \description{
-GOF
 Good of fitting
 }

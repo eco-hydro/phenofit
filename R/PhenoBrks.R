@@ -140,8 +140,7 @@ season <- function(INPUT, lambda, nptperyear = 46, south = FALSE,
                    minpeakdistance = nptperyear/6,
                    ymax_min = 0.5,
                    rymin_less = 0.6, #ymin < rymin_less * A
-                   threshold_max = 0.2, 
-                   threshold_min = 0.05,
+                   threshold_max = 0.2, threshold_min = 0.05,
                    # TRS = 0.05, meth = c('whit', 'sg'), ...,
                    max_MaxPeaksperyear = 2, max_MinPeaksperyear = 3, 
                    plotdat = INPUT, 
@@ -168,10 +167,7 @@ season <- function(INPUT, lambda, nptperyear = 46, south = FALSE,
         # }else if(meth[1] == 'whit'){
         # whitsmw(y, w, ylu, wFUN, iters = 1, lambda = 100, ..., d = 2, missval)
         yfits <- whitsmw2(INPUT$y, INPUT$w, INPUT$ylu, nptperyear, wFUN, iters, lambda)$data
-        # }else{
-        #     stop('Invalid method input! Should be "sg" or "whit".')
-        # }
-
+        
         ## 4. find local extreme values
         ypred <- yfits[, ncol(yfits), drop = T]
         # ypred <- as.numeric(runmed(ypred, frame))
@@ -293,7 +289,14 @@ season <- function(INPUT, lambda, nptperyear = 46, south = FALSE,
                      peak = s[seq(2, ns, 2)],
                      end  = s[seq(3, ns, 2)])
     di %<>% fix_di(t = t) #fix whole year data missing
-
+    ## 7. plot
+    I_max <- di$peak
+    I_min <- union(di$beg, di$end + 1)
+    if (IsPlot){
+        points(t[I_max], ypred[I_max], pch=20, cex = 1.5, col="red")
+        points(t[I_min], ypred[I_min], pch=20, cex = 1.5, col="blue")
+    }
+    ##
     dt <- map_df(di, ~t[.x]) %>%
         mutate(len = difftime(end, beg, units = "days") + 1, year = year(peak)) %>%
         bind_cols(mval = ypred[di$peak], .)
@@ -302,17 +305,6 @@ season <- function(INPUT, lambda, nptperyear = 46, south = FALSE,
         dt %<>% mutate(year = year + as.integer(peak > ymd(sprintf('%d0701', year))) - 1L)
     }
     dt %<>% group_by(year) %>% dplyr::mutate(season = 1:n(), flag = sprintf("%d_%d", year, season))
-
-    I_max <- di$peak
-    I_min <- union(di$beg, di$end + 1)
-    ## 7. plot
-    if (IsPlot){
-        points(t[I_max], ypred[I_max], pch=20, cex = 1.5, col="red")
-        points(t[I_min], ypred[I_min], pch=20, cex = 1.5, col="blue")
-    }
-    # Then curve fitting VI index in every segment, according to local minimum values
-    # If begin at maximum value, then add the 1th point as min value. Or just begin
-    # from the original the first minimum value.
     return(list(whit = bind_cols(data_frame(t, y), yfits),
                 pos = pos, dt = dt, di = di))
 }
