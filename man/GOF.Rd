@@ -4,7 +4,7 @@
 \alias{GOF}
 \title{GOF}
 \usage{
-GOF(Y_obs, Y_sim, w)
+GOF(Y_obs, Y_sim, w, include.cv = FALSE)
 }
 \arguments{
 \item{Y_obs}{Numeric vector, observations}

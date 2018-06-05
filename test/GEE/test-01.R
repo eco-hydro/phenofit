@@ -15,28 +15,34 @@ library(Cairo)
 library(tidyverse)
 library(plyr)
 
-dt <- dt_MOD13A1[, .(site, IGBP, lat, long, t = date, y = EVI, SummaryQA, Tn)]
-dt[, `:=`(w = qc_summary(SummaryQA))]
+dt <- dt_MOD13A1[, .(site, IGBPname = IGBP, lat, long, t = date, y = EVI, SummaryQA, Tn)]
+dt[, ":="(w = qc_summary(SummaryQA))]
 sites      <- unique(dt$site)
 sitename   <- dt$site[1]
 nptperyear <- 23
 
-file <- "a.pdf"
-CairoPDF(file, width = 10, height = 5)
+################################################################################
+source("test/GEE/pkg_seasonality.R")
+
+methods <- c("sgfitw", "whitsmw2", "wHANTS")
+method  <- methods[3] #"sgfitw", "whitsmw2" and "wHANTS".
+FUN  <- get(method)
+file <- sprintf("st10_%s.pdf", method)
+
+CairoPDF(file, width = 10, height = 12)
+par(mfrow = c(5, 1), mar = c(1, 2, 3, 1), mgp = c(1.5, 0.6, 0))
 
 for (i in 1:length(sites)){
     runningId(i)
     sitename <- sites[i]
-
     # sitename <- "AU-How"
     d <- dt[site == sitename, ]
-    whit_brks(d, nptperyear)
-    title(sitename)
+    whit_brks(d, nptperyear, FUN, frame = 16)
 }
 dev.off()
-
 file.show(file)
 
+################################################################################
 
 # add one more year in head and tail
 res   <- list()
@@ -49,7 +55,6 @@ for (i in seq_along(sites)){
     year_end   <- last(year)
 
     d    <- dt[site == sitename]
-
     d    <- d[1:(23*3), ]
     lat  <- d$coords_x2[1] #d$lat[1]
     IGBP_code <- d$IGBPcode[1]#d$IGBP[1]
@@ -77,7 +82,5 @@ for (i in seq_along(sites)){
 
 dev.off()
 # res %<>% set_names(sites)
-
 file.show(file)
 info <- do.call(rbind, stats) %>% data.table()
-##

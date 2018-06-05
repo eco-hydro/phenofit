@@ -124,12 +124,17 @@ merge_pdf <- function(outfile = "RPlot.pdf", indir = 'Figs/', pattern = "*.pdf",
     if (del) shell(sprintf('del %s', pattern))
 }
 
+#' weighted CV
+#' @export
 cv_coef <- function(x, w){
     if (missing(w)) w <- rep(1, length(x))
+    if (length(x) == 0){
+        return( c(mean = NA, sd = NA, cv = NA) )
+    }
+
     mean <- sum(x * w) / sum(w)
     sd   <- sqrt(sum((x  - mean)^2 * w) /sum(w))
     cv   <- sd / mean
-    
     c(mean = mean, sd = sd, cv = cv) # quickly return
 }
 
@@ -142,7 +147,7 @@ cv_coef <- function(x, w){
 #' @param w Numeric vector, weights of every points
 #'
 #' @export
-GOF <- function(Y_obs, Y_sim, w){
+GOF <- function(Y_obs, Y_sim, w, include.cv = FALSE){
     if (missing(w)) w <- rep(1, length(Y_obs))
 
     # remove NA values in Y_sim, Y_obs and w
@@ -153,9 +158,12 @@ GOF <- function(Y_obs, Y_sim, w){
     Y_sim <- Y_sim[I]
     Y_obs <- Y_obs[I]
 
+    if (include.cv) CV <- cv_coef(Y_obs, w)
     if (is_empty(Y_obs)){
-        return(c(Bias = NA, MAE = NA,RMSE = NA, NSE = NA, R2 = NA,
-             pvalue = NA, n_sim = NA, R = NA)) #R = R,
+        out <- c(Bias = NA, MAE = NA,RMSE = NA, NSE = NA, R2 = NA,
+             pvalue = NA, n_sim = NA, R = NA)
+        if (include.cv) out <- c(out, CV)
+        return(out) #R = R,
     }
 
     # R2: the portion of regression explained variance, also known as
@@ -165,7 +173,7 @@ GOF <- function(Y_obs, Y_sim, w){
     # https://en.wikipedia.org/wiki/Explained_sum_of_squares
     y_mean <- sum(Y_obs * w) / sum(w)
 
-    SSR    <- sum( (Y_sim - y_mean)^2 * w)
+    SSR    <- sum( (Y_sim - y_mean)^2 * w) 
     SST    <- sum( (Y_obs - y_mean)^2 * w)
     R2     <- SSR / SST
 
@@ -189,8 +197,11 @@ GOF <- function(Y_obs, Y_sim, w){
     }, error = function(e){
         message(e$message)
     })
-    return(c(Bias = Bias, MAE = MAE,RMSE = RMSE, NSE = NSE, R2 = R2,
-             pvalue = pvalue, n_sim = n_sim, R = R)) #R = R,
+
+    out <- c(Bias = Bias, MAE = MAE,RMSE = RMSE, NSE = NSE, R2 = R2,
+             pvalue = pvalue, n_sim = n_sim, R = R)
+    if (include.cv) out <- c(out, CV)
+    return(out)
 }
 
 

@@ -2,7 +2,6 @@
 
 # require(spam)
 # require(ptw)
-
 whit <- function (y, lambda, w = rep(1, ny), iters = 2) {
     ny <- length(y)
     if (all(is.na(y))){
@@ -53,6 +52,7 @@ v_opt = function(y, w = 0 * y + 1, d = 2, llas = c(0, 4), tol = 0.01) {
     return(op$minimum)
 }
 
+#' @export
 v_curve = function(y, w = 0 * y + 1, llas,  d = 2, show = F) {
   # Compute the V-cure
   fits = pens = NULL
@@ -96,9 +96,10 @@ init_lambda  <- function(y){
     sd       <- sd(y)
     kurtosis <- kurtosis(y, type = 2)
     skewness <- skewness(y, type = 2)
+    # lambda was transformed by log10
     # lambda   <- 0.555484 + 1.671514*mean - 3.434064*sd - 0.052609*skewness + 0.009057*kurtosis
     lambda   <- 0.555465 + 1.501239*mean - 3.204295*sd - 0.031902*skewness # Just three year result
-    return(lambda)
+    return(10^lambda)
 }
 
 ## All year togather

@@ -5,10 +5,10 @@
 \title{season}
 \usage{
 season(INPUT, lambda, nptperyear = 46, south = FALSE, iters = 2,
-  wFUN = wTSM, IsPlot = TRUE, minpeakdistance = nptperyear/6,
-  ymax_min = 0.5, rymin_less = 0.6, threshold_max = 0.2,
-  threshold_min = 0.05, max_MaxPeaksperyear = 2, max_MinPeaksperyear = 3,
-  plotdat = INPUT, ...)
+  wFUN = wTSM, minpeakdistance = nptperyear/6, ymax_min = 0.5,
+  rymin_less = 0.6, threshold_max = 0.2, threshold_min = 0.05,
+  IsPlot = FALSE, max_MaxPeaksperyear = 2, max_MinPeaksperyear = 3,
+  wmin = 0.1, plotdat = INPUT, ...)
 }
 \arguments{
 \item{INPUT}{returned list(t, y, w, ylu) object from `check_input`}

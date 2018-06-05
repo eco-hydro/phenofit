@@ -68,7 +68,7 @@ whitsmw2 <- function(y, w, ylu, nptperyear, wFUN = wTSM, iters=1, lambdas=1000,
             # If curve has been smoothed enough, it will not care about the
             # second smooth. If no, the second one is just prepared for this
             # situation.
-            z <- whit2(z_temp, w, lambda=lambda) #genius move
+            z <- whit2(z_temp, lambda, w) #genius move
             z <- check_fit(z, ylu)
 
             yiter[yiter < z] <- z[yiter < z]
@@ -91,7 +91,7 @@ whitsmw2 <- function(y, w, ylu, nptperyear, wFUN = wTSM, iters=1, lambdas=1000,
         #         df = df, cv = cv, gcv = gcv), LV)
         # }else{
         # }
-        OUT[[j]] <- list(data = as_tibble(c(list(w = w), fits)))
+        OUT[[j]] <- c(list(w = w), fits)
     }
     if (length(lambdas) == 1) OUT <- OUT[[1]]
     return(OUT)

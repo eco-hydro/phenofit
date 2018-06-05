@@ -3,6 +3,7 @@ sgolayS <- function(frame, d){
     outer((-(frame-1)/2):((frame-1)/2), 0:d, "^")
 }
 
+#' Weighted Savitzky-Golay
 #' @export
 sgfitw <- function(y, w, nptperyear, ylu, wFUN = wTSM, iters = 2,
                    frame = floor(nptperyear/7)*2 + 1, d=2, ...){
@@ -19,7 +20,5 @@ sgfitw <- function(y, w, nptperyear, ylu, wFUN = wTSM, iters = 2,
     }
 
     fits %<>% set_names(paste0('iter', 1:iters))
-    return(as_tibble(c(list(w = w), fits)))
+    c(list(w = w), fits)
 }
-
-# test about those function using GPP data.

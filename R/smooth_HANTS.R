@@ -38,7 +38,9 @@
 #   Change call and input arguments to accommodate a base period length (nptperyear)
 #   All frequencies from 1 (base period) until nf are included
 wHANTS <- function(y, t, w, nf = 3, ylu, periodlen = 365, nptperyear,
-                   iters = 2, wFUN = wTSM, wmin = 0.1, ...){
+                   wFUN = wTSM, iters = 2, wmin = 0.1, ...){
+    if (is.Date(t)) t <- as.numeric(t - t[1])
+
     n    <- length(y)
     ncol <- min(2*nf+1, n)
 
@@ -61,7 +63,6 @@ wHANTS <- function(y, t, w, nf = 3, ylu, periodlen = 365, nptperyear,
 
     fits <- list()
     for (i in 1:iters){
-        w[ y<ylu[1] | y>ylu[2] ] <- wmin
         za = t(mat) %*% (w*y)
 
         A = t(mat*w) %*% mat # mat' * diag(w) * mat
@@ -69,11 +70,14 @@ wHANTS <- function(y, t, w, nf = 3, ylu, periodlen = 365, nptperyear,
         # % A(1,1) = A(1,1) - delta
         b <- solve(A, za) # coefficients
         z <- mat %*% b; z <- z[, 1]
-        fits[[i]] <- z
+        # w = wFUN(y, yr, w, 0.5, i, nptperyear) #%wfact = 0.5
         wnew <- wFUN(y, z, w, 1, nptperyear, ...)
         # print(unique(wnew - w))
         w <- wnew
-        # w = wFUN(y, yr, w, 0.5, i, nptperyear) #%wfact = 0.5
+        w[z < ylu[1] | z > ylu[2] ] <- wmin
+
+        z <- check_fit(z, ylu) # very necessary
+        fits[[i]] <- z
     }
 
     amp[1]   = b[1]
@@ -84,37 +88,12 @@ wHANTS <- function(y, t, w, nf = 3, ylu, periodlen = 365, nptperyear,
     rb  <- b[i+1]
     amp[ifr] = sqrt(ra*ra+rb*rb)
 
-    dg  <- 180.0/pi
+    dg    <- 180.0/pi
     phase <- atan2(rb, ra)*dg
     phase[phase<0] = phase[phase<0] + 360
     phi[ifr] = phase
 
     fits %<>% set_names(paste0('iter', 1:iters))
-    return(as_tibble(c(list(w = w), fits)))
+    c(list(w = w), fits) # quickly return
     # list(fit = fits, amp = amp, phi = phi) #quickly return
-}
-
-#' Check vegetation seasonality
-#' @export
-check_SI <- function(INPUT, IsPlot = F, pdat = INPUT, nf = 3, ...){
-    # y <- d$EVI
-    # t <- as.numeric(d$date - ymd(20000101))
-    # w <- d$w
-    # nptperyear = 23
-    # INPUT <- check_input(t, y, w)
-    #
-    # pdat <- as.list(d[, .(y = EVI, t = date, w = w)])
-    # pdat$ylu <- INPUT$ylu
-    fit <- wHANTS(INPUT$y, INPUT$t, INPUT$w, nf = nf, ylu = INPUT$ylu,
-                  nptperyear = 23, iters = 3, wFUN = wTSM, wmin = 0.1)
-    if (IsPlot){
-        plotdata(pdat, 23)
-        colors <- c("red", "blue", "green")
-        for (i in 1:(ncol(fit) - 1)){
-            lines(pdat$t, fit[[i+1]], col = colors[i], lwd = 2)
-        }
-    }
-    stat  <- GOF(INPUT$y, dplyr::last(fit), INPUT$w)
-    stat2 <- cv_coef(dplyr::last(fit), INPUT$w)
-    c(stat, stat2) # quickly return
 }
