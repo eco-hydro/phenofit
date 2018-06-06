@@ -1,52 +1,27 @@
+# res <- list()
+# for (i in seq_along(sites)){
+#     runningId(i)
+#     res[[i]] <- optim_lambda(sites[i])
+# }
+
 source('test/stable/load_pkgs.R')
-# source('test/GEE/V-pack.r')
 
-dt = fread('test/GEE/data/MOD13A1_st_1e3.csv')
-dt[, `:=`(y    = EVI/1e4,
-          t    = ymd(date),
-          w    = qc_summary(dt$SummaryQA))]
-dt[, per := sum(!is.na(EVI))/.N, site]
-df <- dt[per > 0.3, .(site, y, t, w, IGBPcode)]
+lst <- get_slurm_out("result")
+a <- do.call(c, lst) %>% rm_empty()
 
-sites      <- unique(df$site)
-nptperyear <- 23
-
-res <- list()
-
-for (i in seq_along(sites)){
-    runningId(i)
-    sitename <- sites[i]#; grp = 1
-    d    <- df[site == sitename]
-    IGBP <- d$IGBPcode[1]
-
-    INPUT <- check_input(d$t, d$y, d$w, trim = T, maxgap = nptperyear / 4, alpha = 0.02)
-
-    temp <- list()
-    for (j in 1:6){
-        temp[[j]] <- tryCatch({
-            I  <- ((j-1)*3*23+1):(j*3*23)
-            input <- lapply(INPUT[1:3], `[`, I) %>% c(INPUT[5])
-            vc    <- v_curve(input$y, w = input$w, llas = seq(-2, 2, by = 0.01), d = 2, show = F)
-
-            listk(site = sitename, IGBP, lambda = vc$lambda, vc)
-        }, error = function(e){
-            message(sprintf("[%05d]: %s", i, e$message))
-        })
-    }
-    res[[i]] <- temp
-}
-
-a <- do.call(c, res) %>% rm_empty()
-x <- map_df(a, ~llply(.x[c("site", "IGBP", "lambda")], first, default = NA)) %>% data.table()
-
+x <- transpose(a) %>% llply(unlist) %>% do.call(cbind, .) %>% data.table()
 x$lambda %<>% log10()
 x <- x[!is.na(lambda), ]
 x[, grp := (0:(.N-1)), site]
 
-fwrite(x, "st1e4_lambda.csv")
+# ~llply(.x[c("site", "IGBP", "lambda")], first, default = NA)
+# x <- map_df(a, ~.x) %>% data.table()
+
+fwrite(x, "st1e4_lambda2.csv")
 ## statistics
-dt[, grp := floor(1:.N/(23*3)), site]
-dt <- dt[grp <= 5]
+df[, grp := floor(1:.N/(23*3)), site]
+df <- df[grp <= 5]
+
 
 # info <- ddply(dt, .(site), function(d){
 #     y <- d$y[1:(23*3)]
@@ -55,34 +30,103 @@ dt <- dt[grp <= 5]
 #       kurtosis = kurtosis(y, na.rm = T, type = 2),
 #       skewness = skewness(y, na.rm = T, type = 2))
 # })
-info <- dt[, .(mean = mean(y, na.rm = T),
-               sd = sd(y, na.rm = T),
-               kurtosis = kurtosis(y, na.rm = T, type = 2),
-               skewness = skewness(y, na.rm = T, type = 2)), .(site, grp)]
-info[, cv := sd/mean]
+info <- df[!is.na(y), .(mean = mean(y),
+               sd = sd(y),
+               kurtosis = kurtosis(y, type = 2),
+               skewness = skewness(y, type = 2)), .(site, grp)]
+# info[, cv := sd/mean]
+
+ggplot(x, aes(as.factor(IGBP), lambda)) +
+    geom_violin() +
+    geom_boxplot(width =0.2) +
+    geom_jitter(width = 0.2, alpha = 0.01)
+
 
 ## 01. construct connection
 stat <- merge(data.table(x), info, by = c("site", "grp"))
+slm(stat)
 
-slm  <- function(d){
-    lm_model    <- lm(lambda~kurtosis+mean+sd+skewness+I(sd/mean), d, na.action = na.exclude) #
+
+lms <- dlply(stat, .(IGBP), function(d){
+    lm_model    <- rlm(lambda~kurtosis+mean+sd+skewness+I(sd/mean), d, na.action = na.exclude) #
+
     slm_model   <- stepAIC(lm_model)
-    d$fitted    <- predict(slm_model)
-    print(summary(slm_model))
+    stat$fitted <- predict(slm_model)
 
-    d2 <- dt[, .(lambda2 = init_lambda(y)), .(site, grp)]
+    list(glance = glance(slm_model), tidy = tidy(slm_model))
+})
+lms %<>% transpose()
 
-    ggplot(d, aes(lambda, fitted)) + #, color = IGBP
-        geom_point(alpha = 0.3) + #, color = "blue"
+
+#' before regression, scale x to 0-1
+#' Also return sd, and mean, for the future reconstructure
+znorm <- function(d){
+    zscore <- function(x) (x - mean(x, na.rm = T)) / sd(x, na.rm = T)
+    vars   <- c("mean", "sd", "cv", "skewness", "kurtosis")
+
+    sd   <- sapply(d[, ..vars],   sd, na.rm = T)
+    mean <- sapply(d[, ..vars], mean, na.rm = T)
+    newd <- d[, (vars) := lapply(.SD, zscore), .SDcols = vars]
+    list(d = newd, mean = mean, sd = sd)
+}
+
+stat[, cv := mean/sd]
+stat_s <- znorm(stat) # scaled value
+
+
+lst  <- split(1:nrow(stat), stat$IGBP) %>% set_names(NULL)
+f_sample <- function(x) sort(sample(x, length(x)*0.1))
+# resample 10 times
+times <- 1:20 %>% set_names(., .)
+I_lst <- llply(times, function(i){
+    llply(lst, f_sample) %>% do.call(c, .)
+})
+
+res <- llply(I_lst, select_model, .progress = "text") %>%
+    ldply(function(x) x)
+res
+table(res$term)
+
+
+select_model <- function(index){
+    robust <- FALSE
+    lm_fun   <- ifelse(robust, lmRob, lm)
+    step_fun <- ifelse(robust, step.lmRob, stepAIC)
+
+    d <- stat_s$d[index, ]
+    l <- lm_fun(lambda~(kurtosis+mean+sd+skewness+I(sd/mean)), d, na.action = na.exclude) #
+    l_opt <- step_fun(l, trace = 0)
+    tidy(l_opt) # return
+}
+# set.seed(42); sample(1:100, 10)
+
+#' stepwise regression for whittaker lambda relationship constructure
+slm  <- function(stat){
+    # robust
+    stat$fitted <- predict(l_opt)
+    l    <- glm(lambda~kurtosis+mean+sd+skewness+I(sd/mean), stat,
+                       family = gaussian(link = "logit"),
+                       na.action = na.exclude)
+    print(summary(l_opt))
+    d2 <- df[, .(lambda2 = init_lambda(y)), .(site, grp)]
+
+    file <- "a.png"
+    CairoPNG(file, 10, 7, units = "in", dpi = 300)
+    p <- ggplot(stat, aes(lambda, fitted)) + #, color = IGBP
+        geom_point(alpha = 0.07) + #, color = "blue"
+        # geom_density_2d() +
         geom_abline(slope = 1, intercept = 0, color = "red", size = 1) +
         facet_wrap(~IGBP)
+    print(p)
+    dev.off()
+    file.show(file)
 }
 slm(stat)
 
 dt[, .(lambda2 = init_lambda(y)), .(site, grp)]
 ## 02. visualization
 xs <- melt(x, c("site", "IGBP", "lambda"))
-ggplot(xs, aes(value, lambda)) + geom_point(alpha = 0.2) + geom_smooth() +
+ggplot(xs, aes(value, lambda)) + geom_point(alpha = 0.05) + geom_smooth() +
     facet_wrap(~variable, scales = "free")
 # facet_grid(IGBP~variable, scales = "free")
 

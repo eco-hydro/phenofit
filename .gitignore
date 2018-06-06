@@ -48,3 +48,5 @@ src-x64/
 inst/doc
 
 *.json
+result
+log

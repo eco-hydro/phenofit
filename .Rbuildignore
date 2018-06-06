@@ -3,3 +3,5 @@
 ^.*\.pdf$
 ^.*\.rda$
 ^.*\.nb.html$
+result
+log

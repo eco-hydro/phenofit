@@ -47,7 +47,7 @@ whit2 <- function(y, lambda, w = rep(1, ny))
 #'      Modelling 15, 91–111. https://doi.org/10.1177/1471082X14549288
 #' @export
 whitsmw2 <- function(y, w, ylu, nptperyear, wFUN = wTSM, iters=1, lambdas=1000,
-    df = NULL, ...)
+    second = TRUE, df = NULL, ...)
 {
     if (all(is.na(y))) return(y)
     n <- sum(w)
@@ -63,22 +63,18 @@ whitsmw2 <- function(y, w, ylu, nptperyear, wFUN = wTSM, iters=1, lambdas=1000,
                 w <- wFUN(y, z, w, i, nptperyear, ...)
                 # w <- phenofit:::wTSM_cpp(y, z, w, iters, nptperyear, 0.5)
             }
-            # z_temp <- smooth_HdH(yiter, w, lambda=lambda)$z
-            z_temp <- whit2(yiter, lambda, w)
+            z <- whit2(yiter, lambda, w)
             # If curve has been smoothed enough, it will not care about the
             # second smooth. If no, the second one is just prepared for this
             # situation.
-            z <- whit2(z_temp, lambda, w) #genius move
+            if (second) z <- whit2(z, lambda, w) #genius move
+            
             z <- check_fit(z, ylu)
-
-            yiter[yiter < z] <- z[yiter < z]
-            # if (!validation){
-            # }
+            # yiter[yiter < z] <- z[yiter < z]
             fits[[i]] <- z
             # yiter <- z# update y with smooth values
         }
         fits %<>% set_names(paste0('iter', 1:iters))
-
         # # CROSS validation
         # if (validation){
         #     h   <- fit$dhat

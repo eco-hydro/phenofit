@@ -1,5 +1,4 @@
 # source('test/stable/load_pkgs.R')
-
 library(Matrix)
 library(plyr)
 library(data.table)
@@ -16,6 +15,16 @@ library(devtools)
 library(Cairo)
 library(jsonlite)
 library(openxlsx)
+library(pbmcapply)
+library(MASS)
+
+if (.Platform$OS.type == "unix"){
+    dir_climate <- "/OSM/CBR/CoRE/working/timeseries/Climate/"
+    dir_flush   <- "/flush1/kon055/"
+} else{
+    dir_climate <- "//clw-03-cdc.it.csiro.au/OSM_CBR_CoRE_working/timeseries/Climate/"
+    dir_flush   <- "//braggflush1/flush1/kon055/"
+}
 
 # MCD12Q1.006 land cover 1-17, IGBP scheme
 IGBPnames <- c("ENF", "EBF", "DNF", "DBF", "MF" , "CSH", 
@@ -104,37 +113,37 @@ sites_rm2 <- c("GF-Guy", "BR-Sa3", "US-Whs")
 # source("F:/Github/PML_v2/fluxsites_tidy/R/mainfunc/load_pkgs.R", encoding = "utf-8")
 # stations212 <- fread("C:/Users/kon055/Google Drive/Github/data/phenology/station/flux-212.txt")
 
-tidy_pheno <- function(RES){
-    id.vars <- colnames(RES[[1]]$pheno$doy$AG)
-    df <- map(rm_empty(RES), ~.x$pheno$doy) %>%
-        rm_empty() %>%
-        melt(id.vars = id.vars) %>%
-        set_names(c(id.vars, "meth", "site")) %>% as.data.table()
-    return(df)
-}
+# tidy_pheno <- function(RES){
+#     id.vars <- colnames(RES[[1]]$pheno$doy$AG)
+#     df <- map(rm_empty(RES), ~.x$pheno$doy) %>%
+#         rm_empty() %>%
+#         melt(id.vars = id.vars) %>%
+#         set_names(c(id.vars, "meth", "site")) %>% as.data.table()
+#     return(df)
+# }
 
-# re-calculate phenology of every site
-recal_pheno.site <- function(fit){
-    # 3. phenology
-    p <- lapply(fit$fits, getFits_pheno)
-    # pheno: list(p_date, p_doy)
-    fit$pheno  <- map(p, tidyFits_pheno, origin = fit$INPUT$t[1]) %>% purrr::transpose()
-    return(fit)
-}
+# # re-calculate phenology of every site
+# recal_pheno.site <- function(fit){
+#     # 3. phenology
+#     p <- lapply(fit$fits, getFits_pheno)
+#     # pheno: list(p_date, p_doy)
+#     fit$pheno  <- map(p, tidyFits_pheno, origin = fit$INPUT$t[1]) %>% purrr::transpose()
+#     return(fit)
+# }
 
-plotsites <- function(fits, file = 'Fig3_GPP_phenofit_flux112_v13.pdf'){
-    Cairo::CairoPDF(file, width = 10, height = 7)
-    sites <- names(fits)
+# plotsites <- function(fits, file = 'Fig3_GPP_phenofit_flux112_v13.pdf'){
+#     Cairo::CairoPDF(file, width = 10, height = 7)
+#     sites <- names(fits)
 
-    for (i in seq_along(fits)){
-        runningId(i)
-        site <- sites[i]
-        tryCatch({
-            p <- plot_phenofit(fits[[i]]) + ggtitle(site)
-            print(p)
-        }, error = function(e){
-            message(sprintf("%s:%s", site, e$message))
-        })
-    }
-    dev.off()
-}
+#     for (i in seq_along(fits)){
+#         runningId(i)
+#         site <- sites[i]
+#         tryCatch({
+#             p <- plot_phenofit(fits[[i]]) + ggtitle(site)
+#             print(p)
+#         }, error = function(e){
+#             message(sprintf("%s:%s", site, e$message))
+#         })
+#     }
+#     dev.off()
+# }

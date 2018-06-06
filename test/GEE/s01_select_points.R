@@ -30,6 +30,7 @@ file <- sprintf("st340_%s.pdf", method)
 CairoPDF(file, width = 10, height = 12)
 par(mfrow = c(6, 1), mar = c(1, 2, 3, 1), mgp = c(1.5, 0.6, 0))
 
+library()
 stats <- list()
 for (i in 1:length(sites)){
     runningId(i)
@@ -40,6 +41,7 @@ for (i in 1:length(sites)){
 }
 dev.off()
 file.show(file)
+
 
 info   <- do.call(rbind, stats) %>% data.table()
 

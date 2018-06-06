@@ -1,23 +1,5 @@
 # Functions for working with the V-curve
 
-# require(spam)
-# require(ptw)
-whit <- function (y, lambda, w = rep(1, ny), iters = 2) {
-    ny <- length(y)
-    if (all(is.na(y))){
-        return(list(z = y, w = w))
-    }
-
-    for (i in 1:iters){
-        z  <- whit2(y, lambda, w)
-        re <- z - y
-        if (i < iters){
-            w <- wBisquare(re, w) #update weights
-        }
-    }
-    return(list(z = z, w = w))
-}
-
 v_point = function(y, w = 0 * y + 1, lambda = 100, d = 2) {
     # Compute the value of the normalized V-curve for one value of lambda
     # Prepare for smoothing
@@ -46,46 +28,61 @@ v_point = function(y, w = 0 * y + 1, lambda = 100, d = 2) {
 v_opt = function(y, w = 0 * y + 1, d = 2, llas = c(0, 4), tol = 0.01) {
     # Locate the optimal value of log10(lambda) with optimizer
     # Specify bounds of search range for log10(lambda) in paramter 'llas'
-
+    
     v_fun = function(lla, y, w, d) v_point(y, w, 10 ^ lla, d)
     op = optimize(v_fun, llas, y, w, d, tol = tol)
     return(op$minimum)
 }
 
+#' update 20180605 add weights updating to whittaker lambda selecting
 #' @export
-v_curve = function(y, w = 0 * y + 1, llas,  d = 2, show = F) {
-  # Compute the V-cure
-  fits = pens = NULL
-  for (lla in llas) {
-    z = whit2(y, 10 ^ lla, w)
-  	fit = log(sum(w * (y - z) ^ 2))
-	  pen = log(sum(diff(z, diff = d) ^2))
-	  fits = c(fits, fit)
-	  pens = c(pens, pen)
-  }
+v_curve = function(INPUT, nptperyear, llas,  d = 2, show = F, 
+    wFUN = wTSM, iters=2) {
+    # Compute the V-cure
+    y <- INPUT$y
+    w <- INPUT$w
+    
+    param <- c(INPUT, nptperyear = nptperyear, wFUN = wFUN, iters=iters, 
+        second = FALSE, lambdas=NA)
+    # whitsmw2(y, w, ylu, nptperyear, wFUN = wTSM, iters=1, lambdas=1000,
 
-  # Construct V-curve
-  dfits   = diff(fits)
-  dpens   = diff(pens)
-  llastep = llas[2] - llas[1]
-  v      = sqrt(dfits ^ 2 + dpens ^ 2) / (log(10) * llastep)
-  nla    = length(llas)
-  lamids = (llas[-1] + llas[-nla]) / 2
-  k      = which.min(v)
-  lambda = 10 ^ lamids[k]
-  z      = whit2(y, lambda, w)
+    fits = pens = NULL
+    for (lla in llas) {
+        # param$lambdas <- 10^lla
+        # z    <- do.call(whitsmw2, param) %>% dplyr::last()
+        z    = whit2(y, 10 ^ lla, w)
+        fit  = log(sum(w * (y - z) ^ 2))
+        pen  = log(sum(diff(z, diff = d) ^2))
+        fits = c(fits, fit)
+        pens = c(pens, pen)
+    }
 
-  if (show) {
-      ylim = c(0, max(v))
-      plot(lamids, v, type = 'l', col = 'blue', ylim = ylim,
+    # Construct V-curve
+    dfits   = diff(fits)
+    dpens   = diff(pens)
+    llastep = llas[2] - llas[1]
+    v       = sqrt(dfits ^ 2 + dpens ^ 2) / (log(10) * llastep)
+
+    nla     = length(llas)
+    lamids  = (llas[-1] + llas[-nla]) / 2
+    k       = which.min(v)
+    lambda  = 10 ^ lamids[k]
+    
+    # param$lambdas <- lambda
+    # z    <- do.call(whitsmw2, param) %>% dplyr::last()
+    z       = whit2(y, lambda, w)
+
+    if (show) {
+        ylim = c(0, max(v))
+        plot(lamids, v, type = 'l', col = 'blue', ylim = ylim,
            xlab = 'log10(lambda)')
-      points(lamids, v, pch = 16, cex = 0.5, col = 'blue' )
-      abline(h = 0, lty = 2, col = 'gray')
-      abline(v = lamids[k], lty = 2, col = 'gray', lwd = 2)
-      title('V-curve')
-      grid()
-  }
-  return(list(z = z, llas = lamids, lambda = lambda, v = v, vmin = v[k]))
+        points(lamids, v, pch = 16, cex = 0.5, col = 'blue' )
+        abline(h = 0, lty = 2, col = 'gray')
+        abline(v = lamids[k], lty = 2, col = 'gray', lwd = 2)
+        title('V-curve')
+        grid()
+    }
+    return(list(z = z, llas = lamids, lambda = lambda, v = v, vmin = v[k]))
 }
 
 #' Initial lambda value of whittaker taker
@@ -145,6 +142,42 @@ init_lambda  <- function(y){
 #   (4 observations deleted due to missingness)
 # Multiple R-squared:  0.1441,  Adjusted R-squared:  0.144 
 # F-statistic:  5064 on 3 and 90265 DF,  p-value: < 2.2e-16
+
+## 03. try
+# slm(stat)
+# Start:  AIC=-86171.25
+# lambda ~ kurtosis + mean + sd + skewness + I(sd/mean)
+#              Df Sum of Sq   RSS    AIC
+# <none>                    35029 -86171
+# - I(sd/mean)  1      1.46 35030 -86169
+# - kurtosis    1     12.72 35042 -86140
+# - skewness    1     33.95 35063 -86085
+# - mean        1   1815.68 36845 -81593
+# - sd          1   1825.27 36854 -81569
+
+# Call:
+# lm(formula = lambda ~ kurtosis + mean + sd + skewness + I(sd/mean), 
+#     data = d, na.action = na.exclude)
+
+# Residuals:
+#      Min       1Q   Median       3Q      Max 
+# -2.50216 -0.44753  0.07219  0.48951  1.98753 
+
+# Coefficients:
+#               Estimate Std. Error t value Pr(>|t|)    
+# (Intercept)  7.255e-01  7.311e-03  99.235  < 2e-16 ***
+# kurtosis    -8.084e-03  1.409e-03  -5.736 9.72e-09 ***
+# mean         1.189e+00  1.734e-02  68.543  < 2e-16 ***
+# sd          -3.510e+00  5.108e-02 -68.724  < 2e-16 ***
+# skewness    -3.261e-02  3.479e-03  -9.372  < 2e-16 ***
+# I(sd/mean)  -6.875e-05  3.538e-05  -1.944    0.052 .  
+# ---
+# Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+# Residual standard error: 0.6217 on 90639 degrees of freedom
+# Multiple R-squared:  0.1191,    Adjusted R-squared:  0.119 
+# F-statistic:  2450 on 5 and 90639 DF,  p-value: < 2.2e-16
+
 
 #' kurtosis
 #' 
