@@ -10,13 +10,14 @@ library(zoo)
 
 library(Ipaper)
 library(phenofit)
-library(plotly)
+# library(plotly)
 library(devtools)
 library(Cairo)
 library(jsonlite)
 library(openxlsx)
 library(pbmcapply)
 library(MASS)
+library(broom)
 
 if (.Platform$OS.type == "unix"){
     dir_climate <- "/OSM/CBR/CoRE/working/timeseries/Climate/"
