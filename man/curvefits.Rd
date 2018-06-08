@@ -4,9 +4,10 @@
 \alias{curvefits}
 \title{curvefits}
 \usage{
-curvefits(INPUT, brks, nptperyear = 46, wFUN = wTSM, iters = 2, lambda,
-  south = FALSE, extend_month = 3, minT = 0, methods = c("AG", "zhang",
-  "beck", "elmore", "Gu"), qc, debug = FALSE, ...)
+curvefits(INPUT, brks, nptperyear = 23, wFUN = wTSM, iters = 2,
+  wmin = 0.1, south = FALSE, extend_month = 2, minT = 0,
+  methods = c("AG", "zhang", "beck", "elmore", "Gu"), qc, debug = FALSE,
+  ...)
 }
 \arguments{
 \item{extend_month}{For every growing season, previous and afterwards 

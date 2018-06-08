@@ -91,93 +91,80 @@ init_lambda  <- function(y){
     y        <- y[!is.na(y)] #rm NA values
     mean     <- mean(y)
     sd       <- sd(y)
-    kurtosis <- kurtosis(y, type = 2)
+    cv       <- sd/mean
     skewness <- skewness(y, type = 2)
+    kurtosis <- kurtosis(y, type = 2)
     # lambda was transformed by log10
     # lambda   <- 0.555484 + 1.671514*mean - 3.434064*sd - 0.052609*skewness + 0.009057*kurtosis
-    lambda   <- 0.555465 + 1.501239*mean - 3.204295*sd - 0.031902*skewness # Just three year result
+    # lambda   <- 0.555465 + 1.501239*mean - 3.204295*sd - 0.031902*skewness # Just three year result
+    
+    lambda <- 0.831120 + 1.599970*mean - 4.094027*sd - 0.035160*cv - 0.063533*skewness # all year 
+    # lambda <- 0.817783 + 1.803588*mean - 4.263469*sd - 0.038240*cv - 0.066914*skewness - 0.011289*kurtosis  #3y
     return(10^lambda)
 }
 
+
 ## All year togather
 # Call:
-# lm(formula = lambda ~ kurtosis + mean + sd + skewness, data = stat)
+# lm_fun(formula = lambda ~ mean + sd + cv + skewness, data = d, 
+#     na.action = na.exclude)
 
 # Residuals:
-#      Min       1Q   Median       3Q      Max 
-# -2.33795 -0.33385  0.04024  0.37228  2.08361 
+#     Min      1Q  Median      3Q     Max 
+# -2.4662 -0.4267  0.1394  0.4144  2.5824 
 
 # Coefficients:
 #              Estimate Std. Error t value Pr(>|t|)    
-# (Intercept)  0.555484   0.016632  33.399  < 2e-16 ***
-# kurtosis     0.009057   0.002746   3.299 0.000973 ***
-# mean         1.671514   0.038983  42.878  < 2e-16 ***
-# sd          -3.434064   0.118632 -28.947  < 2e-16 ***
-# skewness    -0.052609   0.008332  -6.314 2.79e-10 ***
+# (Intercept)  0.831120   0.021897  37.956  < 2e-16 ***
+# mean         1.599970   0.089914  17.794  < 2e-16 ***
+# sd          -4.094027   0.168844 -24.247  < 2e-16 ***
+# cv          -0.035160   0.008459  -4.157 3.25e-05 ***
+# skewness    -0.063533   0.007966  -7.976 1.62e-15 ***
 # ---
 # Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-# Residual standard error: 0.5506 on 15074 degrees of freedom
-# Multiple R-squared:  0.2118,  Adjusted R-squared:  0.2116 
-# F-statistic:  1013 on 4 and 15074 DF,  p-value: < 2.2e-16
+# Residual standard error: 0.5851 on 15135 degrees of freedom
+# Multiple R-squared:  0.1572,    Adjusted R-squared:  0.1569 
+# F-statistic: 705.5 on 4 and 15135 DF,  p-value: < 2.2e-16
+
+#          term    estimate   std.error  statistic       p.value
+# 1 (Intercept)  0.83112003 0.021897138  37.955647 3.306152e-301
+# 2        mean  1.59997023 0.089914112  17.794428  4.039120e-70
+# 3          sd -4.09402663 0.168843860 -24.247412 1.876008e-127
+# 4          cv -0.03516045 0.008458787  -4.156677  3.246863e-05
+# 5    skewness -0.06353256 0.007965580  -7.975886  1.620571e-15
 
 ## Three year fitting result
 # Call:
-# lm(formula = lambda ~ mean + sd + skewness, data = stat, na.action = na.exclude)
-
-# Residuals:
-#      Min       1Q   Median       3Q      Max 
-# -2.77002 -0.40751  0.01012  0.42447  2.02898 
-
-# Coefficients:
-#              Estimate Std. Error t value Pr(>|t|)    
-# (Intercept)  0.555465   0.007000  79.357   <2e-16 ***
-# mean         1.501239   0.017132  87.628   <2e-16 ***
-# sd          -3.204295   0.044921 -71.332   <2e-16 ***
-# skewness    -0.031902   0.003406  -9.367   <2e-16 ***
-# ---
-# Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-# Residual standard error: 0.6188 on 90265 degrees of freedom
-#   (4 observations deleted due to missingness)
-# Multiple R-squared:  0.1441,  Adjusted R-squared:  0.144 
-# F-statistic:  5064 on 3 and 90265 DF,  p-value: < 2.2e-16
-
-## 03. try
-# slm(stat)
-# Start:  AIC=-86171.25
-# lambda ~ kurtosis + mean + sd + skewness + I(sd/mean)
-#              Df Sum of Sq   RSS    AIC
-# <none>                    35029 -86171
-# - I(sd/mean)  1      1.46 35030 -86169
-# - kurtosis    1     12.72 35042 -86140
-# - skewness    1     33.95 35063 -86085
-# - mean        1   1815.68 36845 -81593
-# - sd          1   1825.27 36854 -81569
-
-# Call:
-# lm(formula = lambda ~ kurtosis + mean + sd + skewness + I(sd/mean), 
+# lm_fun(formula = lambda ~ (mean + sd + cv + skewness + kurtosis), 
 #     data = d, na.action = na.exclude)
 
 # Residuals:
-#      Min       1Q   Median       3Q      Max 
-# -2.50216 -0.44753  0.07219  0.48951  1.98753 
+#     Min      1Q  Median      3Q     Max 
+# -2.6601 -0.4564  0.0490  0.4418  2.7551 
 
 # Coefficients:
-#               Estimate Std. Error t value Pr(>|t|)    
-# (Intercept)  7.255e-01  7.311e-03  99.235  < 2e-16 ***
-# kurtosis    -8.084e-03  1.409e-03  -5.736 9.72e-09 ***
-# mean         1.189e+00  1.734e-02  68.543  < 2e-16 ***
-# sd          -3.510e+00  5.108e-02 -68.724  < 2e-16 ***
-# skewness    -3.261e-02  3.479e-03  -9.372  < 2e-16 ***
-# I(sd/mean)  -6.875e-05  3.538e-05  -1.944    0.052 .  
+#              Estimate Std. Error t value Pr(>|t|)    
+# (Intercept)  0.817783   0.010569  77.379  < 2e-16 ***
+# mean         1.803588   0.042016  42.926  < 2e-16 ***
+# sd          -4.263469   0.081937 -52.033  < 2e-16 ***
+# cv          -0.038240   0.004041  -9.462  < 2e-16 ***
+# skewness    -0.066914   0.003762 -17.785  < 2e-16 ***
+# kurtosis     0.011289   0.001506   7.496 6.62e-14 ***
 # ---
 # Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-# Residual standard error: 0.6217 on 90639 degrees of freedom
-# Multiple R-squared:  0.1191,    Adjusted R-squared:  0.119 
-# F-statistic:  2450 on 5 and 90639 DF,  p-value: < 2.2e-16
+# Residual standard error: 0.6639 on 90639 degrees of freedom
+# Multiple R-squared:  0.1541,    Adjusted R-squared:  0.1541 
+# F-statistic:  3303 on 5 and 90639 DF,  p-value: < 2.2e-16
 
+#          term    estimate   std.error  statistic      p.value
+# 1 (Intercept)  0.81778299 0.010568590  77.378628 0.000000e+00
+# 2        mean  1.80358830 0.042016401  42.925816 0.000000e+00
+# 3          sd -4.26346883 0.081937136 -52.033413 0.000000e+00
+# 4          cv -0.03823967 0.004041253  -9.462331 3.080333e-21
+# 5    skewness -0.06691403 0.003762368 -17.785083 1.216689e-70
+# 6    kurtosis  0.01128888 0.001505916   7.496350 6.621350e-14
 
 #' kurtosis
 #' 

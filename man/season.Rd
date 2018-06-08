@@ -4,14 +4,17 @@
 \alias{season}
 \title{season}
 \usage{
-season(INPUT, lambda, nptperyear = 46, south = FALSE, iters = 2,
-  wFUN = wTSM, minpeakdistance = nptperyear/6, ymax_min = 0.5,
-  rymin_less = 0.6, threshold_max = 0.2, threshold_min = 0.05,
-  IsPlot = FALSE, max_MaxPeaksperyear = 2, max_MinPeaksperyear = 3,
-  wmin = 0.1, plotdat = INPUT, ...)
+season(INPUT, nptperyear = 46, south = FALSE, FUN = whitsmw2,
+  wFUN = wTSM, iters = 2, lambda, nf = 2, frame = floor(nptperyear/7) *
+  2 + 1, minpeakdistance = nptperyear/6, ymax_min = 0.5, rymin_less = 0.6,
+  threshold_max = 0.2, threshold_min = 0.05, IsPlot = FALSE,
+  max_MaxPeaksperyear = 2, max_MinPeaksperyear = 3, wmin = 0.1,
+  plotdat = INPUT, print = FALSE, ...)
 }
 \arguments{
 \item{INPUT}{returned list(t, y, w, ylu) object from `check_input`}
+
+\item{FUN}{Curve fitting functions, call be one of `sgfitw`, `whitsmw2` and `wHANTS`.}
 
 \item{rymin_less}{y_tough < rymin_less * A}
 

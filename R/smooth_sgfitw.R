@@ -10,12 +10,16 @@ sgfitw <- function(y, w, nptperyear, ylu, wFUN = wTSM, iters = 2,
     if (all(is.na(y))) return(y)
 
     S <- sgolayS(frame, d)
-
-    fits <- list()
+    
+    yiter <- y
+    fits  <- list()
     for (i in 1:iters){
-        z <- sgfitw_rcpp(y, w, S)[, 1]
+        z <- sgfitw_rcpp(yiter, w, S)[, 1]
         w <- wFUN(y, z, w, i, nptperyear, ...)
+
         z <- check_fit(z, ylu)
+        yiter[yiter < z] <- z[yiter < z] # upper envelope
+        
         fits[[i]] <- z
     }
 

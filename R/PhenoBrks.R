@@ -1,5 +1,4 @@
 # source('R/mainfunc/PhenoBrks.R', encoding = "utf-8")
-# ylab = expression(paste('GPP ( gC ', m^-2, d^-1, ')'))
 #' @export
 plotdata <- function(INPUT, nptperyear, wmin = 0.1, ...){
     t <- INPUT$t
@@ -25,7 +24,7 @@ plotdata <- function(INPUT, nptperyear, wmin = 0.1, ...){
         add <- ifelse(i == 1, F, T)
         points(t[I], y[I], pch = pch[i], col = colors[i], cex = 0.8)
     }
-    
+    # ylab = expression(paste('GPP ( gC ', m^-2, d^-1, ')'))
     abline(v = t[seq(1, length(y), nptperyear)], col = "grey60", lty = 3)
     grid(nx = NA, NULL)
     ylu <- INPUT$ylu
@@ -54,6 +53,8 @@ rm_duplicate <- function(d, y, threshold){
 }
 
 # fix across multi-year breaks points, when whole year data are missing
+# 
+# This function is only for fluxsites data
 fix_di <- function(di, t){
     for (i in 1:nrow(di)){
         I    <- di$beg[i]:di$end[i]
@@ -108,7 +109,7 @@ fix_di <- function(di, t){
 #' @param rymin_less y_tough < rymin_less * A
 #' @param plotdat Is IsPlot = true, plotdata need to be passed. 
 #' Since, y, w have been changed.
-#' 
+#' @param FUN Curve fitting functions, call be one of `sgfitw`, `whitsmw2` and `wHANTS`.
 #' @export
 #' @return list(dt, di)
 #' $whit
@@ -135,8 +136,9 @@ fix_di <- function(di, t){
 #  3 122   140   163
 # if more than one continuous maximum(minimum) values, only kept the bigger
 # (smaller) one
-season <- function(INPUT, lambda, nptperyear = 46, south = FALSE,
-                   iters = 2, wFUN = wTSM,
+season <- function(INPUT, nptperyear = 46, south = FALSE,
+                   FUN = whitsmw2, wFUN = wTSM, iters = 2,
+                   lambda, nf  = 2, frame = floor(nptperyear/7) * 2 + 1,
                    minpeakdistance = nptperyear/6,
                    ymax_min = 0.5,
                    rymin_less = 0.6, #ymin < rymin_less * A
@@ -144,34 +146,33 @@ season <- function(INPUT, lambda, nptperyear = 46, south = FALSE,
                    IsPlot = FALSE,
                    max_MaxPeaksperyear = 2, max_MinPeaksperyear = 3,
                    wmin = 0.1,
-                   plotdat = INPUT,
+                   plotdat = INPUT, print = FALSE,
                    ...)
 {
     t   <- INPUT$t
     y   <- INPUT$y
 
     if (all(is.na(y))) return(NULL)
-    # npt   <- length(y)
+    n     <- length(y)
     npt   <- sum(INPUT$w > wmin)
     nyear <- ceiling(npt/nptperyear)
-    # if (nyear <= 3) nyear <- ceiling(nyear)
 
     frame <- floor(nptperyear/7) * 2 + 1 #13, reference by TSM SG filter
     if (missing(lambda)) lambda <- max(nyear*frame, 15)
 
-    ## 3. weighted whittaker curve fitting
-    # wfun <- wTSM#wTSM, bisquare
+    ## 1. weighted curve fitting help to divide growing season
     iloop <- 1
     while (iloop <= 3){
-        # if (meth[1] == 'sg'){
-        #     yfits <- sgfitw(INPUT$y, INPUT$w, nptperyear, INPUT$ylu, wFUN, iters, frame, d=2)
-        # }else if(meth[1] == 'whit'){
+        # sgfitw(INPUT$y, INPUT$w, nptperyear, INPUT$ylu, wFUN, iters, frame, d=2)
         # whitsmw(y, w, ylu, wFUN, iters = 1, lambda = 100, ..., d = 2, missval)
-        yfits <- whitsmw2(INPUT$y, INPUT$w, INPUT$ylu, nptperyear, wFUN, iters, lambda)$data
-
-        ## 4. find local extreme values
-        ypred <- yfits[, ncol(yfits), drop = T]
-        # ypred <- as.numeric(runmed(ypred, frame))
+        param <- c(INPUT, nptperyear = nptperyear,
+            wFUN = wFUN, wmin = wmin, iters = iters,
+            lambda = lambda,  # param for whittaker
+            nf     = nf,      # param for HANTS,
+            frame  = frame    # param for
+        )
+        yfits <- do.call(FUN, param)
+        ypred <- last(yfits) #as.numeric(runmed(ypred, frame))
         alpha <- 0.01
 
         # default is three year data input, median will be much better
@@ -180,11 +181,10 @@ season <- function(INPUT, lambda, nptperyear = 46, south = FALSE,
         ylu <- c(pmax(ylu_min, INPUT$ylu[1]), #quantile(ypred, alpha/2)
                  pmin(ylu_max, INPUT$ylu[2]))
         # ylu   <- quantile(ypred, c(alpha/2, 1 - alpha), na.rm = T)
-        # ylu[1] <- pmax(ylu[1], INPUT$ylu[1])
-        # ylu[2] <- pmax(ylu[2], INPUT$ylu[2])
         A         <- diff(ylu)
-        # For avoid fluctuating in peak of growing season or flat peak growing season,
-        # like fluxsite: ZM-Mon
+        ## Plateau peak will lead to failed to find local extreme values.
+        #  To avoid fluctuating in peak of growing season or flat peak growing
+        #  season, like fluxsite: ZM-Mon
         # max_slp <- 2*A/nptperyear
         # pek_slp <- abs(coefficients(lm(ypred[I]~I))[[2]])
         I <- which(ypred > (0.8*A + ylu[1]))
@@ -192,8 +192,7 @@ season <- function(INPUT, lambda, nptperyear = 46, south = FALSE,
             ypred[I] <- median(ypred[I])
         }
         # local minimum values
-        # threshold for local extreme values
-        # peak values is small for minimum values, so can't use threshold here
+        # peak values is small for minimum values, so can't use threshold_min here
         peaks <- findpeaks(-ypred,
                            threshold_max = threshold_max*A,
                            threshold_min = threshold_min*0,
@@ -210,8 +209,9 @@ season <- function(INPUT, lambda, nptperyear = 46, south = FALSE,
         pos_max <- peaks$X
         npeak_MaxPerYear <- length(peaks$gregexpr)/nyear#max peaks
 
-        cat(sprintf('iloop = %d: lambda = %.1f, npeak_MinPerYear = %.2f, npeak_MaxPerYear = %.2f\n',
-                    iloop, lambda, npeak_MinPerYear, npeak_MaxPerYear))
+        if (print)
+            cat(sprintf('iloop = %d: lambda = %.1f, npeak_MinPerYear = %.2f, npeak_MaxPerYear = %.2f\n',
+                iloop, lambda, npeak_MinPerYear, npeak_MaxPerYear))
         # maxpeaksperyear <- 2
         if (npeak_MaxPerYear > max_MaxPeaksperyear | npeak_MinPerYear > max_MinPeaksperyear){
             lambda <- lambda*2
@@ -230,10 +230,11 @@ season <- function(INPUT, lambda, nptperyear = 46, south = FALSE,
     # plot(ypred, type = "b"); grid()
 
     # 1.1 the local minimum value should small than rymin_less * A
-    pos_min %<>% subset((val - ylu[1]) <= rymin_less *A)
-    # pos column: c("val", "pos", "left", "right", "type")
-    pos <- rbind(add_column(pos_max, type = 1), add_column(pos_min, type = -1))
-    pos <- pos[order(pos$pos), ]
+    pos_min <- pos_min[(val - ylu[1]) <= rymin_less *A, ]
+    pos_min[, type := -1]
+    pos_max[, type :=  1]
+    pos <- rbind(pos_min, pos_max)
+    pos <- pos[order(pos), ] # c("val", "pos", "left", "right", "type")
 
     # 1.2 remove both points (date or value of min and max too close)
     # I_del <- union(I_date, I_date+1)
@@ -260,10 +261,9 @@ season <- function(INPUT, lambda, nptperyear = 46, south = FALSE,
     ############################################################################
     ## 5. check head and tail break point, and reform breaks
     locals <- pos[, c("pos", "type")]
-    ns <- nrow(locals)
+    ns     <- nrow(locals)
     # check the head and tail minimum values
     minlen <- nptperyear/3 #distance from peak point
-    n <- length(y)
     if (last(pos$type) == 1 && (n - nth(pos$pos, -2)) > minlen &&
         abs(last(ypred) - nth(pos$val, -2)) < 0.15*A )
         locals %<>% rbind.data.frame(., data.frame(pos = n, type = -1))
@@ -284,39 +284,40 @@ season <- function(INPUT, lambda, nptperyear = 46, south = FALSE,
     pos_max <- subset(locals, type == 1)
     pos_min <- subset(locals, type == -1)
     ## 6. divide into multiple growing seasons
-    di <- data_frame(beg  = s[seq(1, ns-1, 2)]+1,
+    di <- data.table(beg  = s[seq(1, ns-1, 2)],
                      peak = s[seq(2, ns, 2)],
                      end  = s[seq(3, ns, 2)])
     di %<>% fix_di(t = t) #fix whole year data missing
 
-    dt <- map_df(di, ~t[.x]) %>%
-        mutate(len = difftime(end, beg, units = "days") + 1, year = year(peak)) %>%
-        bind_cols(mval = ypred[di$peak], .)
+    dt <- map(di, ~t[.x]) %>% as.data.table() %>%
+        .[, `:=`( y_beg  = ypred[di$beg],
+                  y_peak = ypred[di$peak],
+                  y_end  = ypred[di$end],
+                  len    = as.integer(difftime(end, beg, units = "days") + 1),
+                  year   = year(peak) )]
+    fix_dt(dt) # c++ address operation
     # get the growing season year, not only the calendar year
-    if (south){
-        dt %<>% mutate(year = year + as.integer(peak > ymd(sprintf('%d0701', year))) - 1L)
-    }
-    dt %<>% group_by(year) %>% dplyr::mutate(season = 1:n(), flag = sprintf("%d_%d", year, season))
+    if (south) dt[, year := year + as.integer(peak >= ymd(sprintf('%d0701', year))) - 1L]
+
+    dt[, `:=`(season = 1:.N, flag   = sprintf("%d_%d", year, 1:.N)), .(year)]
 
     ## 7. plot
-    #  7.1 PLOT CURVE FITTING TIME-SERIES
     if (IsPlot){
+        # 7.1 PLOT CURVE FITTING TIME-SERIES
         # need to plot outside, because y, w have been changed.
         plotdata(plotdat, nptperyear)
         colors <- c("red", "blue", "green")
-        for (i in 1:(ncol(yfits) - 1)){
-            lines(INPUT$t, yfits[, i+1, drop = T], col = colors[i], lwd = 2)
+        for (i in 1:(length(yfits) - 1)){
+            lines(INPUT$t, yfits[[i+1]], col = colors[i], lwd = 2)
         }
         if (!is.null(INPUT$ylu)) abline(h=INPUT$ylu, col="red", lty=2) # show ylims
-    }
-    # 7.2 plot break points
-    I_max <- di$peak
-    I_min <- union(di$beg, di$end + 1)
-    if (IsPlot){
+
+        # 7.2 plot break points
+        I_max <- di$peak
+        I_min <- union(di$beg, di$end)
         points(t[I_max], ypred[I_max], pch=20, cex = 1.5, col="red")
         points(t[I_min], ypred[I_min], pch=20, cex = 1.5, col="blue")
     }
-
     return(list(whit = bind_cols(data_frame(t, y), yfits),
                 pos = pos, dt = dt, di = di))
 }

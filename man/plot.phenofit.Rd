@@ -4,7 +4,7 @@
 \alias{plot.phenofit}
 \title{plot function for phenofit class}
 \usage{
-\method{plot}{phenofit}(fit)
+plot.phenofit(fit)
 }
 \arguments{
 \item{fit}{`phenofit` class Object}

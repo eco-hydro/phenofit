@@ -6,6 +6,8 @@
 SEXP _phenofit_sgolayB(SEXP SSEXP, SEXP wSEXP);
 SEXP _phenofit_sgfitw_rcpp(SEXP ySEXP, SEXP wSEXP, SEXP SSEXP);
 SEXP _phenofit_wTSM_cpp(SEXP ySEXP, SEXP yfitSEXP, SEXP wSEXP, SEXP itersSEXP, SEXP nptperyearSEXP, SEXP wfactSEXP);
+SEXP _phenofit_fix_dt(SEXP dSEXP);
+
 void smooth2(double * w, double * y, double * z, double * lamb, int * mm,
     double * d, double * c, double * e);
 
@@ -13,6 +15,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_phenofit_sgolayB", (DL_FUNC) &_phenofit_sgolayB, 2},
     {"_phenofit_sgfitw_rcpp", (DL_FUNC) &_phenofit_sgfitw_rcpp, 3},
     {"_phenofit_wTSM_cpp", (DL_FUNC) &_phenofit_wTSM_cpp, 6},
+    {"_phenofit_fix_dt", (DL_FUNC) &_phenofit_fix_dt, 1},
     {NULL, NULL, 0}
 };
 

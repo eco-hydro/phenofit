@@ -6,6 +6,16 @@
 
 using namespace Rcpp;
 
+// fix_dt
+void fix_dt(DataFrame d);
+RcppExport SEXP _phenofit_fix_dt(SEXP dSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< DataFrame >::type d(dSEXP);
+    fix_dt(d);
+    return R_NilValue;
+END_RCPP
+}
 // sgolayB
 arma::mat sgolayB(const arma::mat S, const arma::colvec w);
 RcppExport SEXP _phenofit_sgolayB(SEXP SSEXP, SEXP wSEXP) {

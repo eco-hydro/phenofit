@@ -5,7 +5,7 @@
 \title{Weigthed Whittaker Smoother}
 \usage{
 whitsmw2(y, w, ylu, nptperyear, wFUN = wTSM, iters = 1, lambdas = 1000,
-  df = NULL, ...)
+  second = TRUE, df = NULL, ...)
 }
 \description{
 Weigthed Whittaker Smoother

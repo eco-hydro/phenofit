@@ -57,8 +57,7 @@ ExtractPheno <- function(fits, TRS = c(0.1, 0.2, 0.5, 0.6), IsPlot = FALSE){
             pch <- c(19, 15, 4, 17)
             for (j in 1:4){
                 ind = which(wi == j)
-                if (!is_empty(ind))
-                    points(ti[ind], yi[ind], pch = pch[j], col = colors[j])    
+                if (!is_empty(ind)) points(ti[ind], yi[ind], pch = pch[j], col = colors[j])    
             }
 
             if (i == 1){
@@ -67,7 +66,7 @@ ExtractPheno <- function(fits, TRS = c(0.1, 0.2, 0.5, 0.6), IsPlot = FALSE){
             }
             stat     <- statistic.phenofit(fit)
             stat_txt <- sprintf("  R=%.2f, p=%.3f\n RMSE=%.3f\nNSE=%.2f\n",
-                                stat[['rmse']], stat[['nash']], stat[['R']], stat[['pvalue']])
+                                stat[['RMSE']], stat[['NSE']], stat[['R']], stat[['pvalue']])
             legend('topleft', stat_txt, adj = c(0.2, 0.2), bty='n', text.col = "red")
             mtext(names[i], side = 2)
         }

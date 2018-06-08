@@ -1,30 +1,28 @@
 source('test/stable/load_pkgs.R')
 
-## 0.1 load whittaker lambdas from cluster
-lst <- get_slurm_out("Y:/Github/phenofit/result") %>% do.call(c, .) %>% rm_empty()
+stat    <- load_data(indir = "Y:/Github/phenofit/result")
+stat_3y <- load_data(indir = "Y:/Github/phenofit/result/grp/")
 
-x <- transpose(lst) %>% llply(unlist) %>% do.call(cbind, .) %>% data.table()
-x$lambda %<>% log10()
-x <- x[!is.na(lambda), ]
-x[, grp := (0:(.N-1)), site]
 
-# fwrite(x, "st1e4_lambda2.csv")
-## 02. read point statistics (i.e. mean, sd, cv, ...)
-df <- fread('data_whit_lambda_01.csv')
-df[, grp := floor(1:.N/(23*3)), site]
-df <- df[grp <= 5]
+stat$group <- F
+stat_3y$group <- T
 
-info <- df[!is.na(y), .(mean = mean(y),
-                        sd = sd(y),
-                        kurtosis = kurtosis(y, type = 2),
-                        skewness = skewness(y, type = 2)), .(site, grp)]
-info[, cv:=mean/sd]
-stat <- merge(data.table(x), info, by = c("site", "grp"))
+df <- rbind(stat, stat_grp)
+# test lambda difference between 3y and 16year
+aov(lambda ~ IGBP + group, df) %>% summary()
+
+ggplot(df, aes(as.factor(IGBP), lambda, color = group)) +
+    geom_boxplot()
 # stat_s <- znorm(stat)$d # scaled value
 
 ## 1.1 check over all gof
 # select_model(stat_s, IsPlot = T)
-select_model(stat, IsPlot = T)
+select_model(stat, IsPlot = T, file = "whit_lambda_IGBP.png")
+select_model(stat_3y, IsPlot = T, file = "whit_lambda_IGBP_3y.png")
+
+
+tuk <- glht(lm(lambda ~ IGBP, stat), linfct = mcp(IGBP = "Tukey"))
+plot(cld(tuk, level = .05), col = "lightgrey")
 
 ## 1.2 resample multiple group
 lst  <- split(1:nrow(stat), stat$IGBP)# %>% set_names(NULL)
@@ -32,7 +30,6 @@ lst  <- split(1:nrow(stat), stat$IGBP)# %>% set_names(NULL)
 times  <- 1:20 %>% set_names(., .)
 I_lst  <- llply(times, function(i){ llply(lst, f_sample) %>% unlist })
 I_lst2 <- llply(times, function(i){ llply(lst, f_sample) })
-
 
 ## 1.3 get group regression coef
 optim <- FALSE

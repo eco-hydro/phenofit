@@ -59,26 +59,33 @@ dev.off()
 
 # test seasons end --------------------------------------------------------
 
-
+fits <- list()
+ps <- list()
 for (i in seq_along(sites)){
     runningId(i)
     sitename <- sites[i]
 
-    d <- df[site == sitename , ]
-    d$w <- 1
-    # Check input data and initial parameters for phenofit
-    INPUT <- check_input(d$date, d$y, d$w, trim = T, maxgap = nptperyear / 4, alpha = 0.02)
-    # The detailed information of those parameters can be seen in `season`.
-    brks <- season(INPUT, lambda, nptperyear, iters = 3, wFUN = wFUN, IsPlot = T,
-                   south = d$lat[1] < 0,
-                   Aymin_less = 0.6, ymax_min = ymax_min,
+    d <- dt[site == sitename , ]
+    # 1. Check input data and initial parameters for phenofit
+    INPUT <- check_input(d$t, d$y, d$w, trim = T, maxgap = nptperyear / 4, alpha = 0.02) #, d$Tn
+    INPUT$y0 <- d$y
+
+    # 2. The detailed information of those parameters can be seen in `season`.
+    lambda <- init_lambda(INPUT$y)#*2
+    brks   <- season(INPUT, nptperyear,
+                   wFUN = wFUN, iters = 3,
+                   FUN = whitsmw2, lambda = lambda,
+                   IsPlot = F, south = d$lat[1] < 0,
+                   rymin_less = 0.6, ymax_min = ymax_min,
                    max_MaxPeaksperyear =2.5, max_MinPeaksperyear = 3.5) #, ...
+
+    # 3. curve fitting
     fit  <- curvefits(INPUT, brks, lambda =lambda, IsPlot = T,
-                      methods = c("AG", "zhang", "beck", "elmore", 'Gu')[c(4)], #,"klos"
-                      nptperyear = nptperyear, debug = F,
-                      wFUN = wFUN,
-                      qc = d$SummaryQA,
+                      methods = c("AG", "zhang", "beck", "elmore", 'Gu'), #,"klos"
+                      nptperyear = nptperyear, debug = F, wFUN = wTSM,
+                      ymax_min = ymax_min,
                       extend_month = 2,
+                      qc = as.numeric(d$SummaryQA),
                       south = d$lat[1] < 0)
     fit$INPUT   <- INPUT
     fit$seasons <- brks

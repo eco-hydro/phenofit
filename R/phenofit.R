@@ -27,9 +27,9 @@ statistic.phenofit <- function(fit){
         message(e$message)
     })
 
-    rmse  <- sqrt(sum((y - pred)^2)/length(pred))
-    nash  <- 1 - sum((pred - y)^2) / sum((y - mean(y))^2)
-    return(c(rmse = rmse, nash = nash, R = R, pvalue = pvalue, n = n))
+    RMSE <- sqrt(sum((y - pred)^2)/length(pred))
+    NSE  <- 1 - sum((pred - y)^2) / sum((y - mean(y))^2)
+    return(c(RMSE = RMSE, NSE = NSE, R = R, pvalue = pvalue, n = n))
 }
 
 #' grad and hess according to numDeriv package

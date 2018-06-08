@@ -16,6 +16,38 @@ get_coef <- function(lst, ...){
     res # return
 }
 
+load_data <- function(indir = "Y:/Github/phenofit/result"){
+    ## 0.1 load whittaker lambdas from cluster
+    lst <- get_slurm_out(indir)
+    group = is.list(lst[[1]][[1]])
+
+    if (group){ lst <- do.call(c, lst) }
+    lst %<>% rm_empty() %>% transpose()
+
+    I_del <- which(sapply(lst$lambda, length) == 0)
+    x <- llply(lst, function(x){
+        unlist(x[-I_del])
+    }) %>% do.call(cbind, .) %>% data.table()
+
+    x$lambda %<>% log10()
+    x <- x[!is.na(lambda), ]
+    x[, grp := (0:(.N-1)), site]
+
+    # fwrite(x, "st1e4_lambda2.csv")
+    ## 02. read point statistics (i.e. mean, sd, cv, ...)
+    df <- fread('data_whit_lambda_01.csv')
+    df[, grp := floor(1:.N/(23*3)), site]
+    df <- df[grp <= 5]
+
+    info <- df[!is.na(y), .(mean = mean(y),
+                            sd = sd(y),
+                            kurtosis = kurtosis(y, type = 2),
+                            skewness = skewness(y, type = 2)), .(site, grp)]
+    info[, cv:=mean/sd]
+    stat <- merge(data.table(x), info, by = c("site", "grp"))
+    stat
+}
+
 znorm <- function(d){
     vars   <- c("mean", "sd", "cv", "skewness", "kurtosis")
 

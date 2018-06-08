@@ -70,7 +70,7 @@ whitsmw2 <- function(y, w, ylu, nptperyear, wFUN = wTSM, iters=1, lambdas=1000,
             if (second) z <- whit2(z, lambda, w) #genius move
             
             z <- check_fit(z, ylu)
-            # yiter[yiter < z] <- z[yiter < z]
+            yiter[yiter < z] <- z[yiter < z] # upper envelope
             fits[[i]] <- z
             # yiter <- z# update y with smooth values
         }

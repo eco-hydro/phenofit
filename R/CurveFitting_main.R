@@ -2,10 +2,10 @@
 #'
 #' Curve fitting for INPUT time-series. Procedures of initial weight, growing
 #' season dividing and curve fitting are separated.
-#' 
-#' @param extend_month For every growing season, previous and afterwards 
-#' `extend_month` are added to fitting daily time-series. In order to 
-#' 
+#'
+#' @param extend_month For every growing season, previous and afterwards
+#' `extend_month` are added to fitting daily time-series. In order to
+#'
 #' @examples
 #' INPUT <- check_input(d$date, d$EVI_500m, d$w, trim = T, maxgap = nptperyear / 4, alpha = 0.02)
 #' # The detailed information of those parameters can be seen in `season`.
@@ -21,10 +21,10 @@
 #'                      south = d$lat[1] < 0)
 #' plot_phenofit(fit, d) # plot to check the curve fitting
 #' @export
-curvefits <- function(INPUT, brks, nptperyear = 46,
-                      wFUN = wTSM, iters = 2,
-                      lambda, south = FALSE,
-                      extend_month = 3, minT = 0, 
+curvefits <- function(INPUT, brks, nptperyear = 23,
+                      wFUN = wTSM, iters = 2, wmin = 0.1,
+                      south = FALSE,
+                      extend_month = 2, minT = 0,
                       methods = c('AG', 'zhang', 'beck', 'elmore', 'Gu'),
                       qc,
                       debug = FALSE, ...)
@@ -34,10 +34,11 @@ curvefits <- function(INPUT, brks, nptperyear = 46,
     doys <- as.numeric(difftime(t, t[1], units = "day") + 1)#days from origin
 
     # Tn for background module
-    Tn <- INPUT$Tn #if has no Tn, NULL will be return
+    Tn     <- INPUT$Tn #if has no Tn, NULL will be return
     has_Tn <- ifelse(is_empty(Tn), F, T)
-    y0 <- INPUT$y #original y
-    
+    y0     <- INPUT$y0 #original y
+    if (is.null(y0)) y0 <- INPUT$y
+
     # title(x$site[1])
     if (all(is.na(INPUT$y))) return(NULL)
     # also constrained in `optim_pheno` function
@@ -46,13 +47,12 @@ curvefits <- function(INPUT, brks, nptperyear = 46,
     di <- brks$di
 
     # possible snow or cloud, replaced with whittaker smooth.
-    I_fix <- which(w == 0)
-    INPUT$y[I_fix] <- brks$whit %>% {.[[ncol(.)]][I_fix]}
-
+    I_fix <- which(w == wmin)
+    # INPUT$y[I_fix] <- brks$whit %>% {.[[ncol(.)]][I_fix]}
+    # w[I_fix]       <- 0.2 # exert the function of whitaker smoother
     # plot(y, type = "b"); grid()
     # lines(brks$whit$iter3, col = "blue")
     # lines(INPUT$y        , col = "red")
-    w[I_fix]       <- 0.2 #exert the function of whitaker smoother
 
     if (debug){
         fits <- stat <- pheno<- NULL
@@ -84,17 +84,18 @@ curvefits <- function(INPUT, brks, nptperyear = 46,
                     wi[I_back] <- 0.5
                 }
             }
+            beginI = ifelse(i == 1, 1, 2) # make sure no overlap
+            tout <- doys[I] %>% {.[beginI]:last(.)} # make sure return the same length result.
 
-            tout <- doys[I] %>% {first(.):last(.)} # make sure return the same length result.
             fit  <- curvefit(yi, ti, tout, nptperyear = nptperyear,
                              w = wi, w0 = w0, ylu = INPUT$ylu, iters = iters,
                              methods = methods, meth = 'BFGS', wFUN = wFUN, ...)
             # add original input data here, global calculation can comment this line
-            data <- tibble(y = y0[I], t = doys[I], w = qc[I]) #INPUT$w[I]
+            data <- data.table(y = y0[I], t = doys[I], w = qc[I]) #INPUT$w[I]
             for (j in seq_along(fit)) fit[[j]]$data <- data
 
             #if too much missing values
-            if (sum(wi > 0.2)/length(wi) < 0.3){
+            if (sum(wi > pmax(wmin, 0.2))/length(wi) < 0.25){
                 fit %<>% map(function(x){
                     x$fits %<>% map(~.x*NA)
                     x$pred %<>% multiply_by(NA)

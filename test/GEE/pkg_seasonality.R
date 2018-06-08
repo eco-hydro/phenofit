@@ -23,7 +23,7 @@ check_seasonality <- function(INPUT, IsPlot = F, pdat = INPUT, nf = 3, ...){
 }
 
 #' REMOVE non-seasonality points according to HANTS smooth result
-rm_nonSIPoints <- function(dt, IsPlot = T, file = 'SI.pdf'){
+rmNonSeasonality <- function(dt, IsPlot = T, file = 'SI.pdf'){
     if (IsPlot){
         CairoPDF(file, width = 10, height = 2*6)
         par(mfrow = c(6, 1), mar = c(2, 3, 2, 1), mgp = c(1.5, 0.6, 0))
@@ -82,8 +82,10 @@ rm_nonSIPoints <- function(dt, IsPlot = T, file = 'SI.pdf'){
 #' This function is designed for MODIS DATASET
 #'
 #' @param FUN Curve fitting functions, call be one of `sgfitw`, `whitsmw2` and `wHANTS`.
-whit_brks <- function(d, nptperyear = 23, FUN = whitsmw2, IsPlot = T, ...){
+whit_brks <- function(d, nptperyear = 23, FUN = whitsmw2, IsPlot = T, partial = TRUE, ...){
     # I_beg <- floor(yday(ymd(20000218))/16) # 0218 is the 4th 16-day
+
+    ## 1. add 1 year data in the head and tail
     ntime  <- nrow(d)
     d_head <- d[21:46, ]
     d_head$t %<>% `-`(., dyears(2) - ddays(1))
@@ -92,13 +94,15 @@ whit_brks <- function(d, nptperyear = 23, FUN = whitsmw2, IsPlot = T, ...){
     d_tail$t %<>% `+`(dyears(2))
 
     dnew  <- rbind(d_head, d, d_tail)
+
+    ## 2. check input data and initial parameters
     INPUT <- check_input(dnew$t, dnew$y, dnew$w, trim = T, maxgap = nptperyear / 4, alpha = 0.02)
 
     years <- 2000:2016
     nyear <- length(years)
 
-    brks <- list()
-    wFUN <- wTSM
+    brks  <- list()
+    wFUN  <- wTSM
     ymax_min  <- 0.05
 
     lat       <- d$lat[1]
@@ -109,14 +113,14 @@ whit_brks <- function(d, nptperyear = 23, FUN = whitsmw2, IsPlot = T, ...){
     for (i in 1:nyear){
         debug <- FALSE
         # debug <- TRUE
-        i = 16; debug <- T
+        # i = 16; debug <- T
         runningId(i)
         year <- years[i]
         I_beg = nptperyear*(i-1)+1
         I_end = nptperyear*(i+2)
         I      <- I_beg:I_end
         input  <- lapply(INPUT[1:3], `[`, I) %>% c(INPUT[5])
-        lambda <- init_lambda(input$y)/2#*2
+        lambda <- init_lambda(input$y)#*2
 
         params <- list(input, lambda = lambda, nptperyear = nptperyear,
             FUN = FUN, wFUN = wFUN, iters = 2,
@@ -141,6 +145,9 @@ whit_brks <- function(d, nptperyear = 23, FUN = whitsmw2, IsPlot = T, ...){
     brks$dt   %<>% do.call(rbind, .)
     # brks # quickly return
 
+    dt <- brks$dt
+    I_fix <- dt$end[-1] - dt[2:.N]$beg
+
     if (is.null(brks$dt)){
         warning(sprintf("[site:%s] No data!", sitename))
         return(NULL)
@@ -158,7 +165,8 @@ whit_brks <- function(d, nptperyear = 23, FUN = whitsmw2, IsPlot = T, ...){
     # if (NSE < 0 | (cv < 0.1 & NSE < 0.1)) {}
 
     ## VISUALIZATION
-    if (IsPlot && (NSE < 0.3)){
+    con <- ifelse(partial, IsPlot && (NSE < 0.3), IsPlot)
+    if (con){
     # if(IsPlot && (NSE < 0 && cv < 0.2)){
         pdat     <- as.list(d[, .(t, y, w)]) %>% c(INPUT[5])
         plotdata(pdat, nptperyear)
@@ -182,6 +190,6 @@ whit_brks <- function(d, nptperyear = 23, FUN = whitsmw2, IsPlot = T, ...){
         subplot(c(pos$beg, pos$end), col = "blue")
         title(str_title)
     }
-
-    c(site = sitename, IGBPcode = IGBP_code, stat) # quickly return
+    # stat <- c(site = sitename, IGBPcode = IGBP_code, stat) # quickly return
+    return(brks)
 }

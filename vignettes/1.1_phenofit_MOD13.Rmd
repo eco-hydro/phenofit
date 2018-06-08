@@ -1,0 +1,196 @@
+---
+title: "phenology based on MOD13 products"
+author: "Dongdong Kong"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+Here, we illustrate how to use `phenofit` in the selected representative points. Regional analysis also can be conducted in the similar way.
+
+## 1. Preparing input data
+
+1.1 Preprocess remote sensing data and download in Google Earth Engine (GEE)  
+
+A 500m buffer was applied to aggregate vegetation index mean value. For a small region (e.g. the 500m buffer), we can consider remote sensing observing condition is same. So, quality control (QC) of point's central grid was used.
+
+1.2 Initial weights for input data. 
+
+For MOD13A1, MOD13A2 and MOD13Q1, Weights can by initialed by `SummaryQA` band.  
+Details can be seen in `qc_summary`.
+
+SummaryQA      | Pixel reliability summary QA | weight
+---------------| ---------------------------- | ------
+-1 Fill/No data| Not processed                | 0
+0 Good data    | Use with confidence          | 1
+1 Marginal data| Useful but look at detailed QA for more information | 0.5
+2 Snow/ice     | Pixel covered with snow/ice  | 0
+3 Cloudy       | Pixel is cloudy              | 0
+
+```{r,eval=TRUE}
+library(phenofit) 
+library(data.table)
+library(magrittr)
+library(plyr) # for mapvalues
+
+# Global parameters for MOD13A1: 
+lambda     <- 5    # The parameter for Whittaker
+ymax_min   <- 0.1  # For a growing season, the maximum ymax shoud be greater than `ymax_min` 
+nptperyear <- 23   # How many points for a single year
+wFUN       <- wTSM # Weights updating function, could be one of `wTSM`, 'wBisquare', `wChen` and `wSELF`. 
+
+# load data
+data(dt_MOD13A1) # 16-day time-scale
+df <- dt_MOD13A1
+df[, w := qc_summary(SummaryQA)]   # Initial weights
+
+# rename variable name as y
+varnames <- c("date", "EVI")
+I_var    <- match(varnames,colnames(df))
+colnames(df)[I_var] <- "y"
+
+# remap SummaryQA factor level, plot_phenofit also use this variable
+if ('SummaryQA' %in% colnames(df)){
+    df$SummaryQA %<>% factor() %>% mapvalues(c("0", "1", "2", "3"), c(" good", " margin", " snow&ice", " cloud"))
+}
+
+sites <- unique(df$site)        # all sites
+d     <- df[site == sites[3], ] # get the first site data
+# knitr::kable(head(d, 10)) 
+```
+
+### 1. Backgroud value
+```{r}
+d$Tn %<>% na.approx(maxgap = 4)
+
+plot(d$Tn, type = "l")
+abline(a = 5, b = 0, col = "red")
+```
+
+### 2. Divide growing seasons
+
+Simply treating calendar year as a complete growing season will induce a considerable error for phenology extraction. A simple growing season dividing method was proposed in `phenofit`.
+
+The growing season dividing method rely on heavily in Whittaker smoother. 
+
+Procedures of initial weight, growing season dividing and curve fitting are separated. Phenology extraction and curve fitting are combined together.
+
+
+```{r}
+# 1. Check input data and initial parameters for phenofit
+INPUT <- check_input(d$date, d$y, d$w, d$Tn, trim = T, maxgap = nptperyear / 4, alpha = 0.02)
+
+# 2. The detailed information of those parameters can be seen in `season`. 
+brks <- season(INPUT, lambda, nptperyear, iters = 3, wFUN = wFUN, IsPlot = F,
+                south = d$lat[1] < 0,
+                Aymin_less = 0.6, ymax_min = ymax_min, 
+                max_MaxPeaksperyear =2.5, max_MinPeaksperyear = 3.5) #, ...
+
+# 3. curve fitting
+fit  <- curvefits(INPUT, brks, lambda =lambda, IsPlot = T, 
+                     methods = c("AG", "zhang", "beck", "elmore", 'Gu'), #,"klos"
+                     nptperyear = nptperyear, debug = F, wFUN = wTSM, 
+                     ymax_min = ymax_min, 
+                     south = d$lat[1] < 0)
+fit$INPUT   <- INPUT
+fit$seasons <- brks
+
+plot_phenofit(fit, d) # plot to check the curve fitting
+
+## 3.2 Get GOF information
+stat  <- ldply(fit$fits, function(fits_meth){
+    ldply(fits_meth, statistic.phenofit, .id = "flag")
+}, .id = "meth")
+
+# 4. extract phenology
+# pheno: list(p_date, p_doy)
+# check extracted phenology extraction for one method.
+temp <- ExtractPheno(fit$fits$ELMORE, IsPlot = T)
+
+p <- lapply(fit$fits, ExtractPheno)
+pheno  <- map(p, tidyFitPheno, origin = t[1]) %>% purrr::transpose()
+
+fit$stat   <- stat
+fit$pheno  <- pheno
+```
+
+Calculate all sites in a time.
+```{r}
+ratio    <- 1.8
+lambda   <- 2
+sites_sm <- sites[c(1, 3, 4, 6, 9)]
+df_sm    <- df[site %in% sites_sm, ]
+
+Cairo::CairoPDF("phenofit_5st_v4.pdf", 10*ratio, 6*ratio)
+fits <- dlply(df_sm, .(site), function(d){
+    fit <- NA
+    tryCatch({
+        # Check input data and initial parameters for phenofit
+        INPUT <- check_input(d$date, d$y, d$w, trim = T, maxgap = nptperyear / 4, alpha = 0.02)
+        # The detailed information of those parameters can be seen in `season`. 
+        brks <- season(INPUT, lambda, nptperyear, iters = 3, wFUN = wFUN, IsPlot = F,
+                        south = d$lat[1] < 0,
+                        Aymin_less = 0.6, ymax_min = ymax_min, 
+                        max_MaxPeaksperyear =2.5, max_MinPeaksperyear = 3.5) #, ...
+        fit  <- curvefits(INPUT, brks, lambda =lambda, IsPlot = T, 
+                          methods = c("AG", "zhang", "beck", "elmore", 'Gu'), #,"klos"
+                          nptperyear = nptperyear, debug = F, 
+                          wFUN = wFUN, 
+                          extend_month = 2, 
+                          south = d$lat[1] < 0)
+        fit$INPUT   <- INPUT
+        fit$seasons <- brks
+
+        titlename <- sprintf('[%s] %s', d$IGBP[1], d$site[1])
+        p <- plot_phenofit(fit, d, titlename)
+        print(p)
+    }, error = function(e){
+        message(sprintf("[e] %s:%s", e$message, d$site[1]))
+    })
+    return(fit)
+})
+dev.off()
+```
+
+You can also call `curvefits2`, which combines all the procedures.   
+```{r}
+south <- d$lat[1] < 0
+fit <- curvefits2(d$date, d$y, d$w, nptperyear = nptperyear,
+           wFUN = wFUN, iters = 2,
+           lambda = lambda, south = FALSE,
+           IsPlot = FALSE,
+           Aymin_less = 0.6, ymax_min = ymax_min, 
+           methods = c('AG', 'zhang', 'beck', 'elmore', 'Gu'),
+           debug = FALSE)
+```
+
+Test backgroud value function here
+
+```{r}
+profvis::profvis({
+        fit <- curvefits2(d$date, d$y, d$w, nptperyear = nptperyear,
+                   wFUN = wFUN, iters = 2,
+                   lambda = lambda, south = FALSE,
+                   IsPlot = FALSE,
+                   Aymin_less = 0.6, ymax_min = ymax_min, 
+                   methods = c('AG', 'zhang', 'beck', 'elmore', 'Gu')[4],
+                   debug = FALSE)
+})
+```
+
+```{r}
+params <- getparam(fit)
+print(params)
+```
+
+You can write math expressions, e.g. $Y = X\beta + \epsilon$, footnotes^[A footnote here.], and tables, e.g. using `knitr::kable()`.

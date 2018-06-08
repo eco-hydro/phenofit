@@ -9,7 +9,7 @@ season <- function(INPUT, nptperyear = 46, south = FALSE,
                    IsPlot = FALSE,
                    max_MaxPeaksperyear = 2, max_MinPeaksperyear = 3,
                    wmin = 0.1,
-                   plotdat = INPUT, print = FALSE, 
+                   plotdat = INPUT, print = FALSE,
                    ...)
 {
     t   <- INPUT$t
@@ -147,23 +147,26 @@ season <- function(INPUT, nptperyear = 46, south = FALSE,
     pos_max <- subset(locals, type == 1)
     pos_min <- subset(locals, type == -1)
     ## 6. divide into multiple growing seasons
-    di <- data_frame(beg  = s[seq(1, ns-1, 2)]+1,
+    di <- data.table(beg  = s[seq(1, ns-1, 2)],
                      peak = s[seq(2, ns, 2)],
                      end  = s[seq(3, ns, 2)])
     di %<>% fix_di(t = t) #fix whole year data missing
 
-    dt <- map_df(di, ~t[.x]) %>%
-        mutate(len = difftime(end, beg, units = "days") + 1, year = year(peak)) %>%
-        bind_cols(mval = ypred[di$peak], .)
+    dt <- map(di, ~t[.x]) %>% as.data.table() %>%
+        .[, `:=`( y_beg  = ypred[di$beg],
+                  y_peak = ypred[di$peak],
+                  y_end  = ypred[di$end],
+                  len    = as.integer(difftime(end, beg, units = "days") + 1),
+                  year   = year(peak) )]
+    fix_dt(dt) # c++ address operation
     # get the growing season year, not only the calendar year
-    if (south){
-        dt %<>% mutate(year = year + as.integer(peak > ymd(sprintf('%d0701', year))) - 1L)
-    }
-    dt %<>% group_by(year) %>% dplyr::mutate(season = 1:n(), flag = sprintf("%d_%d", year, season))
+    if (south) dt[, year := year + as.integer(peak >= ymd(sprintf('%d0701', year))) - 1L]
+
+    dt[, `:=`(season = 1:.N, flag   = sprintf("%d_%d", year, 1:.N)), .(year)]
 
     ## 7. plot
-    #  7.1 PLOT CURVE FITTING TIME-SERIES
     if (IsPlot){
+        # 7.1 PLOT CURVE FITTING TIME-SERIES
         # need to plot outside, because y, w have been changed.
         plotdata(plotdat, nptperyear)
         colors <- c("red", "blue", "green")
@@ -171,15 +174,13 @@ season <- function(INPUT, nptperyear = 46, south = FALSE,
             lines(INPUT$t, yfits[[i+1]], col = colors[i], lwd = 2)
         }
         if (!is.null(INPUT$ylu)) abline(h=INPUT$ylu, col="red", lty=2) # show ylims
-    }
-    # 7.2 plot break points
-    I_max <- di$peak
-    I_min <- union(di$beg, di$end + 1)
-    if (IsPlot){
+
+        # 7.2 plot break points
+        I_max <- di$peak
+        I_min <- union(di$beg, di$end)
         points(t[I_max], ypred[I_max], pch=20, cex = 1.5, col="red")
         points(t[I_min], ypred[I_min], pch=20, cex = 1.5, col="blue")
     }
-
     return(list(whit = bind_cols(data_frame(t, y), yfits),
                 pos = pos, dt = dt, di = di))
 }

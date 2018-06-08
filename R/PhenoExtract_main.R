@@ -94,7 +94,6 @@ plot_phenofit <- function(fit, d, title = NULL, show.legend = T, plotly = F){
         # iter1 iter2 t
         # <dbl> <dbl> <date>
         # 1 0.594 0.780 2005-02-06
-        # 2 0.595 0.780 2005-02-07
         out$t %<>% add(origin.date - 1)
         left_join(org, out, by = "t")
     }
@@ -133,7 +132,7 @@ plot_phenofit <- function(fit, d, title = NULL, show.legend = T, plotly = F){
         #     scale_shape_manual(values = c(21,22, 24:25)) +
         #     scale_fill_manual(values = c("grey40", "#7CAE00", "#F8766D", "#C77CFF")) +
         #     guides(shape = guide_legend(override.aes = list(size = 2)))
-        p  <- p + geom_point(data = d, aes(date, y, shape = SummaryQA, color = SummaryQA), size = 2, alpha = 0.7) +
+        p  <- p + geom_point(data = d, aes(t, y, shape = SummaryQA, color = SummaryQA), size = 2, alpha = 0.7) +
             geom_line(aes(color = iters), size = 0.8, alpha = 0.7) +
             scale_color_manual(values = c(" good" = "grey60", " margin" = "#00BFC4",
                                           " snow&ice" = "#F8766D", " cloud" = "#C77CFF",

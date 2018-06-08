@@ -1,9 +1,9 @@
-#' @title MissInfo
-#' @name MissInfo
-#' @aliases MissInfo-package
+#' @title phenofit
+#' @name phenofit
+#' @aliases phenofit-package
 #' @docType package
-#' @keywords missing information, interpolate
-#' @description detect missing information of meteorological data and interpolate missing values using common interpolation methods
+#' @keywords Vegetation phenology package
+#' @description Vegetation phenology package
 #' @import magrittr numDeriv plyr
 #' @import tibble ggplot2
 #' @importFrom zoo na.approx index zoo
