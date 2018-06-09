@@ -79,8 +79,10 @@ for (i in seq_along(sites)){
                    rymin_less = 0.6, ymax_min = ymax_min,
                    max_MaxPeaksperyear =2.5, max_MinPeaksperyear = 3.5) #, ...
 
+    brks2 <- whit_brks(d, nptperyear = 23, FUN = whitsmw2, IsPlot = T, partial = F)
+
     # 3. curve fitting
-    fit  <- curvefits(INPUT, brks, lambda =lambda, IsPlot = T,
+    fit  <- curvefits(INPUT, brks2, lambda =lambda, IsPlot = T,
                       methods = c("AG", "zhang", "beck", "elmore", 'Gu'), #,"klos"
                       nptperyear = nptperyear, debug = F, wFUN = wTSM,
                       ymax_min = ymax_min,
@@ -103,8 +105,7 @@ for (i in seq_along(sites)){
               panel.grid.minor = element_blank(),
               panel.grid.major.y = element_blank(),
               panel.grid.major.x = element_line(size = 0.5),
-              strip.text = element_blank()
-              ) +
+              strip.text = element_blank()) +
         coord_cartesian(xlim = c(ymd(20000101), ymd(20161231)))
     # if (i < length(sites)){
     #     p <- p + theme(

@@ -184,3 +184,200 @@ season <- function(INPUT, nptperyear = 46, south = FALSE,
     return(list(whit = bind_cols(data_frame(t, y), yfits),
                 pos = pos, dt = dt, di = di))
 }
+
+
+
+curvefits <- function(INPUT, brks, nptperyear = 23,
+                      wFUN = wTSM, iters = 2, wmin = 0.1,
+                      south = FALSE,
+                      extend_month = 2, minT = 0,
+                      methods = c('AG', 'zhang', 'beck', 'elmore', 'Gu'),
+                      qc,
+                      debug = FALSE, ...)
+{
+    t    <- INPUT$t
+    n    <- length(t)
+    doys <- as.numeric(difftime(t, t[1], units = "day") + 1)#days from origin
+
+    # Tn for background module
+    Tn     <- INPUT$Tn #if has no Tn, NULL will be return
+    has_Tn <- ifelse(is_empty(Tn), F, T)
+    y0     <- INPUT$y0 #original y
+    if (is.null(y0)) y0 <- INPUT$y
+
+    # title(x$site[1])
+    if (all(is.na(INPUT$y))) return(NULL)
+    # also constrained in `optim_pheno` function
+    # if (sum(INPUT$w == 0)/length(INPUT$w) > 0.5) return(NULL) #much rigorous than all is.na
+    w  <- brks$whit$w
+    di <- brks$di
+    if (is.null(di)){
+        origin <- t[1]
+        di <- data.table(
+            beg = brks$dt$beg - origin + 1,
+            peak = brks$dt$peak - origin + 1,
+            end  = brks$dt$end  - origin + 1)
+    }
+
+    # possible snow or cloud, replaced with whittaker smooth.
+    I_fix <- which(w == wmin)
+    # INPUT$y[I_fix] <- brks$whit %>% {.[[ncol(.)]][I_fix]}
+    # w[I_fix]       <- 0.2 # exert the function of whitaker smoother
+    # plot(y, type = "b"); grid()
+    # lines(brks$whit$iter3, col = "blue")
+    # lines(INPUT$y        , col = "red")
+
+    if (debug){
+        fits <- stat <- pheno<- NULL
+    }else{
+        ## 1. Curve fitting
+        fits <- list()
+        for (i in 1:nrow(di)){ #
+            runningId(i)
+            I    <- di$beg[i]:di$end[i]
+
+            # extend curve fitting period
+            period <- floor(nptperyear/12*extend_month)
+            I_beg2 <- max(1, di$beg[i] - period)
+            I_end2 <- min(n, di$end[i] + period)
+            I_extend <- I_beg2:I_end2
+
+            ti   <- doys[I_extend]
+            yi   <- INPUT$y[I_extend]
+            wi   <- w[I_extend]
+            # original weights, put in w0 incurvefitting is unwisdom, but for plot
+            w0   <- qc[I_extend] #INPUT$w
+            # add background module here, 20180513
+            if (has_Tn){
+                Tni        <- Tn[I_extend]
+                back_value <- backval(yi, ti, wi, Tni, minT, nptperyear)
+                if (!is.na(back_value)){
+                    I_back     <- yi < back_value
+                    yi[I_back] <- back_value
+                    wi[I_back] <- 0.5
+                }
+            }
+            beginI = ifelse(i == 1, 1, 2) # make sure no overlap
+            tout <- doys[I] %>% {.[beginI]:last(.)} # make sure return the same length result.
+
+            fit  <- curvefit(yi, ti, tout, nptperyear = nptperyear,
+                             w = wi, w0 = w0, ylu = INPUT$ylu, iters = iters,
+                             methods = methods, meth = 'BFGS', wFUN = wFUN, ...)
+            # add original input data here, global calculation can comment this line
+            data <- data.table(y = y0[I], t = doys[I], w = qc[I]) #INPUT$w[I]
+            for (j in seq_along(fit)) fit[[j]]$data <- data
+
+            #if too much missing values
+            if (sum(wi > pmax(wmin, 0.2))/length(wi) < 0.25){
+                fit %<>% map(function(x){
+                    x$fits %<>% map(~.x*NA)
+                    x$pred %<>% multiply_by(NA)
+                    return(x)
+                })
+            }
+            fits[[i]] <- fit
+        }
+        # L1:curve fitting method, L2:yearly flag
+        fits %<>% set_names(brks$dt$flag) %>% purrr::transpose()
+    }
+    return(list(tout = t[first(di$beg):last(di$end)],  #dates for OUTPUT curve fitting VI
+                fits = fits))
+}
+
+
+curvefits <- function(INPUT, brks, nptperyear = 23,
+                      wFUN = wTSM, iters = 2, wmin = 0.1,
+                      south = FALSE,
+                      extend_month = 2, minT = 0,
+                      methods = c('AG', 'zhang', 'beck', 'elmore', 'Gu'),
+                      qc,
+                      debug = FALSE, ...)
+{
+    t    <- INPUT$t
+    n    <- length(t)
+    doys <- as.numeric(difftime(t, t[1], units = "day") + 1)#days from origin
+
+    # Tn for background module
+    Tn     <- INPUT$Tn #if has no Tn, NULL will be return
+    has_Tn <- ifelse(is_empty(Tn), F, T)
+    y0     <- INPUT$y0 #original y
+    if (is.null(y0)) y0 <- INPUT$y
+
+    # title(x$site[1])
+    if (all(is.na(INPUT$y))) return(NULL)
+    # also constrained in `optim_pheno` function
+    # if (sum(INPUT$w == 0)/length(INPUT$w) > 0.5) return(NULL) #much rigorous than all is.na
+    w  <- brks$whit$w
+    di <- brks$di
+    if (is.null(di)){
+        origin <- t[1]
+        di <- data.table(
+            beg = brks$dt$beg - origin + 1,
+            peak = brks$dt$peak - origin + 1,
+            end  = brks$dt$end  - origin + 1)
+    }
+
+    # possible snow or cloud, replaced with whittaker smooth.
+    I_fix <- which(w == wmin)
+    # INPUT$y[I_fix] <- brks$whit %>% {.[[ncol(.)]][I_fix]}
+    # w[I_fix]       <- 0.2 # exert the function of whitaker smoother
+    # plot(y, type = "b"); grid()
+    # lines(brks$whit$iter3, col = "blue")
+    # lines(INPUT$y        , col = "red")
+
+    if (debug){
+        fits <- stat <- pheno<- NULL
+    }else{
+        ## 1. Curve fitting
+        fits <- list()
+        for (i in 1:nrow(di)){ #
+            runningId(i)
+            I    <- di$beg[i]:di$end[i]
+
+            # extend curve fitting period
+            period <- floor(nptperyear/12*extend_month)
+            I_beg2 <- max(1, di$beg[i] - period)
+            I_end2 <- min(n, di$end[i] + period)
+            I_extend <- I_beg2:I_end2
+
+            ti   <- doys[I_extend]
+            yi   <- INPUT$y[I_extend]
+            wi   <- w[I_extend]
+            # original weights, put in w0 incurvefitting is unwisdom, but for plot
+            w0   <- qc[I_extend] #INPUT$w
+            # add background module here, 20180513
+            if (has_Tn){
+                Tni        <- Tn[I_extend]
+                back_value <- backval(yi, ti, wi, Tni, minT, nptperyear)
+                if (!is.na(back_value)){
+                    I_back     <- yi < back_value
+                    yi[I_back] <- back_value
+                    wi[I_back] <- 0.5
+                }
+            }
+            beginI = ifelse(i == 1, 1, 2) # make sure no overlap
+            tout <- doys[I] %>% {.[beginI]:last(.)} # make sure return the same length result.
+
+            fit  <- curvefit(yi, ti, tout, nptperyear = nptperyear,
+                             w = wi, w0 = w0, ylu = INPUT$ylu, iters = iters,
+                             methods = methods, meth = 'BFGS', wFUN = wFUN, ...)
+            # add original input data here, global calculation can comment this line
+            data <- data.table(y = y0[I], t = doys[I], w = qc[I]) #INPUT$w[I]
+            for (j in seq_along(fit)) fit[[j]]$data <- data
+
+            #if too much missing values
+            if (sum(wi > pmax(wmin, 0.2))/length(wi) < 0.25){
+                fit %<>% map(function(x){
+                    x$fits %<>% map(~.x*NA)
+                    x$pred %<>% multiply_by(NA)
+                    return(x)
+                })
+            }
+            fits[[i]] <- fit
+        }
+        # L1:curve fitting method, L2:yearly flag
+        fits %<>% set_names(brks$dt$flag) %>% purrr::transpose()
+    }
+    return(list(tout = t[first(di$beg):last(di$end)],  #dates for OUTPUT curve fitting VI
+                fits = fits))
+}

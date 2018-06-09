@@ -110,6 +110,14 @@ whit_brks <- function(d, nptperyear = 23, FUN = whitsmw2, IsPlot = T, partial = 
     IGBP_code <- d$IGBPcode[1]#d$IGBP[1]
     IGBP_name <- ifelse (!is.null(IGBP_code), IGBPnames[IGBP_code], d$IGBPname)
 
+    params <- list(nptperyear = nptperyear,
+            FUN = FUN, wFUN = wFUN, iters = 2,
+            rymin_less = 0.6, ymax_min = ymax_min,
+            threshold_min = 0.0, threshold_max = 0.3,
+            IsPlot = debug,
+            max_MaxPeaksperyear =2.5, max_MinPeaksperyear = 3.5,
+            south = lat < 0, plotdat = d)#, ...
+        
     for (i in 1:nyear){
         debug <- FALSE
         # debug <- TRUE
@@ -122,14 +130,8 @@ whit_brks <- function(d, nptperyear = 23, FUN = whitsmw2, IsPlot = T, partial = 
         input  <- lapply(INPUT[1:3], `[`, I) %>% c(INPUT[5])
         lambda <- init_lambda(input$y)#*2
 
-        params <- list(input, lambda = lambda, nptperyear = nptperyear,
-            FUN = FUN, wFUN = wFUN, iters = 2,
-            rymin_less = 0.6, ymax_min = ymax_min,
-            threshold_min = 0.0, threshold_max = 0.3,
-            IsPlot = debug,
-            max_MaxPeaksperyear =2.5, max_MinPeaksperyear = 3.5,
-            south = lat < 0, plotdat = d)#, ...
-        brk    <- do.call(season, params)
+        params_i = c(list(input, lambda = lambda), params)
+        brk    <- do.call(season, params_i)
 
         brk$dt %<>% subset(year == years[i])
         if (is.null(brk$dt) || nrow(brk$dt) == 0){

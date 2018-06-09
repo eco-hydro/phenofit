@@ -45,6 +45,13 @@ curvefits <- function(INPUT, brks, nptperyear = 23,
     # if (sum(INPUT$w == 0)/length(INPUT$w) > 0.5) return(NULL) #much rigorous than all is.na
     w  <- brks$whit$w
     di <- brks$di
+    if (is.null(di)){
+        origin <- t[1]
+        di <- data.table(
+            beg  = brks$dt$beg  - origin + 1, 
+            peak = brks$dt$peak - origin + 1,
+            end  = brks$dt$end  - origin + 1)
+    }
 
     # possible snow or cloud, replaced with whittaker smooth.
     I_fix <- which(w == wmin)
