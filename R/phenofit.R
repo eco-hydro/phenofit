@@ -35,12 +35,14 @@ statistic.phenofit <- function(fit){
 #' grad and hess according to numDeriv package
 #' @export
 grad.phenofit <- function(fit, tout){
-    grad(fit$fun, tout, par= fit$par)
+    FUN <- get(fit$fun, mode = 'function')
+    grad(FUN, tout, par= fit$par)
 }
 
 #' @export
 hess.phenofit <- function(fit, tout){
-    grad(function(t) grad(fit$fun, t, par= fit$par), tout)
+    FUN <- get(fit$fun, mode = 'function')
+    grad(function(t) grad(FUN, t, par= fit$par), tout)
 }
 
 #' @export
@@ -54,7 +56,8 @@ curvature <- function(fit, ...) UseMethod('curvature', fit)
 
 #' @export
 print.phenofit <- function(fit){
-    cat(sprintf(" formula:\t%s\n", attr(fit$fun, "formula") ))
+    FUN <- get(fit$fun, mode = 'function')
+    cat(sprintf(" formula:\t%s\n", attr(FUN, "formula") ))
     cat("pars:\n")
     print(fit$par)
 }
@@ -68,7 +71,9 @@ D1.phenofit <- function(fit, numDeriv = FALSE, smspline = FALSE, ...){
     pred <- last(fit$fits)                 #zoo obj
     t    <- fit$tout
     par  <- fit$par
-    D1   <- attr(fit$fun, 'gradient')# first order derivative, D1 was 6 times faster
+
+    FUN <- get(fit$fun, mode = 'function')
+    D1  <- attr(FUN, 'gradient')# first order derivative, D1 was 6 times faster
                                      # than grad, and 20 times faster then diff
     # the derivate of curve fitting time-series
     if (numDeriv){
@@ -91,12 +96,14 @@ D1.phenofit <- function(fit, numDeriv = FALSE, smspline = FALSE, ...){
 
 #' @export
 D2.phenofit <- function(fit, numDeriv = FALSE, smspline = FALSE, ...){
-    pred <- last(fit$fits)                 #zoo obj
+    pred <- last(fit$fits)
     t    <- fit$tout
     par  <- fit$par
-    D1   <- attr(fit$fun, 'gradient') # first order derivative, D1 was 6 times faster
-                                      # than grad, and 20 times faster then diff
-    D2   <- attr(fit$fun, 'hessian')  # second order derivative
+
+    FUN  <- get(fit$fun, mode = 'function')
+    D1   <- attr(FUN, 'gradient') # first order derivative, D1 was 6 times faster
+                                  # than grad, and 20 times faster then diff
+    D2   <- attr(FUN, 'hessian')  # second order derivative
 
     if (numDeriv){
         der1 <- grad.phenofit(fit, t)

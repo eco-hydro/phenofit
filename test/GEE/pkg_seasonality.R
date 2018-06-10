@@ -79,22 +79,28 @@ rmNonSeasonality <- function(dt, IsPlot = T, file = 'SI.pdf'){
     info # quickly return
 }
 
-#' This function is designed for MODIS DATASET
-#'
-#' @param FUN Curve fitting functions, call be one of `sgfitw`, `whitsmw2` and `wHANTS`.
-whit_brks <- function(d, nptperyear = 23, FUN = whitsmw2, IsPlot = T, partial = TRUE, ...){
-    # I_beg <- floor(yday(ymd(20000218))/16) # 0218 is the 4th 16-day
+#' Add one year data in the head and tail
+add_HeadTail <- function(d, nptperyear = 23){
+    # I_beg <- floor(yday(ymd(20000218))/16) # MOD13A1 20000218 is the 4th 16-day
+    ntime    <- nrow(d)
+    step     <- ceiling(365/nptperyear)
+    nmissing <- floor(yday(d$t[1])/step)
 
-    ## 1. add 1 year data in the head and tail
-    ntime  <- nrow(d)
-    d_head <- d[21:46, ]
-    d_head$t %<>% `-`(., dyears(2) - ddays(1))
+    I_head <- seq(nptperyear - nmissing + 1, nptperyear*2)
+    d_head <- d[I_head, ]
+    d_head$t %<>% `-`(., dyears(2) + ddays(1)) 
 
     d_tail <- d[(ntime - 2*nptperyear + 1):(ntime - nptperyear), ]
     d_tail$t %<>% `+`(dyears(2))
 
-    dnew  <- rbind(d_head, d, d_tail)
-
+    rbind(d_head, d, d_tail)
+}
+#' This function is designed for MODIS DATASET
+#'
+#' @param d must have columns: 'y', 't', 'w'
+#' @param FUN Curve fitting functions, call be one of `sgfitw`, `whitsmw2` and `wHANTS`.
+whit_brks <- function(dnew, nptperyear = 23, FUN = whitsmw2, IsPlot = T, partial = TRUE, ...){
+    # dnew  <- add_HeadTail(d)
     ## 2. check input data and initial parameters
     INPUT <- check_input(dnew$t, dnew$y, dnew$w, trim = T, maxgap = nptperyear / 4, alpha = 0.02)
 
@@ -110,6 +116,9 @@ whit_brks <- function(d, nptperyear = 23, FUN = whitsmw2, IsPlot = T, partial = 
     IGBP_code <- d$IGBPcode[1]#d$IGBP[1]
     IGBP_name <- ifelse (!is.null(IGBP_code), IGBPnames[IGBP_code], d$IGBPname)
 
+    debug <- FALSE
+    # debug <- TRUE
+    # i = 16; debug <- T
     params <- list(nptperyear = nptperyear,
             FUN = FUN, wFUN = wFUN, iters = 2,
             rymin_less = 0.6, ymax_min = ymax_min,
@@ -117,11 +126,8 @@ whit_brks <- function(d, nptperyear = 23, FUN = whitsmw2, IsPlot = T, partial = 
             IsPlot = debug,
             max_MaxPeaksperyear =2.5, max_MinPeaksperyear = 3.5,
             south = lat < 0, plotdat = d)#, ...
-        
+
     for (i in 1:nyear){
-        debug <- FALSE
-        # debug <- TRUE
-        # i = 16; debug <- T
         runningId(i)
         year <- years[i]
         I_beg = nptperyear*(i-1)+1

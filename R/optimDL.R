@@ -13,14 +13,16 @@
 #' Interface of optimization functions for double logistics and many other
 #' curve fitting functions
 #'
+#' @param prior Initial parameters for curve fitting function
+#' @param FUN_name Curve fitting function name, can be one of ''
 #' If using weights updating method, need to set `nptperyear` as global parameter.
 #'
 #' @return list(pred, par, fun)
 #' @export
-optim_pheno <- function(prior, FUN, y, t, tout, optimFUN = I_optim, method,
+optim_pheno <- function(prior, FUN_name, y, t, tout, optimFUN = I_optim, method,
     w, w0, ylu, iters = 2, wFUN = wTSM, nptperyear = 46, debug = FALSE, ...)
 {
-    function_name <- attr(FUN, 'name') #curve fitting function name
+    FUN <- get(FUN_name, mode = "function" )
     # add prior colnames
     parnames <- attr(FUN, 'par')
     colnames(prior) <- parnames
@@ -91,7 +93,7 @@ optim_pheno <- function(prior, FUN, y, t, tout, optimFUN = I_optim, method,
                     wFUN(y, FUN(par, t), w, i, nptperyear, ...),
                     #nptperyear, wfact = 0.5)
                     error = function(e) {
-                        message(sprintf('[%s]: %s', function_name, e$message))
+                        message(sprintf('[%s]: %s', FUN_name, e$message))
                         return(w) #return original w
                     })
                 xpred %<>% check_fit(ylu) #values out of ylu are set as NA
@@ -100,12 +102,12 @@ optim_pheno <- function(prior, FUN, y, t, tout, optimFUN = I_optim, method,
         fits[[i]] <- xpred
     }
     fits %<>% set_names(paste0('iter', 1:iters))
-    ws   %<>% set_names(paste0('iter', 1:iters)) %>% as_tibble()
+    ws   %<>% set_names(paste0('iter', 1:iters)) # %>% as_tibble()
     
     # 02. uncertain part also could add here
     # returned object FUN need to be futher optimized
     structure(list(tout = tout, fits = fits, ws = ws,
-        par  = par, fun = FUN), class = 'phenofit')
+        par  = par, fun = FUN_name), class = 'phenofit')
 }
 
 #' I_optim

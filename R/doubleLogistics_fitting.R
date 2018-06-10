@@ -136,7 +136,7 @@ FitDL.Zhang <- function(y, t = index(y), tout = t, optimFUN = I_optimx,
                         method = 'nlm', w, ...){
     e <- Init_param(y, t, w)
 
-    FUN    <- doubleLog.zhang
+    FUN    <- "doubleLog.zhang"
     prior  <- rbind(
         c(doy.mx   , mn, mx, doy[1]   , k  , doy[2]   , k  ),
         c(doy.mx   , mn, mx, doy[1]+t1, k*2, doy[2]-t1, k*2),
@@ -155,7 +155,7 @@ FitAG <- function(y, t = index(y), tout = t, FUN, optimFUN = I_optimx,
     e <- Init_param(y, t, w)
     # print(ls.str(envir = e))
     
-    FUN <- doubleAG
+    FUN <- "doubleAG"
     prior <- rbind(
         c(doy.mx, mn, mx, half    , 2, half, 2),
         # c(doy.mx, mn, mx, 0.2*half, 1  , 0.2*half, 1),
@@ -199,7 +199,7 @@ FitDL.Beck <- function(y, t = index(y), tout = t, optimFUN = I_optimx,
     method = 'nlminb', w, ...) {
     e <- Init_param(y, t, w)
 
-    FUN   <- doubleLog.beck
+    FUN   <- "doubleLog.beck"
     prior <- rbind(
         c(mn, mx, doy[1]   , k  , doy[2]   , k  ),
         c(mn, mx, doy[1]+t1, k*2, doy[2]-t2, k*2))
@@ -225,7 +225,7 @@ FitDL.Elmore <- function(y, t = index(y), tout = t, optimFUN = I_optimx,
     e <- Init_param(y, t, w)
 
     # doy_q  <- quantile(t, c(0.1, 0.25, 0.5, 0.75, 0.9), na.rm = TRUE)
-    FUN   <- doubleLog.elmore
+    FUN   <- "doubleLog.elmore"
     prior <- rbind(
         c(mn, mx - mn, doy[1]+t1, k*2.5  , doy[2]-t2, k*2.5  , 0.002),
         c(mn, mx - mn, doy[1]   , k*1.25 , doy[2]   , k*1.25 , 0.002),
@@ -268,7 +268,7 @@ FitDL.Gu <- function(y, t = index(y), tout = t, optimFUN = I_optimx,
     c1 <- 1
     c2 <- 1
 
-    FUN <- doubleLog.gu
+    FUN <- "doubleLog.gu"
     prior <- rbind(
         c(mn, a, a, doy[1]-t1, k/2 , doy[2]+t2, k/2, 1  , 1),
         c(mn, a, a, doy[1]   , k   , doy[2]   , k  , 2  , 2),
@@ -308,7 +308,7 @@ FitDL.Klos <- function(y, t = index(y), tout = t, optimFUN = I_optimx,
     v1 <- 2    # ok
     v2 <- 2    # ok
 
-    FUN <- doubleLog.klos
+    FUN <- "doubleLog.klos"
     prior <- rbind(
         c(a1, a2, b1, b2, c, B1, B2, m1, m2, q1, q2, v1, v2),
         c(a1, a2, b1, 0.01, 0, B1, B2, m1, m2.bis, q1, 1, v1, 4),

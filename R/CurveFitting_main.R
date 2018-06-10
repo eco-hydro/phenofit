@@ -47,10 +47,12 @@ curvefits <- function(INPUT, brks, nptperyear = 23,
     di <- brks$di
     if (is.null(di)){
         origin <- t[1]
+        getDateId <- function(dates) match(dates, t) %>% rm_empty()
+
         di <- data.table(
-            beg  = brks$dt$beg  - origin + 1, 
-            peak = brks$dt$peak - origin + 1,
-            end  = brks$dt$end  - origin + 1)
+            beg  = getDateId(brks$dt$beg), 
+            peak = getDateId(brks$dt$peak),
+            end  = getDateId(brks$dt$end))
     }
 
     # possible snow or cloud, replaced with whittaker smooth.

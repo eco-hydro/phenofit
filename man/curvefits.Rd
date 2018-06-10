@@ -10,7 +10,7 @@ curvefits(INPUT, brks, nptperyear = 23, wFUN = wTSM, iters = 2,
   ...)
 }
 \arguments{
-\item{extend_month}{For every growing season, previous and afterwards 
+\item{extend_month}{For every growing season, previous and afterwards
 `extend_month` are added to fitting daily time-series. In order to}
 }
 \description{

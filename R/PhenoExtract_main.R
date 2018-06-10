@@ -115,14 +115,14 @@ plot_phenofit <- function(fit, d, title = NULL, show.legend = T, plotly = F){
     # 3. growing season breaks
     # try to add whittaker smoother here
     seasons <- fit$seasons
-    seasons$pos$type %<>% factor(labels = c("min", "max"))
+    # seasons$pos$type %<>% factor(labels = c("min", "max"))
 
     p <- ggplot(pdat1, aes(t, val, color = iters)) +
-        geom_line (data = seasons$whit, aes(t, iter3), color = "black", size = 0.8) +
+        geom_line (data = seasons$whit, aes(t, iter2), color = "black", size = 0.8) +
         geom_vline(data = seasons$dt, aes(xintercept = as.numeric(beg)), size = 0.4, linetype=2, color = "blue") +
         geom_vline(data = seasons$dt, aes(xintercept = as.numeric(end)), size = 0.4, linetype=2, color = "red") +
-        geom_point(data = subset(seasons$pos, type == "max"), aes(t, val), color= "red") +
-        geom_point(data = subset(seasons$pos, type == "min"), aes(t, val), color= "blue") +
+        geom_point(data = seasons$dt, aes(peak, y_peak), color= "red") +
+        geom_point(data = seasons$dt, aes(beg , y_beg ), color= "blue") +
         # geom_line(size = 0.4) +
         facet_grid(meth~.) +
         scale_x_date(breaks = fit$seasons$dt$beg, date_labels = "%Y/%m") + ggtitle(title)

@@ -4,6 +4,8 @@ library(magrittr)
 library(phenofit)
 library(plyr)
 library(Cairo)
+library(gridExtra)
+
 load("Y:/R/phenofit/data/phenofit_MultipleINPUT_flux212.rda")
 stations212 <- fread("C:/Users/kon055/Google Drive/Github/data/phenology/station/flux-212.txt")
 
@@ -12,7 +14,7 @@ df <- lst$MOD13A1 %>%
     reorder_name(c("site", "IGBP", "lat", "long"))
 df <- df[date >= ymd(20010101), ]
 
-sites <- unique(df$site)
+sites   <- unique(df$site)
 # rename variable name as y
 varname <- "EVI_500m"
 I_var   <- which(colnames(df) == varname[1])
@@ -20,7 +22,9 @@ colnames(df)[I_var] <- "y"
 
 # remap SummaryQA factor level, plot_phenofit also use this variable
 if ('SummaryQA' %in% colnames(df)){
-    df$SummaryQA %<>% factor() %>% mapvalues(c("0", "1", "2", "3"), c(" good", " margin", " snow&ice", " cloud"))
+    values <- c("0", "1", "2", "3")
+    levels <- c(" good", " margin", " snow&ice", " cloud")
+    df$SummaryQA %<>% factor() %>% mapvalues(values, levels)
 }
 ## -----------------------------------------------------------------------------
 ratio    <- 1.8
@@ -31,7 +35,6 @@ df_sm    <- df[site %in% sites_sm, ]
 lambda = 2
 ps   <- list()
 fits <- list()
-
 
 ## test seasons
 library(Cairo)
@@ -44,13 +47,16 @@ for (i in seq_along(sites)){
     sitename <- sites[i]
 
     d <- df[site == sitename , ]
+    dnew <- add_HeadTail(d)
     # d$w <- 1
     # Check input data and initial parameters for phenofit
-    INPUT <- check_input(d$date, d$y, d$w, trim = T, maxgap = nptperyear / 4, alpha = 0.02)
+    INPUT <- check_input(dnew$t, dnew$y, dnew$w, trim = T, maxgap = nptperyear/4, alpha = 0.02)
     # The detailed information of those parameters can be seen in `season`.
-    brks <- season(INPUT, lambda, nptperyear, iters = 3, wFUN = wFUN, IsPlot = T,
-                   south = d$lat[1] < 0,
-                   Aymin_less = 0.6, ymax_min = ymax_min,
+    brks <- season(INPUT, nptperyear,
+                   wFUN = wFUN, iters = 3,
+                   FUN = whitsmw2, lambda = lambda,
+                   IsPlot = F, south = d$lat[1] < 0,
+                   rymin_less = 0.6, ymax_min = ymax_min,
                    max_MaxPeaksperyear =2.5, max_MinPeaksperyear = 3.5) #, ...
     titlename <- sprintf('(%d) %s, %s', i, d$site[1], d$IGBP[1])
     title(titlename)
@@ -65,21 +71,22 @@ for (i in seq_along(sites)){
     runningId(i)
     sitename <- sites[i]
 
-    d <- dt[site == sitename , ]
-    # 1. Check input data and initial parameters for phenofit
-    INPUT <- check_input(d$t, d$y, d$w, trim = T, maxgap = nptperyear / 4, alpha = 0.02) #, d$Tn
-    INPUT$y0 <- d$y
+    d <- df[site == sitename , ]
+    dnew <- add_HeadTail(d)
+    # Check input data and initial parameters for phenofit
+    INPUT <- check_input(dnew$t, dnew$y, dnew$w, trim = T, maxgap = nptperyear/4, alpha = 0.02)
+    INPUT$y0 <- dnew$y
 
     # 2. The detailed information of those parameters can be seen in `season`.
     lambda <- init_lambda(INPUT$y)#*2
-    brks   <- season(INPUT, nptperyear,
+    brks <- season(INPUT, nptperyear,
                    wFUN = wFUN, iters = 3,
                    FUN = whitsmw2, lambda = lambda,
                    IsPlot = F, south = d$lat[1] < 0,
                    rymin_less = 0.6, ymax_min = ymax_min,
                    max_MaxPeaksperyear =2.5, max_MinPeaksperyear = 3.5) #, ...
 
-    brks2 <- whit_brks(d, nptperyear = 23, FUN = whitsmw2, IsPlot = T, partial = F)
+    brks2 <- whit_brks(dnew, nptperyear = 23, FUN = whitsmw2, IsPlot = T, partial = F)
 
     # 3. curve fitting
     fit  <- curvefits(INPUT, brks2, lambda =lambda, IsPlot = T,
@@ -87,10 +94,10 @@ for (i in seq_along(sites)){
                       nptperyear = nptperyear, debug = F, wFUN = wTSM,
                       ymax_min = ymax_min,
                       extend_month = 2,
-                      qc = as.numeric(d$SummaryQA),
+                      qc = as.numeric(dnew$SummaryQA),
                       south = d$lat[1] < 0)
     fit$INPUT   <- INPUT
-    fit$seasons <- brks
+    fit$seasons <- brks2
     fits[[i]]   <- fit
 
     titlename <- sprintf('(%s) %s, %s', letters[i], d$site[1], d$IGBP[1])
@@ -116,11 +123,10 @@ for (i in seq_along(sites)){
     # temp <- ExtractPheno(fit$fits$ELMORE, IsPlot = T)
     ps[[i]] <- p
 }
-
 names(fits) <- sites
 
+## check curve fitting
 n <- length(sites)
-library(gridExtra)
 file <- "Figure4_phenofit_curvefitting.pdf"
 cairo_pdf(file, 10, 20)
 fig <- do.call(arrangeGrob, c(ps, list(ncol = 1)))
@@ -139,7 +145,6 @@ file.show("Figure5_Phenology_Extraction.pdf")
 # fits <- dlply(df_sm, .(site), function(d){
 #     fit <- NA
 #     tryCatch({
-#
 #         print(p)
 #     }, error = function(e){
 #         message(sprintf("[e] %s:%s", e$message, d$site[1]))
@@ -150,25 +155,20 @@ file.show("Figure5_Phenology_Extraction.pdf")
 
 p + theme_light() +
     theme(
-            # legend.position="top",
+          # legend.position="top",
           plot.title = element_text(vjust = -6, hjust = 0.01,
                                     margin = margin(1, 1, 1, 1, "cm")*0),
           plot.margin = unit(c(0,1,1,1)*0.3, "cm"),
-          panel.grid.minor = element_blank()
-    ) +
-#
+          panel.grid.minor = element_blank() ) +
 #     scale_shape(guide = FALSE) +
 #     scale_linetype(guide = TRUE) +
     guides(color = guide_legend(title = "lgd"),
            shape = guide_legend(title = "lgd"),
-           fill  = guide_legend("lgd", nrow = 1, order = 1)
-           ) +
+           fill  = guide_legend("lgd", nrow = 1, order = 1) ) +
     labs(shape="Male/Female", colour="Male/Female")
 
 grid.newpage()
-
 grid.draw(lgd1)
-
 grid.newpage()
 I <- 5:7
 lgd2 <- legendGrob(labels[I],
@@ -178,4 +178,3 @@ lgd2 <- legendGrob(labels[I],
                            col = colors[I], fill = colors[I]))
 grid.draw(lgd2)
 p <-  grid.arrange(lgd1, lgd2, nrow = 2, padding = unit(0, "line"))
-
