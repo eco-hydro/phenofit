@@ -7,7 +7,7 @@
 check_fit(yfit, ylu)
 }
 \arguments{
-\item{ylu}{limits of y value, [min, max]}
+\item{ylu}{limits of y value, [ymin, ymax]}
 }
 \description{
 check_fit

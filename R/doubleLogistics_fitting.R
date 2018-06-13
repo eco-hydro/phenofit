@@ -3,30 +3,55 @@
 .backnormalize <- function(x, sf) (x+sf[1]/(sf[2]-sf[1]))*(sf[2]-sf[1])
 
 #' check_input
-#'
-#' If just replace NA values with a const missing value, it is inappropriate for
-#' middle growing season points. If interpolating all values by na.approx, it is
-#' unsuitable for large number continous missing segments, e.g. in the start
-#' or end of growing season. So a maxgap parameter with a default value of
-#' `nptperyear/4` will be a good choice.
-#' @param t A numeric vector
-#' @param y A numeric vector
-#' @param w A numeric vector
+#' 
+#' Check input data, interpolate NA values in y, remove spike values, and set 
+#' weights for NA in y and w.
+#' 
+#' @param t Numeric vector, \code{Date} variable
+#' @param y Numeric vector, vegetation index time-series
+#' @param w Numeric vector, weights of \code{y}
+#' @param Tn Numeric vector, night temperature, default is null. If provided, 
+#' Tn is used to help divide ungrowing period, and then get background value in 
+#' ungrowing season (see details in \code{\link[phenofit]{backval}}).
+#' @param wmin Double, min weight. w < wmin will be set to wmin. \code{wmin} 
+#' should be greater than 0, otherwise bad points (e.g. snow contaminated points)
+#' will be complete ignored.
 #' @param missval Double, which is used to replace NA values in y. If missing,
-#' the default vlaue is `ylu[1] - diff(ylu)/10`.
+#' the default vlaue is \code{ylu[1]}.
 #' @param maxgap Integer, nptperyear/4 will be a suitable value. If continuous
 #' missing value numbers less than maxgap, then interpolate those NA values by
-#' zoo::na.approx; If false, then replace those NA values with a const value,
-#' `ylu[1]`
-#'
+#' zoo::na.approx; If false, then replace those NA values with a constant value 
+#' \code{ylu[1]}. \cr
+#' Replacing NA values with a constant missing value (e.g. background value ymin) 
+#' is inappropriate for middle growing season points. Interpolating all values 
+#' by na.approx, it is unsuitable for large number continous missing segments, 
+#' e.g. in the start or end of growing season. 
+#' 
+#' @return A list object returned
+#' \itemize{ 
+#' \item{y} Numeric vector
+#' \item{t} Numeric vector
+#' \item{w} Numeric vector
+#' \item{Tn} Numeric vector
+#' \item{ylu} =[ymin, ymax]. \code{w_critical} is used to filter not too 
+#'      bad values. If the percentage good values (w=1) is greater than 30\%, then 
+#'      \code{w_critical}=1. The else, if the percentage of w >= 0.5 points is greater 
+#'      than 10\%, then \code{w_critical}=0.5. In boreal regions, even if the percentage 
+#'      of w >= 0.5 points is only 10\%, we still can't set \code{w_critical=wmin}. 
+#'      We can't rely on points with the wmin weights. Then, 
+#'      \code{y_good = y[w >= w_critical ]}, 
+#'      \code{ymin = pmax( quantile(y_good, alpha/2), 0)}, \code{ymax = max(y_good)}.
+#' } 
+#' 
+#' @seealso \code{\link[phenofit]{backval}}
+#' 
 #' @export
-check_input <- function(t, y, w, Tn = NULL, minT= 0, missval, maxgap = 10, trim = TRUE, alpha = 0.01){
+check_input <- function(t, y, w, Tn = NULL, wmin = 0.1, missval, maxgap = 10, alpha = 0.01){
     n   <- length(y)
     if (missing(w)) w <- rep(1, n)
 
     # ylu   <- quantile(y[w == 1], c(alpha/2, 1 - alpha), na.rm = T) #only consider good value
     # ylu   <- range(y, na.rm = T)
-    wmin <- 0.1
     # only remove low values
     w_critical <- wmin + 0.1
     if (sum(w == 1, na.rm = T) >= n * 0.3){
@@ -80,7 +105,7 @@ check_input <- function(t, y, w, Tn = NULL, minT= 0, missval, maxgap = 10, trim 
 }
 
 #' check_fit
-#' @param ylu limits of y value, [min, max]
+#' @param ylu limits of y value, [ymin, ymax]
 #' @export
 check_fit <- function(yfit, ylu){
     I_max <- yfit > ylu[2]

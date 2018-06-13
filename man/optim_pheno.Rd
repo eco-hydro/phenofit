@@ -8,6 +8,8 @@ optim_pheno(prior, FUN_name, y, t, tout, optimFUN = I_optim, method, w, w0,
   ylu, iters = 2, wFUN = wTSM, nptperyear = 46, debug = FALSE, ...)
 }
 \arguments{
+\item{prior}{Initial parameters for curve fitting function}
+
 \item{FUN_name}{Curve fitting function name, can be one of ''
 If using weights updating method, need to set `nptperyear` as global parameter.}
 }

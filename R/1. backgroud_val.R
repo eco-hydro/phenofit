@@ -51,7 +51,7 @@ backval <- function(y, t, w, Tn, minT = 5, nptperyear, ...){
         back <- getBack(y, i_good)
     } else if (n - n_lowT < max(5, nptperyear/12*2)){ 
         # Warming temperature less 2 month (e.g. high latitude, boreal region)
-        # If nighttimetemperature is always below10°C, the growing season is 
+        # If nighttimetemperature is always below 10°C, the growing season is 
         # set to be June to August (Zhang et al., 2016)
         month    <- month(t)
         i_summer <- month %in% c(6, 7, 8)
