@@ -182,14 +182,14 @@ FitAG <- function(y, t = index(y), tout = t, FUN, optimFUN = I_optimx,
     
     FUN <- "doubleAG"
     prior <- rbind(
-        c(doy.mx, mn, mx, half    , 2, half, 2),
+        c(doy.mx, mn, mx, 1/half    , 2, 1/half, 2),
         # c(doy.mx, mn, mx, 0.2*half, 1  , 0.2*half, 1),
         # c(doy.mx, mn, mx, 0.5*half, 1.5, 0.5*half, 1.5),
-        c(doy.mx, mn, mx, 0.8*half, 3, 0.8*half, 3))
+        c(doy.mx, mn, mx, 1/(0.8*half), 3, 1/(0.8*half), 3))
     # referenced by TIMESAT
+    lower  <- c(lims$t0[1], lims$mn[1], lims$mx[1], 1/(0.1*half), 2, 1/(0.1*half), 2)
+    upper  <- c(lims$t0[2], lims$mn[2], lims$mx[2], 1/(1.4*half), 8, 1/(1.4*half), 8)
     
-    lower  <- c(lims$t0[1], lims$mn[1], lims$mx[1], 0.1*half, 2, 0.1*half, 2)
-    upper  <- c(lims$t0[2], lims$mn[2], lims$mx[2], 1.4*half, 8, 1.4*half, 8)
     optim_pheno(prior, FUN, y, t, tout, optimFUN, method, w, lower = lower, upper = upper, ...)#quick return
 }
 
@@ -368,7 +368,7 @@ Init_param <- function(y, t, w){
     deltaT <- (max(t) - min(t))/4
     half   <- (max(t) - min(t))/2
 
-    k      <- 4/half #approximate value
+    k      <- 4/half*2.67 #approximate value
     # k limits: about 0.004 - 0.2
     # kmin <- 4 / (half * 5), half = 200, k = 0.004
     # kmax <- 4 / (half / 5), half = 100, k = 0.2

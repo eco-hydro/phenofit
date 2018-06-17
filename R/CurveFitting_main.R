@@ -1,6 +1,6 @@
-#' curvefits
+#' Fine Curve fitting
 #'
-#' Curve fitting for INPUT time-series. Procedures of initial weight, growing
+#' Fine Curve fitting for INPUT time-series. Procedures of initial weight, growing
 #' season dividing and curve fitting are separated.
 #'
 #' @param extend_month For every growing season, previous and afterwards

@@ -76,18 +76,18 @@ doubleAG <- function(par, t){
     a4 <- par[6]
     a5 <- par[7]
 
-    pred <- mn + (mx - mn)*exp(- c( ((t0 - t[t <= t0])/a2) ^a3,
-                    ((t[t >  t0] - t0)/a4) ^a5) )
+    pred <- mn + (mx - mn)*exp(- c( ((t0 - t[t <= t0])*rsp) ^a3,
+                    ((t[t >  t0] - t0)*rau) ^a5) )
     return(pred)
     # pred <- (mx - mn)/c(1 + exp(-rsp*(t[t <= t0] - sos)),
     #     1 + exp(-rau*(t[t >  t0] - eos))) + mn
 }
 # a3, a5 should be greater than 1
 attr(doubleAG, 'name')    <- 'doubleAG'
-attr(doubleAG, 'par') <- c("t0", "mn", "mx", "a2", "a3", "a4", "a5")
+attr(doubleAG, 'par')     <- c("t0", "mn", "mx", "rsp", "a3", "rau", "a5")
 # piecewise function
-attr(doubleAG, 'formula') <- expression( mn + (mx - mn)*exp(- ((t0 - t)/a2) ^a3 ),
-                                         mn + (mx - mn)*exp(- ((t - t0)/a4) ^a5 ))
+attr(doubleAG, 'formula') <- expression( mn + (mx - mn)*exp(- ((t0 - t)*rsp) ^a3 ),
+                                         mn + (mx - mn)*exp(- ((t - t0)*rau) ^a5 ))
 
 #' @export
 doubleLog.beck <- function(par, t) {
