@@ -3,48 +3,48 @@
 .backnormalize <- function(x, sf) (x+sf[1]/(sf[2]-sf[1]))*(sf[2]-sf[1])
 
 #' check_input
-#' 
-#' Check input data, interpolate NA values in y, remove spike values, and set 
+#'
+#' Check input data, interpolate NA values in y, remove spike values, and set
 #' weights for NA in y and w.
-#' 
+#'
 #' @param t Numeric vector, \code{Date} variable
 #' @param y Numeric vector, vegetation index time-series
 #' @param w Numeric vector, weights of \code{y}
-#' @param Tn Numeric vector, night temperature, default is null. If provided, 
-#' Tn is used to help divide ungrowing period, and then get background value in 
+#' @param Tn Numeric vector, night temperature, default is null. If provided,
+#' Tn is used to help divide ungrowing period, and then get background value in
 #' ungrowing season (see details in \code{\link[phenofit]{backval}}).
-#' @param wmin Double, min weight. w < wmin will be set to wmin. \code{wmin} 
+#' @param wmin Double, min weight. w < wmin will be set to wmin. \code{wmin}
 #' should be greater than 0, otherwise bad points (e.g. snow contaminated points)
 #' will be complete ignored.
 #' @param missval Double, which is used to replace NA values in y. If missing,
 #' the default vlaue is \code{ylu[1]}.
 #' @param maxgap Integer, nptperyear/4 will be a suitable value. If continuous
 #' missing value numbers less than maxgap, then interpolate those NA values by
-#' zoo::na.approx; If false, then replace those NA values with a constant value 
+#' zoo::na.approx; If false, then replace those NA values with a constant value
 #' \code{ylu[1]}. \cr
-#' Replacing NA values with a constant missing value (e.g. background value ymin) 
-#' is inappropriate for middle growing season points. Interpolating all values 
-#' by na.approx, it is unsuitable for large number continous missing segments, 
-#' e.g. in the start or end of growing season. 
-#' 
+#' Replacing NA values with a constant missing value (e.g. background value ymin)
+#' is inappropriate for middle growing season points. Interpolating all values
+#' by na.approx, it is unsuitable for large number continous missing segments,
+#' e.g. in the start or end of growing season.
+#'
 #' @return A list object returned
-#' \itemize{ 
+#' \itemize{
 #' \item{y} Numeric vector
 #' \item{t} Numeric vector
 #' \item{w} Numeric vector
 #' \item{Tn} Numeric vector
-#' \item{ylu} =[ymin, ymax]. \code{w_critical} is used to filter not too 
-#'      bad values. If the percentage good values (w=1) is greater than 30\%, then 
-#'      \code{w_critical}=1. The else, if the percentage of w >= 0.5 points is greater 
-#'      than 10\%, then \code{w_critical}=0.5. In boreal regions, even if the percentage 
-#'      of w >= 0.5 points is only 10\%, we still can't set \code{w_critical=wmin}. 
-#'      We can't rely on points with the wmin weights. Then, 
-#'      \code{y_good = y[w >= w_critical ]}, 
+#' \item{ylu} =[ymin, ymax]. \code{w_critical} is used to filter not too
+#'      bad values. If the percentage good values (w=1) is greater than 30\%, then
+#'      \code{w_critical}=1. The else, if the percentage of w >= 0.5 points is greater
+#'      than 10\%, then \code{w_critical}=0.5. In boreal regions, even if the percentage
+#'      of w >= 0.5 points is only 10\%, we still can't set \code{w_critical=wmin}.
+#'      We can't rely on points with the wmin weights. Then,
+#'      \code{y_good = y[w >= w_critical ]},
 #'      \code{ymin = pmax( quantile(y_good, alpha/2), 0)}, \code{ymax = max(y_good)}.
-#' } 
-#' 
+#' }
+#'
 #' @seealso \code{\link[phenofit]{backval}}
-#' 
+#'
 #' @export
 check_input <- function(t, y, w, Tn = NULL, wmin = 0.1, missval, maxgap = 10, alpha = 0.01){
     n   <- length(y)
@@ -56,7 +56,7 @@ check_input <- function(t, y, w, Tn = NULL, wmin = 0.1, missval, maxgap = 10, al
     w_critical <- wmin + 0.1
     if (sum(w == 1, na.rm = T) >= n * 0.3){
         w_critical <- 1
-    }else if (sum(w >= 0.5, na.rm = T) > n * 0.1){ 
+    }else if (sum(w >= 0.5, na.rm = T) > n * 0.1){
         # Just set a small portion for boreal regions. In this way, it will give
         # more weights to marginal data.
         w_critical <- 0.5
@@ -115,7 +115,8 @@ check_fit <- function(yfit, ylu){
     return(yfit)
 }
 
-#' values out of ylu, set to be na and interpolate it.
+# values out of ylu, set to be na and interpolate it.
+# Not export
 check_fit2 <- function(y, ylu){
     I <- which(y < ylu[1] | y > ylu[2])
     if (length(I) > 0){
@@ -135,7 +136,7 @@ check_fit2 <- function(y, ylu){
     return(y)
 }
 
-# 
+#
 #' using cubic spline function to avoid the difficult in setting parameter
 #' lambda in smooth.spline
 #'
@@ -168,9 +169,10 @@ FitDL.Zhang <- function(y, t = index(y), tout = t, optimFUN = I_optimx,
         c(doy.mx   , mn, mx, doy[1]-t1, k/2, doy[2]+t2, k/2))
 
     param_lims <- lims[c('t0', 'mn', 'mx', 'sos', 'r', 'eos', 'r')]
+    param_lims$r[2] %<>% multiply_by(2)
     lower  <- sapply(param_lims, `[`, 1)
     upper  <- sapply(param_lims, `[`, 2)
-    
+
     optim_pheno(prior, FUN, y, t, tout, optimFUN, method, w, lower = lower, upper = upper, ...)#quick return
 }
 
@@ -179,7 +181,7 @@ FitAG <- function(y, t = index(y), tout = t, FUN, optimFUN = I_optimx,
     method = 'nlminb', w, ...){
     e <- Init_param(y, t, w)
     # print(ls.str(envir = e))
-    
+
     FUN <- "doubleAG"
     prior <- rbind(
         c(doy.mx, mn, mx, 1/half    , 2, 1/half, 2),
@@ -187,9 +189,9 @@ FitAG <- function(y, t = index(y), tout = t, FUN, optimFUN = I_optimx,
         # c(doy.mx, mn, mx, 0.5*half, 1.5, 0.5*half, 1.5),
         c(doy.mx, mn, mx, 1/(0.8*half), 3, 1/(0.8*half), 3))
     # referenced by TIMESAT
-    lower  <- c(lims$t0[1], lims$mn[1], lims$mx[1], 1/(0.1*half), 2, 1/(0.1*half), 2)
-    upper  <- c(lims$t0[2], lims$mn[2], lims$mx[2], 1/(1.4*half), 8, 1/(1.4*half), 8)
-    
+    lower  <- c(lims$t0[1], lims$mn[1], lims$mx[1], 1/(1.4*half), 2, 1/(1.4*half), 2)
+    upper  <- c(lims$t0[2], lims$mn[2], lims$mx[2], 1/(0.1*half), 8, 1/(0.1*half), 8)
+
     optim_pheno(prior, FUN, y, t, tout, optimFUN, method, w, lower = lower, upper = upper, ...)#quick return
 }
 
@@ -206,11 +208,11 @@ FitAG <- function(y, t = index(y), tout = t, FUN, optimFUN = I_optimx,
 #'
 #' @return list(pred, par, fun)
 #' @references
-#' [1]. Beck, P.S.A., Atzberger, C., Hogda, K.A., Johansen, B., Skidmore, A.K., 
-#'      2006. Improved monitoring of vegetation dynamics at very high latitudes: 
-#'      A new method using MODIS NDVI. Remote Sens. Environ. 
+#' [1]. Beck, P.S.A., Atzberger, C., Hogda, K.A., Johansen, B., Skidmore, A.K.,
+#'      2006. Improved monitoring of vegetation dynamics at very high latitudes:
+#'      A new method using MODIS NDVI. Remote Sens. Environ.
 #'      https://doi.org/10.1016/j.rse.2005.10.021
-#' 
+#'
 #' @examples
 #' FitDL.Beck  (y, t, tout, optimFUN = optim_p, pfun = p_nlminb)
 #' FitDL.Elmore(y, t, tout, optimFUN = optim_p, pfun = p_nlminb)
@@ -240,9 +242,9 @@ FitDL.Beck <- function(y, t = index(y), tout = t, optimFUN = I_optimx,
 # attr(doubleLog.beck, 'formula') <- expression(mn + (mx - mn)*(1/(1 + exp(-rsp*(t - sos))) + 1/(1 + exp(rau*(t - eos)))))
 
 #' @references
-#' [1]. Elmore, A.J., Guinn, S.M., Minsley, B.J., Richardson, A.D., 2012. 
-#'      Landscape controls on the timing of spring, autumn, and growing season 
-#'      length in mid-Atlantic forests. Glob. Chang. Biol. 18, 656–674. 
+#' [1]. Elmore, A.J., Guinn, S.M., Minsley, B.J., Richardson, A.D., 2012.
+#'      Landscape controls on the timing of spring, autumn, and growing season
+#'      length in mid-Atlantic forests. Glob. Chang. Biol. 18, 656–674.
 #'      https://doi.org/10.1111/j.1365-2486.2011.02521.x
 #' @export
 FitDL.Elmore <- function(y, t = index(y), tout = t, optimFUN = I_optimx,
@@ -260,7 +262,7 @@ FitDL.Elmore <- function(y, t = index(y), tout = t, optimFUN = I_optimx,
     param_lims <- lims[c('mn', 'mx', 'sos', 'r', 'eos', 'r')]
     lower  <- c(sapply(param_lims, `[`, 1), 0  )
     upper  <- c(sapply(param_lims, `[`, 2), Inf)
-    
+
     optim_pheno(prior, FUN, y, t, tout, optimFUN, method, w, lower = lower, upper = upper, ...)#return
 }
 
@@ -273,17 +275,17 @@ FitDL.Elmore <- function(y, t = index(y), tout = t, optimFUN = I_optimx,
 # attr(doubleLog.elmore, 'par')     <- c("mn", "mx", "sos", "rsp", "eos", "rau", "m7")
 # attr(doubleLog.elmore, 'formula') <- expression( mn + (mx - m7*t)*( 1/(1 + exp(-rsp*(t-sos))) - 1/(1 + exp(-rau*(t-eos))) ) )
 
-#' @references 
-#' [1]. Gu, L., Post, W.M., Baldocchi, D.D., Black, T.A., Suyker, A.E., Verma, 
-#'      S.B., Vesala, T., Wofsy, S.C., 2009. Characterizing the Seasonal Dynamics 
-#'      of Plant Community Photosynthesis Across a Range of Vegetation Types, 
-#'      in: Noormets, A. (Ed.), Phenology of Ecosystem Processes: Applications 
-#'      in Global Change Research. Springer New York, New York, NY, pp. 35–58. 
+#' @references
+#' [1]. Gu, L., Post, W.M., Baldocchi, D.D., Black, T.A., Suyker, A.E., Verma,
+#'      S.B., Vesala, T., Wofsy, S.C., 2009. Characterizing the Seasonal Dynamics
+#'      of Plant Community Photosynthesis Across a Range of Vegetation Types,
+#'      in: Noormets, A. (Ed.), Phenology of Ecosystem Processes: Applications
+#'      in Global Change Research. Springer New York, New York, NY, pp. 35–58.
 #'      https://doi.org/10.1007/978-1-4419-0026-5_2 \cr
 #' [2]. https://github.com/kongdd/phenopix/blob/master/R/FitDoubleLogGu.R
-#' 
+#'
 #' @export
-FitDL.Gu <- function(y, t = index(y), tout = t, optimFUN = I_optimx, 
+FitDL.Gu <- function(y, t = index(y), tout = t, optimFUN = I_optimx,
     method = "nlminb", w, ...) {
     e <- Init_param(y, t, w)
 
@@ -301,11 +303,11 @@ FitDL.Gu <- function(y, t = index(y), tout = t, optimFUN = I_optimx,
         c(mn, a, a, doy[1]+t1, k*2 , doy[2]-t2, k*2, 0.5, 0.5),
         c(mn, a, a, doy[1]+t1, k*3 , doy[2]-t2, k*3, 5  , 5))
     # y0 + (a1/(1 + exp(-(t - t1)/b1))^c1) - (a2/(1 + exp(-(t - t2)/b2))^c2)
-    
+
     param_lims <- lims[c('mn', 'mx', 'mx', 'sos', 'r', 'eos', 'r')]
     lower  <- c(sapply(param_lims, `[`, 1), 0  , 0)
     upper  <- c(sapply(param_lims, `[`, 2), Inf, Inf)
-    
+
     optim_pheno(prior, FUN, y, t, tout, optimFUN, method, w, lower = lower, upper = upper, ...)#return
 }
 
@@ -360,7 +362,7 @@ Init_param <- function(y, t, w){
     doy  <- c((doy.mx + first(t))/2, (last(t) + doy.mx) /2)
     t1   <- (doy.mx - doy[1])/3 # adjust for doy[1]
     t2   <- (doy[2] - doy.mx)/3 # adjust for doy[2]
-    
+
     # if (doy[1] >= doy.mx) doy[1] <- (doy.mx - first(t))/2 + first(t)
     # if (doy[2] <= doy.mx) doy[2] <- (last(t) - doy.mx) /2 + doy.mx
     ampl   <- mx - mn
@@ -375,14 +377,14 @@ Init_param <- function(y, t, w){
 
     # parameters limit
     lims = list(
-        t0  = c(doy.mx - deltaT, doy.mx + deltaT), 
+        t0  = c(doy.mx - deltaT, doy.mx + deltaT),
         mn  = c(mn - deltaY    , mn + deltaY),
         mx  = c(mx - deltaY*2  , mx + deltaY*2),
-        r   = c(k/3, k*3), 
+        r   = c(k/3, k*3),
         sos = c(min(t)         , doy.mx + deltaT),
         eos = c(doy.mx - deltaT, max(t))
     )
-    list2env(listk( mx, mn, ampl, doy, doy.mx, 
-        deltaT, deltaY, half, t1, t2, 
+    list2env(listk( mx, mn, ampl, doy, doy.mx,
+        deltaT, deltaY, half, t1, t2,
         k, lims), envir = parent.frame())
 }

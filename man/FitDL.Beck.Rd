@@ -37,8 +37,8 @@ FitDL.Zhang (y, t, tout, optimFUN = optim_p, pfun = p_nlm)
 FitAG (y, t, tout, optimFUN = optim_p, pfun = p_nlminb)
 }
 \references{
-[1]. Beck, P.S.A., Atzberger, C., Hogda, K.A., Johansen, B., Skidmore, A.K., 
-     2006. Improved monitoring of vegetation dynamics at very high latitudes: 
-     A new method using MODIS NDVI. Remote Sens. Environ. 
+[1]. Beck, P.S.A., Atzberger, C., Hogda, K.A., Johansen, B., Skidmore, A.K.,
+     2006. Improved monitoring of vegetation dynamics at very high latitudes:
+     A new method using MODIS NDVI. Remote Sens. Environ.
      https://doi.org/10.1016/j.rse.2005.10.021
 }

@@ -37,10 +37,10 @@ ExtractPheno <- function(fits, TRS = c(0.1, 0.2, 0.5, 0.6), IsPlot = FALSE){
         show.lgd = FALSE
         if (IsPlot && !all_na){
             ti <- fit$data$t
-            yi <- fit$data$y
+            yi <- fit$data$y # may have NA values.
             # constrain plot ylims
-            ylim0    <- c( pmin(min(yi), min(ypred)), 
-                           pmax(max(yi), max(ypred)))
+            ylim0    <- c( pmin(min(yi, na.rm = T), min(ypred)), 
+                           pmax(max(yi, na.rm = T), max(ypred)))
             A = diff(ylim0);
             ylim     <- ylim0 + c(-1, 0.2) * 0.05 *A 
             ylim_trs <- (ylim - ylim0) / A # TRS:0-1

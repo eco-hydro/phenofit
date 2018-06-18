@@ -68,13 +68,13 @@ attr(doubleLog.zhang, 'formula') <- expression( (mx - mn)/(1 + exp(-rsp*(t - sos
 #' Peter M. Atkinson, et al., 2012, RSE, 123:400-417
 #' @export
 doubleAG <- function(par, t){
-    t0 <- par[1]
-    mn <- par[2]
-    mx <- par[3]
-    a2 <- par[4]
-    a3 <- par[5]
-    a4 <- par[6]
-    a5 <- par[7]
+    t0  <- par[1]
+    mn  <- par[2]
+    mx  <- par[3]
+    rsp <- par[4]
+    a3  <- par[5]
+    rau <- par[6]
+    a5  <- par[7]
 
     pred <- mn + (mx - mn)*exp(- c( ((t0 - t[t <= t0])*rsp) ^a3,
                     ((t[t >  t0] - t0)*rau) ^a5) )
@@ -85,7 +85,6 @@ doubleAG <- function(par, t){
 # a3, a5 should be greater than 1
 attr(doubleAG, 'name')    <- 'doubleAG'
 attr(doubleAG, 'par')     <- c("t0", "mn", "mx", "rsp", "a3", "rau", "a5")
-# piecewise function
 attr(doubleAG, 'formula') <- expression( mn + (mx - mn)*exp(- ((t0 - t)*rsp) ^a3 ),
                                          mn + (mx - mn)*exp(- ((t - t0)*rau) ^a5 ))
 

@@ -79,125 +79,47 @@ rmNonSeasonality <- function(dt, IsPlot = T, file = 'SI.pdf'){
     info # quickly return
 }
 
+#' 
 #' Add one year data in the head and tail
+#' 
+#' 
+#' @param d A data.table, should have \code{t} (compositing date) column 
+#' (\code{Date} variable).
+#' 
+#' @return data.table
 add_HeadTail <- function(d, nptperyear = 23){
     # I_beg <- floor(yday(ymd(20000218))/16) # MOD13A1 20000218 is the 4th 16-day
     ntime    <- nrow(d)
     step     <- ceiling(365/nptperyear)
-    nmissing <- floor(yday(d$t[1])/step)
 
-    I_head <- seq(nptperyear - nmissing + 1, nptperyear*2)
-    d_head <- d[I_head, ]
-    d_head$t %<>% `-`(., dyears(2) + ddays(1)) 
+    nmissing_head <- floor( yday(d$t[1])/step )
+    nmissing_tail <- nptperyear - floor( yday(last(d$t))/step ) - 1
 
-    d_tail <- d[(ntime - 2*nptperyear + 1):(ntime - nptperyear), ]
-    d_tail$t %<>% `+`(dyears(2))
+    date_beg <- first(d$t)
+    date_end <- last(d$t)
+    
+    year_beg <- year(date_beg)
+    year_end <- year(date_end)
 
-    rbind(d_head, d, d_tail)
+    md_beg <- date_beg %>% {month(.)*100 + day(.)} # begin date month-day
+    md_end <- date_end %>% {month(.)*100 + day(.)} # end   date month-day
+    
+    # if tiny missing, than this year is include to extract phenology
+    nyear_add_head <- ifelse (nmissing_head < nptperyear/2, 2, 1)  
+    nyear_add_tail <- ifelse (nmissing_tail < nptperyear/2, 2, 1)
+
+    # head
+    d_head <- d[t >= ymd( (year_beg+1)*1e4 + 0101) & 
+                t <  ymd( (year_beg+nyear_add_head)*1e4 + md_beg)]
+
+    d_head$t %<>% `-`(dyears(nyear_add_head)) 
+
+    # tail 
+    d_tail <- d[t >  ymd( (year_end-nyear_add_tail)*1e4 + md_end) & 
+                t <= ymd( (year_end-1)*1e4 + 1231)]
+    d_tail$t %<>% `+`(dyears(nyear_add_tail)) 
+
+    res <- rbind(d_head, d, d_tail)
+    res # return
 }
-#' This function is designed for MODIS DATASET
-#'
-#' @param d must have columns: 'y', 't', 'w'
-#' @param FUN Curve fitting functions, call be one of `sgfitw`, `whitsmw2` and `wHANTS`.
-whit_brks <- function(dnew, nptperyear = 23, FUN = whitsmw2, IsPlot = T, partial = TRUE, ...){
-    # dnew  <- add_HeadTail(d)
-    ## 2. check input data and initial parameters
-    INPUT <- check_input(dnew$t, dnew$y, dnew$w, trim = T, maxgap = nptperyear / 4, alpha = 0.02)
 
-    years <- 2000:2016
-    nyear <- length(years)
-
-    brks  <- list()
-    wFUN  <- wTSM
-    ymax_min  <- 0.05
-
-    lat       <- d$lat[1]
-    sitename  <- d$site[1]
-    IGBP_code <- d$IGBPcode[1]#d$IGBP[1]
-    IGBP_name <- ifelse (!is.null(IGBP_code), IGBPnames[IGBP_code], d$IGBPname)
-
-    debug <- FALSE
-    # debug <- TRUE
-    # i = 16; debug <- T
-    params <- list(nptperyear = nptperyear,
-            FUN = FUN, wFUN = wFUN, iters = 2,
-            rymin_less = 0.6, ymax_min = ymax_min,
-            threshold_min = 0.0, threshold_max = 0.3,
-            IsPlot = debug,
-            max_MaxPeaksperyear =2.5, max_MinPeaksperyear = 3.5,
-            south = lat < 0, plotdat = d)#, ...
-
-    for (i in 1:nyear){
-        runningId(i)
-        year <- years[i]
-        I_beg = nptperyear*(i-1)+1
-        I_end = nptperyear*(i+2)
-        I      <- I_beg:I_end
-        input  <- lapply(INPUT[1:3], `[`, I) %>% c(INPUT[5])
-        lambda <- init_lambda(input$y)#*2
-
-        params_i = c(list(input, lambda = lambda), params)
-        brk    <- do.call(season, params_i)
-
-        brk$dt %<>% subset(year == years[i])
-        if (is.null(brk$dt) || nrow(brk$dt) == 0){
-            params$threshold_max = 0.2
-            brk <- do.call(season, params)
-            brk$dt %<>% subset(year == years[i])
-        }
-        brks[[i]] <- list(whit = brk$whit[(nptperyear+1):(2*nptperyear), ],
-                          dt   = brk$dt)
-    }
-    brks %<>% purrr::transpose()
-    brks$whit %<>% do.call(rbind, .)
-    brks$dt   %<>% do.call(rbind, .)
-    # brks # quickly return
-
-    dt <- brks$dt
-    I_fix <- dt$end[-1] - dt[2:.N]$beg
-
-    if (is.null(brks$dt)){
-        warning(sprintf("[site:%s] No data!", sitename))
-        return(NULL)
-    }
-    ## statistics
-    I    <- match(brks$whit$t, INPUT$t)
-    stat      <- GOF(INPUT$y[I], dplyr::last(brks$whit), INPUT$w[I], include.cv = TRUE)
-    stat_str  <- stat[c("R2", "NSE", "cv")] %>% {paste(names(.), round(., 3), sep = "=", collapse = ", ")}
-    str_title <- sprintf("[%s] IGBP = %s, %s, lat = %.2f", sitename, IGBP_name, stat_str, lat)
-
-    nseason           <- nrow(brks$dt)
-    stat[['nseason']] <- nseason
-    NSE <- stat[['NSE']]
-    cv  <- stat[['cv']]
-    # if (NSE < 0 | (cv < 0.1 & NSE < 0.1)) {}
-
-    ## VISUALIZATION
-    con <- ifelse(partial, IsPlot && (NSE < 0.3), IsPlot)
-    if (con){
-    # if(IsPlot && (NSE < 0 && cv < 0.2)){
-        pdat     <- as.list(d[, .(t, y, w)]) %>% c(INPUT[5])
-        plotdata(pdat, nptperyear)
-
-        whit <- brks$whit
-        pos  <- brks$dt
-        pos_max <- pos$peak
-
-        colors  <- c("red", "blue", "green")
-        if (ncol(whit) - 3 < 3) colors <- c("red", "green")
-
-        for (i in 1:(ncol(whit) - 3)){
-            lines(whit$t, whit[[i+3]], col = colors[i], lwd = 2)
-        }
-        # subfunction to plot breaks points
-        subplot <- function(t, ...) {
-            I <- match(t, whit$t)
-            points(t, last(whit)[I], pch = 20, cex = 1.5, ...)
-        }
-        subplot(pos$peak           , col = "red")
-        subplot(c(pos$beg, pos$end), col = "blue")
-        title(str_title)
-    }
-    # stat <- c(site = sitename, IGBPcode = IGBP_code, stat) # quickly return
-    return(brks)
-}

@@ -32,41 +32,13 @@ lambda   <- 2
 sites_sm <- sites[c(1, 3, 4, 6, 9)]
 df_sm    <- df[site %in% sites_sm, ]
 
-lambda = 2
+lambda <- 2
 ps   <- list()
 fits <- list()
 
-## test seasons
-library(Cairo)
-CairoPDF("test-season.pdf", 10, 6*2)
-
-op <- par(mfrow = c(6, 1),
-          oma = c(1, 2, 2, 1), mar = c(3, 2, 1, 1), xaxt = "n") #, yaxt = "n",
-for (i in seq_along(sites)){
-    runningId(i)
-    sitename <- sites[i]
-
-    d <- df[site == sitename , ]
-    dnew <- add_HeadTail(d)
-    # d$w <- 1
-    # Check input data and initial parameters for phenofit
-    INPUT <- check_input(dnew$t, dnew$y, dnew$w, trim = T, maxgap = nptperyear/4, alpha = 0.02)
-    # The detailed information of those parameters can be seen in `season`.
-    brks <- season(INPUT, nptperyear,
-                   wFUN = wFUN, iters = 3,
-                   FUN = whitsmw2, lambda = lambda,
-                   IsPlot = F, south = d$lat[1] < 0,
-                   rymin_less = 0.6, ymax_min = ymax_min,
-                   max_MaxPeaksperyear =2.5, max_MinPeaksperyear = 3.5) #, ...
-    titlename <- sprintf('(%d) %s, %s', i, d$site[1], d$IGBP[1])
-    title(titlename)
-}
-dev.off()
+nptperyear <- 23
 
 # test seasons end --------------------------------------------------------
-
-fits <- list()
-ps <- list()
 for (i in seq_along(sites)){
     runningId(i)
     sitename <- sites[i]
@@ -85,6 +57,7 @@ for (i in seq_along(sites)){
                    IsPlot = F, south = d$lat[1] < 0,
                    rymin_less = 0.6, ymax_min = ymax_min,
                    max_MaxPeaksperyear =2.5, max_MinPeaksperyear = 3.5) #, ...
+    titlename <- sprintf('(%d) %s, %s', i, d$site[1], d$IGBP[1])
 
     brks2 <- whit_brks(dnew, nptperyear = 23, FUN = whitsmw2, IsPlot = T, partial = F)
 

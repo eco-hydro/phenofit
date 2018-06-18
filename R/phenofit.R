@@ -12,23 +12,29 @@ statistic.phenofit <- function(fit){
     I_org <- match(ti, t)
     I_sim <- match(ti, tout)
 
-    y     <- fit$data$y[I_org]
-    pred  <- last(fit$fits)[I_sim]
+    Y_obs  <- fit$data$y[I_org]
+    Y_sim  <- last(fit$fits)[I_sim]
+
+    I <- which(!(is.na(Y_obs) | is.na(Y_sim)))
+    # n_obs <- length(Y_obs)
+
+    Y_sim <- Y_sim[I]
+    Y_obs <- Y_obs[I]
 
     R      <- NA
     pvalue <- NA
-    n      <- length(y)
+    n      <- length(I)
 
     tryCatch({
-        cor.obj <- cor.test(y, pred, use = "complete.obs")
+        cor.obj <- cor.test(Y_obs, Y_sim, use = "complete.obs")
         R       <- cor.obj$estimate[[1]]
         pvalue  <- cor.obj$p.value
     }, error = function(e){
         message(e$message)
     })
 
-    RMSE <- sqrt(sum((y - pred)^2)/length(pred))
-    NSE  <- 1 - sum((pred - y)^2) / sum((y - mean(y))^2)
+    RMSE <- sqrt(sum((Y_obs - Y_sim)^2)/n)
+    NSE  <- 1 - sum((Y_sim - Y_obs)^2) / sum((Y_obs - mean(Y_obs))^2)
     return(c(RMSE = RMSE, NSE = NSE, R = R, pvalue = pvalue, n = n))
 }
 

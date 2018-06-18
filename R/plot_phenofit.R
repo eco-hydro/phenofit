@@ -1,74 +1,3 @@
-#'
-#' curve fit vegetation index (VI) time-series
-#'
-#' curve fit VI using 'spline', 'beck', 'elmore', 'klos', 'AG', 'Gu', 'zhang' methods
-#'
-#' @param y Vegetation time-series index, numeric vector
-#' @param t The corresponding doy of x
-#' @param tout The output interpolated time.
-#'
-#' @export
-curvefit <- function(y, t = index(y), tout = t, meth = 'BFGS',
-    methods = c('spline', 'beck', 'elmore', 'klos', 'AG', 'zhang'), ...)
-{
-    if (all(is.na(y))) return(NULL)
-    if (length(methods) == 1 && methods == 'all')
-        methods <- c('spline', 'beck', 'elmore', 'klos', 'AG', 'Gu', 'zhang')
-
-    params <- list(y, t, tout, optimFUN = I_optim, method = meth, ...)
-
-    if ('spline' %in% methods) fit.spline <- splinefit(y, t, tout)
-
-    if ('beck'   %in% methods) fit.beck   <- do.call(FitDL.Beck,  c(params, pfun = p_nlminb))  #nlminb
-    if ('elmore' %in% methods) fit.elmore <- do.call(FitDL.Elmore,c(params, pfun = p_nlminb))  #nlminb
-
-    # best: BFGS, but its speed lower than other function, i.e. nlm
-    if ('Gu'     %in% methods) fit.Gu     <- do.call(FitDL.Gu,    c(params, pfun = p_nlminb))  #nlm, ucminf
-    if ('zhang'  %in% methods) fit.zhang  <- do.call(FitDL.Zhang, c(params, pfun = p_nlminb))  #nlm
-    if ('AG'     %in% methods) fit.AG     <- do.call(FitAG,       c(params, pfun = p_nlminb))     #nlm
-    if ('klos'   %in% methods) fit.klos   <- do.call(FitDL.Klos,  c(params, pfun = p_optim))   #BFGS, Nelder-Mead, L-BFGS-B
-
-    names <- ls(pattern = "fit\\.") %>% set_names(., .)
-    fits  <- lapply(names, get, envir = environment()) %>%
-        set_names(toupper(gsub("fit\\.", "", names))) #remove `fit.` and update names
-    return(fits)
-}
-
-
-#' make_legend
-make_legend <- function(){
-    labels <- c(" good", " margin", " snow&ice", " cloud", "iter1", "iter2", "whit")
-    colors <- c("grey60", "#00BFC4", "#F8766D", "#C77CFF", "blue", "red", "black")
-    pch <- c(19, 15, 4, 17, NA, NA, NA)
-    lty <- c(0, 0, 1, 0, rep(1, 3))
-    lwd <- c(1, 1, 0, 1, 3, 3, 3)
-
-    I <- 1:7
-    lgd <- grid::legendGrob(labels[I], pch = pch[I], nrow = 1,
-                       # do.lines = T,
-                       gp=grid::gpar(lty = lty[I], lwd = lwd[I],
-                               col = colors[I], fill = colors[I]))
-    return(lgd)
-}
-lgd <- make_legend()
-
-
-getFitValueYear <- function(fit_year){
-    t         <- fit_year$data$t
-    I         <- match(t, fit_year$tout)
-    d_iters   <- map_df(fit_year$fits, ~.x[I])
-    d_iters$t <- t
-    return(d_iters)
-}
-
-#' getFitValueYears
-#' @examples
-#' origin.date <- fit$INPUT$t[1]
-#' out$t %<>% add(origin.date - 1)
-getFitValueYears <- function(fit_years){
-    map_df(fit_years, getFitValueYear)
-}
-
 #' plot_phenofit
 #'
 #' @param fit data from phenofit_site
@@ -137,7 +66,8 @@ plot_phenofit <- function(fit, d, title = NULL, show.legend = T, plotly = F){
             scale_color_manual(values = c(" good" = "grey60", " margin" = "#00BFC4",
                                           " snow&ice" = "#F8766D", " cloud" = "#C77CFF",
                                           "iter1" = "blue", "iter2" = "red"), drop = F) +
-            scale_shape_manual(values = c(19, 15, 4, 17), drop = F)# +
+            scale_shape_manual(values = c(19, 15, 4, 17), drop = F) +
+            ylab('Vegetation Index')
             # guides(shape = FALSE,
             #        color = guide_legend(
             #            "legend",
@@ -172,6 +102,39 @@ plot_phenofit <- function(fit, d, title = NULL, show.legend = T, plotly = F){
     }
 }
 
+#' make_legend
+make_legend <- function(){
+    labels <- c(" good", " margin", " snow&ice", " cloud", "iter1", "iter2", "whit")
+    colors <- c("grey60", "#00BFC4", "#F8766D", "#C77CFF", "blue", "red", "black")
+    pch <- c(19, 15, 4, 17, NA, NA, NA)
+    lty <- c(0, 0, 1, 0, rep(1, 3))
+    lwd <- c(1, 1, 0, 1, 3, 3, 3)
+
+    I <- 1:7
+    lgd <- grid::legendGrob(labels[I], pch = pch[I], nrow = 1,
+                       # do.lines = T,
+                       gp=grid::gpar(lty = lty[I], lwd = lwd[I],
+                               col = colors[I], fill = colors[I]))
+    return(lgd)
+}
+lgd <- make_legend()
+
+getFitValueYear <- function(fit_year){
+    t         <- fit_year$data$t
+    I         <- match(t, fit_year$tout)
+    d_iters   <- map_df(fit_year$fits, ~.x[I])
+    d_iters$t <- t
+    return(d_iters)
+}
+
+#' getFitValueYears
+#' @examples
+#' origin.date <- fit$INPUT$t[1]
+#' out$t %<>% add(origin.date - 1)
+getFitValueYears <- function(fit_years){
+    map_df(fit_years, getFitValueYear)
+}
+
 #' tidyFits_pheno
 #'
 #' Tidy for every method with multiple years phenology data
@@ -194,53 +157,4 @@ tidyFitPheno <- function(pheno, origin){
 
     vars  <- c("flag", "origin", phenonames)
     list(date = p_date[vars], doy = p_doy[vars]) #quickly return
-}
-
-phenonames <- c('TRS2.SOS', 'TRS2.EOS', 'TRS5.SOS', 'TRS5.EOS', 'TRS6.SOS', 'TRS6.EOS',
-    'DER.SOS', 'DER.POP', 'DER.EOS',
-    'UD', 'SD', 'DD','RD',
-    'GreenUp', 'Maturity', 'Senescence', 'Dormancy')
-
-#' curvefit_optimx
-#'
-#' With the help of `optimx` package, try to find which optimization function
-#' is best.
-#' @param optimFUN `I_optim` or `I_optimx`
-#' @param meth c('BFGS','CG','Nelder-Mead','L-BFGS-B','nlm','nlminb',
-#' spg','ucminf','Rcgmin','Rvmmin','newuoa','bobyqa','nmkb','hjkb')
-#' @param pfun c(p_nlminb, p_ncminf, p_nlm, p_optim)
-#'
-#' @export
-curvefit_optimx <- function(x, t = index(x), tout = t,
-    optimFUN = I_optimx,
-    methods = c('spline', 'beck', 'elmore', 'AG'),
-    meth, pfun, ...)
-{
-    if (all(is.na(x))) return(NULL)
-    ##2. curve fitting
-    if (length(methods) == 1 && methods == 'all')
-        methods <- c('spline', 'beck', 'elmore', 'klos', 'AG', 'Gu', 'zhang')
-
-    # failed: 'BFGS', 'Nelder-Mead', 'L-BFGS-B'
-    # meth = 'L-BFGS-B'
-    # ok: 'L-BFGS-B'; failed: 'BFGS', 'Nelder-Mead'
-    params <- list(x, t, tout, optimFUN = optimFUN, pfun = pfun, method = meth, ...)
-    # fit.beck   <- FitDL.Beck   #even Nelder-Mead was faster and convergent, but nlminb was better
-    # ok: BFGS; failed: 'L-BFGS-B'
-    if ('spline' %in% methods) fit.spline <- splinefit(x, t, tout)
-    if ('beck'   %in% methods) fit.beck   <- do.call(FitDL.Beck, params)        #nlminb
-    if ('elmore' %in% methods) fit.elmore <- do.call(FitDL.Elmore, params)      #nlminb
-
-    # best: BFGS, but its speed lower than other function, i.e. nlm
-    if ('Gu'     %in% methods) fit.Gu     <- do.call(FitDL.Gu, params)          #nlm, ucminf
-    if ('zhang'  %in% methods) fit.zhang  <- do.call(FitDL.Zhang, params)       #nlm
-    if ('AG'     %in% methods) fit.AG     <- do.call(FitAG, params)             #nlm
-    if ('klos'   %in% methods) fit.klos   <- do.call(FitDL.Klos, params)        #BFGS, Nelder-Mead, L-BFGS-B
-
-    # test for optimx methods
-    # fit   <- FitDL.Zhang  (x, t, tout, optimFUN = optimx_fun, debug = T, method = 'BFGS')
-    names <- ls(pattern = "fit\\.") %>% set_names(., .)
-    fits  <- lapply(names, get, envir = environment()) %>%
-        set_names(toupper(gsub("fit\\.", "", names))) #remove `fit.` and update names
-    return(fits)
 }

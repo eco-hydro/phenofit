@@ -47,7 +47,7 @@ whit2 <- function(y, lambda, w = rep(1, ny))
 #'      Modelling 15, 91–111. https://doi.org/10.1177/1471082X14549288
 #' @export
 whitsmw2 <- function(y, w, ylu, nptperyear, wFUN = wTSM, iters=1, lambdas=1000,
-    second = TRUE, df = NULL, ...)
+    second = FALSE, df = NULL, ...)
 {
     if (all(is.na(y))) return(y)
     n <- sum(w)

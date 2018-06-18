@@ -56,5 +56,5 @@ Check input data, interpolate NA values in y, remove spike values, and set
 weights for NA in y and w.
 }
 \seealso{
-\code{\link{backval}}
+\code{\link[phenofit]{backval}}
 }

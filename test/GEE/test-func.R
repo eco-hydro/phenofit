@@ -1,15 +1,12 @@
-#' @param FUN Curve fitting functions, call be one of `sgfitw`, `whitsmw2` and `wHANTS`.
 season <- function(INPUT, nptperyear = 46, south = FALSE,
-                   FUN = whitsmw2, wFUN = wTSM, iters = 2,
+                   FUN = whitsmw2, wFUN = wTSM, iters = 2, wmin = 0.1,
                    lambda, nf  = 2, frame = floor(nptperyear/7) * 2 + 1,
+                   IsPlot  = FALSE, plotdat = INPUT, print = FALSE,
                    minpeakdistance = nptperyear/6,
-                   ymax_min = 0.5,
+                   ymax_min   = 0.5,
                    rymin_less = 0.6, #ymin < rymin_less * A
                    threshold_max = 0.2, threshold_min = 0.05,
-                   IsPlot = FALSE,
                    max_MaxPeaksperyear = 2, max_MinPeaksperyear = 3,
-                   wmin = 0.1,
-                   plotdat = INPUT, print = FALSE,
                    ...)
 {
     t   <- INPUT$t
@@ -19,6 +16,7 @@ season <- function(INPUT, nptperyear = 46, south = FALSE,
     n     <- length(y)
     npt   <- sum(INPUT$w > wmin)
     nyear <- ceiling(npt/nptperyear)
+    ylu0  <- INPUT$ylu
 
     frame <- floor(nptperyear/7) * 2 + 1 #13, reference by TSM SG filter
     if (missing(lambda)) lambda <- max(nyear*frame, 15)
@@ -34,6 +32,7 @@ season <- function(INPUT, nptperyear = 46, south = FALSE,
             nf     = nf,      # param for HANTS,
             frame  = frame    # param for
         )
+
         yfits <- do.call(FUN, param)
         ypred <- last(yfits) #as.numeric(runmed(ypred, frame))
         alpha <- 0.01
@@ -43,17 +42,21 @@ season <- function(INPUT, nptperyear = 46, south = FALSE,
         ylu_max <- aggregate(ypred, list(year = year(t)), max)$x %>% median()
         ylu <- c(pmax(ylu_min, INPUT$ylu[1]), #quantile(ypred, alpha/2)
                  pmin(ylu_max, INPUT$ylu[2]))
-        # ylu   <- quantile(ypred, c(alpha/2, 1 - alpha), na.rm = T)
         A         <- diff(ylu)
+
+        INPUT$ylu <- ylu
+        # ylu   <- quantile(ypred, c(alpha/2, 1 - alpha), na.rm = T)
         ## Plateau peak will lead to failed to find local extreme values.
         #  To avoid fluctuating in peak of growing season or flat peak growing
         #  season, like fluxsite: ZM-Mon
         # max_slp <- 2*A/nptperyear
         # pek_slp <- abs(coefficients(lm(ypred[I]~I))[[2]])
-        I <- which(ypred > (0.8*A + ylu[1]))
-        if (length(I)/length(y) > 0.3){
-            ypred[I] <- median(ypred[I])
-        }
+        #
+        # I <- which(ypred > (0.8*A + ylu[1]))
+        # if (length(I)/length(y) > 0.3){
+        #     ypred[I] <- median(ypred[I])
+        # }
+        #
         # local minimum values
         # peak values is small for minimum values, so can't use threshold_min here
         peaks <- findpeaks(-ypred,
@@ -158,7 +161,7 @@ season <- function(INPUT, nptperyear = 46, south = FALSE,
                   y_end  = ypred[di$end],
                   len    = as.integer(difftime(end, beg, units = "days") + 1),
                   year   = year(peak) )]
-    fix_dt(dt) # c++ address operation
+    phenofit:::fix_dt(dt) # c++ address operation
     # get the growing season year, not only the calendar year
     if (south) dt[, year := year + as.integer(peak >= ymd(sprintf('%d0701', year))) - 1L]
 
@@ -173,7 +176,7 @@ season <- function(INPUT, nptperyear = 46, south = FALSE,
         for (i in 1:(length(yfits) - 1)){
             lines(INPUT$t, yfits[[i+1]], col = colors[i], lwd = 2)
         }
-        if (!is.null(INPUT$ylu)) abline(h=INPUT$ylu, col="red", lty=2) # show ylims
+        if (is.null(INPUT$ylu)) abline(h=INPUT$ylu, col="red", lty=2) # show ylims
 
         # 7.2 plot break points
         I_max <- di$peak
@@ -186,12 +189,16 @@ season <- function(INPUT, nptperyear = 46, south = FALSE,
 }
 
 
+
+#' @param minPercValid If valid percentage is less than \code{minPercValid}, the
+#' fits are set to \code{list()}.
+#'
 curvefits <- function(INPUT, brks, nptperyear = 23,
                       wFUN = wTSM, iters = 2, wmin = 0.1,
                       south = FALSE,
                       extend_month = 2, minT = 0,
                       methods = c('AG', 'zhang', 'beck', 'elmore', 'Gu'),
-                      qc,
+                      qc, minPercValid = 0.3,
                       debug = FALSE, ...)
 {
     t    <- INPUT$t
@@ -216,14 +223,14 @@ curvefits <- function(INPUT, brks, nptperyear = 23,
     if (is.null(di)){
         getDateId <- function(dates) match(dates, t) #%>% rm_empty()
         di <- data.table( beg  = getDateId(brks$dt$beg),
-            peak = getDateId(brks$dt$peak),
-            end  = getDateId(brks$dt$end)) %>% na.omit()
+                          peak = getDateId(brks$dt$peak),
+                          end  = getDateId(brks$dt$end)) %>% na.omit()
     }
     # possible snow or cloud, replaced with whittaker smooth.
     # I_fix <- which(w == wmin)
     # INPUT$y[I_fix] <- brks$whit %>% {.[[ncol(.)]][I_fix]}
     # w[I_fix]       <- 0.2 # exert the function of whitaker smoother
-    
+
     # plot(y, type = "b"); grid()
     # lines(brks$whit$iter3, col = "blue")
     # lines(INPUT$y        , col = "red")
@@ -269,17 +276,16 @@ curvefits <- function(INPUT, brks, nptperyear = 23,
         # lines(x$tout, x$fits$iter2)
 
         #if too much missing values
-        if (sum(wi > pmax(wmin, 0.2))/length(wi) < 0.25){
+        if (sum(wi > pmax(wmin, 0.2))/length(wi) < minPercValid){
             fit %<>% map(function(x){
-                x$fits %<>% map(~.x*NA)
-                x$pred %<>% multiply_by(NA)
+                x$fits %<>% map(~.x*NA) # list()
                 return(x)
             })
         }
         fits[[i]] <- fit
-        # L1:curve fitting method, L2:yearly flag
-        fits %<>% set_names(brks$dt$flag) %>% purrr::transpose()
     }
+    # L1:curve fitting method, L2:yearly flag
+    fits %<>% set_names(brks$dt$flag) %>% purrr::transpose()
     return(list(tout = t[first(di$beg):last(di$end)],  #dates for OUTPUT curve fitting VI
                 fits = fits))
 }
