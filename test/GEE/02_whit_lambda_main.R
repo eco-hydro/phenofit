@@ -53,10 +53,6 @@ optim_lambda <- function(sitename, df, IsPlot = F){
     temp # return
 }
 
-obj.size <- function(obj){
-    cat(format(object.size(obj), 'Mb'), "\n")
-}
-
 group = F # three year group
 outdir <- ifelse(group, '_grp', '')
 outdir <- paste0("result", outdir)

@@ -4,22 +4,32 @@
 \alias{season_3y}
 \title{Growing season dividing in the 3-year length moving window}
 \usage{
-season_3y(INPUT, nptperyear = 23, FUN = whitsmw2, south = FALSE,
+season_3y(INPUT, nptperyear = 23, south = FALSE, FUN = whitsmw2,
   IsPlot = T, plotdat = INPUT, print = TRUE, partial = TRUE, ...)
 }
 \arguments{
-\item{FUN}{Curve fitting functions, call be one of `sgfitw`, `whitsmw2` and `wHANTS`.}
-
-\item{...}{Arguments passed on to \code{season}
-\describe{
-  \item{INPUT}{A list object with the elements of 't', 'y', 'w', 'Tn' (option) 
+\item{INPUT}{A list object with the elements of 't', 'y', 'w', 'Tn' (option) 
 and 'ylu', returned by \code{check_input}.}
-  \item{nptperyear}{Integer, points per year.}
-  \item{FUN}{Coarse curve fitting function, can be one of `sgfitw`, `whitsmw2` 
-and `wHANTS`.}
-}}
 
-\item{d}{must have columns: 'y', 't', 'w'}
+\item{nptperyear}{Integer, points per year.}
+
+\item{south}{Boolean. In south hemisphere, growing year is 1 July to the 
+following year 31 June; In north hemisphere, growing year is 1 Jan to 31 Dec.}
+
+\item{FUN}{Coarse curve fitting function, can be one of `sgfitw`, `whitsmw2` 
+and `wHANTS`.}
+
+\item{IsPlot}{Boolean}
+
+\item{plotdat}{Is IsPlot = true, plotdata is used to plot original input, 
+known that y and w in \code{INPUT} have been changed.}
+
+\item{print}{Whether to print progress information}
+
+\item{partial}{If true, only plot partial figures whose NSE < 0.3}
+}
+\value{
+List object, list(whit, dt, stat)
 }
 \description{
 Growing season dividing in the 3-year length moving window

@@ -43,7 +43,9 @@ c("AG", "zhang", "beck", "elmore", "Gu").}
 \item{minPercValid}{If valid percentage is less than \code{minPercValid}, the
 fits are set to NA.}
 
-\item{print}{Whether to print progress information}
+\item{print}{Whether to print progress information?}
+
+\item{...}{Other parameters will be ignore.}
 }
 \value{
 

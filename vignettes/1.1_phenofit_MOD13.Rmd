@@ -171,10 +171,8 @@ get_phenofit <- function(d){
         fit  <- curvefits(INPUT, brks2, lambda =lambda,
                           methods = c("AG", "zhang", "beck", "elmore"), #,"klos",, 'Gu'
                           nptperyear = nptperyear, debug = F, wFUN = wTSM,
-                          ymax_min = ymax_min,
                           extend_month = 2, nextent = 1,
                           qc = as.numeric(dnew$SummaryQA), minPercValid = 0.2, 
-                          south = d$lat[1] < 0, 
                           print = print)
         fit$INPUT   <- INPUT
         fit$seasons <- brks2

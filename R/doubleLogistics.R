@@ -98,6 +98,7 @@ doubleLog.beck <- function(par, t) {
     rau <- par[6]
     # if (sos >= eos) return(rep(9999, length(t)))
     try(if (eos < sos) return(rep(99, length(t))), silent = T)
+    
     pred <- mn + (mx - mn)*(1/(1 + exp(-rsp*(t - sos))) + 1/(1 + exp(rau*(t - eos))) - 1)
     return(pred)
 }

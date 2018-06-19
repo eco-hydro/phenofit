@@ -11,7 +11,9 @@
 #' @param plotdat Is IsPlot = true, plotdata is used to plot original input, 
 #' known that y and w in \code{INPUT} have been changed.
 #' @param print Whether to print progress information
+#' @param partial If true, only plot partial figures whose NSE < 0.3
 #' 
+#' @return List object, list(whit, dt, stat)
 #' @export
 season_3y <- function(INPUT, nptperyear = 23, south = FALSE,
     FUN = whitsmw2,

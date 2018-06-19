@@ -23,7 +23,8 @@
 #' @param qc Factor, only suit for MOD13A1. 
 #' @param minPercValid If valid percentage is less than \code{minPercValid}, the
 #' fits are set to NA.
-#' @param print Whether to print progress information
+#' @param print Whether to print progress information?
+#' @param ... Other parameters will be ignore.
 #' 
 #' @return
 #' 
@@ -65,7 +66,7 @@ curvefits <- function(INPUT, brks, nptperyear = 23,
     # title(x$site[1])
     if (all(is.na(INPUT$y))) return(NULL)
     # also constrained in `optim_pheno` function
-    # if (sum(INPUT$w == 0)/length(INPUT$w) > 0.5) return(NULL) #much rigorous than all is.na
+    # if (sum(INPUT$w == 0)/length(INPUT$w) > 0.5) return(NULL) 
     w   <- INPUT$w
     I_w <- match(brks$whit$t, t) %>% rm_empty()
     w[I_w] <- brks$whit$w

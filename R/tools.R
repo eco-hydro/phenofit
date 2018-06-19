@@ -218,4 +218,11 @@ R2_sign <- function(n, NumberOfPredictor = 2, alpha = 0.05){
     return(list(F = F, R2 = R2))
 }
 
-
+#' obj.size
+#' 
+#' Get object size in \code{unit}
+#' @param obj Object
+#' @param unit "Kb", "Mb" or "Gb"
+obj.size <- function(obj, unit = "Mb"){
+    cat(format(object.size(obj), unit), "\n")
+}
