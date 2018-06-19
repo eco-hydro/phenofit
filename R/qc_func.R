@@ -50,12 +50,24 @@
 # 14: BRDF correction is invalid
 # 15: Polar flag, latitude over 60 degrees (land) or 50 degrees (ocean)
 
-#' Extract bitcoded QA information from bin value
+#' Initial weights according to qc
+#' 
+#' @description
+#' \describe{
+#'   \item{getBits}{Extract bitcoded QA information from bin value}
+#'   \item{qc_summary}{Initial weigths based on Quality reliability of VI pixel, 
+#' suit for MOD13A1, MOD13A2 and MOD13Q1.}
+#'   \item{qc_5l}{Initial weights based on Quality control of five-level 
+#' confidence score, suit for MCD15A3H(LAI) and MOD17A2H(GPP)}
+#'   \item{qc_NDVIv4}{For NDVIv4}
+#' }
 #' 
 #' @param x Binary value
 #' @param start Bit starting position
 #' @param end Bit ending position
-#' @return decimal value
+#' @return weigths
+#' 
+#' @rdname qc_func
 #' @export
 getBits <- function(x, start, end = start){
     # Geometric progression Sn = a1*(1 - q^n)/(1-q)
@@ -66,6 +78,10 @@ getBits <- function(x, start, end = start){
     bitwAnd(x, Sn) %>% bitwShiftR(start) #quickly return
 }
 
+
+#' @param QA quality control variable
+#' 
+#' @rdname qc_func
 #' @export
 qc_summary <- function(QA, wmin = 0.1){
     w <- rep(NA, length(QA)) # default weight is zero
@@ -76,10 +92,9 @@ qc_summary <- function(QA, wmin = 0.1){
     w[QA >= 2 & QA <=3] <- wmin # Snow/ice, or cloudy
     return(w)
 }
-#' qc_5l
-#' Quality control of five-level confidence score
-#' 
-#' This function is suit for MCD15A3H(LAI) and MODGPP.
+
+#' @export
+#' @rdname qc_func
 qc_5l <- function(QA, wmin = 0.1){
     # bit5-7, five-level confidence score
     QA <- bitwShiftR(bitwAnd(QA, 224), 5) #1110 0000=224L
@@ -90,6 +105,8 @@ qc_5l <- function(QA, wmin = 0.1){
     w[QA >  4] <- wmin
     return(w)
 }
+
+#' @rdname qc_func
 qc_NDVIv4 <- function(QA){
     # bit1-2: cloudy, cloud shadow
     QA <- bitwShiftR(bitwAnd(QA, 7), 1) 
@@ -98,9 +115,4 @@ qc_NDVIv4 <- function(QA){
     w[QA == 0] <- 1   #clear, good
     w[QA == 2] <- 0.5 #cloud shadow
     return(w)
-}
-
-# fix_snow
-# Roughly assume growing season is Apr-Oct.
-fix_snow <- function(x){
 }

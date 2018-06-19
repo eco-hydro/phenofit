@@ -104,6 +104,10 @@ add_HeadTail <- function(d, nptperyear = 23){
     md_beg <- date_beg %>% {month(.)*100 + day(.)} # begin date month-day
     md_end <- date_end %>% {month(.)*100 + day(.)} # end   date month-day
     
+    # in case of leap year
+    if (md_beg == 0229) md_beg = 0228
+    if (md_beg == 0229) md_end = 0301
+     
     # if tiny missing, than this year is include to extract phenology
     nyear_add_head <- ifelse (nmissing_head < nptperyear/2, 2, 1)  
     nyear_add_tail <- ifelse (nmissing_tail < nptperyear/2, 2, 1)

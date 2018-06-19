@@ -5,20 +5,51 @@
 \title{Fine Curve fitting}
 \usage{
 curvefits(INPUT, brks, nptperyear = 23, wFUN = wTSM, iters = 2,
-  wmin = 0.1, south = FALSE, extend_month = 2, minT = 0,
+  wmin = 0.1, extend_month = 12, nextent = 2, minT = 0,
   methods = c("AG", "zhang", "beck", "elmore", "Gu"), qc,
-  minPercValid = 0.3, debug = FALSE, ...)
+  minPercValid = 0.2, print = TRUE, ...)
 }
 \arguments{
-\item{extend_month}{For every growing season, previous and afterwards
-`extend_month` are added to fitting daily time-series. In order to}
+\item{INPUT}{A list object with the elements of 't', 'y', 'w', 'Tn' (option) 
+and 'ylu', returned by \code{check_input}.}
+
+\item{brks}{A list object with the elements of 'fit' and 'dt', returned by 
+\code{season} or \code{season_3y}, which contains the growing season 
+dividing information.}
+
+\item{nptperyear}{Integer, points per year.}
+
+\item{wFUN}{weights updating function, can be one of 'wTSM', 'wChen' and 
+'wBisquare'.}
+
+\item{iters}{How many times curve fitting is implemented.}
+
+\item{wmin}{Double, minimum weigth value (i.e. weight for snow, ice and cloud).}
+
+\item{extend_month}{Search good or marginal good values in previous and 
+subsequent `extend _month` period.}
+
+\item{nextent}{Extend curve fitting window, until \code{nextent} element are
+found in previous and subsequent growing season.}
+
+\item{minT}{Double, use night temperature Tn to define backgroud value. 
+Tn < minT is treated as ungrowing season.}
+
+\item{methods}{Character, find curve fitting names, can be one of 
+c("AG", "zhang", "beck", "elmore", "Gu").}
+
+\item{qc}{Factor, only suit for MOD13A1.}
 
 \item{minPercValid}{If valid percentage is less than \code{minPercValid}, the
-fits are set to \code{list()}.}
+fits are set to NA.}
+
+\item{print}{Whether to print progress information}
+}
+\value{
+
 }
 \description{
-Fine Curve fitting for INPUT time-series. Procedures of initial weight, growing
-season dividing and curve fitting are separated.
+Fine Curve fitting for INPUT time-series.
 }
 \examples{
 INPUT <- check_input(d$date, d$EVI_500m, d$w, trim = T, maxgap = nptperyear / 4, alpha = 0.02)
@@ -30,7 +61,7 @@ brks  <- season(INPUT, lambda, nptperyear, iters = 3, wFUN = wFUN, IsPlot = F,
 
 fit <- curvefit_site(INPUT, brks, lambda =lambda, IsPlot = T,
                      methods = c("AG", "zhang", "beck", "elmore", 'Gu'), #,"klos"
-                     nptperyear = nptperyear, debug = F, wFUN = wTSM,
+                     nptperyear = nptperyear, wFUN = wTSM,
                      ymax_min = ymax_min,
                      south = d$lat[1] < 0)
 plot_phenofit(fit, d) # plot to check the curve fitting

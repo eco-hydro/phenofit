@@ -2,20 +2,29 @@
 #'
 #' First smooth VI timeseries by weighted whittaker, then use findpeak function
 #' to get the local maximum and local minimum values. Two local minimum defined
-#' a growing season. If two local minimum(maximum) was adjacent, then only the
+#' a growing season. If two local minimum(maximum) are too closed, then only the
 #' smaller(biger) is left.
 #'
 #' Then according to season pos, based to local maximum position divide yearly
 #' growing season. lambda need to set carefully.
 #'
-#' divide growing season circle just like TIMESAT season function
+#' @param INPUT A list object with the elements of 't', 'y', 'w', 'Tn' (option) 
+#' and 'ylu', returned by \code{check_input}.
+#' @param nptperyear Integer, points per year.
+#' @param south Boolean. In south hemisphere, growing year is 1 July to the 
+#' following year 31 June; In north hemisphere, growing year is 1 Jan to 31 Dec.
 #' 
-#' @param INPUT returned list(t, y, w, ylu) object from `check_input`
-#' @param ... Other parameters passed to findpeaks, e.g. 'threshold',
-#' 'minpeakheight', 'minpeakdistance'
-#' @param rymin_less y_tough < rymin_less * A
-#' @param plotdat Is IsPlot = true, plotdata need to be passed. 
-#' Since, y, w have been changed.
+#' @param FUN Coarse curve fitting function, can be one of `sgfitw`, `whitsmw2` 
+#' and `wHANTS`.
+#' @param wFUN weights updating function, can be one of 'wTSM', 'wChen' and 
+#' 'wBisquare'.
+#' @param iters How many times curve fitting is implemented.
+#' @param wmin Double, minimum weigth value (i.e. weight for snow, ice and cloud).
+#' @param lambda the parameter of \code{whitsmw2}
+#' @param nf the parameter of \code{wHANTS}, number of frequencies to be 
+#' considered above the zero frequency
+#' @param frame the parameter of \code{sgfitw}, moving window size. Suggested by 
+#' TIMESAT, default frame = floor(nptperyear/7)*2 + 1.
 #' @param minpeakdistance The minimum distance (in indices) peaks have to have
 #' to be counted. If the distance of two maximum extreme value less than
 #' `minpeakdistance`, only the real maximum value will be left.
@@ -24,41 +33,47 @@
 #' should be greater than threshold_min.
 #' @param threshold_max Similar as `threshold_min`, The maximum threshold should
 #' be greater than `threshold_max`.
-#' 
-#' @param FUN Curve fitting functions, call be one of `sgfitw`, `whitsmw2` and `wHANTS`.
+#' @param ypeak_min ypeak >= ypeak_min 
+#' @param rytrough_max ytrough <= rytrough_max*A, A is the amplitude of y.
+#' @param MaxPeaksPerYear This parameter is used to adjust lambda in iterations.
+#' If PeaksPerYear > MaxPeaksPerYear, then lambda = lambda*2.
+#' @param MaxTroughsPerYear This parameter is used to adjust lambda in iterations.
+#' If TroughsPerYear > MaxTroughsPerYear, then lambda = lambda*2.
+#' @param IsPlot Boolean
+#' @param plotdat Is IsPlot = true, plotdata is used to plot original input, 
+#' known that y and w in \code{INPUT} have been changed.
+#' @param print Whether to print progress information
+#' @param ... Other parameters passed to findpeaks
+#'
 #' @export
-#' @return list(dt, di)
+#' @return A list object with the elements of 'fit' and 'dt'.
+#' list(dt, di)
 #' $whit
 # # A tibble: 574 x 5
 #    t              y     w iter1 iter2
 #    <date>     <dbl> <dbl> <dbl> <dbl>
 #  1 2002-07-04  9.43 0.149 10.1  10.5
-#  2 2002-07-12  9.06 0.137  9.81 10.2
-#  3 2002-07-20 10.2  1.00   9.56  9.86
 #   $dt
 # # A tibble: 11 x 7
 # # Groups:   year [11]
 #    beg        peak       end        len     year season flag
 #    <date>     <date>     <date>     <time> <dbl>  <int> <chr>
 #  1 2003-01-09 2003-07-12 2004-02-18 406     2003      1 2003_1
-#  2 2004-02-26 2004-07-11 2005-02-10 351     2004      1 2004_1
 #   $di
 # # A tibble: 11 x 3
 #      beg  peak   end
 #    <dbl> <dbl> <dbl>
 #  1  25.0  48.0  76.0
-#  2  77.0  94.0 121
 # if more than one continuous maximum(minimum) values, only kept the bigger
 # (smaller) one
 season <- function(INPUT, nptperyear = 46, south = FALSE,
                    FUN = whitsmw2, wFUN = wTSM, iters = 2, wmin = 0.1,
                    lambda, nf  = 2, frame = floor(nptperyear/7) * 2 + 1,
-                   IsPlot  = FALSE, plotdat = INPUT, print = FALSE,
                    minpeakdistance = nptperyear/6,
-                   ymax_min   = 0.5,
-                   rymin_less = 0.6, #ymin < rymin_less * A
                    threshold_max = 0.2, threshold_min = 0.05,
-                   max_MaxPeaksperyear = 2, max_MinPeaksperyear = 3,
+                   ypeak_min   = 0.5, rytrough_max = 0.6, 
+                   MaxPeaksPerYear = 2, MaxTroughsPerYear = 3,
+                   IsPlot  = FALSE, plotdat = INPUT, print = FALSE,
                    ...)
 {
     t   <- INPUT$t
@@ -117,23 +132,23 @@ season <- function(INPUT, nptperyear = 46, south = FALSE,
                            minpeakdistance = minpeakdistance, zero = "-", nups = 0)
         pos_min   <- peaks$X
         pos_min[, 1] %<>% multiply_by(-1)
-        npeak_MinPerYear <- length(peaks$gregexpr)/nyear#max peaks
+        ntrough_PerYear <- length(peaks$gregexpr)/nyear#max peaks
         # local maximum values,
         peaks <- findpeaks(ypred, zero = "+",
                            threshold_max = threshold_max*A,
                            threshold_min = threshold_min*A,
                            minpeakdistance = minpeakdistance,
-                           minpeakheight = max(0.2*A + ylu[1], ymax_min), nups = 1)
+                           minpeakheight = max(0.2*A + ylu[1], ypeak_min), nups = 1)
         pos_max <- peaks$X
-        npeak_MaxPerYear <- length(peaks$gregexpr)/nyear#max peaks
+        npeak_PerYear <- length(peaks$gregexpr)/nyear#max peaks
 
         if (print)
-            cat(sprintf('iloop = %d: lambda = %.1f, npeak_MinPerYear = %.2f, npeak_MaxPerYear = %.2f\n',
-                iloop, lambda, npeak_MinPerYear, npeak_MaxPerYear))
+            cat(sprintf('iloop = %d: lambda = %.1f, ntrough_PerYear = %.2f, npeak_PerYear = %.2f\n',
+                iloop, lambda, ntrough_PerYear, npeak_PerYear))
         # maxpeaksperyear <- 2
-        if (npeak_MaxPerYear > max_MaxPeaksperyear | npeak_MinPerYear > max_MinPeaksperyear){
+        if (npeak_PerYear > MaxPeaksPerYear | ntrough_PerYear > MaxTroughsPerYear){
             lambda <- lambda*2
-        }else if (npeak_MaxPerYear < 1  | npeak_MinPerYear < 1){
+        }else if (npeak_PerYear < 1  | ntrough_PerYear < 1){
             lambda <- lambda/2
         }else{
             break
@@ -147,8 +162,8 @@ season <- function(INPUT, nptperyear = 46, south = FALSE,
     }
     # plot(ypred, type = "b"); grid()
 
-    # 1.1 the local minimum value should small than rymin_less * A
-    pos_min <- pos_min[(val - ylu[1]) <= rymin_less *A, ]
+    # 1.1 the local minimum value should small than rytrough_max * A
+    pos_min <- pos_min[(val - ylu[1]) <= rytrough_max *A, ]
     pos_min[, type := -1]
     pos_max[, type :=  1]
     pos <- rbind(pos_min, pos_max)
@@ -213,7 +228,6 @@ season <- function(INPUT, nptperyear = 46, south = FALSE,
                   y_end  = ypred[di$end],
                   len    = as.integer(difftime(end, beg, units = "days") + 1),
                   year   = year(peak) )]
-    phenofit:::fix_dt(dt) # c++ address operation
     # get the growing season year, not only the calendar year
     if (south) dt[, year := year + as.integer(peak >= ymd(sprintf('%d0701', year))) - 1L]
 

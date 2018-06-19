@@ -1,13 +1,32 @@
 #' Fine Curve fitting
 #'
-#' Fine Curve fitting for INPUT time-series. Procedures of initial weight, growing
-#' season dividing and curve fitting are separated.
+#' Fine Curve fitting for INPUT time-series. 
 #'
-#' @param extend_month For every growing season, previous and afterwards
-#' `extend_month` are added to fitting daily time-series. In order to
+#' @param INPUT A list object with the elements of 't', 'y', 'w', 'Tn' (option) 
+#' and 'ylu', returned by \code{check_input}.
+#' @param brks A list object with the elements of 'fit' and 'dt', returned by 
+#' \code{season} or \code{season_3y}, which contains the growing season 
+#' dividing information.
+#' @param nptperyear Integer, points per year.
+#' @param wFUN weights updating function, can be one of 'wTSM', 'wChen' and 
+#' 'wBisquare'.
+#' @param iters How many times curve fitting is implemented.
+#' @param wmin Double, minimum weigth value (i.e. weight for snow, ice and cloud).
+#' @param extend_month Search good or marginal good values in previous and 
+#' subsequent `extend _month` period.
+#' @param nextent Extend curve fitting window, until \code{nextent} element are
+#' found in previous and subsequent growing season.
+#' @param minT Double, use night temperature Tn to define backgroud value. 
+#' Tn < minT is treated as ungrowing season.
+#' @param methods Character, find curve fitting names, can be one of 
+#' c("AG", "zhang", "beck", "elmore", "Gu").
+#' @param qc Factor, only suit for MOD13A1. 
 #' @param minPercValid If valid percentage is less than \code{minPercValid}, the
-#' fits are set to \code{list()}.
-#'
+#' fits are set to NA.
+#' @param print Whether to print progress information
+#' 
+#' @return
+#' 
 #' @examples
 #' INPUT <- check_input(d$date, d$EVI_500m, d$w, trim = T, maxgap = nptperyear / 4, alpha = 0.02)
 #' # The detailed information of those parameters can be seen in `season`.
@@ -18,20 +37,21 @@
 #'
 #' fit <- curvefit_site(INPUT, brks, lambda =lambda, IsPlot = T,
 #'                      methods = c("AG", "zhang", "beck", "elmore", 'Gu'), #,"klos"
-#'                      nptperyear = nptperyear, debug = F, wFUN = wTSM,
+#'                      nptperyear = nptperyear, wFUN = wTSM,
 #'                      ymax_min = ymax_min,
 #'                      south = d$lat[1] < 0)
 #' plot_phenofit(fit, d) # plot to check the curve fitting
 #' @export
 curvefits <- function(INPUT, brks, nptperyear = 23,
                       wFUN = wTSM, iters = 2, wmin = 0.1,
-                      south = FALSE,
-                      extend_month = 2, minT = 0,
+                      extend_month = 12, nextent = 2,
+                      minT = 0,
                       methods = c('AG', 'zhang', 'beck', 'elmore', 'Gu'),
-                      qc, minPercValid = 0.3,
-                      debug = FALSE, ...)
+                      qc, minPercValid = 0.2,
+                      print = TRUE, ...)
 {
-    t    <- INPUT$t
+    t     <- INPUT$t
+    years <- year(t)
     n    <- length(t)
     doys <- as.numeric(difftime(t, t[1], units = "day") + 1)#days from origin
 
@@ -39,8 +59,9 @@ curvefits <- function(INPUT, brks, nptperyear = 23,
     Tn     <- INPUT$Tn #if has no Tn, NULL will be return
     has_Tn <- ifelse(is_empty(Tn), F, T)
     y0     <- INPUT$y0 #original y
-    if (is.null(y0)) y0 <- INPUT$y
+    w0     <- INPUT$w
 
+    if (is.null(y0)) y0 <- INPUT$y
     # title(x$site[1])
     if (all(is.na(INPUT$y))) return(NULL)
     # also constrained in `optim_pheno` function
@@ -64,24 +85,34 @@ curvefits <- function(INPUT, brks, nptperyear = 23,
     # plot(y, type = "b"); grid()
     # lines(brks$whit$iter3, col = "blue")
     # lines(INPUT$y        , col = "red")
+    width_extend = floor(nptperyear/12*extend_month)
+    width_ylu    = nptperyear*2
 
-    ## 1. Curve fitting
+    y <- INPUT$y
     fits <- list()
     for (i in 1:nrow(di)){ #
-        runningId(i)
+        if (print) runningId(i, prefix = '\t[curvefits] ')
+
         I    <- di$beg[i]:di$end[i]
+        I_beg <- di$beg[i]
+        I_end <- di$end[i]
 
-        # extend curve fitting period
-        period <- floor(nptperyear/12*extend_month)
-        I_beg2 <- max(1, di$beg[i] - period)
-        I_end2 <- min(n, di$end[i] + period)
-        I_extend <- I_beg2:I_end2
+        I_extend <- get_extentI(w0, width_extend, I_beg, I_end, nextent, wmin)
 
+        ### 2. input data
         ti   <- doys[I_extend]
         yi   <- INPUT$y[I_extend]
         wi   <- w[I_extend]
+        # yi_good <- yi[w0[I_extend] > wmin]
+
+        ### update ylu in a three year moving window
+        ylu <- get_ylu (y, years, w0, width_ylu, I_beg, I_end, Imedian = TRUE, wmin = 0.1)
+        ylu <- merge_ylu(INPUT$ylu, ylu)
+
+        # yi[yi < ylu[1]] <- ylu[1] # update y value
+
         # original weights, put in w0 incurvefitting is unwisdom, but for plot
-        w0   <- qc[I_extend] #INPUT$w
+        # w0   <- qc[I_extend] #INPUT$w
         # add background module here, 20180513
         if (has_Tn){
             Tni        <- Tn[I_extend]
@@ -96,7 +127,7 @@ curvefits <- function(INPUT, brks, nptperyear = 23,
         tout <- doys[I] %>% {.[beginI]:last(.)} # make sure return the same length result.
 
         fit  <- curvefit(yi, ti, tout, nptperyear = nptperyear,
-                         w = wi, w0 = w0, ylu = INPUT$ylu, iters = iters,
+                         w = wi, w0 = qc[I_extend], ylu = ylu, iters = iters,
                          methods = methods, meth = 'BFGS', wFUN = wFUN, ...)
         # add original input data here, global calculation can comment this line
         data <- data.table(y = y0[I], t = doys[I], w = qc[I]) #INPUT$w[I]
@@ -120,158 +151,54 @@ curvefits <- function(INPUT, brks, nptperyear = 23,
                 fits = fits))
 }
 
+# extend curve fitting period
+get_extentI <- function(w0, width, I_beg, I_end, nextent = 1, wmin = 0.1){
+    n <- length(w0)
 
-#' curvefits2
-#'
-#' @param t A date vector
-#' @param y A numberic vector, same length as t
-#' @param methods A character vector, c('spline', 'beck', 'elmore', 'klos', 'AG', 'zhang')
-#' @param ... other parameters pass to season or curvefit_site
-#' @export
-curvefits2 <- function(t, y, w, nptperyear = 46,
-                          wFUN = wTSM, iters = 2,
-                          lambda, south = FALSE,
-                          IsPlot = FALSE,
-                          Aymin_less = 0.6, ymax_min = 0.1,
-                          methods = c('AG', 'zhang', 'beck', 'elmore', 'Gu'),
-                          debug = FALSE, ...)
-{
-    # 1. Check input data and initial parameters for phenofit
-    INPUT <- check_input(t, y, w, maxgap = nptperyear / 4, alpha = 0.02)
+    I_beg2  <- I_end2 <- NA
+    # period <- floor(nptperyear/12*extend_month)
 
-    # 2. The detailed information of those parameters can be seen in `season`.
-    brks  <- season(INPUT, lambda, nptperyear, iters = 3, wFUN = wFUN,
-                    IsPlot = IsPlot, south = south,
-                    Aymin_less = Aymin_less, ymax_min = ymax_min,
-                    max_MaxPeaksperyear=2.5, max_MinPeaksperyear=3.5, ...)
-    ## 3.1. curve fitting
-    fit <- curvefits(INPUT, brks, lambda =lambda,
-                         methods = c("AG", "zhang", "beck", "elmore", 'Gu'), #,"klos"
-                         nptperyear = nptperyear, debug = F, wFUN = wTSM, ...)
-    ## 3.2 Get GOF information
-    stat  <- ldply(fit$fits, function(fits_meth){
-        ldply(fits_meth, statistic.phenofit, .id = "flag")
-    }, .id = "meth")
+    if (!is.null(nextent)){
+        I_beg_raw <- seq(max(1, I_beg-1), max(1, I_beg-width))
+        I_end_raw <- seq(min(n, I_end+1), min(n, I_end+width))
 
-    # 4. extract phenology
-    # pheno: list(p_date, p_doy)
-    p <- lapply(fit$fits, ExtractPheno)
-    pheno  <- map(p, tidyFitPheno, origin = t[1]) %>% purrr::transpose()
+        # at least `nextent` marginal point in previous and following season
+        I_beg2 <- I_beg_raw[ which(w0[I_beg_raw] > wmin)[nextent]  ]
+        I_end2 <- I_end_raw[ which(w0[I_end_raw] > wmin)[nextent]  ]
+    }
 
-    fit$INPUT   <- INPUT
-    fit$seasons <- brks
-    fit$stat    <- stat
-    fit$pheno   <- pheno
-    return(fit)
+    if(is.na(I_beg2)) I_beg2 <- pmax(1, I_beg - width)
+    if(is.na(I_end2)) I_end2 <- pmin(n, I_end + width)
+
+    return( I_beg2:I_end2 )
 }
 
-
-phenonames <- c('TRS2.SOS', 'TRS2.EOS', 'TRS5.SOS', 'TRS5.EOS', 'TRS6.SOS', 'TRS6.EOS',
-    'DER.SOS', 'DER.POP', 'DER.EOS',
-    'UD', 'SD', 'DD','RD',
-    'GreenUp', 'Maturity', 'Senescence', 'Dormancy')
-
-
-#'
-#' curve fit vegetation index (VI) time-series
-#'
-#' curve fit VI using 'spline', 'beck', 'elmore', 'klos', 'AG', 'Gu', 'zhang' methods
-#'
-#' @param y Vegetation time-series index, numeric vector
-#' @param t The corresponding doy of x
-#' @param tout The output interpolated time.
-#'
-#' @export
-curvefit <- function(y, t = index(y), tout = t, meth = 'BFGS',
-    methods = c('spline', 'beck', 'elmore', 'klos', 'AG', 'zhang'), ...)
-{
-    if (all(is.na(y))) return(NULL)
-    if (length(methods) == 1 && methods == 'all')
-        methods <- c('spline', 'beck', 'elmore', 'klos', 'AG', 'Gu', 'zhang')
-
-    params <- list(y, t, tout, optimFUN = I_optim, method = meth, ...)
-
-    if ('spline' %in% methods) fit.spline <- splinefit(y, t, tout)
-
-    if ('beck'   %in% methods) fit.beck   <- do.call(FitDL.Beck,  c(params, pfun = p_nlminb))  #nlminb
-    if ('elmore' %in% methods) fit.elmore <- do.call(FitDL.Elmore,c(params, pfun = p_nlminb))  #nlminb
-
-    # best: BFGS, but its speed lower than other function, i.e. nlm
-    if ('Gu'     %in% methods) fit.Gu     <- do.call(FitDL.Gu,    c(params, pfun = p_nlminb))  #nlm, ucminf
-    if ('zhang'  %in% methods) fit.zhang  <- do.call(FitDL.Zhang, c(params, pfun = p_nlminb))  #nlm
-    if ('AG'     %in% methods) fit.AG     <- do.call(FitAG,       c(params, pfun = p_nlminb))     #nlm
-    if ('klos'   %in% methods) fit.klos   <- do.call(FitDL.Klos,  c(params, pfun = p_optim))   #BFGS, Nelder-Mead, L-BFGS-B
-
-    names <- ls(pattern = "fit\\.") %>% set_names(., .)
-    fits  <- lapply(names, get, envir = environment()) %>%
-        set_names(toupper(gsub("fit\\.", "", names))) #remove `fit.` and update names
-    return(fits)
+# merge two limits
+merge_ylu <- function(ylu_org, ylu_new){
+    if (!is.na(ylu_new[1])) ylu_org[1] <- pmax(ylu_new[1], ylu_org[1])
+    if (!is.na(ylu_new[2])) ylu_org[2] <- pmin(ylu_new[2], ylu_org[2])
+    ylu_org # return
 }
 
+# get ylu in a three year moving window,
+get_ylu <- function(y, years, w0, width, I_beg, I_end, Imedian = TRUE, wmin = 0.1){
+    n <- length(w0)
+    I_win  <- pmax(1, I_beg - width) : pmin(n, I_end + width)
+    w0_win <- w0[I_win]
+    I_win  <- I_win[which(w0_win > wmin)]
 
-#' curvefit_optimx
-#'
-#' With the help of `optimx` package, try to find which optimization function
-#' is best.
-#' @param optimFUN `I_optim` or `I_optimx`
-#' @param meth c('BFGS','CG','Nelder-Mead','L-BFGS-B','nlm','nlminb',
-#' spg','ucminf','Rcgmin','Rvmmin','newuoa','bobyqa','nmkb','hjkb')
-#' @param pfun c(p_nlminb, p_ncminf, p_nlm, p_optim)
-#'
-#' @export
-curvefit_optimx <- function(x, t = index(x), tout = t,
-    optimFUN = I_optimx,
-    methods = c('spline', 'beck', 'elmore', 'AG'),
-    meth, pfun, ...)
-{
-    if (all(is.na(x))) return(NULL)
-    ##2. curve fitting
-    if (length(methods) == 1 && methods == 'all')
-        methods <- c('spline', 'beck', 'elmore', 'klos', 'AG', 'Gu', 'zhang')
-
-    # failed: 'BFGS', 'Nelder-Mead', 'L-BFGS-B'
-    # meth = 'L-BFGS-B'
-    # ok: 'L-BFGS-B'; failed: 'BFGS', 'Nelder-Mead'
-    params <- list(x, t, tout, optimFUN = optimFUN, pfun = pfun, method = meth, ...)
-    # fit.beck   <- FitDL.Beck   #even Nelder-Mead was faster and convergent, but nlminb was better
-    # ok: BFGS; failed: 'L-BFGS-B'
-    if ('spline' %in% methods) fit.spline <- splinefit(x, t, tout)
-    if ('beck'   %in% methods) fit.beck   <- do.call(FitDL.Beck, params)        #nlminb
-    if ('elmore' %in% methods) fit.elmore <- do.call(FitDL.Elmore, params)      #nlminb
-
-    # best: BFGS, but its speed lower than other function, i.e. nlm
-    if ('Gu'     %in% methods) fit.Gu     <- do.call(FitDL.Gu, params)          #nlm, ucminf
-    if ('zhang'  %in% methods) fit.zhang  <- do.call(FitDL.Zhang, params)       #nlm
-    if ('AG'     %in% methods) fit.AG     <- do.call(FitAG, params)             #nlm
-    if ('klos'   %in% methods) fit.klos   <- do.call(FitDL.Klos, params)        #BFGS, Nelder-Mead, L-BFGS-B
-
-    # test for optimx methods
-    # fit   <- FitDL.Zhang  (x, t, tout, optimFUN = optimx_fun, debug = T, method = 'BFGS')
-    names <- ls(pattern = "fit\\.") %>% set_names(., .)
-    fits  <- lapply(names, get, envir = environment()) %>%
-        set_names(toupper(gsub("fit\\.", "", names))) #remove `fit.` and update names
-    return(fits)
-}
-
-
-#'
-#' Get parameters from curve fitting result
-#'
-#' @param fit Object returned by curvefits
-#' @export
-getparam <- function(fit){
-    llply(fit$fits, function(x){
-        ldply(x, . %>% .$par, .id = "flag") %>% as_tibble()
-    })
-}
-
-#'
-#' Get parameters from multiple curve fitting results
-#'
-#' @param fits List Object of curvefits returned
-#' @export
-getparams <- function(fits){
-    pars <- map(fits, getparams) %>% purrr::transpose() %>%
-        map(~melt_list(.x, "site") %>% as_tibble())
-    return(pars)
+    if (is_empty(I_win)){
+        ylu_max <- ylu_min <- NA
+    } else{
+        y_win  <- y[I_win]
+        if (Imedian){
+            year_win  <- years[I_win]
+            ylu_min <- aggregate(y_win, list(year = year_win), min)$x %>% median()
+            ylu_max <- aggregate(y_win, list(year = year_win), max)$x %>% median()
+        } else {
+            ylu_min <- min(y_win)
+            ylu_max <- max(y_win)
+        }
+    }
+    c(ylu_min, ylu_max) # return
 }

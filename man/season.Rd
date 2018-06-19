@@ -6,24 +6,41 @@
 \usage{
 season(INPUT, nptperyear = 46, south = FALSE, FUN = whitsmw2,
   wFUN = wTSM, iters = 2, wmin = 0.1, lambda, nf = 2,
-  frame = floor(nptperyear/7) * 2 + 1, IsPlot = FALSE, plotdat = INPUT,
-  print = FALSE, minpeakdistance = nptperyear/6, ymax_min = 0.5,
-  rymin_less = 0.6, threshold_max = 0.2, threshold_min = 0.05,
-  max_MaxPeaksperyear = 2, max_MinPeaksperyear = 3, ...)
+  frame = floor(nptperyear/7) * 2 + 1, minpeakdistance = nptperyear/6,
+  threshold_max = 0.2, threshold_min = 0.05, ypeak_min = 0.5,
+  rytrough_max = 0.6, MaxPeaksPerYear = 2, MaxTroughsPerYear = 3,
+  IsPlot = FALSE, plotdat = INPUT, print = FALSE, ...)
 }
 \arguments{
-\item{INPUT}{returned list(t, y, w, ylu) object from `check_input`}
+\item{INPUT}{A list object with the elements of 't', 'y', 'w', 'Tn' (option) 
+and 'ylu', returned by \code{check_input}.}
 
-\item{FUN}{Curve fitting functions, call be one of `sgfitw`, `whitsmw2` and `wHANTS`.}
+\item{nptperyear}{Integer, points per year.}
 
-\item{plotdat}{Is IsPlot = true, plotdata need to be passed. 
-Since, y, w have been changed.}
+\item{south}{Boolean. In south hemisphere, growing year is 1 July to the 
+following year 31 June; In north hemisphere, growing year is 1 Jan to 31 Dec.}
+
+\item{FUN}{Coarse curve fitting function, can be one of `sgfitw`, `whitsmw2` 
+and `wHANTS`.}
+
+\item{wFUN}{weights updating function, can be one of 'wTSM', 'wChen' and 
+'wBisquare'.}
+
+\item{iters}{How many times curve fitting is implemented.}
+
+\item{wmin}{Double, minimum weigth value (i.e. weight for snow, ice and cloud).}
+
+\item{lambda}{the parameter of \code{whitsmw2}}
+
+\item{nf}{the parameter of \code{wHANTS}, number of frequencies to be 
+considered above the zero frequency}
+
+\item{frame}{the parameter of \code{sgfitw}, moving window size. Suggested by 
+TIMESAT, default frame = floor(nptperyear/7)*2 + 1.}
 
 \item{minpeakdistance}{The minimum distance (in indices) peaks have to have
 to be counted. If the distance of two maximum extreme value less than
 `minpeakdistance`, only the real maximum value will be left.}
-
-\item{rymin_less}{y_tough < rymin_less * A}
 
 \item{threshold_max}{Similar as `threshold_min`, The maximum threshold should
 be greater than `threshold_max`.}
@@ -32,22 +49,37 @@ be greater than `threshold_max`.}
 trough value. There are two threshold (left and right). The minimum threshold
 should be greater than threshold_min.}
 
-\item{...}{Other parameters passed to findpeaks, e.g. 'threshold',
-'minpeakheight', 'minpeakdistance'}
+\item{ypeak_min}{ypeak >= ypeak_min}
+
+\item{rytrough_max}{ytrough <= rytrough_max*A, A is the amplitude of y.}
+
+\item{MaxPeaksPerYear}{This parameter is used to adjust lambda in iterations.
+If PeaksPerYear > MaxPeaksPerYear, then lambda = lambda*2.}
+
+\item{MaxTroughsPerYear}{This parameter is used to adjust lambda in iterations.
+If TroughsPerYear > MaxTroughsPerYear, then lambda = lambda*2.}
+
+\item{IsPlot}{Boolean}
+
+\item{plotdat}{Is IsPlot = true, plotdata is used to plot original input, 
+known that y and w in \code{INPUT} have been changed.}
+
+\item{print}{Whether to print progress information}
+
+\item{...}{Other parameters passed to findpeaks}
 }
 \value{
+A list object with the elements of 'fit' and 'dt'.
 list(dt, di)
 $whit
 }
 \description{
 First smooth VI timeseries by weighted whittaker, then use findpeak function
 to get the local maximum and local minimum values. Two local minimum defined
-a growing season. If two local minimum(maximum) was adjacent, then only the
+a growing season. If two local minimum(maximum) are too closed, then only the
 smaller(biger) is left.
 }
 \details{
 Then according to season pos, based to local maximum position divide yearly
 growing season. lambda need to set carefully.
-
-divide growing season circle just like TIMESAT season function
 }

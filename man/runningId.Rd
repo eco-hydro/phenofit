@@ -4,7 +4,7 @@
 \alias{runningId}
 \title{print the running ID in the console}
 \usage{
-runningId(i, step = 1)
+runningId(i, step = 1, prefix = "")
 }
 \description{
 print the running ID in the console

@@ -5,15 +5,18 @@
 \title{Growing season dividing in the 3-year length moving window}
 \usage{
 season_3y(INPUT, nptperyear = 23, FUN = whitsmw2, south = FALSE,
-  IsPlot = T, plotdat = INPUT, partial = TRUE, ...)
+  IsPlot = T, plotdat = INPUT, print = TRUE, partial = TRUE, ...)
 }
 \arguments{
 \item{FUN}{Curve fitting functions, call be one of `sgfitw`, `whitsmw2` and `wHANTS`.}
 
 \item{...}{Arguments passed on to \code{season}
 \describe{
-  \item{INPUT}{returned list(t, y, w, ylu) object from `check_input`}
-  \item{FUN}{Curve fitting functions, call be one of `sgfitw`, `whitsmw2` and `wHANTS`.}
+  \item{INPUT}{A list object with the elements of 't', 'y', 'w', 'Tn' (option) 
+and 'ylu', returned by \code{check_input}.}
+  \item{nptperyear}{Integer, points per year.}
+  \item{FUN}{Coarse curve fitting function, can be one of `sgfitw`, `whitsmw2` 
+and `wHANTS`.}
 }}
 
 \item{d}{must have columns: 'y', 't', 'w'}

@@ -1,13 +1,21 @@
 #' Growing season dividing in the 3-year length moving window
 #'
-#' @inheritDotParams season INPUT nptperyear FUN
-#' @param d must have columns: 'y', 't', 'w'
-#' @param FUN Curve fitting functions, call be one of `sgfitw`, `whitsmw2` and `wHANTS`.
+#' @param INPUT A list object with the elements of 't', 'y', 'w', 'Tn' (option) 
+#' and 'ylu', returned by \code{check_input}.
+#' @param nptperyear Integer, points per year.
+#' @param south Boolean. In south hemisphere, growing year is 1 July to the 
+#' following year 31 June; In north hemisphere, growing year is 1 Jan to 31 Dec.
+#' @param FUN Coarse curve fitting function, can be one of `sgfitw`, `whitsmw2` 
+#' and `wHANTS`.
+#' @param IsPlot Boolean
+#' @param plotdat Is IsPlot = true, plotdata is used to plot original input, 
+#' known that y and w in \code{INPUT} have been changed.
+#' @param print Whether to print progress information
 #' 
 #' @export
-season_3y <- function(INPUT, nptperyear = 23, FUN = whitsmw2,
-    south = FALSE,
-    IsPlot = T, plotdat = INPUT,
+season_3y <- function(INPUT, nptperyear = 23, south = FALSE,
+    FUN = whitsmw2,
+    IsPlot = T, plotdat = INPUT, print = TRUE,
     partial = TRUE, ...){
 
     nlen  <- length(INPUT$t)
@@ -17,21 +25,22 @@ season_3y <- function(INPUT, nptperyear = 23, FUN = whitsmw2,
 
     brks  <- list()
     wFUN  <- wTSM
-    ymax_min  <- 0.05
+    ypeak_min  <- 0.05
 
     debug <- FALSE
     # debug <- TRUE
-    i = 18; debug <- T
-    params <- list(nptperyear = nptperyear,
+    # i = 1;
+    # debug <- T
+    params <- list(nptperyear = nptperyear, south = south,
             FUN = FUN, wFUN = wFUN, iters = 2,
-            rymin_less = 0.6, ymax_min = ymax_min,
+            rytrough_max = 0.8, ypeak_min = ypeak_min,
             threshold_min = 0.0, threshold_max = 0.3,
-            IsPlot = debug,
-            max_MaxPeaksperyear =2.5, max_MinPeaksperyear = 3.5,
-            south = south, plotdat = plotdat)#, ...
+            MaxPeaksPerYear = 2.5, MaxTroughsPerYear = 3.5,
+            IsPlot = debug, plotdat = plotdat)#, ...
 
     for (i in 1:nyear){
-        runningId(i)
+        if (print) runningId(i, prefix = '\t[season_3y] ')
+
         year <- years[i]
         I_beg = nptperyear*(i-1)+1
         I_end = pmin ( nptperyear*(i+2), nlen)
@@ -54,16 +63,17 @@ season_3y <- function(INPUT, nptperyear = 23, FUN = whitsmw2,
     }
     brks %<>% purrr::transpose()
     brks$whit %<>% do.call(rbind, .)
-    brks$dt   %<>% do.call(rbind, .)
-    # brks # quickly return
+    dt <- do.call(rbind, brks$dt)
 
-    dt <- brks$dt
-    I_fix <- dt$end[-1] - dt[2:.N]$beg
-
-    if (is.null(brks$dt)){
-        warning(sprintf("[site:%s] No data!", sitename))
+    if (is.null(dt)){
+        warning( 'No growing season found!')
         return(NULL)
     }
+
+    # dt %<>% subset(len < 650 & len > 45) # mask too long and short gs
+    phenofit:::fix_dt(dt) # c++ address operation, fix growing season overlap
+    brks$dt <- dt
+
     ## statistics
     I    <- match(brks$whit$t, INPUT$t)
     stat      <- GOF(INPUT$y[I], dplyr::last(brks$whit), INPUT$w[I], include.cv = TRUE)
@@ -108,6 +118,7 @@ season_3y <- function(INPUT, nptperyear = 23, FUN = whitsmw2,
         subplot(c(pos$beg, pos$end), col = "blue")
         title(str_title)
     }
+    brks$stat <- stat
     # stat <- c(site = sitename, IGBPcode = IGBP_code, stat) # quickly return
     return(brks)
 }

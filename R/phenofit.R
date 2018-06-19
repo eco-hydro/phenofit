@@ -25,12 +25,14 @@ statistic.phenofit <- function(fit){
     pvalue <- NA
     n      <- length(I)
 
+    if (n < 2) return(c(RMSE = NA, NSE = NA, R = R, pvalue = pvalue, n = n))    
+
     tryCatch({
         cor.obj <- cor.test(Y_obs, Y_sim, use = "complete.obs")
         R       <- cor.obj$estimate[[1]]
         pvalue  <- cor.obj$p.value
     }, error = function(e){
-        message(e$message)
+        message(sprintf('[statistic] %s', e$message))
     })
 
     RMSE <- sqrt(sum((Y_obs - Y_sim)^2)/n)

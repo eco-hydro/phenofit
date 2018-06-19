@@ -6,8 +6,8 @@ fprintf <- function(fmt, ...) cat(sprintf(fmt, ...))
 #' print the running ID in the console
 #'
 #' @export
-runningId <- function(i, step = 1) {
-    if (mod(i, step) == 0) cat(sprintf("running %d ...\n", i))
+runningId <- function(i, step = 1, prefix = "") {
+    if (mod(i, step) == 0) cat(sprintf("%s running %d ...\n", prefix, i))
 }
 
 #' retry

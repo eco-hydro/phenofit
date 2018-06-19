@@ -23,9 +23,9 @@ ExtractPheno <- function(fits, TRS = c(0.1, 0.2, 0.5, 0.6), IsPlot = FALSE){
     pheno_list <- list()
     methods    <- c(paste0("TRS", TRS*10),"DER","GU", "ZHANG")
     TRS_last   <- last(TRS) # only display last threshold figure
-    
+
     if (IsPlot)
-        op <- par(mfrow = c(length(fits), 5), 
+        op <- par(mfrow = c(length(fits), 5),
             oma = c(1, 2, 3, 1), mar = rep(0, 4), yaxt = "n", xaxt = "n")
     ylim <- NULL
     for (i in seq_along(fits)){
@@ -39,17 +39,17 @@ ExtractPheno <- function(fits, TRS = c(0.1, 0.2, 0.5, 0.6), IsPlot = FALSE){
             ti <- fit$data$t
             yi <- fit$data$y # may have NA values.
             # constrain plot ylims
-            ylim0    <- c( pmin(min(yi, na.rm = T), min(ypred)), 
+            ylim0    <- c( pmin(min(yi, na.rm = T), min(ypred)),
                            pmax(max(yi, na.rm = T), max(ypred)))
             A = diff(ylim0);
-            ylim     <- ylim0 + c(-1, 0.2) * 0.05 *A 
+            ylim     <- ylim0 + c(-1, 0.2) * 0.05 *A
             ylim_trs <- (ylim - ylim0) / A # TRS:0-1
-            
+
             PhenoPlot(fit$tout, ypred, ylim = ylim)
-            lines(ti, yi, lwd = 1, col = "grey60") 
+            lines(ti, yi, lwd = 1, col = "grey60")
             # pch = 19, col = "grey60"
-            wi <- as.numeric(fit$data$w) 
-            
+            wi <- as.numeric(fit$data$w)
+
             ## Just designed for MOD13A1
             # Levels:  good  margin  snow&ice  cloud
             labels <- c(" good", " margin", " snow&ice", " cloud")
@@ -57,7 +57,7 @@ ExtractPheno <- function(fits, TRS = c(0.1, 0.2, 0.5, 0.6), IsPlot = FALSE){
             pch <- c(19, 15, 4, 17)
             for (j in 1:4){
                 ind = which(wi == j)
-                if (!is_empty(ind)) points(ti[ind], yi[ind], pch = pch[j], col = colors[j])    
+                if (!is_empty(ind)) points(ti[ind], yi[ind], pch = pch[j], col = colors[j])
             }
 
             if (i == 1){
@@ -83,7 +83,7 @@ ExtractPheno <- function(fits, TRS = c(0.1, 0.2, 0.5, 0.6), IsPlot = FALSE){
 
         param_common  <- list(fit, IsPlot, ylim = ylim)
         param_common2 <- list(fit, IsPlot, ylim = ylim, show.lgd = show.lgd)
-        
+
         der   <- do.call(PhenoDeriv, param_common2);   if (i == 1 && IsPlot) mtext("DER")
         gu    <- do.call(PhenoGu, param_common)[1:4];  if (i == 1 && IsPlot) mtext("GU")
         zhang <- do.call(PhenoKl, param_common2);      if (i == 1 && IsPlot) mtext("ZHANG")
@@ -285,7 +285,7 @@ PhenoGu <- function(fit, IsPlot = TRUE, smspline = TRUE, ...) {
     # Gu Phenology Extraction method also quite rely on first order derivative
     rl.b <- VI.rsp - rsp*sos # interception of recovery line
     sl.b <- VI.rau - rau*eos # interception of recovery line
-    
+
     baseline <- min(values, na.rm = T)
     maxline  <- max(values, na.rm = T)
 
@@ -308,7 +308,7 @@ PhenoGu <- function(fit, IsPlot = TRUE, smspline = TRUE, ...) {
         # y1 = rau*t + sl.b
         # y2 = k2t + b2
         # so, t = (sl.b - b2)/(k2 -rau)
-        DD <- (sl.b - plateau.intercept) / (plateau.slope - rau)        
+        DD <- (sl.b - plateau.intercept) / (plateau.slope - rau)
     }else{
         plateau.slope     <- NA
         plateau.intercept <- NA
@@ -331,7 +331,7 @@ PhenoGu <- function(fit, IsPlot = TRUE, smspline = TRUE, ...) {
         abline(sl.b, rau, col = "red" , lty=  2, lwd = linewidth,)
         # any na values input to abline will lead to error
         if (all(!is.na(c(plateau.slope, plateau.intercept))))
-            abline(a = plateau.intercept, b = plateau.slope, 
+            abline(a = plateau.intercept, b = plateau.slope,
                 lty = 2, lwd = linewidth, col = "darkgreen")
 
         abline(h = c(maxline, baseline), lty = 2, lwd = linewidth,)

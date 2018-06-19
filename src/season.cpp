@@ -28,11 +28,11 @@ void fix_dt(DataFrame d) {
     for (int i = 0; i < n - 1; i++){
         // Rcout << i << std::endl;
         if (date_end[i] > date_beg[i+1]){
-            bool con = (val_end[i] < val_beg[i+1]);
-            Date  newdate = con? date_end[i] : date_beg[i+1];
+            bool con = (val_end[i] > val_beg[i+1]);
+            Date  newdate = con? date_end[i] : date_beg[i+1]; // get maximum date
             double newval = con? val_end[i] : val_beg[i+1];
 
-            date_end[i]   = newdate + (-1);
+            date_end[i]   = newdate; // + (-1);
             date_beg[i+1] = newdate;
             val_end[i]    = newval;
             val_beg[i+1]  = newval;
