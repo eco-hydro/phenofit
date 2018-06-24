@@ -106,10 +106,18 @@ ExtractPheno <- function(fits, TRS = c(0.1, 0.2, 0.5, 0.6), IsPlot = FALSE){
 #' @export
 PhenoTrs <- function(fit, approach = c("White", "Trs"), trs = 0.5, min.mean = 0.1,
     IsPlot = TRUE, ...) {
+    metrics <- c(sos = NA, eos = NA)
+
     t      <- fit$tout
     values <- last(fit$fits)
+    n      <- length(t)
 
-    if (all(is.na(values))) return(c(sos = NA, eos = NA))
+    # get peak of season position
+    half.season <- median(which.max(values)) # + 20, half season + 20 was unreasonable
+    pop <- t[half.season]
+
+    if (all(is.na(values))) return(metrics)
+    if (half.season < 5 || half.season > (n - 5)) return(metrics)
 
     # get statistical values
     # n    <- t[length(t)]
@@ -120,8 +128,6 @@ PhenoTrs <- function(fit, approach = c("White", "Trs"), trs = 0.5, min.mean = 0.
     mn   <- min(x2)
     ampl <- peak - mn
 
-    # get peak of season position
-    pop <- median(t[which.max(values)])
     # select (or scale) values and thresholds for different methods
     approach <- approach[1]
     if (approach == "White") {
@@ -139,13 +145,11 @@ PhenoTrs <- function(fit, approach = c("White", "Trs"), trs = 0.5, min.mean = 0.
     }
 
     greenup <- .Greenup(ratio)
-
     ## distinguish the first half year and second year
     # select time where SOS and EOS are located (around trs value)
     bool <- ratio >= trs.low & ratio <= trs.up
 
     # get SOS, EOS, LOS
-
     # fixed 2017-01-04, according to TP phenology property
     # sos <- round(median(sose os[greenup & bool], na.rm = TRUE))
     # eos <- round(median(soseos[!greenup & bool], na.rm = TRUE))
@@ -194,18 +198,21 @@ PhenoTrs <- function(fit, approach = c("White", "Trs"), trs = 0.5, min.mean = 0.
 #' @description rechecked in 2017-11-17, with no problems
 #' @export
 PhenoDeriv <- function(fit, IsPlot = TRUE, smspline = TRUE, show.lgd = T, ...){
+    PhenoNames <- c("SOS", "POP", "EOS")
+    metrics <- setNames(rep(NA, 3), c("sos", "pop", "eos")) # template
+
     t      <- fit$tout
     values <- last(fit$fits)
-    PhenoNames <- c("SOS", "POP", "EOS")
-
-    if (all(is.na(values))) return( setNames(rep(NA, 3), c("sos", "pop", "eos")) )
-
-    der1   <- D1.phenofit(fit, smspline = smspline)
+    n      <- length(t)
 
     # get peak of season position
-    half.season <- median(which.max(values)) #deal with multiple pop values
+    half.season <- median(which.max(values)) # deal with multiple pop values
     pop <- t[half.season]
 
+    if (all(is.na(values))) return(metrics)
+    if (half.season < 5 || half.season > (n - 5)) return(metrics)
+
+    der1   <- D1.phenofit(fit, smspline = smspline)
     # get SOS and EOS according to first order derivative
     # fixed 20180510, ±5 to make sure sos and eos are not in the POP.
     # I_sos <- median(which.max(der1[1:(half.season - 5)]))
@@ -259,18 +266,21 @@ PhenoDeriv <- function(fit, IsPlot = TRUE, smspline = TRUE, show.lgd = T, ...){
 #' @export
 #' @importFrom dplyr last
 PhenoGu <- function(fit, IsPlot = TRUE, smspline = TRUE, ...) {
-    t      <- fit$tout
-    values <- last(fit$fits)
     PhenoNames <- c("UD", "SD", "DD", "RD")
     metrics <- setNames(rep(NA, 4), c("UD", "SD", "DD", "RD"))
+
+    t      <- fit$tout
+    values <- last(fit$fits)
+    n      <- length(t)
+
+    # get peak of season position
+    half.season <- median(which.max(values)) # deal with multiple pop values
+    pop <- t[half.season]
+
     if (all(is.na(values))) return(metrics)
+    if (half.season < 5 || half.season > (n - 5)) return(metrics)
 
     der1   <- D1.phenofit(fit, smspline = smspline)
-    # get peak of season position
-    half.season <- median(which.max(values)) #deal with multiple pop values
-    pop <- t[half.season]
-    if (half.season >= length(der1)) return(metrics)
-
     # get SOS and EOS according to first order derivative
     sos.index <- median(which.max(der1[1:(half.season-5)]))
     eos.index <- median(which.min(der1[(half.season+5):length(der1)])) + half.season
@@ -360,11 +370,16 @@ PhenoKl <- function(fit, IsPlot = TRUE, show.lgd = T, ...) {
     metrics <- setNames(rep(NA, 4), PhenoNames)
 
     t      <- fit$tout
-    xlim   <- range(t)
     values <- last(fit$fits)
-    half.season <- which.max(values)  # + 20, half season + 20 was unreasonable
+    n      <- length(t)
+    xlim   <- range(t)
 
-    if (all(is.na(values))) return(setNames(rep(NA, 4), PhenoNames))
+    # get peak of season position
+    half.season <- median(which.max(values)) # + 20, half season + 20 was unreasonable
+    pop <- t[half.season]
+
+    if (all(is.na(values))) return(metrics)
+    if (half.season < 5 || half.season > (n - 5)) return(metrics)
 
     derivs <- curvature.phenofit(fit, smspline = TRUE)
     k      <- derivs$k

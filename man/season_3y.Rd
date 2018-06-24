@@ -5,7 +5,8 @@
 \title{Growing season dividing in the 3-year length moving window}
 \usage{
 season_3y(INPUT, nptperyear = 23, south = FALSE, FUN = whitsmw2,
-  IsPlot = T, plotdat = INPUT, print = TRUE, partial = TRUE, ...)
+  wFUN = wTSM, wmin = 0.2, IsPlot = T, plotdat = INPUT, print = TRUE,
+  partial = TRUE, ...)
 }
 \arguments{
 \item{INPUT}{A list object with the elements of 't', 'y', 'w', 'Tn' (option) 
@@ -18,6 +19,8 @@ following year 31 June; In north hemisphere, growing year is 1 Jan to 31 Dec.}
 
 \item{FUN}{Coarse curve fitting function, can be one of `sgfitw`, `whitsmw2` 
 and `wHANTS`.}
+
+\item{wmin}{Double, minimum weigth value (i.e. weight for snow, ice and cloud).}
 
 \item{IsPlot}{Boolean}
 

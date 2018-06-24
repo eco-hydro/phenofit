@@ -71,7 +71,7 @@ season <- function(INPUT, nptperyear = 46, south = FALSE,
                    lambda, nf  = 2, frame = floor(nptperyear/7) * 2 + 1,
                    minpeakdistance = nptperyear/6,
                    threshold_max = 0.2, threshold_min = 0.05,
-                   ypeak_min   = 0.5, rytrough_max = 0.6, 
+                   ypeak_min   = 0.5, rytrough_max = 0.6,
                    MaxPeaksPerYear = 2, MaxTroughsPerYear = 3,
                    IsPlot  = FALSE, plotdat = INPUT, print = FALSE,
                    ...)
@@ -250,7 +250,7 @@ season <- function(INPUT, nptperyear = 46, south = FALSE,
         points(t[I_max], ypred[I_max], pch=20, cex = 1.5, col="red")
         points(t[I_min], ypred[I_min], pch=20, cex = 1.5, col="blue")
     }
-    return(list(whit = bind_cols(data_frame(t, y), yfits),
+    return(list(whit = as.data.table(c(list(t = t, y = y), yfits)),
                 pos = pos, dt = dt, di = di))
 }
 

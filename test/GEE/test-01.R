@@ -37,7 +37,7 @@ for (i in 1:length(sites)){
     sitename <- sites[i]
     # sitename <- "AU-How"
     d <- dt[site == sitename, ]
-    whit_brks(d, nptperyear, FUN, frame = 16)
+    res <- whit_brks(d, nptperyear, FUN, frame = 16, partial = F)
 }
 dev.off()
 file.show(file)

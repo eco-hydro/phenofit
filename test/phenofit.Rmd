@@ -66,8 +66,6 @@ lambda     <- 2
 ymax_min   <- 0.1
 nptperyear <- 23
 
-
-
 CairoPDF("phenofit_MOD13A1_2.pdf", width = 11, height = 6)
 # op <- par(mfrow = c(2, 3),
 #           oma = c(1, 2, 2, 1), mar = c(3, 2, 1, 1)) #, yaxt = "n", xaxt = "n"
@@ -96,8 +94,6 @@ yfits <- dlply(df_show, .(site), function(d) {
 }, .progress = "text")
 dev.off()
 ```
-
-
 
 ```{r debug season brk function}
 # source("../R/PhenoBrks.R")

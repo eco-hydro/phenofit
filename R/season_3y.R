@@ -7,6 +7,7 @@
 #' following year 31 June; In north hemisphere, growing year is 1 Jan to 31 Dec.
 #' @param FUN Coarse curve fitting function, can be one of `sgfitw`, `whitsmw2` 
 #' and `wHANTS`.
+#' @param wmin Double, minimum weigth value (i.e. weight for snow, ice and cloud).
 #' @param IsPlot Boolean
 #' @param plotdat Is IsPlot = true, plotdata is used to plot original input, 
 #' known that y and w in \code{INPUT} have been changed.
@@ -16,23 +17,21 @@
 #' @return List object, list(whit, dt, stat)
 #' @export
 season_3y <- function(INPUT, nptperyear = 23, south = FALSE,
-    FUN = whitsmw2,
+    FUN = whitsmw2, wFUN = wTSM, wmin = 0.2,
     IsPlot = T, plotdat = INPUT, print = TRUE,
     partial = TRUE, ...){
 
-    nlen  <- length(INPUT$t)
-    years <- seq(year(first(INPUT$t)) + 1, year(last(INPUT$t)) - 1)
+    nlen      <- length(INPUT$t)
+    date_year <- year(INPUT$t)
+    years     <- seq(year(first(INPUT$t)) + 1, year(last(INPUT$t)) - 1)
+    nyear     <- length(years)
 
-    nyear <- length(years)
-
-    brks  <- list()
-    wFUN  <- wTSM
-    ypeak_min  <- 0.05
+    ypeak_min <- 0.05
+    width_ylu <- nptperyear*1
 
     debug <- FALSE
     # debug <- TRUE
     # i = 1;
-    # debug <- T
     params <- list(nptperyear = nptperyear, south = south,
             FUN = FUN, wFUN = wFUN, iters = 2,
             rytrough_max = 0.8, ypeak_min = ypeak_min,
@@ -40,6 +39,7 @@ season_3y <- function(INPUT, nptperyear = 23, south = FALSE,
             MaxPeaksPerYear = 2.5, MaxTroughsPerYear = 3.5,
             IsPlot = debug, plotdat = plotdat)#, ...
 
+    brks  <- list()
     for (i in 1:nyear){
         if (print) runningId(i, prefix = '\t[season_3y] ')
 
@@ -47,8 +47,13 @@ season_3y <- function(INPUT, nptperyear = 23, south = FALSE,
         I_beg = nptperyear*(i-1)+1
         I_end = pmin ( nptperyear*(i+2), nlen)
 
+        ylu <- get_ylu (INPUT$y, date_year, INPUT$w, width_ylu, I_beg, I_end, Imedian = TRUE, wmin)
+        ylu <- merge_ylu(INPUT$ylu, ylu) # curvefits.R
+
         I      <- I_beg:I_end
-        input  <- lapply(INPUT[1:3], `[`, I) %>% c(INPUT[5])
+        input  <- lapply(INPUT[1:3], `[`, I)
+        input$ylu <- ylu
+
         lambda <- init_lambda(input$y)#*2
 
         params_i = c(list(INPUT = input, lambda = lambda), params)
@@ -71,9 +76,12 @@ season_3y <- function(INPUT, nptperyear = 23, south = FALSE,
         warning( 'No growing season found!')
         return(NULL)
     }
-
-    # dt %<>% subset(len < 650 & len > 45) # mask too long and short gs
+    
+    dt %<>% subset(len < 650 & len > 45) # mask too long and short gs
     phenofit:::fix_dt(dt) # c++ address operation, fix growing season overlap
+    # after fix_dt, growing season length will become shorter
+    dt %<>% subset(len < 650 & len > 45) # mask too long and short gs
+    
     brks$dt <- dt
 
     ## statistics

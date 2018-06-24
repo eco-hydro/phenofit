@@ -28,7 +28,8 @@ void fix_dt(DataFrame d) {
     for (int i = 0; i < n - 1; i++){
         // Rcout << i << std::endl;
         if (date_end[i] > date_beg[i+1]){
-            bool con = (val_end[i] > val_beg[i+1]);
+            // minimum value as trough
+            bool con = (val_end[i] <= val_beg[i+1]);
             Date  newdate = con? date_end[i] : date_beg[i+1]; // get maximum date
             double newval = con? val_end[i] : val_beg[i+1];
 
@@ -36,6 +37,15 @@ void fix_dt(DataFrame d) {
             date_beg[i+1] = newdate;
             val_end[i]    = newval;
             val_beg[i+1]  = newval;
+
+            // second solution, switch values
+            // Date temp_date = date_end[i];
+            // date_end[i]    = date_beg[i+1];
+            // date_beg[i+1]  =  temp_date;
+            //
+            // double temp_val = val_end[i];
+            // val_end[i]      = val_beg[i+1];
+            // val_beg[i+1]    =  temp_val;
         }
     }
 
@@ -43,6 +53,7 @@ void fix_dt(DataFrame d) {
     d["end"] = date_end;
     d["y_beg"] = val_beg;
     d["y_end"] = val_end;
+    d["len"]   = date_end - date_beg + 1;
     // CharacterVector names = d.attr("names");
     // Rcout << names << std::endl;
     // return max_dte;

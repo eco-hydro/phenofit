@@ -5,8 +5,8 @@
 \title{Fine Curve fitting}
 \usage{
 curvefits(INPUT, brks, nptperyear = 23, wFUN = wTSM, iters = 2,
-  wmin = 0.1, extend_month = 12, nextent = 2, minT = 0,
-  methods = c("AG", "zhang", "beck", "elmore", "Gu"), qc,
+  wmin = 0.2, nextent = 2, maxExtendMonth = 3, minExtendMonth = 1,
+  minT = 0, methods = c("AG", "zhang", "beck", "elmore", "Gu"), qc,
   minPercValid = 0.2, print = TRUE, ...)
 }
 \arguments{
@@ -26,11 +26,17 @@ dividing information.}
 
 \item{wmin}{Double, minimum weigth value (i.e. weight for snow, ice and cloud).}
 
-\item{extend_month}{Search good or marginal good values in previous and 
-subsequent `extend _month` period.}
+\item{nextent}{Extend curve fitting window, until \code{nextent} good or 
+marginal element are found in previous and subsequent growing season.}
 
-\item{nextent}{Extend curve fitting window, until \code{nextent} element are
-found in previous and subsequent growing season.}
+\item{maxExtendMonth}{Search good or marginal good values in previous and 
+subsequent `maxExtendMonth` period.}
+
+\item{minExtendMonth}{Extending perid defined by \code{nextent} and 
+\code{maxExtendMonth} should be no shorter than \code{minExtendMonth}. 
+When all points of the input time-series are good value, then the extending 
+period will be too short. In that situation, we can't make sure the connection
+between different growing seasons is smoothing.}
 
 \item{minT}{Double, use night temperature Tn to define backgroud value. 
 Tn < minT is treated as ungrowing season.}

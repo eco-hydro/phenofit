@@ -50,3 +50,4 @@ inst/doc
 *.json
 result
 log
+*.RDS

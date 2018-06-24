@@ -30,7 +30,7 @@ wTSM <- function(y, yfit, w, iter = 2, nptperyear, wfact = 0.5, ...){
 #' dimensions with missing values. Computational statistics & data analysis,
 #' 54(4), pp.1167-1178.
 #' @export
-wBisquare <- function(y, yfit, w, ...){
+wBisquare <- function(y, yfit, w, wmin, ...){
     if (missing(w)) w  <- rep(1, length(y))
     wnew <- w
 
@@ -41,9 +41,12 @@ wBisquare <- function(y, yfit, w, ...){
 
     I_pos        <- which(re > 0 & re < sc)
     wnew[I_pos]  <- (1 - (re_abs[I_pos]/sc)^2)^2 * w[I_pos]
-
+    # have a problem, in this way, original weights will be ignored.
+    
     I_zero       <- which(re_abs >= sc)
-    wnew[I_zero] <- 0
+    wnew[I_zero] <- wmin
+    wnew[wnew < wmin] <- wmin
+
     # constrain growing VI: enlarge the positive bias values, reduce the weights
     #   of negative bias values, as TIMESAT
     # diff = 2 * (yfit(i) - y(i)) / yfitstd;
@@ -70,8 +73,8 @@ wChen <- function(y, yfit, w, ...){
     d_max  <- max(re_abs, na.rm = T) #6 * median(re, na.rm = T)
 
     I_pos  <- re > 0
-    wnew[ I_pos]  <- (1 - re_abs[I_pos] / d_max) * w[I_pos]
-    
+    wnew[ I_pos]      <- (1 - re_abs[I_pos] / d_max) * w[I_pos]
+    wnew[wnew < wmin] <- wmin
     return(wnew)
 }
 

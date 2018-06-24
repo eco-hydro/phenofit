@@ -14,4 +14,5 @@
 #SBATCH --mail-user=Dongdong.Kong@csiro.au
 
 module load R
-Rscript -e 'source("test/GEE/02_whit_lambda_main.R")'
+# Rscript -e 'source("test/GEE/02_whit_lambda_main.R")'
+Rscript -e 'source("test/GEE/03_phenofit_test.R")'

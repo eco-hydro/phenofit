@@ -96,7 +96,7 @@ plot_phenofit <- function(fit, d, title = NULL, show.legend = T, plotly = F){
     }else{
         if (show.legend){
             p <- p + theme(legend.position="none")
-            p <- arrangeGrob(p, lgd,nrow = 2, heights = c(15, 1), padding = unit(0, "line")) #return
+            p <- arrangeGrob(p, lgd, nrow = 2, heights = c(15, 1), padding = unit(1, "line")) #return, 
         }
         return(p)
     }
@@ -108,7 +108,7 @@ make_legend <- function(){
     colors <- c("grey60", "#00BFC4", "#F8766D", "#C77CFF", "blue", "red", "black")
     pch <- c(19, 15, 4, 17, NA, NA, NA)
     lty <- c(0, 0, 1, 0, rep(1, 3))
-    lwd <- c(1, 1, 0, 1, 3, 3, 3)
+    lwd <- c(1, 1, 1, 1, 3, 3, 3)
 
     I <- 1:7
     lgd <- grid::legendGrob(labels[I], pch = pch[I], nrow = 1,

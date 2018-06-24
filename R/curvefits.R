@@ -12,10 +12,15 @@
 #' 'wBisquare'.
 #' @param iters How many times curve fitting is implemented.
 #' @param wmin Double, minimum weigth value (i.e. weight for snow, ice and cloud).
-#' @param extend_month Search good or marginal good values in previous and 
-#' subsequent `extend _month` period.
-#' @param nextent Extend curve fitting window, until \code{nextent} element are
-#' found in previous and subsequent growing season.
+#' @param nextent Extend curve fitting window, until \code{nextent} good or 
+#' marginal element are found in previous and subsequent growing season.
+#' @param maxExtendMonth Search good or marginal good values in previous and 
+#' subsequent `maxExtendMonth` period.
+#' @param minExtendMonth Extending perid defined by \code{nextent} and 
+#' \code{maxExtendMonth} should be no shorter than \code{minExtendMonth}. 
+#' When all points of the input time-series are good value, then the extending 
+#' period will be too short. In that situation, we can't make sure the connection
+#' between different growing seasons is smoothing. 
 #' @param minT Double, use night temperature Tn to define backgroud value. 
 #' Tn < minT is treated as ungrowing season.
 #' @param methods Character, find curve fitting names, can be one of 
@@ -44,8 +49,8 @@
 #' plot_phenofit(fit, d) # plot to check the curve fitting
 #' @export
 curvefits <- function(INPUT, brks, nptperyear = 23,
-                      wFUN = wTSM, iters = 2, wmin = 0.1,
-                      extend_month = 12, nextent = 2,
+                      wFUN = wTSM, iters = 2, wmin = 0.2,
+                      nextent = 2, maxExtendMonth = 3, minExtendMonth = 1, 
                       minT = 0,
                       methods = c('AG', 'zhang', 'beck', 'elmore', 'Gu'),
                       qc, minPercValid = 0.2,
@@ -60,16 +65,19 @@ curvefits <- function(INPUT, brks, nptperyear = 23,
     Tn     <- INPUT$Tn #if has no Tn, NULL will be return
     has_Tn <- ifelse(is_empty(Tn), F, T)
     y0     <- INPUT$y0 #original y
-    w0     <- INPUT$w
+    w <- w0 <- INPUT$w
 
     if (is.null(y0)) y0 <- INPUT$y
-    # title(x$site[1])
     if (all(is.na(INPUT$y))) return(NULL)
-    # also constrained in `optim_pheno` function
-    # if (sum(INPUT$w == 0)/length(INPUT$w) > 0.5) return(NULL) 
-    w   <- INPUT$w
+
+    # possible snow or cloud, replaced with whittaker smooth.
     I_w <- match(brks$whit$t, t) %>% rm_empty()
+
+    I_fix <- which(w[I_w] == wmin)
+    I_y   <- I_w[I_fix]
+    INPUT$y[I_y] <- dplyr::last(brks$whit)[I_fix]
     w[I_w] <- brks$whit$w
+    #w[I_fix]       <- wmin + 0.1 # exert the function of whitaker smoother
 
     di <- brks$di
     if (is.null(di)){
@@ -78,18 +86,15 @@ curvefits <- function(INPUT, brks, nptperyear = 23,
                           peak = getDateId(brks$dt$peak),
                           end  = getDateId(brks$dt$end)) %>% na.omit()
     }
-    # possible snow or cloud, replaced with whittaker smooth.
-    # I_fix <- which(w == wmin)
-    # INPUT$y[I_fix] <- brks$whit %>% {.[[ncol(.)]][I_fix]}
-    # w[I_fix]       <- 0.2 # exert the function of whitaker smoother
 
     # plot(y, type = "b"); grid()
     # lines(brks$whit$iter3, col = "blue")
     # lines(INPUT$y        , col = "red")
-    width_extend = floor(nptperyear/12*extend_month)
+    MaxExtendWidth = ceiling(nptperyear/12*maxExtendMonth)
+    MinExtendWidth = ceiling(nptperyear/12*minExtendMonth)
     width_ylu    = nptperyear*2
 
-    y <- INPUT$y
+    y    <- INPUT$y
     fits <- list()
     for (i in 1:nrow(di)){ #
         if (print) runningId(i, prefix = '\t[curvefits] ')
@@ -98,7 +103,7 @@ curvefits <- function(INPUT, brks, nptperyear = 23,
         I_beg <- di$beg[i]
         I_end <- di$end[i]
 
-        I_extend <- get_extentI(w0, width_extend, I_beg, I_end, nextent, wmin)
+        I_extend <- get_extentI(w0, MaxExtendWidth, MinExtendWidth, I_beg, I_end, nextent, wmin)
 
         ### 2. input data
         ti   <- doys[I_extend]
@@ -107,7 +112,7 @@ curvefits <- function(INPUT, brks, nptperyear = 23,
         # yi_good <- yi[w0[I_extend] > wmin]
 
         ### update ylu in a three year moving window
-        ylu <- get_ylu (y, years, w0, width_ylu, I_beg, I_end, Imedian = TRUE, wmin = 0.1)
+        ylu <- get_ylu (y, years, w0, width_ylu, I_beg, I_end, Imedian = TRUE, wmin)
         ylu <- merge_ylu(INPUT$ylu, ylu)
 
         # yi[yi < ylu[1]] <- ylu[1] # update y value
@@ -138,7 +143,7 @@ curvefits <- function(INPUT, brks, nptperyear = 23,
         # lines(x$tout, x$fits$iter2)
 
         #if too much missing values
-        if (sum(wi > pmax(wmin, 0.2))/length(wi) < minPercValid){
+        if (sum(wi > pmax(wmin+0.1, 0.2))/length(wi) < minPercValid){
             fit %<>% map(function(x){
                 x$fits %<>% map(~.x*NA) # list()
                 return(x)
@@ -153,23 +158,27 @@ curvefits <- function(INPUT, brks, nptperyear = 23,
 }
 
 # extend curve fitting period
-get_extentI <- function(w0, width, I_beg, I_end, nextent = 1, wmin = 0.1){
+get_extentI <- function(w0, MaxExtendWidth, MinExtendWidth, I_beg, I_end, nextent = 1, wmin = 0.1){
     n <- length(w0)
 
     I_beg2  <- I_end2 <- NA
     # period <- floor(nptperyear/12*extend_month)
-
     if (!is.null(nextent)){
-        I_beg_raw <- seq(max(1, I_beg-1), max(1, I_beg-width))
-        I_end_raw <- seq(min(n, I_end+1), min(n, I_end+width))
+        I_beg_raw <- seq(max(1, I_beg-1), max(1, I_beg-MaxExtendWidth))
+        I_end_raw <- seq(min(n, I_end+1), min(n, I_end+MaxExtendWidth))
 
         # at least `nextent` marginal point in previous and following season
+        # I_beg2 and I_end2 have been constrained in the range of [1, n]
         I_beg2 <- I_beg_raw[ which(w0[I_beg_raw] > wmin)[nextent]  ]
         I_end2 <- I_end_raw[ which(w0[I_end_raw] > wmin)[nextent]  ]
     }
 
-    if(is.na(I_beg2)) I_beg2 <- pmax(1, I_beg - width)
-    if(is.na(I_end2)) I_end2 <- pmin(n, I_end + width)
+    # in case of previous and subsequent season good values too closed
+    max_Beg <- max(1, I_beg - MinExtendWidth)
+    min_End <- min(n, I_end + MinExtendWidth)
+
+    I_beg2 <- ifelse( is.na(I_beg2), max_Beg, min(I_beg2, max_Beg))
+    I_end2 <- ifelse( is.na(I_end2), min_End, max(I_end2, min_End))
 
     return( I_beg2:I_end2 )
 }
