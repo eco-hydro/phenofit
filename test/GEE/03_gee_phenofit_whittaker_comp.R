@@ -1,11 +1,11 @@
 source('test/stable/load_pkgs.R')
-source("R/plot_phenofit.R")
+# source("R/plot_phenofit.R")
 
 # main functions
 stations212 <- fread("F:/Github/MATLAB/PML/data/flux-212.txt")
 # get curve fitting results
 getFit <- function(fit){
-    df_fit <- get_fittings(fit) %>% data.table()
+    df_fit <- getFittings(fit) %>% data.table()
 
     whit <- melt(fit$seasons$whit, measure.vars = c("iter1", "iter2"),
                  variable.name = "iters", value.name = "val")
@@ -44,9 +44,7 @@ table_count <- function(x, levels){
 
 ## 00. raw MOD13A1
 df_raw     <- fread("data_test/phenofit166_MOD13A1_INPUT.csv", strip.white = F)
-df_raw[, `:=`( t = ymd(t),
-           SummaryQA = factor(SummaryQA, qc_levels))]
-colnames(df_raw)[1] <- "site"
+df_raw[, `:=`( t = ymd(t), SummaryQA = factor(SummaryQA, qc_levels))]
 
 ## 01. load MOD13A1 curve fitting
 lst <- get_slurm_out("Y:/github/phenofit_cluster/result/flux166_MOD13A1/")

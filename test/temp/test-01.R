@@ -22,7 +22,6 @@ sitename   <- dt$site[1]
 nptperyear <- 23
 
 ################################################################################
-source("test/GEE/pkg_seasonality.R")
 
 methods <- c("sgfitw", "whitsmw2", "wHANTS")
 method  <- methods[3] #"sgfitw", "whitsmw2" and "wHANTS".

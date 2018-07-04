@@ -8,9 +8,15 @@ library(lubridate)
 
 source('test/stable/load_pkgs.R')
 
-indir <- "D:/Document/GoogleDrive/phenofit/data/gee_phenofit/v2/"
-files <- dir(indir, "*.geojson", full.names = T)
-df_gee <- read_whits.gee(files)
+indir  <- "D:/Document/GoogleDrive/phenofit/data/gee_phenofit/v2/"
+prefix <- ("phenoflux", "phenocam")
+
+readwhit.gee <- function(prefix){
+    pattern <- paste0(prefix, "_.*.geojson")
+    files   <- dir(indir, pattern, full.names = T)
+    df      <- read_whits.gee(files)
+    df
+}
 
 df <- fread("file:///D:/Document/GoogleDrive/phenofit/data/fluxsites212_MOD13A1_006_0m_buffer.csv")
 df <- df[, .(site = substr(`system:index`, 12, 17),

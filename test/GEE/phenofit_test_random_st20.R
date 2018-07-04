@@ -20,7 +20,6 @@ ymax_min   <- 0.1
 
 # info <- rm_nonSIPoints(df, IsPlot = T, file = 'SI_2.pdf')
 ################################################################################
-source("test/GEE/pkg_seasonality.R")
 
 methods <- c("sgfitw", "whitsmw2", "wHANTS")
 method  <- methods[2] #"sgfitw", "whitsmw2" and "wHANTS".

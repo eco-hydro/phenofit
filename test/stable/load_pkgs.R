@@ -131,7 +131,7 @@ read_whits.gee <- function(files){
     years <- 2000:2017
     doy   <- seq(1, 366, 16)
     date    <- sprintf("%4d%03d", rep(years, each = 23), doy)[-(1:3)] %>% parse_date_time("%Y%j") %>% date()
-    df$date <- date[-c(399, 401)]
+    df$date <- date # 20180705, Simon has fixed image missing
     df
 }
 
