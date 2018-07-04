@@ -74,3 +74,4 @@ main <- function(infile, st){
 
 main(file_cam, st_cam)
 main(file_flux, st_flux)
+# check phenocam 85 IGBPname

@@ -87,6 +87,7 @@ rmNonSeasonality <- function(dt, IsPlot = T, file = 'SI.pdf'){
 #' (\code{Date} variable).
 #' 
 #' @return data.table
+#' @export
 add_HeadTail <- function(d, nptperyear = 23){
     # I_beg <- floor(yday(ymd(20000218))/16) # MOD13A1 20000218 is the 4th 16-day
     ntime    <- nrow(d)

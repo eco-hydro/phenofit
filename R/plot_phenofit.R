@@ -58,7 +58,7 @@ getFittings <- function(fit){
 #' @importFrom dplyr left_join
 #' @export
 plot_phenofit <- function(fit, d, title = NULL, show.legend = T, plotly = F){
-    pdat1 <- get_fittings(fit)
+    pdat1 <- getFittings(fit)
     # t_fit <- index(fits_years[[1]]) + t[1] - 1
     # 1. curve fitting data
     # pdat1 <- dplyr::full_join(fit$INPUT, new, by = "t") %>%

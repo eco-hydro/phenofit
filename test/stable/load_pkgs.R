@@ -138,8 +138,10 @@ read_whits.gee <- function(files){
 get_phenofit <- function(sitename, df, st, prefix_fig = 'phenofit_v3'){
     d     <- df[site == sitename, ] # get the first site data
     sp    <- st[site == sitename, ] # station point
-    titlestr <- with(sp, sprintf('[%03d_%s] %s, lat = %5.2f, lon = %6.2f',
+    titlestr <- with(sp, sprintf('[%03d,%s] %s, lat = %5.2f, lon = %6.2f',
                                      ID, site, IGBPname, lat, lon))
+    file_pdf <- sprintf('Figure/%s_[%03d]_%s.pdf', prefix_fig, sp$ID[1], sp$site[1])
+
     tryCatch({
         dnew  <- add_HeadTail(d)
         # 1. Check input data and initial parameters for phenofit
@@ -170,7 +172,6 @@ get_phenofit <- function(sitename, df, st, prefix_fig = 'phenofit_v3'){
         fit$seasons <- brks2
 
         # svg("Figure1_phenofit_curve_fitting.svg", 11, 7)
-        file_pdf = sprintf('Figure/%s_%s.pdf', prefix_fig, d$site[1])
         Cairo::CairoPDF(file_pdf, 11, 6) #
         # grid::grid.newpage()
         plot_phenofit(fit, d, titlestr) %>% grid::grid.draw()# plot to check the curve fitting
