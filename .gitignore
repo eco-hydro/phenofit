@@ -51,3 +51,4 @@ inst/doc
 result
 log
 *.RDS
+result.rda

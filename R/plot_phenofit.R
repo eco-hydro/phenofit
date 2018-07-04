@@ -1,22 +1,41 @@
-#' plot_phenofit
-#'
-#' @param fit data from phenofit_site
-#' @importFrom dplyr left_join
+# get curve fitting of spline, deprecated
+getFitVI <- function(fit_years){
+    map(fit_years, ~window(.x$pred, .x$data$t)) %>% do.call(c, .) %>% set_names(NULL)
+}
+
+getFitValueYear <- function(fit_year, first = FALSE){
+    t         <- fit_year$data$t
+    I         <- match(t, fit_year$tout)
+    d_iters   <- map_df(fit_year$fits, ~.x[I])
+    d_iters$t <- t
+    if (!first) d_iters <- d_iters[-1, ]
+    return(d_iters)
+}
+
+#' getFitValueYears
+#' @examples
+#' origin.date <- fit$INPUT$t[1]
+#' out$t %<>% add(origin.date - 1)
+getFitValueYears <- function(fit_years){
+    # Avoiding overlap, only first year include first point, 
+    nyear <- length(fit_years)
+    first  <- map_df(fit_years[1], getFitValueYear, first = T)
+    others <- map_df(fit_years[2:nyear], getFitValueYear)
+    rbind(first, others)
+}
+
 #' @export
-plot_phenofit <- function(fit, d, title = NULL, show.legend = T, plotly = F){
+getFittings <- function(fit){
     #global variables
     origin.date <- fit$INPUT$t[1] #
     I   <- match(fit$tout, fit$INPUT$t)
     org <- as_tibble(fit$INPUT[c('t', 'y', 'w')])[I, ]
 
-    getFitVI <- function(fit_years){
-        map(fit_years, ~window(.x$pred, .x$data$t)) %>% do.call(c, .) %>% set_names(NULL)
-    }
     # fit_years: fits for one method, multiple years
     getFitVI_iters <- function(fit_years){
-        if (is.null(fit_years[[1]]$fun)){
-            out <- getFitVI(fit_years) %>% as.numeric() %>% {tibble(iter1 = .)}
-        }else{
+        if (!is.null(fit_years[[1]]$fun)){
+        #     out <- getFitVI(fit_years) %>% as.numeric() %>% {tibble(iter1 = .)}
+        # }else{
             out <- getFitValueYears(fit_years)
         }
         # out
@@ -28,8 +47,18 @@ plot_phenofit <- function(fit, d, title = NULL, show.legend = T, plotly = F){
     }
 
     fits_years <- map(fit$fits, getFitVI_iters)
-    pdat1 <- melt(fits_years, id.vars = colnames(org)) %>%
+    res <- melt(fits_years, id.vars = colnames(org)) %>%
         set_names(c(colnames(org), "iters", "val", "meth"))
+    return(res)
+}
+
+#' plot_phenofit
+#'
+#' @param fit data from phenofit_site
+#' @importFrom dplyr left_join
+#' @export
+plot_phenofit <- function(fit, d, title = NULL, show.legend = T, plotly = F){
+    pdat1 <- get_fittings(fit)
     # t_fit <- index(fits_years[[1]]) + t[1] - 1
     # 1. curve fitting data
     # pdat1 <- dplyr::full_join(fit$INPUT, new, by = "t") %>%
@@ -104,7 +133,7 @@ plot_phenofit <- function(fit, d, title = NULL, show.legend = T, plotly = F){
 
 #' make_legend
 make_legend <- function(){
-    labels <- c(" good", " margin", " snow&ice", " cloud", "iter1", "iter2", "whit")
+    labels <- c(" good", " margin", " snow/ice", " cloud", "iter1", "iter2", "whit")
     colors <- c("grey60", "#00BFC4", "#F8766D", "#C77CFF", "blue", "red", "black")
     pch <- c(19, 15, 4, 17, NA, NA, NA)
     lty <- c(0, 0, 1, 0, rep(1, 3))
@@ -118,22 +147,6 @@ make_legend <- function(){
     return(lgd)
 }
 lgd <- make_legend()
-
-getFitValueYear <- function(fit_year){
-    t         <- fit_year$data$t
-    I         <- match(t, fit_year$tout)
-    d_iters   <- map_df(fit_year$fits, ~.x[I])
-    d_iters$t <- t
-    return(d_iters)
-}
-
-#' getFitValueYears
-#' @examples
-#' origin.date <- fit$INPUT$t[1]
-#' out$t %<>% add(origin.date - 1)
-getFitValueYears <- function(fit_years){
-    map_df(fit_years, getFitValueYear)
-}
 
 #' tidyFits_pheno
 #'

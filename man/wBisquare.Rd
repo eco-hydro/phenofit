@@ -4,7 +4,7 @@
 \alias{wBisquare}
 \title{Bisquare weight update method}
 \usage{
-wBisquare(y, yfit, w, ...)
+wBisquare(y, yfit, w, wmin, ...)
 }
 \description{
 Bisquare has been modified to emphasis on upper envelope.

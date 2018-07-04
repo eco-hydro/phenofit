@@ -1,16 +1,17 @@
 Package: phenofit
 Type: Package
 Title: phenofit
-Version: 0.1.0
+Version: 0.1.2
 Author: Dongdong Kong
 Maintainer: kongdd<kongdd.sysu@gmail.com>
-Description: Satellite Vegetation index (e.g. AVHRR, SPOT, MODIS NDVI & EVI) docucurve fit and extract phenology metrics.
-License: What license is it under?
+Description: A remote sensing vegetation index phenology extraction package.
+License: MIT | file LICENSE
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.0.1
 LinkingTo: Rcpp, RcppArmadillo
-Imports: Rcpp, RcppArmadillo
+Imports: Rcpp, RcppArmadillo, data.table, gridExtra, reshape2, zoo, 
+    dplyr, purrr, stringr, tidyr, ggplot2, lubridate
 Suggests: knitr,
     rmarkdown
 VignetteBuilder: knitr

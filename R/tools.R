@@ -78,6 +78,29 @@ list.cbind <- function(x) do.call(cbind.data.frame, x) %>% set_colnames(names(x)
 #' @export
 list.rbind <- function(x) do.call(rbind.data.frame, x) %>% set_rownames(names(x))#%>% set_rownames(names(x))
 
+#' Add n-day flag
+#' 
+#' To aggregated data into n-day (e.g. 8-day, 16-day) like MODIS product, a 
+#' n-day flag is need.
+#' 
+#' @param d data.frame or data.table
+#' @param days Integer number or vector, can't have duplicated value.
+#' @export
+add_dn <- function(d, days = 8){
+    if (class(d$date) != 'Date')
+        d$date %<>% ymd()
+    
+    d %<>% plyr::mutate(d, year = year(date), doy = yday(date))
+    
+    days <- floor(days)
+    for (i in seq_along(days)){
+        day <- days[i]
+        # d$d8  = ceiling(d$doy/8)
+        eval(parse(text = sprintf("d$d%d <- ceiling(d$doy/%d)", day, day)))
+    }
+    return(d)
+}
+
 #' reorder_name
 #' @export
 reorder_name <- function(d,
