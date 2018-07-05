@@ -1,25 +1,8 @@
 library(phenofit)
-library(Ipaper)
-
-library(data.table)
-library(plyr)
-library(lubridate)
-library(magrittr)
-library(purrr)
-library(tidyverse)
-
 source('test/stable/load_pkgs.R')
 # source("R/plot_phenofit.R")
 
 ################################################################################
-dir_data <- "data_test/"
-
-file_st_cam  <- paste0(dir_data, "st_phenocam133.csv")
-file_st_flux <- paste0(dir_data, "st_phenoflux166.csv")
-
-file_flux <- paste0(dir_data, "phenoflux166_MOD13A1_INPUT.csv")
-file_cam  <- paste0(dir_data, "phenocam133_MOD13A1_INPUT.csv")
-
 if (.Platform$OS.type == "windows"){
     st_flux <- fread("F:/Github/MATLAB/PML/data/flux_166.csv")
     st_cam  <- fread("D:/SciData/PhenoCam/PhenoCam_V1_1511/phenocam133_site.csv")

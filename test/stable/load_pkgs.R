@@ -6,6 +6,8 @@ library(tidyverse)
 
 library(magrittr)
 library(lubridate)
+library(purrr)
+
 library(zoo)
 
 library(Ipaper)
@@ -19,6 +21,16 @@ library(pbmcapply)
 library(MASS)
 library(broom)
 
+## fluxnet2015 and phenocam dataset were used to test phenofit
+dir_data <- "data_test/"
+
+file_st_cam  <- paste0(dir_data, "st_phenocam133.csv")
+file_st_flux <- paste0(dir_data, "st_phenoflux166.csv")
+
+file_flux <- paste0(dir_data, "phenoflux166_MOD13A1_INPUT.csv")
+file_cam  <- paste0(dir_data, "phenocam133_MOD13A1_INPUT.csv")
+
+## 
 if (.Platform$OS.type == "unix"){
     dir_climate <- "/OSM/CBR/CoRE/working/timeseries/Climate/"
     dir_flush   <- "/flush1/kon055/"
@@ -55,7 +67,6 @@ fix_level <- function(x){
         rev(c('TRS1.EOS', 'TRS2.EOS', 'Dormancy', 'RD')))
     factor(x, phenophase) %>% mapvalues(phenophase, phenophase_spl)#return
 }
-
 
 siteorder <- function(sites){ factor(sites) %>% as.numeric() }
 
@@ -99,7 +110,7 @@ tidyMOD13INPUT_gee <- function(infile, outfile){
 
 ############################# GEE WHITTAKER ####################################
 #' This function is only used to read gee_phenofit whittaker result.
-read_whit.gee <- function(file){
+read_whitMat.gee <- function(file){
     lst   <- read_json(file)$features
     ncol  <- length(lst[[1]]$properties$array[[1]])
     names <- c("raw", paste0("iter", 1:(ncol-1) ) )
@@ -124,8 +135,8 @@ read_whit.gee <- function(file){
 #' indir <- "D:/Document/GoogleDrive/phenofit/data/gee_phenofit/v2/"
 #' files <- dir(indir, "*.geojson", full.names = T)
 #' df_gee <- read_whits.gee(files)
-read_whits.gee <- function(files){
-    lst   <- llply(files, read_whit.gee, .progress = "text")
+read_whitMats.gee <- function(files){
+    lst   <- llply(files, read_whitMat.gee, .progress = "text")
     df    <- do.call(rbind, lst) %>% {.[order(site), ]}
 
     years <- 2000:2017
