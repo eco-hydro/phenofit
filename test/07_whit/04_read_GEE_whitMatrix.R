@@ -1,40 +1,22 @@
 library(jsonlite)
-library(tidyverse)
-library(data.table)
-library(magrittr)
-library(phenofit)
-library(plyr)
-library(lubridate)
+library(grid)
+library(gridExtra)
 
 source('test/stable/load_pkgs.R')
 
-indir  <- "D:/Document/GoogleDrive/phenofit/data/gee_phenofit/v2/"
-prefix <- ("phenoflux", "phenocam")
+dir_gdrive  <- "D:/Document/GoogleDrive/" #phenofit/data/gee_phenofit/v2/
+mat_cam  <- readwhitMAT(dir_gdrive, "phenocam")
+mat_flux <- readwhitMAT(dir_gdrive, "fluxnet")
 
-readwhit.gee <- function(prefix){
-    pattern <- paste0(prefix, "_.*.geojson")
-    files   <- dir(indir, pattern, full.names = T)
-    df      <- read_whits.gee(files)
-    df
-}
-
-df <- fread("file:///D:/Document/GoogleDrive/phenofit/data/fluxsites212_MOD13A1_006_0m_buffer.csv")
-df <- df[, .(site = substr(`system:index`, 12, 17),
-             date = ymd(date),
-             EVI  = EVI/1e4,
-             qc = SummaryQA)]
+full_cam  <- tidyMOD13INPUT_gee(file_cam)  %>% merge(st_cam[, .(site)])
+full_flux <- tidyMOD13INPUT_gee(file_flux) %>% merge(st_flux[, .(site)])
 
 df_full = merge(df_gee, df, by = c("site", "date"))
 df_full[is.na(qc), qc := 3]
 df_full$qc %<>% as.factor()
 ## visualization
 sites <- unique(df_full$site)
-
-lgd <- phenofit:::make_legend()
-
-
-library(grid)
-library(gridExtra)
+lgd   <- phenofit:::make_legend()
 
 file <- "whit_GEE.pdf"
 Cairo::CairoPDF(file, 10, 4)

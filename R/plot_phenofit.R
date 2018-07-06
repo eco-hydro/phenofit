@@ -48,7 +48,7 @@ getFittings <- function(fit){
 
     fits_years <- map(fit$fits, getFitVI_iters)
     res <- melt(fits_years, id.vars = colnames(org)) %>%
-        set_names(c(colnames(org), "iters", "val", "meth"))
+        set_names(c(colnames(org), "iters", "val", "meth")) %>% data.table()
     return(res)
 }
 

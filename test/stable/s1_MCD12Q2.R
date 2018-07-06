@@ -1,4 +1,4 @@
-source('F:/Github/phenology/China_Phenology/R/phenofit/test/stable/geom_boxplot_no_outlier.R')
+source('test/stable/geom_boxplot_no_outlier.R')
 
 site_rm2 <- c("AU-Cum", "AU-Cpr", "AU-Gin", "AU-RDF", "AU-Stp", "AU-Tum","AU-Wac",
     "IT-Noe","BR-Sa3", "CH-Oe2","DE-Kli", "FR-Pue","GF-Guy", "IT-BCi", "US-Blo", "US-SRG","US-Whs")

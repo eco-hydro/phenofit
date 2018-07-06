@@ -1,7 +1,7 @@
-windowsFonts(Times = windowsFont("Time New Roman"),
+windowsFonts(Times = windowsFont("Times New Roman"),
              Arial = windowsFont("Arial"))
-fontsize <- 12
-mytheme <- theme_grey(base_size = fontsize, base_family = "Arial") +
+fontsize <- 14
+mytheme_grey <- theme_grey(base_size = fontsize, base_family = "Arial") +
     theme(
         # legend.position = c(0.02, 0.02), legend.justification = c(0, 0),
         # legend.position="bottom",
@@ -19,7 +19,27 @@ mytheme <- theme_grey(base_size = fontsize, base_family = "Arial") +
         panel.grid.major = element_line(colour = "white"),
         panel.grid.minor = element_line(size = 0.2),
         plot.margin = unit(c(1,3,1,1)*0.2, "cm"))
-theme_set(mytheme)
+
+# theme_grey, theme_gray, theme_light
+mytheme_light  <- theme_light(base_size = fontsize, base_family = "Times") +
+    theme(
+        # legend.position = c(0.02, 0.02), legend.justification = c(0, 0), 
+        # legend.position="bottom", 
+        text = element_text(colour = "black", size = fontsize), 
+        # axis.title.x = element_blank(),
+        # plot.title = element_text(hjust = 0),
+        axis.title = element_text(face = "bold", size = fontsize), 
+        axis.text  = element_text(colour = "black", size = fontsize), 
+        strip.text = element_text(colour = "black", size = fontsize, face = "bold"),
+        # axis.text.x = element_text(angle = 0, size = fontsize), 
+        # legend.margin = unit(0.2, "cm"), 
+        legend.text  = element_text(size = fontsize, face = "bold"), 
+        legend.title = element_blank(), 
+        panel.grid.minor.y = element_blank(), 
+        # panel.grid.major = element_line(colour = "white"), 
+        panel.grid.minor = element_line(size = 0.2),
+        plot.margin = unit(c(1,3,1,1)*0.2, "cm"))
+theme_set(mytheme_light)
 
 ##
 pbar <- function(p){

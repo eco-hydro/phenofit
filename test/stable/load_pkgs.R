@@ -7,7 +7,6 @@ library(tidyverse)
 library(magrittr)
 library(lubridate)
 library(purrr)
-
 library(zoo)
 
 library(Ipaper)
@@ -48,6 +47,74 @@ IGBPnames_006 <- c("ENF", "EBF", "DNF", "DBF", "MF" , "CSH",
 IGBPnames_005 <- c("water", "ENF", "EBF", "DNF", "DBF", "MF" , "CSH",
                    "OSH", "WSA", "SAV", "GRA", "WET", "CRO",
                    "URB", "CNV", "SNOW", "BSV", "UNC")
+
+get_phenofit <- function(sitename, df, st, prefix_fig = 'phenofit_v3'){
+    d     <- df[site == sitename, ] # get the first site data
+    sp    <- st[site == sitename, ] # station point
+    titlestr <- with(sp, sprintf('[%03d,%s] %s, lat = %5.2f, lon = %6.2f',
+                                     ID, site, IGBPname, lat, lon))
+    file_pdf <- sprintf('Figure/%s_[%03d]_%s.pdf', prefix_fig, sp$ID[1], sp$site[1])
+
+    tryCatch({
+        dnew  <- add_HeadTail(d)
+        # 1. Check input data and initial parameters for phenofit
+        INPUT <- check_input(dnew$t, dnew$y, dnew$w, maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
+        INPUT$y0 <- dnew$y
+        IsPlot   <- FALSE # for brks
+        # 2. The detailed information of those parameters can be seen in `season`.
+        lambda <- init_lambda(INPUT$y)#*2
+        # brks   <- season(INPUT, nptperyear,
+        #                FUN = whitsmw2, wFUN = wFUN, iters = 2,
+        #                lambda = lambda,
+        #                IsPlot = IsPlot, plotdat = d,
+        #                south = d$lat[1] < 0,
+        #                rymin_less = 0.6, ymax_min = ymax_min,
+        #                max_MaxPeaksperyear =2.5, max_MinPeaksperyear = 3.5) #, ...
+        # get growing season breaks in a 3-year moving window
+        brks2 <- season_3y(INPUT, nptperyear, south = sp$lat[1] < 0, FUN = whitsmw2,
+                           IsPlot = IsPlot, print = print, partial = F)
+
+        # 3. curve fitting
+        fit  <- curvefits(INPUT, brks2, lambda =lambda,
+                          methods = c("AG", "zhang", "beck", "elmore"), #,"klos",, 'Gu'
+                          nptperyear = nptperyear, debug = F, wFUN = wTSM,
+                          nextent = 2, maxExtendMonth = 3, minExtendMonth = 1,
+                          qc = as.numeric(dnew$SummaryQA), minPercValid = 0.2,
+                          print = print)
+        fit$INPUT   <- INPUT
+        fit$seasons <- brks2
+
+        # svg("Figure1_phenofit_curve_fitting.svg", 11, 7)
+        Cairo::CairoPDF(file_pdf, 11, 6) #
+        # grid::grid.newpage()
+        plot_phenofit(fit, d, titlestr) %>% grid::grid.draw()# plot to check the curve fitting
+        dev.off()
+
+        # temp <- ExtractPheno(fit$fits$ELMORE[1:5], IsPlot = T) # check extracted phenology
+        ## 3.2 Get GOF information
+        stat  <- ldply(fit$fits, function(fits_meth){
+            ldply(fits_meth, statistic.phenofit, .id = "flag")
+        }, .id = "meth")
+        fit$stat <- stat
+
+        # 4. extract phenology, check extracted phenology extraction for one method.
+        # ratio = 1.15
+        # file <- "Figure5_Phenology_Extraction_temp.pdf"
+        # cairo_pdf(file, 8*ratio, 6*ratio)
+        # temp <- ExtractPheno(fit$fits$ELMORE[2:6], IsPlot = T)
+        # dev.off()
+        # file.show(file)
+
+        # pheno: list(p_date, p_doy)
+        p <- lapply(fit$fits, ExtractPheno)
+        pheno  <- map(p, tidyFitPheno, origin = INPUT$t[1]) %>% purrr::transpose()
+
+        fit$pheno  <- pheno
+        return(fit)
+    }, error = function(e){
+        message(sprintf('[e]: %s, %s', titlestr, e$message))
+    })
+}
 
 # rename phenofit phenology metrics names
 fix_level <- function(x){
@@ -123,11 +190,12 @@ read_whitMat.gee <- function(file){
             data.table()
     })
 
-    sites <- map_chr(lst, "id") %>% str_extract(".*(?=_)")
-
+    sites <- map_chr(lst, ~.x$properties$site)
+    # sites <- map_chr(lst, "id") %>% str_extract(".*(?=_)")
     df <- set_names(data, sites) %>% melt_list(var.name = "site")
     df
 }
+
 
 #' read gee_phenofit whittaker from multiple json files
 #' 
@@ -146,73 +214,15 @@ read_whitMats.gee <- function(files){
     df
 }
 
-get_phenofit <- function(sitename, df, st, prefix_fig = 'phenofit_v3'){
-    d     <- df[site == sitename, ] # get the first site data
-    sp    <- st[site == sitename, ] # station point
-    titlestr <- with(sp, sprintf('[%03d,%s] %s, lat = %5.2f, lon = %6.2f',
-                                     ID, site, IGBPname, lat, lon))
-    file_pdf <- sprintf('Figure/%s_[%03d]_%s.pdf', prefix_fig, sp$ID[1], sp$site[1])
-
-    tryCatch({
-        dnew  <- add_HeadTail(d)
-        # 1. Check input data and initial parameters for phenofit
-        INPUT <- check_input(dnew$t, dnew$y, dnew$w, maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
-        INPUT$y0 <- dnew$y
-        IsPlot   <- FALSE # for brks
-        # 2. The detailed information of those parameters can be seen in `season`.
-        lambda <- init_lambda(INPUT$y)#*2
-        # brks   <- season(INPUT, nptperyear,
-        #                FUN = whitsmw2, wFUN = wFUN, iters = 2,
-        #                lambda = lambda,
-        #                IsPlot = IsPlot, plotdat = d,
-        #                south = d$lat[1] < 0,
-        #                rymin_less = 0.6, ymax_min = ymax_min,
-        #                max_MaxPeaksperyear =2.5, max_MinPeaksperyear = 3.5) #, ...
-        # get growing season breaks in a 3-year moving window
-        brks2 <- season_3y(INPUT, nptperyear, south = sp$lat[1] < 0, FUN = whitsmw2,
-                           IsPlot = IsPlot, print = print, partial = F)
-
-        # 3. curve fitting
-        fit  <- curvefits(INPUT, brks2, lambda =lambda,
-                          methods = c("AG", "zhang", "beck", "elmore"), #,"klos",, 'Gu'
-                          nptperyear = nptperyear, debug = F, wFUN = wTSM,
-                          nextent = 2, maxExtendMonth = 3, minExtendMonth = 1,
-                          qc = as.numeric(dnew$SummaryQA), minPercValid = 0.2,
-                          print = print)
-        fit$INPUT   <- INPUT
-        fit$seasons <- brks2
-
-        # svg("Figure1_phenofit_curve_fitting.svg", 11, 7)
-        Cairo::CairoPDF(file_pdf, 11, 6) #
-        # grid::grid.newpage()
-        plot_phenofit(fit, d, titlestr) %>% grid::grid.draw()# plot to check the curve fitting
-        dev.off()
-
-        # temp <- ExtractPheno(fit$fits$ELMORE[1:5], IsPlot = T) # check extracted phenology
-        ## 3.2 Get GOF information
-        stat  <- ldply(fit$fits, function(fits_meth){
-            ldply(fits_meth, statistic.phenofit, .id = "flag")
-        }, .id = "meth")
-        fit$stat <- stat
-
-        # 4. extract phenology, check extracted phenology extraction for one method.
-        # ratio = 1.15
-        # file <- "Figure5_Phenology_Extraction_temp.pdf"
-        # cairo_pdf(file, 8*ratio, 6*ratio)
-        # temp <- ExtractPheno(fit$fits$ELMORE[2:6], IsPlot = T)
-        # dev.off()
-        # file.show(file)
-
-        # pheno: list(p_date, p_doy)
-        p <- lapply(fit$fits, ExtractPheno)
-        pheno  <- map(p, tidyFitPheno, origin = INPUT$t[1]) %>% purrr::transpose()
-
-        fit$pheno  <- pheno
-        return(fit)
-    }, error = function(e){
-        message(sprintf('[e]: %s, %s', titlestr, e$message))
-    })
+#' read gee whit matrix
+#' 
+readwhitMAT <- function(indir, prefix){
+    pattern <- paste0(prefix, "_.*.geojson")
+    files   <- dir(indir, pattern, full.names = T)
+    df      <- read_whitMats.gee(files)
+    df
 }
+
 # nptperyear = 46
 # # df <- fread("data/lc006/PMLv2_flux112_sgfitw&TSM.csv")
 # df <- fread("PMLv2_flux112_CV.csv")

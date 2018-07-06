@@ -1,3 +1,4 @@
+# source('test/stable/geom_boxplot_no_outlier.R')
 # stat_summary(fun.data = box_qtl, geom = "errorbar", width = 0.5) +
 # geom_boxplot2(notch = TRUE, outlier.shape = NA, coef = 0, width = 0.8)
         

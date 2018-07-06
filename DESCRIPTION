@@ -13,5 +13,6 @@ LinkingTo: Rcpp, RcppArmadillo
 Imports: Rcpp, RcppArmadillo, data.table, gridExtra, reshape2, zoo, 
     dplyr, purrr, stringr, tidyr, ggplot2, lubridate
 Suggests: knitr,
-    rmarkdown
+    rmarkdown,
+    testthat
 VignetteBuilder: knitr

@@ -118,6 +118,14 @@ files_del <- sprintf("%s/%s_1day.csv", indir, info_del$grp)
 files_del %>% { file.rename(., paste(dirname(dirname(.)), basename(.), sep = "/") ) }
 
 
+## write station info into shapefile and upload to GEE
+# library(maptools)
+df <- fread(file_st_cam)
+sp <- df2sp(df)
+
+writePointsShape(sp, "phenocam_st133.shp")
+
+
 # b_overlap <- function(ints){
 #     n <- length(ints)
 #     flag <- FALSE
