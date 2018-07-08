@@ -1,5 +1,5 @@
 ---
-title: "Extract vegetation phenology from MOD13A1 by `phenofit`"
+title: "Extract vegetation phenology from MOD13A1"
 author: "Dongdong Kong"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
