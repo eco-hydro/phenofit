@@ -20,6 +20,11 @@ library(pbmcapply)
 library(MASS)
 library(broom)
 
+qc_values <- c("0", "1", "2", "3")
+qc_levels <- c("good", "margin", "snow/ice", "cloud")
+qc_colors <- c("grey60", "#00BFC4", "#F8766D", "#C77CFF") %>% set_names(qc_levels)
+qc_shapes <- c(19, 15, 4, 17) %>% set_names(qc_levels)
+
 ## fluxnet2015 and phenocam dataset were used to test phenofit
 dir_data <- "data_test/"
 
@@ -147,9 +152,6 @@ getRealDate <- function(df){
     df[abs(DayOfYear - doy) <  300, t := as.Date(sprintf("%d-%03d", year  , DayOfYear), "%Y-%j")]
     df
 }
-
-qc_values <- c("0", "1", "2", "3")
-qc_levels <- c(" good", " margin", " snow/ice", " cloud")
 
 #' Tidy phenofit INPUT data from raw original data exported from gee
 #' This function only suit for MODIS VI products (e.g. MOD13A1, MOD13A2, ...)

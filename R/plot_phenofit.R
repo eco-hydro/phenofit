@@ -58,6 +58,10 @@ getFittings <- function(fit){
 #' @importFrom dplyr left_join
 #' @export
 plot_phenofit <- function(fit, d, title = NULL, show.legend = T, plotly = F){
+    qc_levels <- c("good", "margin", "snow/ice", "cloud")
+    qc_colors <- c("grey60", "#00BFC4", "#F8766D", "#C77CFF") %>% set_names(qc_levels)
+    qc_shapes <- c(19, 15, 4, 17) %>% set_names(qc_levels)
+
     pdat1 <- getFittings(fit)
     # t_fit <- index(fits_years[[1]]) + t[1] - 1
     # 1. curve fitting data
@@ -90,26 +94,13 @@ plot_phenofit <- function(fit, d, title = NULL, show.legend = T, plotly = F){
         #     scale_shape_manual(values = c(21,22, 24:25)) +
         #     scale_fill_manual(values = c("grey40", "#7CAE00", "#F8766D", "#C77CFF")) +
         #     guides(shape = guide_legend(override.aes = list(size = 2)))
-        p  <- p + geom_point(data = d, aes(t, y, shape = SummaryQA, color = SummaryQA), size = 2, alpha = 0.7) +
+        p  <- p + geom_point(data = d, aes(t, y, shape=SummaryQA, color = SummaryQA), size = 2, alpha = 0.7) +
             geom_line(aes(color = iters), size = 0.8, alpha = 0.7) +
-            scale_color_manual(values = c("good" = "grey60", "margin" = "#00BFC4",
-                                          "snow/ice" = "#F8766D", "cloud" = "#C77CFF",
+            scale_color_manual(values = c(qc_colors,
                                           "iter1" = "blue", "iter2" = "red"), drop = F) +
-            scale_shape_manual(values = c(19, 15, 4, 17), drop = F) +
+            scale_shape_manual(values = qc_shapes, drop = F) +
             ylab('Vegetation Index')
-            # guides(shape = FALSE,
-            #        color = guide_legend(
-            #            "legend",
-            #            override.aes = list(
-            #                shape = c(c(19, 15, 4, 17)[c(4, 1, 2, 3)], NA, NA),
-            #                linetype = c(0, 0, 0, 0, 1, 1),
-            #                # color = c(" good" = "grey60", " margin" = "#00BFC4",
-            #                #           " snow&ice" = "#F8766D", " cloud" = "#C77CFF",
-            #                #           "iter1" = "blue", "iter2" = "red"),
-            #                name = letters[1:6],
-            #                size = 1.2
-            #            )
-            #        ))
+
     }else{
         p <- p + geom_point(aes(t, y), size = 2, alpha = 0.5, color = "grey60") +
             geom_line(aes(color = iters), size = 1)

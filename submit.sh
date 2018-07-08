@@ -15,4 +15,4 @@
 
 module load R
 # Rscript -e 'source("test/GEE/02_whit_lambda_main.R")'
-Rscript -e 'source("test/GEE/03_phenofit_test_flux&cam.R")'
+Rscript -e 'source("test/07_whit/01_phenofit_main_test_flux&cam.R")'

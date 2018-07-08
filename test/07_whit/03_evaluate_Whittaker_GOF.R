@@ -8,12 +8,18 @@ source('test/stable/ggplot/geom_boxplot_no_outlier.R')
 infile     <- file_cam
 dir_gdrive <- "D:/Document/GoogleDrive/"
 
-# df_cam  <- get_phenofit_result(file_cam)
-# df_flux <- get_phenofit_result(file_flux)
-#
-# st_cam  <- fread(file_st_cam)
-# st_flux <- fread(file_st_flux)
-load("D:/Documents/GoogleDrive/phenofit.rda")
+file <- "phenofit.rda"
+if (!file.exists(file)){
+    df_cam  <- get_phenofit_result(file_cam)
+    df_flux <- get_phenofit_result(file_flux)
+
+    st_cam  <- fread(file_st_cam)
+    st_flux <- fread(file_st_flux)
+    save(df_cam, df_flux, st_cam, st_flux, file = file)
+}else{
+    load(file)
+}
+# load("D:/Documents/GoogleDrive/phenofit.rda")
 
 methods <- c('AG', 'BECK', 'ELMORE', 'ZHANG', 'whit_R', 'whit_gee')[-5]
 

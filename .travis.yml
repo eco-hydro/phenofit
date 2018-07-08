@@ -3,6 +3,9 @@ cache: packages
 sudo: true
 dist: trusty
 
+r_packages:
+  - maptools
+
 r_github_packages:
   - r-lib/covr
 

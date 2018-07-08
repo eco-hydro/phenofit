@@ -1,4 +1,3 @@
-library(phenofit)
 source('test/stable/load_pkgs.R')
 # source("R/plot_phenofit.R")
 
@@ -18,13 +17,13 @@ if (.Platform$OS.type == "windows"){
 }
 
 # format raw MODIS VI data exported frorm GEE
-if (!file.exists(file_flux)){
-    infile_flux  <- "D:/Document/GoogleDrive/phenofit/data/fluxsites212_MOD13A1_006_0m_buffer.csv"
+if (!file.exists(file_flux) || !file.exists(file_cam)){
+    # phenoflux
+    infile_flux  <- "file:///D:/Document/GoogleDrive/phenoflux212_MOD13A1_006_0m_buffer.csv"
     tidyMOD13INPUT_gee(infile_flux) %>% merge(st_flux[, .(site)]) %>% fwrite(file_flux)
-}
 
-if (!file.exists(file_cam)){
-    infile_cam  <- "D:/Document/GoogleDrive/phenofit/data/phenocam133_MOD13A1_006_0m_buffer.csv"
+    ## phenocam
+    infile_cam  <- "file:///D:/Document/GoogleDrive/phenocam133_MOD13A1_006_0m_buffer.csv"
     tidyMOD13INPUT_gee(infile_cam) %>% merge(st_cam[, .(site)]) %>% fwrite(file_cam)
 }
 
@@ -35,14 +34,13 @@ rytrough_max <- 0.8  # trough < ymin + A*rymin_less
 nptperyear   <- 23   # How many points for a single year
 wFUN         <- wTSM # Weights updating function, could be one of `wTSM`, 'wBisquare', `wChen` and `wSELF`.
 
-
 print = T
 
 main <- function(infile, st){
     prefix <- str_extract(infile, "\\w*(?=_MOD)")
     outdir <- paste0("result/", prefix)
 
-    df     <- fread(infile, strip.white = F)
+    df     <- fread(infile) # , strip.white = T
     df     <- unique(df) # sometimes data is duplicated at begin and end.
     df[, `:=`( t = ymd(t),
         SummaryQA = factor(SummaryQA, qc_levels))]
