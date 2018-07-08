@@ -138,13 +138,13 @@ contain <- function(d, pattern = "NDVI|EVI") {
 #'
 #' rely on python pdfmerge package, `pip install pdfmerge`
 #' @export
-merge_pdf <- function(outfile = "RPlot.pdf", indir = 'Figs/', pattern = "*.pdf", del = FALSE){
+merge_pdf <- function(outfile = "RPlot.pdf", indir = 'Figure', pattern = "*.pdf", del = FALSE){
     # "Y:/R/phenofit/Figs/"
     files <- dir(indir, pattern, full.names = T)
     cmd <- sprintf("pdfmerge -o %s %s", outfile, paste(files, collapse = " "))
     shell(cmd, wait = FALSE)
     # shell(sprintf('pdfmerge -o %s %s', outfile, pattern) )
-    if (del) shell(sprintf('del %s', pattern))
+    if (del) shell(sprintf('del %s/%s', indir, pattern))
 }
 
 #' weighted CV

@@ -4,7 +4,7 @@
 \alias{merge_pdf}
 \title{merge_pdf}
 \usage{
-merge_pdf(outfile = "RPlot.pdf", indir = "Figs/", pattern = "*.pdf",
+merge_pdf(outfile = "RPlot.pdf", indir = "Figure", pattern = "*.pdf",
   del = FALSE)
 }
 \description{

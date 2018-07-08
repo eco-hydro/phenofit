@@ -12,6 +12,7 @@ RoxygenNote: 6.0.1
 LinkingTo: Rcpp, RcppArmadillo
 Imports: Rcpp, RcppArmadillo, data.table, gridExtra, reshape2, zoo, 
     dplyr, purrr, stringr, tidyr, ggplot2, lubridate, 
+    optimx,
     numDeriv
 Suggests: knitr,
     rmarkdown,

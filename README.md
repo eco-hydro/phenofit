@@ -1,5 +1,9 @@
 ## phenofit
 
+[![Travis Build
+Status](https://travis-ci.org/kongdd/phenofit.svg?branch=master)](https://travis-ci.org/kongdd/phenofit)
+[![codecov](https://codecov.io/gh/kongdd/phenofit/branch/master/graph/badge.svg)](https://codecov.io/gh/kongdd/phenofit)
+
 A state-of-the-art **remote sensing vegetation phenology** extraction package: `phenofit`
 
 

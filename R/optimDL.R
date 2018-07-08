@@ -18,6 +18,7 @@
 #' If using weights updating method, need to set `nptperyear` as global parameter.
 #'
 #' @return list(pred, par, fun)
+#' @import optimx
 #' @export
 optim_pheno <- function(prior, FUN_name, y, t, tout, optimFUN = I_optim, method,
     w, w0, ylu, iters = 2, wFUN = wTSM, nptperyear = 46, debug = FALSE, ...)
