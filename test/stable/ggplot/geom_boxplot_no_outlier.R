@@ -52,7 +52,7 @@ geom_boxplot2 <- function(mapping = NULL, data = NULL,
 #' @format NULL
 #' @usage NULL
 #' @export
-GeomBoxplot2 <- ggproto("GeomBoxplot", Geom,
+GeomBoxplot2 <- ggproto("GeomBoxplot2", Geom,
   setup_data = function(data, params) {
     data$width <- data$width %||%
       params$width %||% (resolution(data$x, FALSE) * 0.9)
@@ -84,7 +84,7 @@ GeomBoxplot2 <- ggproto("GeomBoxplot", Geom,
     data
   },
 
-  draw_group = function(data, panel_scales, coord, fatten = 2,
+  draw_group = function(data, panel_params, coord, fatten = 2,
                         outlier.colour = NULL, outlier.fill = NULL,
                         outlier.shape = 19,
                         outlier.size = 1.5, outlier.stroke = 0.5,
@@ -137,15 +137,15 @@ GeomBoxplot2 <- ggproto("GeomBoxplot", Geom,
         alpha = outlier.alpha %||% data$alpha[1],
         stringsAsFactors = FALSE
       )
-      outliers_grob <- GeomPoint$draw_panel(outliers, panel_scales, coord)
+      outliers_grob <- GeomPoint$draw_panel(outliers, panel_params, coord)
     } else {
       outliers_grob <- NULL
     }
 
     ggplot2:::ggname("geom_boxplot", grid::grobTree(
       outliers_grob,
-      GeomSegment$draw_panel(whiskers, panel_scales, coord),
-      GeomCrossbar$draw_panel(box, fatten = fatten, panel_scales, coord)
+      GeomSegment$draw_panel(whiskers, panel_params, coord),
+      GeomCrossbar$draw_panel(box, fatten = fatten, panel_params, coord)
     ))
   },
 
@@ -156,5 +156,6 @@ GeomBoxplot2 <- ggproto("GeomBoxplot", Geom,
 
   required_aes = c("x", "lower", "upper", "middle", "ymin", "ymax")
 )
-environment(GeomBoxplot) <- environment(ggplot2::geom_boxplot)
+# environment(GeomBoxplot2) <- environment(ggplot2::geom_boxplot)
+# environment(geom_boxplot2) <- environment(ggplot2::geom_boxplot)
 # rm(geom_boxplot, GeomBoxplot)

@@ -5,3 +5,5 @@
 ^.*\.nb.html$
 result
 log
+^README\.Rmd$
+^README-.*\.png$

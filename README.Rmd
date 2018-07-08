@@ -1,23 +1,41 @@
 ---
-title: "Extract vegetation phenology from MOD13A1 by `phenofit`"
-author: "Dongdong Kong"
-date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{Vignette Title}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+output: github_document
 ---
 
-```{r setup, include = FALSE}
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, echo = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#",
-  fig.width=7, fig.height=4,
-  fig.align="center",
-  resize.width = T
+  fig.width = 10, fig.height = 5,
+  fig.align = "center",
+  fig.path  = "man/Figure/"
 )
 ```
+## phenofit  
+[![Travis Build Status](https://travis-ci.org/kongdd/phenofit.svg?branch=master)](https://travis-ci.org/kongdd/phenofit)
+[![codecov](https://codecov.io/gh/kongdd/phenofit/branch/master/graph/badge.svg)](https://codecov.io/gh/kongdd/phenofit)
+
+A state-of-the-art **remote sensing vegetation phenology** extraction package: `phenofit`
+
+ - `phenofit` combine merits of TIMESAT and phenopix
+ - A simple and stable growing season dividing methods was proposed
+ - Provide a practical snow elimination method, based on Whittaker
+ - 7 curve fitting methods and 4 phenology extraction methods
+ - We add parameters boundary for every curve fitting methods according to their ecological meaning.
+ - `optimx` is used to select best optimization method for different curve fitting methods.
+
+## Installation
+
+You can install phenofit from github with:
+
+```{r gh-installation, eval = FALSE}
+# install.packages("devtools")
+devtools::install_github("kongdd/phenofit")
+```
+
+## Example
 
 Here, we illustrate how to use `phenofit` to extract vegetation phenology from 
 MOD13A1 in the sampled points. Regional analysis also can be conducted in the 
@@ -157,7 +175,7 @@ brks2 <- season_3y(INPUT, nptperyear, south = sp$lat[1] < 0, FUN = whitsmw2,
 ```
 
 ## 2.3 Curve fitting
-```{r curve fitting, fig.height=6}
+```{r curve fitting, fig.height=6, fig.align="center"}
 fit  <- curvefits(INPUT, brks2, lambda =lambda,
                   methods = c("AG", "zhang", "beck", "elmore"), #,"klos",, 'Gu'
                   nptperyear = nptperyear, debug = F, wFUN = wTSM,

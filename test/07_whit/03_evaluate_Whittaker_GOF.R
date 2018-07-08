@@ -8,7 +8,7 @@ source('test/stable/ggplot/geom_boxplot_no_outlier.R')
 infile     <- file_cam
 dir_gdrive <- "D:/Document/GoogleDrive/"
 
-file <- "phenofit.rda"
+file <- "data_test/phenofit.rda"
 if (!file.exists(file)){
     df_cam  <- get_phenofit_result(file_cam)
     df_flux <- get_phenofit_result(file_flux)
@@ -24,7 +24,7 @@ if (!file.exists(file)){
 methods <- c('AG', 'BECK', 'ELMORE', 'ZHANG', 'whit_R', 'whit_gee')[-5]
 
 ##
-i <- 2
+i <- 1
 prefix <- c("phenoflux", "phenocam")[i]
 df <- if(i == 1) df_flux else df_cam
 st <- if(i == 1) st_flux else st_cam
@@ -39,9 +39,6 @@ formula <- if(i == 1) formula(site+date+t+y+GPP_NT+GPP_DT+SummaryQA~meth) else
 over_perform(df, formula, prefix)
 
 # site figure data input
-qc_levels <- c("good", "margin", "snow/ice", "cloud")
-qc_colors <- c("grey60", "#00BFC4", "#F8766D", "#C77CFF") %>% set_names(qc_levels)
-qc_shapes <- c(19, 15, 4, 17) %>% set_names(qc_levels)
 
 df_trim <- dcast(df, formula, value.var = "value", fun.aggregate = mean) # %>% na.omit()
 df_trim$SummaryQA %<>% factor(qc_levels)
@@ -64,7 +61,9 @@ for (i in seq_along(sites)){
 
 # merge_pdf('../whit_phenoflux166.pdf', indir = "./")
 # merge_pdf('whit_phenoflux166.pdf', indir = "Figure/")
-merge_pdf('whit_phenocam133.pdf', indir = "Figure", del = F)
+merge_pdf('whit_phenocam133.pdf', indir = "Figure", "whit_phenocam.*.pdf", del = F)
+merge_pdf('whit_phenoflux166.pdf', indir = "Figure", "whit_phenoflux.*.pdf", del = F)
+
 ################################################################################
 # colnames(df)[4] <- "raw"
 

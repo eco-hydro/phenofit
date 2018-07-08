@@ -1,4 +1,6 @@
-fontsize = 12
+windowsFonts(Times = windowsFont("Times New Roman"),
+             Arial = windowsFont("Arial"))
+fontsize = 14
 
 # save pdf just like `ggsave`
 save_pdf <- function(file = "Rplot.pdf", width = 10, height = 5, p, open = F){
@@ -66,17 +68,18 @@ agree_index <- function(Y_obs, Y_sim){
 }
 
 # boxplot for over all correlation and agreement index
-boxplot <- function(p, width = 0.8){
+boxplot <- function(p, width = 0.9){
     p + stat_summary(fun.data = box_qtl,
                  position = position_dodge(width = width),
                  geom = "errorbar", width = width) +
-    geom_boxplot(coef = 0, width = width,
+    geom_boxplot2(coef = 0, width = width,
                  lwd = 0.3,
                  notch = F, outlier.shape = NA) +
     theme_light(base_size = fontsize, base_family = "Arial") +
     theme(legend.position = c(1-0.01, 0.01), legend.justification = c(1, 0),
           panel.grid.major = element_line(linetype = 2),
           panel.grid.minor = element_blank(),
+          legend.title=element_blank(),
           axis.text = element_text(color = "black"))
 }
 
@@ -127,7 +130,7 @@ get_phenofit_result <- function(infile){
     res
 }
 
-methods <- c('AG', 'BECK', 'ELMORE', 'ZHANG', 'whit_R', 'whit_gee')
+methods <- c('AG', 'BECK', 'ELMORE', 'ZHANG', 'whit_R', 'whit_gee')[-5]
 #' @examples
 #' over_perform(df, formula, prefix)
 over_perform <- function(df, formula, prefix){
@@ -147,11 +150,14 @@ over_perform <- function(df, formula, prefix){
     p1 <- ggplot(info_r, aes(IGBPname, R, colour = meth), position = "dodge") %>%
         boxplot() %>% `+`(labs(x = "IGBP", y = "Correlation (r)"))
 
-    save_pdf(sprintf("valid_%s_R.pdf", prefix), 12, 5, p1)
-
     p2 <- ggplot(info_ai, aes(IGBPname, ai, colour = meth), position = "dodge") %>%
         boxplot() %>% `+`(labs(x = "IGBP", y = "Agreement Index (AI)"))
-    save_pdf(sprintf("valid_%s_AI.pdf", prefix), 12, 5, p2)
+    p2 <-p2 + theme(legend.position = 'none')
+
+    p <- gridExtra::arrangeGrob(p1, p2, nrow = 2, heights = c(1, 1), padding = unit(1, "line"))
+
+    save_pdf(sprintf("valid_%s.pdf", prefix), 9, 8, p)
+    # save_pdf(sprintf("valid_%s_AI.pdf", prefix), 12, 5, p2)
 }
 
 # geom_point(aes(fill = meth), pch = 21,

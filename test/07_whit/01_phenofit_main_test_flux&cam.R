@@ -57,3 +57,6 @@ main <- function(infile, st){
 main(file_cam, st_cam)
 main(file_flux, st_flux)
 # check phenocam 85 IGBPname
+
+# phenofit::merge_pdf('phenofit_flux166_MOD13A1_v1.pdf', indir = 'Figure/', 'phenoflux166.*.pdf')
+# phenofit::merge_pdf('phenofit_cam133_MOD13A1_v1.pdf', indir = 'Figure/', 'phenocam133.*.pdf')

@@ -9,6 +9,10 @@ library(gridExtra)
 load("Y:/R/phenofit/data/phenofit_MultipleINPUT_flux212.rda")
 stations212 <- fread("C:/Users/kon055/Google Drive/Github/data/phenology/station/flux-212.txt")
 
+# shpfile <- "st_20.shp"
+# st <- readShapePoints(shpfile) %>% 
+#     { data.table( set_colnames(coordinates(.), c("lon", "lat")), .@data)}
+
 df <- lst$MOD13A1 %>%
     merge(stations212[, .(site, lat, IGBP)], by = "site") %>%
     reorder_name(c("site", "IGBP", "lat", "long"))
