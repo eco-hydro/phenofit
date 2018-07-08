@@ -35,7 +35,6 @@ tmp
 # figures
 *.emf
 *.pdf
-
 *.avi
 *.mp4
 *.o
@@ -46,10 +45,11 @@ src-i386/
 src-x64/
 # test/
 inst/doc
-
 *.json
 result
 log
 *.RDS
 result.rda
 test/Figs/phenofit_OUTPUT.rda
+^Figure$
+^Offical$
