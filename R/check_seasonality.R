@@ -45,7 +45,7 @@ rmNonSeasonality <- function(dt, IsPlot = T, file = 'SI.pdf'){
         # vc <- v_curve(INPUT$y, w = INPUT$w, llas = seq(-2, 2, by = 0.01), d = 2, show = F); lambda <- vc$lambda
         # lambda <- init_lambda(INPUT$y)
         # if ( sum(d$w >= 0.5, na.rm = T) > nrow(d) * 0.3){
-            INPUT <- check_input(d$t, d$y, d$w, trim = T, maxgap = nptperyear / 4, alpha = 0.02)
+            INPUT <- check_input(d$t, d$y, d$w, maxgap = nptperyear / 4, alpha = 0.02)
 
             INPUT_SI <- INPUT
             INPUT_SI$t %<>% {as.numeric(difftime(., ymd(20000101)))}

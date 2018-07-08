@@ -48,7 +48,7 @@ getFittings <- function(fit){
 
     fits_years <- map(fit$fits, getFitVI_iters)
     res <- melt(fits_years, id.vars = colnames(org)) %>%
-        set_names(c(colnames(org), "iters", "val", "meth")) %>% data.table()
+        set_names(c(colnames(org), "iters", "value", "meth")) %>% data.table()
     return(res)
 }
 
@@ -75,7 +75,7 @@ plot_phenofit <- function(fit, d, title = NULL, show.legend = T, plotly = F){
     seasons <- fit$seasons
     # seasons$pos$type %<>% factor(labels = c("min", "max"))
 
-    p <- ggplot(pdat1, aes(t, val, color = iters)) +
+    p <- ggplot(pdat1, aes(t, value, color = iters)) +
         geom_line (data = seasons$whit, aes(t, iter2), color = "black", size = 0.8) +
         geom_vline(data = seasons$dt, aes(xintercept = as.numeric(beg)), size = 0.4, linetype=2, color = "blue") +
         geom_vline(data = seasons$dt, aes(xintercept = as.numeric(end)), size = 0.4, linetype=2, color = "red") +
@@ -92,8 +92,8 @@ plot_phenofit <- function(fit, d, title = NULL, show.legend = T, plotly = F){
         #     guides(shape = guide_legend(override.aes = list(size = 2)))
         p  <- p + geom_point(data = d, aes(t, y, shape = SummaryQA, color = SummaryQA), size = 2, alpha = 0.7) +
             geom_line(aes(color = iters), size = 0.8, alpha = 0.7) +
-            scale_color_manual(values = c(" good" = "grey60", " margin" = "#00BFC4",
-                                          " snow&ice" = "#F8766D", " cloud" = "#C77CFF",
+            scale_color_manual(values = c("good" = "grey60", "margin" = "#00BFC4",
+                                          "snow/ice" = "#F8766D", "cloud" = "#C77CFF",
                                           "iter1" = "blue", "iter2" = "red"), drop = F) +
             scale_shape_manual(values = c(19, 15, 4, 17), drop = F) +
             ylab('Vegetation Index')
@@ -131,19 +131,22 @@ plot_phenofit <- function(fit, d, title = NULL, show.legend = T, plotly = F){
     }
 }
 
-#' make_legend
-make_legend <- function(){
-    labels <- c(" good", " margin", " snow/ice", " cloud", "iter1", "iter2", "whit")
-    colors <- c("grey60", "#00BFC4", "#F8766D", "#C77CFF", "blue", "red", "black")
-    pch <- c(19, 15, 4, 17, NA, NA, NA)
-    lty <- c(0, 0, 1, 0, rep(1, 3))
-    lwd <- c(1, 1, 1, 1, 3, 3, 3)
+# make_legend
+make_legend <- function(linename = c("iter1", "iter2", "whit"), 
+        linecolor = c("blue", "red", "black")){
+    labels <- c(" good", " margin", " snow/ice", " cloud", linename)
+    colors <- c("grey60", "#00BFC4", "#F8766D", "#C77CFF", linecolor)
+    nline  <- length(linename)
+    pch <- c(19, 15, 4, 17, rep(NA, nline))
+    lty <- c(0, 0, 1, 0, rep(1, nline))
+    lwd <- c(1, 1, 1, 1, rep(3, nline))
 
-    I <- 1:7
+    I <- 1:(nline + 4)
     lgd <- grid::legendGrob(labels[I], pch = pch[I], nrow = 1,
                        # do.lines = T,
                        gp=grid::gpar(lty = lty[I], lwd = lwd[I],
                                col = colors[I], fill = colors[I]))
+    lgd$children[[5]]$children[[1]]$children %<>% .[2] # fix cross point type
     return(lgd)
 }
 lgd <- make_legend()

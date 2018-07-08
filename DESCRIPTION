@@ -11,7 +11,8 @@ LazyData: true
 RoxygenNote: 6.0.1
 LinkingTo: Rcpp, RcppArmadillo
 Imports: Rcpp, RcppArmadillo, data.table, gridExtra, reshape2, zoo, 
-    dplyr, purrr, stringr, tidyr, ggplot2, lubridate
+    dplyr, purrr, stringr, tidyr, ggplot2, lubridate, 
+    numDeriv
 Suggests: knitr,
     rmarkdown,
     testthat

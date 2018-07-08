@@ -17,6 +17,7 @@ if (.Platform$OS.type == "windows"){
     st_flux <- fread(file_st_flux)
 }
 
+# format raw MODIS VI data exported frorm GEE
 if (!file.exists(file_flux)){
     infile_flux  <- "D:/Document/GoogleDrive/phenofit/data/fluxsites212_MOD13A1_006_0m_buffer.csv"
     tidyMOD13INPUT_gee(infile_flux) %>% merge(st_flux[, .(site)]) %>% fwrite(file_flux)

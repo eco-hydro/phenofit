@@ -34,17 +34,18 @@ df_sm <- df[, .(site, date, image_count, gcc = gcc_90, vci = gcc_90/(1-gcc_90),
 df_sm %<>% add_dn(days = c(8, 16))
 df_sm <- reorder_name(df_sm)
 
-# replace NA flag with zero
-df_sm[is.na(snow_flag), snow_flag := 0]
-df_sm[is.na(int_flag) , int_flag := 0]
+# If the midday image was not evaluated, a value of NA is assigned
+# replace NA flag with 6 (new category),
+df_sm[is.na(snow_flag), snow_flag := 6]
+df_sm[is.na(int_flag) , int_flag  := 0]
 
 # Only no snow or snow on ground are used (2, 3, 4).
-df_sm_16d <- df_sm[int_flag == 0 & snow_flag >= 2 & snow_flag <= 4,
+cam_16d <- df_sm[int_flag == 0 & snow_flag %in% c(2:4, 6),
       .(gcc = median(gcc), vci = median(vci)), .(site, year, d16)]
-df_sm_16d[, date := format(parse_date_time(paste0(year, (d16-1)*16+1), "%Y%j"))]
+cam_16d[, date := format(parse_date_time(paste0(year, (d16-1)*16+1), "%Y%j"))]
 # fwrite(df_sm, "valid_phenocam133_1day.csv")
-fwrite(df_sm_16d, paste0(dir_data, "valid_phenocam133_16day.csv"))
 
+# setdiff(names(files_grp), df_sm_16d[, .N, .(site)]$site)
 
 # 2. fluxnet2015 tier1 GPP data -------------------------------------------
 # See fluxsites_tidy repository for detail:
@@ -61,4 +62,10 @@ flux_16d <- flux[, lapply(.SD, median, na.rm = T), .(site, year, d16),
 flux_16d[, date := format(parse_date_time(paste0(year, (d16-1)*16+1), "%Y%j"))]
 # flux_16d <- merge(stations, flux_16d)
 
+## rm sites less than 1y
+df_sm_16d[, .N, site][N>=23, ]
+flux_16d[, .N, site][N>=23, ]
+
+## actually, 166 and 131 sites
+fwrite(cam_16d, paste0(dir_data, "valid_phenocam133_16day.csv"))
 fwrite(flux_16d, paste0(dir_data, "valid_phenoflux166_16day.csv"))
