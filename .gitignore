@@ -53,3 +53,5 @@ result.rda
 test/Figs/phenofit_OUTPUT.rda
 ^Figure$
 ^Offical$
+data_test/
+data_test/*/
