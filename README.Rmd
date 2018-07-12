@@ -206,7 +206,7 @@ grid::grid.newpage(); grid::grid.draw(g)# plot to check the curve fitting
 ```
 
 ## 2.4 Extract phenology.
-```{r Extract phenology, fig.height=5, fig.width=7}
+```{r Extract phenology, fig.height=5, fig.width=10}
 # pheno: list(p_date, p_doy)
 p <- lapply(fit$fits, ExtractPheno)
 pheno  <- map(p, tidyFitPheno, origin = INPUT$t[1]) %>% purrr::transpose()

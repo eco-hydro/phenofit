@@ -22,6 +22,8 @@ hessf_t(FUN)
 grad_par(FUN)
 }
 \arguments{
+\item{FUN}{Curve fitting function.}
+
 \item{expr}{expression}
 
 \item{par}{Named vector, or named list. It can't be matrix.
@@ -36,8 +38,12 @@ return the gradient function of double logistics
 Analytical derivative can also have some weird result. `numDeriv`'s result
 was accurate enough.
 
+Higher derivatives
+
 For par aspect DERIVS, it had better to use deriv return function.
 For t aspect DERIVS, it had better to use D, then eval D expression
+
+grad_par
 }
 \details{
 Enclosure env of `ans` was this funcion's execution env. But environment of
@@ -56,12 +62,14 @@ grad_fpar : gradient function f(par, t), get values through `eval`, (from the as
 hess_fpar : hessian  function f(par, t), get values through `eval`, (from the aspect of t)
 }
 \examples{
-#'grade_t' only cost 3/4 time of 'gradf_t'
-#'hesse_t' used more 1/2 times of 'hessf_t'
+\dontrun{
+# grade_t' only cost 3/4 time of 'gradf_t'
+# hesse_t' used more 1/2 times of 'hessf_t'
 microbenchmark(
     gradf_t(FUN)(par,t),
     grade_t(FUN)(par,t))
 microbenchmark(
  hessf_t(FUN)(par,t),
  hesse_t(FUN)(par,t))
+}
 }

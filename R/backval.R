@@ -7,25 +7,19 @@
 #' season by assuming that the background and vegetation abundance could remain 
 #' the same during a consecutive two yearperiod. Details can be seen in Zhang et al., (2015).
 #' 
-#' @param y A numeric vector, NA values are not allowed in y
-#' @param t A date vector, corresponding data of y
-#' @param w 
-#' @param Tn Night Temperature, unit: degree
-#' @return back
-#' If back value is NA, it is impossible to extract phenology here.
+#' @inheritParams check_input
+#' @return back If back value is NA, it is impossible to extract phenology here.
 #' 
 #' @references
 #' [1]. Zhang, X., 2015. Reconstruction of a complete global time series of daily 
 #'      vegetation index trajectory from long-term AVHRR data. Remote Sens. Environ. 
-#'      156, 457–472. https://doi.org/10.1016/j.rse.2014.10.012 \cr
+#'      156, 457–472. https://doi.org/10.1016/j.rse.2014.10.012. \cr
 #' [2]. Zhang, Y., Xiao, X., Jin, C., Dong, J., Zhou, S., Wagle, P., Joiner, 
 #'      J., Guanter, L., Zhang, Y., Zhang, G., Qin, Y., Wang, J., Moore, B., 2016. 
 #'      Consistency between sun-induced chlorophyll fluorescence and gross primary 
 #'      production of vegetation in North America. Remote Sens. Environ. 
-#'      183, 154–169. https://doi.org/10.1016/j.rse.2016.05.015
+#'      183, 154–169. https://doi.org/10.1016/j.rse.2016.05.015.
 #' @export
-#' @examples
-#' backval(y, t, w, Tn, nptperyear)
 backval <- function(y, t, w, Tn, minT = 5, nptperyear, ...){
     # get median of 5 smallest values in y[index]
     getBack <- function(y, index){

@@ -21,15 +21,17 @@
 #' @param FUN Curve fitting function.
 #' @rdname curvefit_deriv
 #' @examples
-#' #'grade_t' only cost 3/4 time of 'gradf_t'
-#' #'hesse_t' used more 1/2 times of 'hessf_t'
+#' \dontrun{
+#' # grade_t' only cost 3/4 time of 'gradf_t'
+#' # hesse_t' used more 1/2 times of 'hessf_t'
 #' microbenchmark(
 #'     gradf_t(FUN)(par,t),
 #'     grade_t(FUN)(par,t))
 #' microbenchmark(
 #'  hessf_t(FUN)(par,t),
 #'  hesse_t(FUN)(par,t))
-# @export
+#' }
+#' @export
 grad_ft <- function(FUN){
     formula  <- attr(FUN, 'formula')
     parnames <- c("t", attr(FUN, 'par'))
@@ -82,11 +84,9 @@ hess_ft <- function(FUN){
 }
 # hess_ft = . %>% {deriv3(attr(., 'formula'), 't', func = T)}
 
-#' @import magrittr
 grad_fpar = . %>% {
     deriv (attr(., 'formula'), attr(., 'par'), func = T)}
 
-#' @import magrittr
 hess_fpar = . %>% {
     deriv3(attr(., 'formula'), attr(., 'par'), func = T)}
 

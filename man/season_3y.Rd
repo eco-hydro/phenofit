@@ -5,8 +5,8 @@
 \title{Growing season dividing in the 3-year length moving window}
 \usage{
 season_3y(INPUT, nptperyear = 23, south = FALSE, FUN = whitsmw2,
-  wFUN = wTSM, wmin = 0.2, IsPlot = T, plotdat = INPUT,
-  print = TRUE, partial = TRUE, ...)
+  wFUN = wTSM, wmin = 0.2, IsPlot = T, plotdat = INPUT, print = TRUE,
+  partial = TRUE, ...)
 }
 \arguments{
 \item{INPUT}{A list object with the elements of 't', 'y', 'w', 'Tn' (option) 

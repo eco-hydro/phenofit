@@ -18,6 +18,24 @@ splinefit <- function(y, t = index(y), tout = t, plot = FALSE, df.factor = 0.06,
         pred = xpred.out, par = NULL, fun = NULL), class = "phenofit")
 }
 
+#' Fitting double logistics, asymmetric gaussian functions
+#'
+#' @param y input vegetation index time-series.
+#' @param t the corresponding doy(day of year) of y.
+#' @param tout the output curve fitting time-series time steps.
+#' @param optimFUN optimization function to solve curve fitting functions'
+#' parameters. It's should be `optimx_fun`, or `optim_p`.
+#' @param method method passed to `optimx` or `optim` function.
+#' @param w weights
+#' @param ... other paraters passed to optimFUN, such as weights.
+#'
+#' @return list(pred, par, fun)
+#' @references
+#' [1]. Beck, P.S.A., Atzberger, C., Hogda, K.A., Johansen, B., Skidmore, A.K.,
+#'      2006. Improved monitoring of vegetation dynamics at very high latitudes:
+#'      A new method using MODIS NDVI. Remote Sens. Environ.
+#'      https://doi.org/10.1016/j.rse.2005.10.021.
+#' @rdname FitDL
 #' @export
 FitDL.Zhang <- function(y, t = index(y), tout = t, optimFUN = I_optimx,
                         method = 'nlm', w, ...){
@@ -37,6 +55,7 @@ FitDL.Zhang <- function(y, t = index(y), tout = t, optimFUN = I_optimx,
     optim_pheno(prior, FUN, y, t, tout, optimFUN, method, w, lower = lower, upper = upper, ...)#quick return
 }
 
+#' @rdname FitDL
 #' @export
 FitAG <- function(y, t = index(y), tout = t, FUN, optimFUN = I_optimx,
     method = 'nlminb', w, ...){
@@ -56,32 +75,7 @@ FitAG <- function(y, t = index(y), tout = t, FUN, optimFUN = I_optimx,
     optim_pheno(prior, FUN, y, t, tout, optimFUN, method, w, lower = lower, upper = upper, ...)#quick return
 }
 
-#'
-#' Fitting double logistics, asymmetric gaussian functions
-#'
-#' @param y input vegetation index time-series.
-#' @param t the corresponding doy(day of year) of y.
-#' @param tout the output curve fitting time-series time steps.
-#' @param optimFUN optimization function to solve curve fitting functions'
-#' parameters. It's should be `optimx_fun`, or `optim_p`.
-#' @param method method passed to `optimx` or `optim` function.
-#' @param ... other paraters passed to optimFUN, such as weights.
-#'
-#' @return list(pred, par, fun)
-#' @references
-#' [1]. Beck, P.S.A., Atzberger, C., Hogda, K.A., Johansen, B., Skidmore, A.K.,
-#'      2006. Improved monitoring of vegetation dynamics at very high latitudes:
-#'      A new method using MODIS NDVI. Remote Sens. Environ.
-#'      https://doi.org/10.1016/j.rse.2005.10.021
-#'
-#' @examples
-#' FitDL.Beck  (y, t, tout, optimFUN = optim_p, pfun = p_nlminb)
-#' FitDL.Elmore(y, t, tout, optimFUN = optim_p, pfun = p_nlminb)
-#' FitDL.Gu    (y, t, tout, optimFUN = optim_p, pfun = p_nlminb)
-#' FitDL.Klos  (y, t, tout, optimFUN = optim_p, pfun = p_optim, method = 'BFGS')
-#'
-#' FitDL.Zhang (y, t, tout, optimFUN = optim_p, pfun = p_nlm)
-#' FitAG (y, t, tout, optimFUN = optim_p, pfun = p_nlminb)
+#' @rdname FitDL
 #' @export
 FitDL.Beck <- function(y, t = index(y), tout = t, optimFUN = I_optimx,
     method = 'nlminb', w, ...) {
@@ -103,10 +97,11 @@ FitDL.Beck <- function(y, t = index(y), tout = t, optimFUN = I_optimx,
 # attr(doubleLog.beck, 'formula') <- expression(mn + (mx - mn)*(1/(1 + exp(-rsp*(t - sos))) + 1/(1 + exp(rau*(t - eos)))))
 
 #' @references
-#' [1]. Elmore, A.J., Guinn, S.M., Minsley, B.J., Richardson, A.D., 2012.
+#' [2]. Elmore, A.J., Guinn, S.M., Minsley, B.J., Richardson, A.D., 2012.
 #'      Landscape controls on the timing of spring, autumn, and growing season
-#'      length in mid-Atlantic forests. Glob. Chang. Biol. 18, 656–674.
-#'      https://doi.org/10.1111/j.1365-2486.2011.02521.x
+#'      length in mid-Atlantic forests. Glob. Chang. Biol. 18, 656-674.
+#'      https://doi.org/10.1111/j.1365-2486.2011.02521.x. \cr
+#' @rdname FitDL
 #' @export
 FitDL.Elmore <- function(y, t = index(y), tout = t, optimFUN = I_optimx,
     method = 'nlminb', w, ...) {
@@ -137,14 +132,16 @@ FitDL.Elmore <- function(y, t = index(y), tout = t, optimFUN = I_optimx,
 # attr(doubleLog.elmore, 'formula') <- expression( mn + (mx - m7*t)*( 1/(1 + exp(-rsp*(t-sos))) - 1/(1 + exp(-rau*(t-eos))) ) )
 
 #' @references
-#' [1]. Gu, L., Post, W.M., Baldocchi, D.D., Black, T.A., Suyker, A.E., Verma,
+#' [3]. Gu, L., Post, W.M., Baldocchi, D.D., Black, T.A., Suyker, A.E., Verma,
 #'      S.B., Vesala, T., Wofsy, S.C., 2009. Characterizing the Seasonal Dynamics
 #'      of Plant Community Photosynthesis Across a Range of Vegetation Types,
 #'      in: Noormets, A. (Ed.), Phenology of Ecosystem Processes: Applications
-#'      in Global Change Research. Springer New York, New York, NY, pp. 35–58.
-#'      https://doi.org/10.1007/978-1-4419-0026-5_2 \cr
-#' [2]. https://github.com/kongdd/phenopix/blob/master/R/FitDoubleLogGu.R
-#'
+#'      in Global Change Research. Springer New York, New York, NY, pp. 35-58.
+#'      https://doi.org/10.1007/978-1-4419-0026-5_2. \cr
+#' 
+#' [4]. https://github.com/kongdd/phenopix/blob/master/R/FitDoubleLogGu.R
+#' 
+#' @rdname FitDL
 #' @export
 FitDL.Gu <- function(y, t = index(y), tout = t, optimFUN = I_optimx,
     method = "nlminb", w, ...) {
@@ -172,6 +169,7 @@ FitDL.Gu <- function(y, t = index(y), tout = t, optimFUN = I_optimx,
     optim_pheno(prior, FUN, y, t, tout, optimFUN, method, w, lower = lower, upper = upper, ...)#return
 }
 
+#' @rdname FitDL
 #' @export
 FitDL.Klos <- function(y, t = index(y), tout = t, optimFUN = I_optimx,
     method = 'BFGS', w, ...) {

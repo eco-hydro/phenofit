@@ -31,22 +31,7 @@
 #' @param print Whether to print progress information?
 #' @param ... Other parameters will be ignore.
 #' 
-#' @return
-#' 
-#' @examples
-#' INPUT <- check_input(d$date, d$EVI_500m, d$w, trim = T, maxgap = nptperyear / 4, alpha = 0.02)
-#' # The detailed information of those parameters can be seen in `season`.
-#' brks  <- season(INPUT, lambda, nptperyear, iters = 3, wFUN = wFUN, IsPlot = F,
-#'                 south = south,
-#'                 Aymin_less = 0.7,
-#'                 max_MaxPeaksperyear =2.5, max_MinPeaksperyear = 3.5, ...) #, ...
-#'
-#' fit <- curvefit_site(INPUT, brks, lambda =lambda, IsPlot = T,
-#'                      methods = c("AG", "zhang", "beck", "elmore", 'Gu'), #,"klos"
-#'                      nptperyear = nptperyear, wFUN = wTSM,
-#'                      ymax_min = ymax_min,
-#'                      south = d$lat[1] < 0)
-#' plot_phenofit(fit, d) # plot to check the curve fitting
+#' @return fits Multiple phenofit object.
 #' @export
 curvefits <- function(INPUT, brks, nptperyear = 23,
                       wFUN = wTSM, iters = 2, wmin = 0.2,

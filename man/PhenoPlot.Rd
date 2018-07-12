@@ -4,11 +4,17 @@
 \alias{PhenoPlot}
 \title{PhenoPlot}
 \usage{
-PhenoPlot(t, x, main = "", ...)
+PhenoPlot(t, y, main = "", ...)
+}
+\arguments{
+\item{t}{Numeric vector, \code{Date} variable}
+
+\item{y}{Numeric vector, vegetation index time-series}
+
+\item{main}{figure title}
+
+\item{...}{ignored parameters}
 }
 \description{
 PhenoPlot
-}
-\examples{
-PhenoPlot(t, x, main = main)
 }

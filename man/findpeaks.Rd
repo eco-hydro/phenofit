@@ -6,8 +6,7 @@
 \usage{
 findpeaks(x, IsDiff = TRUE, nups = 1, ndowns = nups, zero = "0",
   peakpat = NULL, minpeakheight = -Inf, minpeakdistance = 1,
-  threshold_min = 0, threshold_max = 0, npeaks = 0,
-  sortstr = FALSE)
+  threshold_min = 0, threshold_max = 0, npeaks = 0, sortstr = FALSE)
 }
 \arguments{
 \item{nups}{minimum number of increasing steps before a peak is reached}
@@ -58,6 +57,6 @@ for (i in seq(along=pos)) {
 
 plot(pSignal, type="l", col="navy"); grid()
 x <- findpeaks(pSignal, npeaks=3, threshold_min=4, sortstr=TRUE)
-points(x[, 2], x[, 1], pch=20, col="maroon")
+points(val~pos, x$X, pch=20, col="maroon")
 
 }

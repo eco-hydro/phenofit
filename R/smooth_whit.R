@@ -17,11 +17,13 @@
 #' 
 #' @author Paul Eilers, Jan Gerretzen
 #' @examples
+#' \dontrun{
 #' data(gaschrom)
 #' plot(gaschrom[1,], type = "l", ylim = c(0, 100))
 #' lines(whit2(gaschrom[1,], lambda = 1e5), col = 2)
 #' lines(whit2(gaschrom[1,], lambda = 1e6), col = 3)
 #' lines(whit2(gaschrom[1,], lambda = 1e7), col = 4)
+#' }
 #' @export
 whit2 <- function(y, lambda, w = rep(1, ny))
 {

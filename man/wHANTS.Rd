@@ -4,8 +4,8 @@
 \alias{wHANTS}
 \title{Weighted HANTS SMOOTH}
 \usage{
-wHANTS(y, t, w, nf = 3, ylu, periodlen = 365, nptperyear,
-  wFUN = wTSM, iters = 2, wmin = 0.1, ...)
+wHANTS(y, t, w, nf = 3, ylu, periodlen = 365, nptperyear, wFUN = wTSM,
+  iters = 2, wmin = 0.1, ...)
 }
 \arguments{
 \item{y}{Numeric vector, vegetation index time-series}

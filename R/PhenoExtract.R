@@ -2,11 +2,14 @@ colors    <- c("blue", "green3", "orange", "red")
 linewidth <- 1.2
 
 #' PhenoPlot
-#' @examples
-#' PhenoPlot(t, x, main = main)
+#' 
+#' @inheritParams check_input
+#' @param main figure title
+#' @param ... ignored parameters
+#' 
 #' @export
-PhenoPlot <- function(t, x, main = "", ...){
-    plot(t, x, main = main, ...,
+PhenoPlot <- function(t, y, main = "", ...){
+    plot(t, y, main = main, ...,
              type= "l", cex = 2, col = "black", lwd = linewidth) #pch = 20,
     # grid(nx = NA)
     grid(ny = 4, nx = NA)
@@ -15,8 +18,11 @@ PhenoPlot <- function(t, x, main = "", ...){
 #' ExtractPheno
 #'
 #' Get yearly vegetation phenological metrics of a curve fitting method
+#' 
+#' @param fits Multiple \code{phenofit} object.
 #' @param TRS Threshold for \code{PhenoTrs}.
 #' @param IsPlot Boolean. Whether to plot figure?
+#' 
 #' @export
 ExtractPheno <- function(fits, TRS = c(0.1, 0.2, 0.5, 0.6), IsPlot = FALSE){
     names <- names(fits)

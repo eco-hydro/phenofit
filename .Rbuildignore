@@ -11,3 +11,5 @@
 ^temp$
 ^Figure$
 ^Official$
+^man-roxygen$
+^\.travis\.yml$

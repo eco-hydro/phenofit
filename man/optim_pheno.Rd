@@ -4,9 +4,8 @@
 \alias{optim_pheno}
 \title{optim_pheno}
 \usage{
-optim_pheno(prior, FUN_name, y, t, tout, optimFUN = I_optim, method, w,
-  w0, ylu, iters = 2, wFUN = wTSM, nptperyear = 46, debug = FALSE,
-  ...)
+optim_pheno(prior, FUN_name, y, t, tout, optimFUN = I_optim, method, w, w0,
+  ylu, iters = 2, wFUN = wTSM, nptperyear = 46, debug = FALSE, ...)
 }
 \arguments{
 \item{prior}{A vector of initial values for the parameters for which optimal 
