@@ -15,7 +15,7 @@ Imports: Rcpp, RcppArmadillo,
     data.table, 
     grid, gridExtra, 
     magrittr, plyr, reshape2, zoo, 
-    optimx,
+    optimx, ucminf,
     numDeriv, 
     grDevices, utils, stats
 Suggests: knitr,
