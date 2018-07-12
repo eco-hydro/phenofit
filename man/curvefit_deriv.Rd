@@ -2,13 +2,42 @@
 % Please edit documentation in R/derivs.R
 \name{grad_ft}
 \alias{grad_ft}
+\alias{hess_ft}
+\alias{DD}
+\alias{gradf_t}
+\alias{hessf_t}
+\alias{grad_par}
 \title{devirs of double logistics functions (analytical resolution)}
 \usage{
 grad_ft(FUN)
+
+hess_ft(FUN)
+
+DD(expr, name, order = 1)
+
+gradf_t(FUN)
+
+hessf_t(FUN)
+
+grad_par(FUN)
+}
+\arguments{
+\item{expr}{expression}
+
+\item{par}{Named vector, or named list. It can't be matrix.
+Colnamed matrix cooperating with plyr::alply will be fine.}
+}
+\value{
+expression was returned.
+
+return the gradient function of double logistics
 }
 \description{
 Analytical derivative can also have some weird result. `numDeriv`'s result
 was accurate enough.
+
+For par aspect DERIVS, it had better to use deriv return function.
+For t aspect DERIVS, it had better to use D, then eval D expression
 }
 \details{
 Enclosure env of `ans` was this funcion's execution env. But environment of

@@ -4,19 +4,49 @@
 \alias{optim_pheno}
 \title{optim_pheno}
 \usage{
-optim_pheno(prior, FUN_name, y, t, tout, optimFUN = I_optim, method, w, w0,
-  ylu, iters = 2, wFUN = wTSM, nptperyear = 46, debug = FALSE, ...)
+optim_pheno(prior, FUN_name, y, t, tout, optimFUN = I_optim, method, w,
+  w0, ylu, iters = 2, wFUN = wTSM, nptperyear = 46, debug = FALSE,
+  ...)
 }
 \arguments{
-\item{prior}{Initial parameters for curve fitting function}
+\item{prior}{A vector of initial values for the parameters for which optimal 
+values are to be found.}
 
-\item{FUN_name}{Curve fitting function name, can be one of ''
-If using weights updating method, need to set `nptperyear` as global parameter.}
+\item{FUN_name}{Curve fitting function name, can be one of 'FitDL.Zhang', 
+'FitAG', 'FitDL.Beck', 'FitDL.Elmore', 'FitDL.Gu' and 'FitDL.Klos'.}
+
+\item{y}{Numeric vector, vegetation index time-series}
+
+\item{t}{Numeric vector, \code{Date} variable}
+
+\item{tout}{corresponding \code{t} of curve fitting result}
+
+\item{method}{String, optimization method, passed to \code{optimFun}.}
+
+\item{w}{Numeric vector, weights of \code{y}}
+
+\item{w0}{original weighted, is just used for visualization.}
+
+\item{ylu}{[low, high] of time-series y (curve fitting values are constrained
+in the range of \code{ylu}.}
+
+\item{iters}{How many times curve fitting is implemented.}
+
+\item{wFUN}{weights updating function, can be one of 'wTSM', 'wChen' and 
+'wBisquare'.}
+
+\item{nptperyear}{number of images per year}
+
+\item{debug}{boolean}
+
+\item{...}{other parameters passed to \code{optimFUN}}
+
+\item{optimFun}{optimization function, can be \code{I_optim} or \code{I_optimx}.}
 }
 \value{
 list(pred, par, fun)
 }
 \description{
-Interface of optimization functions for double logistics and many other
+Interface of optimization functions for double logistics and other parametric
 curve fitting functions
 }

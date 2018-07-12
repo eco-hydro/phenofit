@@ -1,10 +1,17 @@
-#' @title fprintf
-#' @description print sprintf result into console just like C style fprintf function
+#' fprintf
+#' Print sprintf result into console, just like C style fprintf function
+#' @param fmt a character vector of format strings, each of up to 8192 bytes.
+#' @param ... other parameters will be passed to \code{sprintf}
 #' @export
 fprintf <- function(fmt, ...) cat(sprintf(fmt, ...))
 
 #' print the running ID in the console
-#'
+#' 
+#' @param i the running Id.
+#' @param step how long of print step.
+#' @param prefix prefix string
+#' 
+#' @rdname fprintf
 #' @export
 runningId <- function(i, step = 1, prefix = "") {
     if (mod(i, step) == 0) cat(sprintf("%s running %d ...\n", prefix, i))
@@ -12,6 +19,10 @@ runningId <- function(i, step = 1, prefix = "") {
 
 #' retry
 #' retry to execute expr until success before reaches the max try times (maxTimes)
+#' 
+#' @param expr expression to be evaluated
+#' @param maxTimes maximum try times
+#' 
 #' @export
 retry <- function(expr, maxTimes = 3){
     eTimes <- 0
@@ -30,7 +41,8 @@ retry <- function(expr, maxTimes = 3){
 }
 
 #' melt_list
-#'
+#' 
+#' @rdname listk
 #' @importFrom reshape2 melt
 #' @export
 melt_list <- function(list, var.name, na.rm = TRUE, ...){
@@ -71,10 +83,11 @@ listk <- function(...){
   return(x)
 }
 
-#' list.cbind
+#' @rdname listk
 #' @export
 list.cbind <- function(x) do.call(cbind.data.frame, x) %>% set_colnames(names(x))
-#' list.rbind
+
+#' @rdname listk
 #' @export
 list.rbind <- function(x) do.call(rbind.data.frame, x) %>% set_rownames(names(x))#%>% set_rownames(names(x))
 
@@ -102,6 +115,9 @@ add_dn <- function(d, days = 8){
 }
 
 #' reorder_name
+#' @param headvars headvars will be in the head columns.
+#' @param tailvars tailvars will be in the tail columns.
+#' @rdname tools
 #' @export
 reorder_name <- function(d,
                          headvars = c("site", "date", "year", "doy", "d8", "d16"),
@@ -118,6 +134,9 @@ reorder_name <- function(d,
 }
 
 #' rm_empty
+#' @param x A vector or list
+#' 
+#' @rdname tools
 #' @export
 rm_empty <- function(x){
     if (is.list(x)){
@@ -129,6 +148,10 @@ rm_empty <- function(x){
 
 #' contain
 #' find assigned pattern variable names
+#' @param d A data.frame vector, or list
+#' @param pattern string used to match \code{names(d)}
+#' 
+#' @rdname tools
 #' @export
 contain <- function(d, pattern = "NDVI|EVI") {
     names(d) %>% .[grep(pattern, .)]
@@ -136,7 +159,12 @@ contain <- function(d, pattern = "NDVI|EVI") {
 
 #' merge_pdf
 #'
-#' rely on python pdfmerge package, `pip install pdfmerge`
+#' rely on python pdfmerge package, \code{pip install pdfmerge}
+#' 
+#' @param outfile String
+#' @param indir Directory to search pdfs
+#' @param pattern string used to match pdf filename
+#' @param del Booolean. If true, after merge, original pdf files will be delete.
 #' @export
 merge_pdf <- function(outfile = "RPlot.pdf", indir = 'Figure', pattern = "*.pdf", del = FALSE){
     # "Y:/R/phenofit/Figs/"
@@ -144,10 +172,12 @@ merge_pdf <- function(outfile = "RPlot.pdf", indir = 'Figure', pattern = "*.pdf"
     cmd <- sprintf("pdfmerge -o %s %s", outfile, paste(files, collapse = " "))
     shell(cmd, wait = FALSE)
     # shell(sprintf('pdfmerge -o %s %s', outfile, pattern) )
-    if (del) shell(sprintf('del %s/%s', indir, pattern))
+    if (del) file.rename(files)
 }
 
 #' weighted CV
+#' @param x Numeric vector
+#' @param w weights of different point
 #' @export
 cv_coef <- function(x, w){
     if (missing(w)) w <- rep(1, length(x))
@@ -168,7 +198,7 @@ cv_coef <- function(x, w){
 #' @param Y_obs Numeric vector, observations
 #' @param Y_sim Numeric vector, corresponding simulated values
 #' @param w Numeric vector, weights of every points
-#'
+#' @param include.cv If true, cv will be returned. 
 #' @export
 GOF <- function(Y_obs, Y_sim, w, include.cv = FALSE){
     if (missing(w)) w <- rep(1, length(Y_obs))
@@ -228,6 +258,13 @@ GOF <- function(Y_obs, Y_sim, w, include.cv = FALSE){
 }
 
 
+#' Determinated correlation critical value
+#' 
+#' @param n length of observation.
+#' @param NumberOfPredictor Number of predictor.
+#' @param alpha significant level.
+#' 
+#' @return F statistic and R2 at significant level
 R2_sign <- function(n, NumberOfPredictor = 2, alpha = 0.05){
     freedom_r = NumberOfPredictor - 1 # regression
     freedom_e = n - NumberOfPredictor # error 

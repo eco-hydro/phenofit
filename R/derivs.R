@@ -10,7 +10,7 @@
 #' grad is the first order derivative, and hess is the second order derivative.
 #' `f` means function, generated from `deriv` function
 #' `e` means expression, generated from `D` or `D` function
-#'
+#' 
 #' gradf_t   : gradient function f(par, t) (from the aspect of t)
 #' hessf_t   : hessian  function f(par, t) (from the aspect of t)
 #' grade_t   : gradient expression function f(par, t), get values through `eval`, (from the aspect of t)
@@ -18,7 +18,8 @@
 #'
 #' grad_fpar : gradient function f(par, t), get values through `eval`, (from the aspect of t)
 #' hess_fpar : hessian  function f(par, t), get values through `eval`, (from the aspect of t)
-#'
+#' @param FUN Curve fitting function.
+#' @rdname curvefit_deriv
 #' @examples
 #' #'grade_t' only cost 3/4 time of 'gradf_t'
 #' #'hesse_t' used more 1/2 times of 'hessf_t'
@@ -28,7 +29,7 @@
 #' microbenchmark(
 #'  hessf_t(FUN)(par,t),
 #'  hesse_t(FUN)(par,t))
-#' @export
+# @export
 grad_ft <- function(FUN){
     formula  <- attr(FUN, 'formula')
     parnames <- c("t", attr(FUN, 'par'))
@@ -54,6 +55,7 @@ grad_ft <- function(FUN){
     return(ans)
 }
 
+#' @rdname curvefit_deriv
 #' @export
 hess_ft <- function(FUN){
     formula <- attr(FUN, 'formula')
@@ -94,6 +96,7 @@ hess_fpar = . %>% {
 #'
 #' @param expr expression
 #' @return expression was returned.
+#' @rdname curvefit_deriv
 DD <- function(expr, name, order = 1) {
    if(order < 1) stop("'order' must be >= 1")
    if(order == 1) D(expr, name)
@@ -106,6 +109,7 @@ DD <- function(expr, name, order = 1) {
 #' For par aspect DERIVS, it had better to use deriv return function.
 #' For t aspect DERIVS, it had better to use D, then eval D expression
 #'
+#' @rdname curvefit_deriv
 gradf_t <- function(FUN) {
     # f <- deriv(attr(FUN, 'formula'), 't', func = T) #attr(FUN, 'par')
     # print(environment())
@@ -134,7 +138,8 @@ gradf_t <- function(FUN) {
 # par <- setNames(1:7, attr(fun,"par"))
 # fun_grad <- attr(fun, "grad")
 
-#' using `do.call` to avoid the difficult of environment finding
+# using `do.call` to avoid the difficult of environment finding
+#' @rdname curvefit_deriv
 hessf_t <- function(FUN) {
     f <- hess_ft(FUN)
     # f <- deriv3(attr(FUN, 'formula'), 't', func = T) #attr(FUN, 'par')
@@ -167,6 +172,7 @@ hessf_t <- function(FUN) {
 #' @param par Named vector, or named list. It can't be matrix.
 #'  Colnamed matrix cooperating with plyr::alply will be fine.
 #' @return return the gradient function of double logistics
+#' @rdname curvefit_deriv
 grad_par <- function(FUN) {
     f <- grad_fpar(FUN)
     environment(f) <- environment()

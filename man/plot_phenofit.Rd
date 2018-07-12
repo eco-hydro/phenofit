@@ -4,10 +4,16 @@
 \alias{plot_phenofit}
 \title{plot_phenofit}
 \usage{
-plot_phenofit(fit, d, title = NULL, show.legend = T, plotly = F)
+plot_phenofit(fit, d, title = NULL, show.legend = T)
 }
 \arguments{
-\item{fit}{data from phenofit_site}
+\item{fit}{Object returned by \code{curvefits}.}
+
+\item{d}{original input data}
+
+\item{title}{String}
+
+\item{show.legend}{Boolean}
 }
 \description{
 plot_phenofit

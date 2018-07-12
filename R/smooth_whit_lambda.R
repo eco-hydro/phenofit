@@ -25,18 +25,26 @@ v_point = function(y, w = 0 * y + 1, lambda = 100, d = 2) {
 }
 
 # sometimes not converge
-v_opt = function(y, w = 0 * y + 1, d = 2, llas = c(0, 4), tol = 0.01) {
+v_opt = function(y, w = 0 * y + 1, d = 2, lambdas = c(0, 4), tol = 0.01) {
     # Locate the optimal value of log10(lambda) with optimizer
-    # Specify bounds of search range for log10(lambda) in paramter 'llas'
+    # Specify bounds of search range for log10(lambda) in paramter 'lambdas'
     
     v_fun = function(lla, y, w, d) v_point(y, w, 10 ^ lla, d)
-    op = optimize(v_fun, llas, y, w, d, tol = tol)
+    op = optimize(v_fun, lambdas, y, w, d, tol = tol)
     return(op$minimum)
 }
 
-#' update 20180605 add weights updating to whittaker lambda selecting
+#' v_curve
+#' 
+#' V-curve is used to optimize Whittaker parameter lambda.
+#' Update 20180605 add weights updating to whittaker lambda selecting
+#' 
+#' @inheritParams whitsmw2
+#' @param d difference order
+#' @param IsPlot Boolean. Whether to plot figure?
+#' 
 #' @export
-v_curve = function(INPUT, nptperyear, llas,  d = 2, show = F, 
+v_curve = function(INPUT, nptperyear, lambdas,  d = 2, IsPlot = F, 
     wFUN = wTSM, iters=2) {
     # Compute the V-cure
     y <- INPUT$y
@@ -47,7 +55,7 @@ v_curve = function(INPUT, nptperyear, llas,  d = 2, show = F,
     # whitsmw2(y, w, ylu, nptperyear, wFUN = wTSM, iters=1, lambdas=1000,
 
     fits = pens = NULL
-    for (lla in llas) {
+    for (lla in lambdas) {
         # param$lambdas <- 10^lla
         # z    <- do.call(whitsmw2, param) %>% dplyr::last()
         z    = whit2(y, 10 ^ lla, w)
@@ -60,11 +68,11 @@ v_curve = function(INPUT, nptperyear, llas,  d = 2, show = F,
     # Construct V-curve
     dfits   = diff(fits)
     dpens   = diff(pens)
-    llastep = llas[2] - llas[1]
+    llastep = lambdas[2] - lambdas[1]
     v       = sqrt(dfits ^ 2 + dpens ^ 2) / (log(10) * llastep)
 
-    nla     = length(llas)
-    lamids  = (llas[-1] + llas[-nla]) / 2
+    nla     = length(lambdas)
+    lamids  = (lambdas[-1] + lambdas[-nla]) / 2
     k       = which.min(v)
     lambda  = 10 ^ lamids[k]
     
@@ -72,7 +80,7 @@ v_curve = function(INPUT, nptperyear, llas,  d = 2, show = F,
     # z    <- do.call(whitsmw2, param) %>% dplyr::last()
     z       = whit2(y, lambda, w)
 
-    if (show) {
+    if (IsPlot) {
         ylim = c(0, max(v))
         plot(lamids, v, type = 'l', col = 'blue', ylim = ylim,
            xlab = 'log10(lambda)')
@@ -82,10 +90,11 @@ v_curve = function(INPUT, nptperyear, llas,  d = 2, show = F,
         title('V-curve')
         grid()
     }
-    return(list(z = z, llas = lamids, lambda = lambda, v = v, vmin = v[k]))
+    return(list(z = z, lambdas = lamids, lambda = lambda, v = v, vmin = v[k]))
 }
 
 #' Initial lambda value of whittaker taker
+#' @param y Numeric vector
 #' @export
 init_lambda  <- function(y){
     y        <- y[!is.na(y)] #rm NA values
@@ -166,9 +175,15 @@ init_lambda  <- function(y){
 # 5    skewness -0.06691403 0.003762368 -17.785083 1.216689e-70
 # 6    kurtosis  0.01128888 0.001505916   7.496350 6.621350e-14
 
-#' kurtosis
+#' skewness and kurtosis
 #' 
 #' Inherit from package `e1071`
+#' @param x a numeric vector containing the values whose skewness is to be 
+#' computed.
+#' @param na.rm a logical value indicating whether NA values should be stripped 
+#' before the computation proceeds.
+#' @param type an integer between 1 and 3 selecting one of the algorithms for 
+#' computing \code{\link[e1071]{skewness}}.
 #' 
 #' @export
 kurtosis <- function (x, na.rm = FALSE, type = 3) {
@@ -195,6 +210,7 @@ kurtosis <- function (x, na.rm = FALSE, type = 3) {
     y
 }
 
+#' @rdname kurtosis
 #' @export
 skewness <- function (x, na.rm = FALSE, type = 3) {
     if (any(ina <- is.na(x))) {

@@ -8,7 +8,7 @@ Description: A remote sensing vegetation index phenology extraction package.
 License: MIT | file LICENSE
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 6.0.1
+RoxygenNote: 6.0.1.9000
 LinkingTo: Rcpp, RcppArmadillo
 Imports: Rcpp, RcppArmadillo, 
     tibble, dplyr, purrr, stringr, tidyr, ggplot2, lubridate, 
@@ -16,7 +16,8 @@ Imports: Rcpp, RcppArmadillo,
     grid, gridExtra, 
     magrittr, plyr, reshape2, zoo, 
     optimx,
-    numDeriv
+    numDeriv, 
+    grDevices, utils, stats
 Suggests: knitr,
     rmarkdown,
     testthat

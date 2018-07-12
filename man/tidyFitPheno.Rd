@@ -6,6 +6,11 @@
 \usage{
 tidyFitPheno(pheno, origin)
 }
+\arguments{
+\item{pheno}{Extracted phenology from \code{ExtractPheno}}
+
+\item{origin}{time origin, i.e. \code{INPUT$t[1]}}
+}
 \description{
 Tidy for every method with multiple years phenology data
 }

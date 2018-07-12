@@ -6,6 +6,11 @@
 \usage{
 cv_coef(x, w)
 }
+\arguments{
+\item{x}{Numeric vector}
+
+\item{w}{weights of different point}
+}
 \description{
 weighted CV
 }

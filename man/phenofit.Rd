@@ -4,7 +4,6 @@
 \name{phenofit}
 \alias{phenofit}
 \alias{phenofit-package}
-\alias{phenofit-package}
 \title{phenofit}
 \description{
 Vegetation phenology package

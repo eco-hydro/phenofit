@@ -4,28 +4,34 @@
 \alias{wHANTS}
 \title{Weighted HANTS SMOOTH}
 \usage{
-HANTS(nptperyear,nf,y,ts,HiLo,low,high,fet,dod,delta)
+wHANTS(y, t, w, nf = 3, ylu, periodlen = 365, nptperyear,
+  wFUN = wTSM, iters = 2, wmin = 0.1, ...)
 }
 \arguments{
-\item{y}{array of input sample values (e.g. NDVI values)}
+\item{y}{Numeric vector, vegetation index time-series}
+
+\item{t}{Numeric vector, \code{Date} variable}
+
+\item{w}{Numeric vector, weights of \code{y}}
 
 \item{nf}{number of frequencies to be considered above the zero frequency}
 
-\item{ylu}{[low, high] of time-series y (values outside the valid range are rejeced
-right away)}
+\item{ylu}{[low, high] of time-series y (curve fitting values are constrained
+in the range of \code{ylu}.}
 
 \item{periodlen}{length of the base period, measured in virtual samples
 (days, dekads, months, etc.). nptperyear in timesat.}
 
-\item{nptperyear}{points per year}
+\item{nptperyear}{number of images per year}
 
-\item{ni}{nr. of images (total number of actual samples of the time series)}
+\item{wFUN}{weights updating function, can be one of 'wTSM', 'wChen' and 
+'wBisquare'.}
 
-\item{ts}{array of size ni of time sample indicators
-(indicates virtual sample number relative to the base period)
-numbers in array ts maybe greater than nptperyear
-If no aux file is used (no time samples), we assume ts(i)= i,
-where i=1, ..., ni}
+\item{iters}{How many times curve fitting is implemented.}
+
+\item{wmin}{Double, minimum weigth (i.e. weight of snow, ice and cloud).}
+
+\item{...}{Additional parameters are passed to \code{wFUN}.}
 }
 \value{
 amp returned array of amplitudes, first element is the average of

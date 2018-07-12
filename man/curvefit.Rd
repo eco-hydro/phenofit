@@ -4,8 +4,8 @@
 \alias{curvefit}
 \title{curve fit vegetation index (VI) time-series}
 \usage{
-curvefit(y, t = index(y), tout = t, meth = "BFGS", methods = c("spline",
-  "beck", "elmore", "klos", "AG", "zhang"), ...)
+curvefit(y, t = index(y), tout = t, meth = "BFGS",
+  methods = c("spline", "beck", "elmore", "klos", "AG", "zhang"), ...)
 }
 \arguments{
 \item{y}{Vegetation time-series index, numeric vector}
@@ -13,7 +13,15 @@ curvefit(y, t = index(y), tout = t, meth = "BFGS", methods = c("spline",
 \item{t}{The corresponding doy of x}
 
 \item{tout}{The output interpolated time.}
+
+\item{meth}{optimization method}
+
+\item{methods}{curve fitting method names, can be one or more of 'beck', 
+'elmore', 'klos', 'AG', 'Gu', 'zhang'. Note that 'klos' has so many parameters.
+Its optimization is not stable.}
+
+\item{...}{other parameters passed to curve fitting function.}
 }
 \description{
-curve fit VI using 'spline', 'beck', 'elmore', 'klos', 'AG', 'Gu', 'zhang' methods
+curve fit VI using  methods
 }

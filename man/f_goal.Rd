@@ -4,8 +4,25 @@
 \alias{f_goal}
 \title{Common goal function of those curve fitting methods}
 \usage{
-f_goal(par, y, t, fun = c(doubleLog.elmore, doubleLog.beck, doubleLog.klos,
-  doubleLog.gu, doubleLog.zhang, doubleAG), w, ylu, ...)
+f_goal(par, y, t, fun = c(doubleLog.elmore, doubleLog.beck,
+  doubleLog.klos, doubleLog.gu, doubleLog.zhang, doubleAG), w, ylu, ...)
+}
+\arguments{
+\item{y}{Numeric vector, vegetation index time-series}
+
+\item{t}{Numeric vector, \code{Date} variable}
+
+\item{fun}{A curve fitting function, see \link{logistics}.}
+
+\item{w}{Numeric vector, weights of \code{y}}
+
+\item{ylu}{[low, high] of time-series y (curve fitting values are constrained
+in the range of \code{ylu}.}
+
+\item{...}{other parameters passed to \code{fun}.}
+}
+\value{
+RMSE root mean square error of curve fitting values.
 }
 \description{
 Common goal function of those curve fitting methods

@@ -12,6 +12,8 @@ GOF(Y_obs, Y_sim, w, include.cv = FALSE)
 \item{Y_sim}{Numeric vector, corresponding simulated values}
 
 \item{w}{Numeric vector, weights of every points}
+
+\item{include.cv}{If true, cv will be returned.}
 }
 \description{
 Good of fitting

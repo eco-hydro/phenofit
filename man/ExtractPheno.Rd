@@ -7,7 +7,9 @@
 ExtractPheno(fits, TRS = c(0.1, 0.2, 0.5, 0.6), IsPlot = FALSE)
 }
 \arguments{
-\item{outdir}{save calculated phenology in oudir txts}
+\item{TRS}{Threshold for \code{PhenoTrs}.}
+
+\item{IsPlot}{Boolean. Whether to plot figure?}
 }
 \description{
 Get yearly vegetation phenological metrics of a curve fitting method

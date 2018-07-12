@@ -1,23 +1,17 @@
 #' Weighted HANTS SMOOTH
 #'
 #' Modified by Dongdong Kong, 2018-05-29
-#'
-#' @param ni nr. of images (total number of actual samples of the time series)
+#' 
+#' @template INPUT
+#' @param nf number of frequencies to be considered above the zero frequency
+#' @param ylu [low, high] of time-series y (curve fitting values are constrained
+#' in the range of \code{ylu}.
+#' @param nptperyear number of images per year
 #' @param periodlen length of the base period, measured in virtual samples
 #'           (days, dekads, months, etc.). nptperyear in timesat.
-#' @param nptperyear points per year
-#' @param nf number of frequencies to be considered above the zero frequency
-#' @param y  array of input sample values (e.g. NDVI values)
-#' @param ts array of size ni of time sample indicators
-#'           (indicates virtual sample number relative to the base period)
-#'           numbers in array ts maybe greater than nptperyear
-#'           If no aux file is used (no time samples), we assume ts(i)= i,
-#'           where i=1, ..., ni
-#' @param ylu [low, high] of time-series y (values outside the valid range are rejeced
-#'           right away)
-#' @usage
-#' HANTS(nptperyear,nf,y,ts,HiLo,low,high,fet,dod,delta)
-#'
+#' @template WEIGHT
+#' @param ... Additional parameters are passed to \code{wFUN}.
+#' 
 #' @author
 #' Wout Verhoef, NLR, Remote Sensing Dept. June 1998
 #' Mohammad Abouali (2011), Converted to MATLAB

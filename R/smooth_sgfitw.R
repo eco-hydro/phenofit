@@ -4,6 +4,11 @@ sgolayS <- function(frame, d){
 }
 
 #' Weighted Savitzky-Golay
+#' 
+#' @inheritParams wHANTS
+#' @param frame Savitzky-Golay windows size
+#' @param d polynomial of degree
+#' 
 #' @export
 sgfitw <- function(y, w, nptperyear, ylu, wFUN = wTSM, iters = 2,
                    frame = floor(nptperyear/7)*2 + 1, d=2, ...){

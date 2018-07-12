@@ -12,10 +12,10 @@ getFitValueYear <- function(fit_year, first = FALSE){
     return(d_iters)
 }
 
-#' getFitValueYears
-#' @examples
-#' origin.date <- fit$INPUT$t[1]
-#' out$t %<>% add(origin.date - 1)
+# getFitValueYears
+# @examples
+# origin.date <- fit$INPUT$t[1]
+# out$t %<>% add(origin.date - 1)
 getFitValueYears <- function(fit_years){
     # Avoiding overlap, only first year include first point, 
     nyear <- length(fit_years)
@@ -24,6 +24,11 @@ getFitValueYears <- function(fit_years){
     rbind(first, others)
 }
 
+#' getFittings
+#' 
+#' Get curve fitting data.frame
+#' 
+#' @param fit Object returned by \code{curvefits}.
 #' @export
 getFittings <- function(fit){
     #global variables
@@ -54,10 +59,14 @@ getFittings <- function(fit){
 
 #' plot_phenofit
 #'
-#' @param fit data from phenofit_site
+#' @param fit Object returned by \code{curvefits}.
+#' @param d original input data
+#' @param title String
+#' @param show.legend Boolean
+#' 
 #' @importFrom dplyr left_join
 #' @export
-plot_phenofit <- function(fit, d, title = NULL, show.legend = T, plotly = F){
+plot_phenofit <- function(fit, d, title = NULL, show.legend = T){
     qc_levels <- c("good", "margin", "snow/ice", "cloud")
     qc_colors <- c("grey60", "#00BFC4", "#F8766D", "#C77CFF") %>% set_names(qc_levels)
     qc_shapes <- c(19, 15, 4, 17) %>% set_names(qc_levels)
@@ -111,15 +120,15 @@ plot_phenofit <- function(fit, d, title = NULL, show.legend = T, plotly = F){
     # p + facet_grid(meth~pmeth)
     #return
     
-    if (plotly){
-        plotly::ggplotly(p)
-    }else{
-        if (show.legend){
-            p <- p + theme(legend.position="none")
-            p <- arrangeGrob(p, lgd, nrow = 2, heights = c(15, 1), padding = unit(1, "line")) #return, 
-        }
-        return(p)
+    # if (plotly){
+    #     plotly::ggplotly(p)
+    # }else{
+    if (show.legend){
+        p <- p + theme(legend.position="none")
+        p <- arrangeGrob(p, lgd, nrow = 2, heights = c(15, 1), padding = unit(1, "line")) #return, 
     }
+    return(p)
+    # }
 }
 
 # make_legend
@@ -145,6 +154,10 @@ lgd <- make_legend()
 #' tidyFits_pheno
 #'
 #' Tidy for every method with multiple years phenology data
+#' 
+#' @param pheno Extracted phenology from \code{ExtractPheno}
+#' @param origin time origin, i.e. \code{INPUT$t[1]}
+#' 
 #' @export
 tidyFitPheno <- function(pheno, origin){
     tidToDate <- function(datenum)  origin - 1 + unlist(datenum)

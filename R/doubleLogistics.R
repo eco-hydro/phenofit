@@ -1,21 +1,28 @@
-#'
-#' Define double logistics, piecewise logistics and many other functions used to
+#' Double logistics functions
+#' 
+#' Define double logistics, piecewise logistics and many other functions to
 #' curve fit VI time-series
-#'
-#' @usage
-#' doubleLog.beck(par, t)
-#' doubleLog.gu(par, t)
-#' doubleLog.elmore(par, t)
-#' doubleLog.klos(par, t)
-#' doubleLog.zhang(par, t) #piecewise
-#' doubleAG(par, t)        #piecewise
-#'
-#' All of those function have `par` and `formula` attributes for the convenience for
-#' analytical D1 and D2
-
-#' only fit part of growing season NDVI, before or after peak NDVI
+#' \itemize{
+#'    \item \code{Logistic} The traditional simplest logistic function. It can 
+#'      be only used in half growing season, i.e. vegetation green-up or senescence 
+#'      period. 
+#'    \item \code{doubleLog.zhang} Piecewise logistics, Zhang Xiaoyang, RME, 2003.
+#'    \item \code{doubleAG} Asymmetric Gaussian.
+#'    \item \code{doubleLog.beck} Beck logistics.
+#'    \item \code{doubleLog.gu} Gu logistics.
+#'    \item \code{doubleLog.elmore} Elmore logistics.
+#'    \item \code{doubleLog.klos} Klos logistics.
+#' }
+#' 
+#' All of those function have \code{par} and \code{formula} attributes for the 
+#' convenience for analytical D1 and D2
+#' 
+#' @references
+#' Peter M. Atkinson, et al., 2012, RSE, 123:400-417
+#' 
+#' @rdname logistics
 #' @export
-Log.zhang <- function(par, t){
+Logistic <- function(par, t){
     mn   <- par[1]
     mx   <- par[2]
     sos  <- par[3]
@@ -24,16 +31,11 @@ Log.zhang <- function(par, t){
     # pred <- c/(1 + exp(a + b * t)) + d
     return(pred)
 }
-attr(Log.zhang, 'name')    <- 'Log.zhang'
-attr(Log.zhang, 'par')     <- c("mn", "mx", "sos", "rsp")
-attr(Log.zhang, 'formula') <- expression((mx - mn)/(1 + exp(-rsp*(t - sos))) + mn)
+attr(Logistic, 'name')    <- 'Logistic'
+attr(Logistic, 'par')     <- c("mn", "mx", "sos", "rsp")
+attr(Logistic, 'formula') <- expression((mx - mn)/(1 + exp(-rsp*(t - sos))) + mn)
 
-#'
-#' simplest piecewise logistics function
-#'
-#' fit whole growing season NDVI. First introduced to phenology by
-#'  Zhang Xiaoyang, RME, 2003
-#'
+#' @rdname logistics
 #' @export
 doubleLog.zhang <- function(par, t){
     t0  <- par[1]
@@ -62,10 +64,8 @@ attr(doubleLog.zhang, 'par')     <- c("t0", "mn", "mx", "sos", "rsp", "eos", "ra
 # piecewise function
 attr(doubleLog.zhang, 'formula') <- expression( (mx - mn)/(1 + exp(-rsp*(t - sos))),
                                                 (mx - mn)/(1 + exp( rau*(t - eos))) )
-#' Asymmetric Gaussian
-#'
-#' @references
-#' Peter M. Atkinson, et al., 2012, RSE, 123:400-417
+
+#' @rdname logistics
 #' @export
 doubleAG <- function(par, t){
     t0  <- par[1]
@@ -88,6 +88,7 @@ attr(doubleAG, 'par')     <- c("t0", "mn", "mx", "rsp", "a3", "rau", "a5")
 attr(doubleAG, 'formula') <- expression( mn + (mx - mn)*exp(- ((t0 - t)*rsp) ^a3 ),
                                          mn + (mx - mn)*exp(- ((t - t0)*rau) ^a5 ))
 
+#' @rdname logistics
 #' @export
 doubleLog.beck <- function(par, t) {
     mn  <- par[1]
@@ -106,7 +107,7 @@ attr(doubleLog.beck, 'name') <- 'doubleLog.beck'
 attr(doubleLog.beck, 'par') <- c("mn", "mx", "sos", "rsp", "eos", "rau")
 attr(doubleLog.beck, 'formula') <- expression(mn + (mx - mn)*(1/(1 + exp(-rsp*(t - sos))) + 1/(1 + exp(rau*(t - eos)))) - 1)
 
-# unified parameter names
+#' @rdname logistics
 #' @export
 doubleLog.elmore <- function(par, t) {
     mn  <- par[1]
@@ -132,6 +133,7 @@ attr(doubleLog.elmore, 'name')    <- 'doubleLog.elmore'
 attr(doubleLog.elmore, 'par')     <- c("mn", "mx", "sos", "rsp", "eos", "rau", "m7")
 attr(doubleLog.elmore, 'formula') <- expression( mn + (mx - m7*t)*( 1/(1 + exp(-rsp*(t-sos))) - 1/(1 + exp(-rau*(t-eos))) ) )
 
+#' @rdname logistics
 #' @export
 doubleLog.gu <- function(par, t) {
     y0  <- par[1]
@@ -155,6 +157,7 @@ attr(doubleLog.gu, 'name')    <- 'doubleLog.gu'
 attr(doubleLog.gu, 'par')     <- c('y0', 'a1', 'a2', 'sos', 'rsp', 'eos', 'rau', 'c1', 'c2')
 attr(doubleLog.gu, 'formula') <- expression(y0 + (a1/(1 + exp(-rsp*(t - sos)))^c1) - (a2/(1 + exp(-rau*(t - eos)))^c2))
 
+#' @rdname logistics
 #' @export
 doubleLog.klos <- function(par, t) {
     a1 <- par[1]
@@ -201,6 +204,11 @@ attr(doubleLog.klos, 'formula') <- expression((a1*t + b1) + (a2*t^2 + b2*t + c) 
 
 #' Common goal function of those curve fitting methods
 #' 
+#' @inheritParams optim_pheno
+#' @param fun A curve fitting function, see \link{logistics}.
+#' @param ... other parameters passed to \code{fun}.
+#' 
+#' @return RMSE root mean square error of curve fitting values.
 #' @export
 f_goal <- function(
     par, y, t,

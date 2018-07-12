@@ -7,11 +7,22 @@
 I_optimx(prior, FUN, y, t, tout, method, debug = FALSE, ...)
 }
 \arguments{
+\item{prior}{A vector of initial values for the parameters for which optimal 
+values are to be found.}
+
+\item{y}{Numeric vector, vegetation index time-series}
+
+\item{t}{Numeric vector, \code{Date} variable}
+
+\item{tout}{corresponding \code{t} of curve fitting result}
+
 \item{method}{Method passed to optimx function, which can be one of:
 'BFGS','CG','Nelder-Mead','L-BFGS-B','nlm','nlminb', spg','ucminf',
 'Rcgmin','Rvmmin','newuoa','bobyqa','nmkb','hjkb'}
 
 \item{debug}{If debug is true, all.methods is also true for optimx}
+
+\item{...}{other parameters passed to \code{optimFUN}}
 }
 \value{
 result same as what optimx function returned

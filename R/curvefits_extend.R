@@ -4,15 +4,20 @@ phenonames <- c('TRS2.SOS', 'TRS2.EOS', 'TRS5.SOS', 'TRS5.EOS', 'TRS6.SOS', 'TRS
     'GreenUp', 'Maturity', 'Senescence', 'Dormancy')
 
 
-#'
+
 #' curve fit vegetation index (VI) time-series
 #'
-#' curve fit VI using 'spline', 'beck', 'elmore', 'klos', 'AG', 'Gu', 'zhang' methods
+#' curve fit VI using  methods
 #'
 #' @param y Vegetation time-series index, numeric vector
 #' @param t The corresponding doy of x
 #' @param tout The output interpolated time.
-#'
+#' @param meth optimization method
+#' @param methods curve fitting method names, can be one or more of 'beck', 
+#' 'elmore', 'klos', 'AG', 'Gu', 'zhang'. Note that 'klos' has so many parameters.
+#' Its optimization is not stable.
+#' @param ... other parameters passed to curve fitting function.
+#' 
 #' @export
 curvefit <- function(y, t = index(y), tout = t, meth = 'BFGS',
     methods = c('spline', 'beck', 'elmore', 'klos', 'AG', 'zhang'), ...)
@@ -89,7 +94,7 @@ curvefit_optimx <- function(x, t = index(x), tout = t,
 
 #' Get parameters from curve fitting result
 #'
-#' @param fit Object returned by curvefits
+#' @param fit Curve fitting result by \code{curvefits} result. 
 #' @export
 getparam <- function(fit){
     llply(fit$fits, function(x){
@@ -97,10 +102,8 @@ getparam <- function(fit){
     })
 }
 
-
-#' Get parameters from multiple curve fitting results
-#'
-#' @param fits List Object of curvefits returned
+#' @param fits Multiple methods curve fitting results by \code{curvefits} result. 
+#' @rdname getparam
 #' @export
 getparams <- function(fits){
     pars <- map(fits, getparams) %>% purrr::transpose() %>%
@@ -109,13 +112,13 @@ getparams <- function(fits){
 }
 
 
-#' curvefits2
-#'
-#' @param t A date vector
-#' @param y A numberic vector, same length as t
-#' @param methods A character vector, c('spline', 'beck', 'elmore', 'klos', 'AG', 'zhang')
-#' @param ... other parameters pass to season or curvefit_site
-#' @export
+##  curvefits2
+## 
+##  @param t A date vector
+##  @param y A numberic vector, same length as t
+##  @param methods A character vector, c('spline', 'beck', 'elmore', 'klos', 'AG', 'zhang')
+##  @param ... other parameters pass to season or curvefit_site
+##  @export
 curvefits2 <- function(t, y, w, nptperyear = 46,
                           wFUN = wTSM, iters = 2,
                           lambda, south = FALSE,

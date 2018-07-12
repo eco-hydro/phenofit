@@ -7,7 +7,7 @@
 \method{plot}{phenofit}(fit)
 }
 \arguments{
-\item{fit}{`phenofit` class Object}
+\item{fit}{Curve fitting result returned by \code{curvefit}.}
 }
 \description{
 plot curve fitting VI, gradient (first order difference D1), hessian (D2),

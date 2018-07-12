@@ -7,8 +7,10 @@
 check_fit(yfit, ylu)
 }
 \arguments{
+\item{yfit}{Numeric vector, curve fitting result}
+
 \item{ylu}{limits of y value, [ymin, ymax]}
 }
 \description{
-check_fit
+Curve fitting values are constrained in the range of \code{ylu}.
 }

@@ -6,6 +6,9 @@
 \usage{
 init_lambda(y)
 }
+\arguments{
+\item{y}{Numeric vector}
+}
 \description{
 Initial lambda value of whittaker taker
 }

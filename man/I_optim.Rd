@@ -7,11 +7,22 @@
 I_optim(prior, FUN, y, t, tout, pfun = p_optim, method = "BFGS", ...)
 }
 \arguments{
+\item{prior}{A vector of initial values for the parameters for which optimal 
+values are to be found.}
+
+\item{y}{Numeric vector, vegetation index time-series}
+
+\item{t}{Numeric vector, \code{Date} variable}
+
+\item{tout}{corresponding \code{t} of curve fitting result}
+
 \item{pfun}{with prefixion of 'p_', pfun was self modified and unified
 optimization function for double logistics and many other functions.}
 
 \item{method}{was only used for `p_optim` function. Other pfun, e.g. p_nlm, p_nlminb
 will ignore it.}
+
+\item{...}{other parameters passed to \code{optimFUN}}
 }
 \description{
 Interface of self defined optimization functions.

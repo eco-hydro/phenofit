@@ -15,8 +15,8 @@ PhenoPlot <- function(t, x, main = "", ...){
 #' ExtractPheno
 #'
 #' Get yearly vegetation phenological metrics of a curve fitting method
-#'
-#' @param outdir save calculated phenology in oudir txts
+#' @param TRS Threshold for \code{PhenoTrs}.
+#' @param IsPlot Boolean. Whether to plot figure?
 #' @export
 ExtractPheno <- function(fits, TRS = c(0.1, 0.2, 0.5, 0.6), IsPlot = FALSE){
     names <- names(fits)
@@ -103,9 +103,15 @@ ExtractPheno <- function(fits, TRS = c(0.1, 0.2, 0.5, 0.6), IsPlot = FALSE){
     return(greenup)
 }
 
+#' Phenology extraction functions
+#' 
+#' 
+#' @inheritParams D1.phenofit
+#' 
+#' @rdname PhenoExtractMeth
 #' @export
-PhenoTrs <- function(fit, approach = c("White", "Trs"), trs = 0.5, min.mean = 0.1,
-    IsPlot = TRUE, ...) {
+PhenoTrs <- function(fit, approach = c("White", "Trs"), trs = 0.5, #, min.mean = 0.1
+    IsPlot = TRUE, ...) { 
     metrics <- c(sos = NA, eos = NA)
 
     t      <- fit$tout
@@ -193,9 +199,10 @@ PhenoTrs <- function(fit, approach = c("White", "Trs"), trs = 0.5, min.mean = 0.
     ### The function returns a vector with SOS, EOS, LOS, POP, MGS, rsp, rau, PEAK, MSP and MAU. }
 }
 
-#'
+
 #' PhenoDeriv
-#' @description rechecked in 2017-11-17, with no problems
+#' 
+#' @rdname PhenoExtractMeth
 #' @export
 PhenoDeriv <- function(fit, IsPlot = TRUE, smspline = TRUE, show.lgd = T, ...){
     PhenoNames <- c("SOS", "POP", "EOS")
@@ -262,9 +269,9 @@ PhenoDeriv <- function(fit, IsPlot = TRUE, smspline = TRUE, show.lgd = T, ...){
 }
 
 
-#' PhenoGu
-#' @export
 #' @importFrom dplyr last
+#' @rdname PhenoExtractMeth
+#' @export
 PhenoGu <- function(fit, IsPlot = TRUE, smspline = TRUE, ...) {
     PhenoNames <- c("UD", "SD", "DD", "RD")
     metrics <- setNames(rep(NA, 4), c("UD", "SD", "DD", "RD"))
@@ -364,6 +371,7 @@ PhenoGu <- function(fit, IsPlot = TRUE, smspline = TRUE, ...) {
     return(metrics)
 }
 
+#' @rdname PhenoExtractMeth
 #' @export
 PhenoKl <- function(fit, IsPlot = TRUE, show.lgd = T, ...) {
     PhenoNames <- c("Greenup", "Maturity", "Senescence", "Dormancy")

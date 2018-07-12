@@ -7,15 +7,11 @@
 #' Check input data, interpolate NA values in y, remove spike values, and set
 #' weights for NA in y and w.
 #'
-#' @param t Numeric vector, \code{Date} variable
-#' @param y Numeric vector, vegetation index time-series
-#' @param w Numeric vector, weights of \code{y}
+#' @template INPUT
 #' @param Tn Numeric vector, night temperature, default is null. If provided,
 #' Tn is used to help divide ungrowing period, and then get background value in
 #' ungrowing season (see details in \code{\link[phenofit]{backval}}).
-#' @param wmin Double, min weight. w < wmin will be set to wmin. \code{wmin}
-#' should be greater than 0, otherwise bad points (e.g. snow contaminated points)
-#' will be complete ignored.
+#' @param wmin Double, minimum weigth (i.e. weight of snow, ice and cloud).
 #' @param missval Double, which is used to replace NA values in y. If missing,
 #' the default vlaue is \code{ylu[1]}.
 #' @param maxgap Integer, nptperyear/4 will be a suitable value. If continuous
@@ -104,6 +100,10 @@ check_input <- function(t, y, w, Tn = NULL, wmin = 0.2, missval, maxgap = 10, al
 }
 
 #' check_fit
+#' 
+#' Curve fitting values are constrained in the range of \code{ylu}.
+#' 
+#' @param yfit Numeric vector, curve fitting result
 #' @param ylu limits of y value, [ymin, ymax]
 #' @export
 check_fit <- function(yfit, ylu){

@@ -28,7 +28,7 @@ and `wHANTS`.}
 
 \item{iters}{How many times curve fitting is implemented.}
 
-\item{wmin}{Double, minimum weigth value (i.e. weight for snow, ice and cloud).}
+\item{wmin}{Double, minimum weigth (i.e. weight of snow, ice and cloud).}
 
 \item{lambda}{the parameter of \code{whitsmw2}}
 

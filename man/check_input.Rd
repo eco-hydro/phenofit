@@ -18,9 +18,7 @@ check_input(t, y, w, Tn = NULL, wmin = 0.2, missval, maxgap = 10,
 Tn is used to help divide ungrowing period, and then get background value in
 ungrowing season (see details in \code{\link[phenofit]{backval}}).}
 
-\item{wmin}{Double, min weight. w < wmin will be set to wmin. \code{wmin}
-should be greater than 0, otherwise bad points (e.g. snow contaminated points)
-will be complete ignored.}
+\item{wmin}{Double, minimum weigth (i.e. weight of snow, ice and cloud).}
 
 \item{missval}{Double, which is used to replace NA values in y. If missing,
 the default vlaue is \code{ylu[1]}.}

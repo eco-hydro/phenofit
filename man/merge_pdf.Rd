@@ -7,6 +7,15 @@
 merge_pdf(outfile = "RPlot.pdf", indir = "Figure", pattern = "*.pdf",
   del = FALSE)
 }
+\arguments{
+\item{outfile}{String}
+
+\item{indir}{Directory to search pdfs}
+
+\item{pattern}{string used to match pdf filename}
+
+\item{del}{Booolean. If true, after merge, original pdf files will be delete.}
+}
 \description{
-rely on python pdfmerge package, `pip install pdfmerge`
+rely on python pdfmerge package, \code{pip install pdfmerge}
 }

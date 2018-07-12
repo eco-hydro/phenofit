@@ -19,7 +19,7 @@
 #' @param wFUN weights updating function, can be one of 'wTSM', 'wChen' and 
 #' 'wBisquare'.
 #' @param iters How many times curve fitting is implemented.
-#' @param wmin Double, minimum weigth value (i.e. weight for snow, ice and cloud).
+#' @param wmin Double, minimum weigth (i.e. weight of snow, ice and cloud).
 #' @param lambda the parameter of \code{whitsmw2}
 #' @param nf the parameter of \code{wHANTS}, number of frequencies to be 
 #' considered above the zero frequency

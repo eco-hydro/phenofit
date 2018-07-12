@@ -2,10 +2,28 @@
 % Please edit documentation in R/tools.R
 \name{fprintf}
 \alias{fprintf}
-\title{fprintf}
+\alias{runningId}
+\title{fprintf
+Print sprintf result into console, just like C style fprintf function}
 \usage{
 fprintf(fmt, ...)
+
+runningId(i, step = 1, prefix = "")
+}
+\arguments{
+\item{fmt}{a character vector of format strings, each of up to 8192 bytes.}
+
+\item{...}{other parameters will be passed to \code{sprintf}}
+
+\item{i}{the running Id.}
+
+\item{step}{how long of print step.}
+
+\item{prefix}{prefix string}
 }
 \description{
-print sprintf result into console just like C style fprintf function
+fprintf
+Print sprintf result into console, just like C style fprintf function
+
+print the running ID in the console
 }

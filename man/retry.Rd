@@ -7,6 +7,11 @@ retry to execute expr until success before reaches the max try times (maxTimes)}
 \usage{
 retry(expr, maxTimes = 3)
 }
+\arguments{
+\item{expr}{expression to be evaluated}
+
+\item{maxTimes}{maximum try times}
+}
 \description{
 retry
 retry to execute expr until success before reaches the max try times (maxTimes)

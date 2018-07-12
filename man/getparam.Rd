@@ -2,12 +2,17 @@
 % Please edit documentation in R/curvefits_extend.R
 \name{getparam}
 \alias{getparam}
+\alias{getparams}
 \title{Get parameters from curve fitting result}
 \usage{
 getparam(fit)
+
+getparams(fits)
 }
 \arguments{
-\item{fit}{Object returned by curvefits}
+\item{fit}{Curve fitting result by \code{curvefits} result.}
+
+\item{fits}{Multiple methods curve fitting results by \code{curvefits} result.}
 }
 \description{
 Get parameters from curve fitting result

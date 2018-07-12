@@ -1,10 +1,8 @@
-#'
 #' statistic
 #'
 #' statistics to evaluate curve fitting performance
 #' @param fit The phenofit object
 #' @export
-#'
 statistic.phenofit <- function(fit){
     t     <- fit$data$t
     tout  <- fit$tout
@@ -40,13 +38,19 @@ statistic.phenofit <- function(fit){
     return(c(RMSE = RMSE, NSE = NSE, R = R, pvalue = pvalue, n = n))
 }
 
-#' grad and hess according to numDeriv package
+#' Gradient (grad) and Hessian (hess) based on \code{numDeriv} package
+#' 
+#' @param fit Curve fitting result returned by \code{curvefit}.
+#' @param tout A vector of time steps at which the function can be predicted
+#' 
+#' @rdname derivative
 #' @export
 grad.phenofit <- function(fit, tout){
     FUN <- get(fit$fun, mode = 'function')
     grad(FUN, tout, par= fit$par)
 }
 
+#' @rdname derivative
 #' @export
 hess.phenofit <- function(fit, tout){
     FUN <- get(fit$fun, mode = 'function')
@@ -70,10 +74,13 @@ print.phenofit <- function(fit){
     print(fit$par)
 }
 
-#'
-#' D1.phenofit
+#' @rdname derivative
+#' @param numDeriv If true, \code{numDeriv} package \code{grad} and \code{hess} 
+#' will be used; if false, \code{D1} and \code{D2} will be used.
 #' @param smspline If smspline = TRUE or attr(fit$fun, 'gradient') == null,
 #'                 it will use smooth.spline to get der1 and der2.
+#' @param ... Other parameters are ignored.
+#' 
 #' @export
 D1.phenofit <- function(fit, numDeriv = FALSE, smspline = FALSE, ...){
     pred <- last(fit$fits)                 #zoo obj
@@ -102,6 +109,7 @@ D1.phenofit <- function(fit, numDeriv = FALSE, smspline = FALSE, ...){
     return(der1)
 }
 
+#' @rdname derivative
 #' @export
 D2.phenofit <- function(fit, numDeriv = FALSE, smspline = FALSE, ...){
     pred <- last(fit$fits)
@@ -135,6 +143,7 @@ D2.phenofit <- function(fit, numDeriv = FALSE, smspline = FALSE, ...){
     return(list(der1 = der1, der2 = der2))
 }
 
+#' @rdname derivative
 #' @export
 curvature.phenofit <- function(fit, numDeriv = FALSE, smspline = FALSE, ...){
     derivs <- D2.phenofit(fit, numDeriv = numDeriv, smspline = smspline)
@@ -142,13 +151,12 @@ curvature.phenofit <- function(fit, numDeriv = FALSE, smspline = FALSE, ...){
     return(list(k = k, der1 = derivs$der1, der2 = derivs$der2))
 }
 
-#'
 #' plot function for phenofit class
 #'
 #' plot curve fitting VI, gradient (first order difference D1), hessian (D2),
 #' curvature (k) and the change rate of curvature(der.k)
 #'
-#' @param fit `phenofit` class Object
+#' @inheritParams grad.phenofit
 #' @export
 plot.phenofit <- function(fit){
     name <- deparse(substitute(fit))

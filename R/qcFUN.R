@@ -67,7 +67,7 @@
 #' @param end Bit ending position
 #' @return weigths
 #' 
-#' @rdname qc_func
+#' @rdname qcFUN
 #' @export
 getBits <- function(x, start, end = start){
     # Geometric progression Sn = a1*(1 - q^n)/(1-q)
@@ -81,7 +81,7 @@ getBits <- function(x, start, end = start){
 
 #' @param QA quality control variable
 #' 
-#' @rdname qc_func
+#' @rdname qcFUN
 #' @export
 qc_summary <- function(QA, wmin = 0.1){
     w <- rep(NA, length(QA)) # default weight is zero
@@ -94,7 +94,7 @@ qc_summary <- function(QA, wmin = 0.1){
 }
 
 #' @export
-#' @rdname qc_func
+#' @rdname qcFUN
 qc_5l <- function(QA, wmin = 0.1){
     # bit5-7, five-level confidence score
     QA <- bitwShiftR(bitwAnd(QA, 224), 5) #1110 0000=224L
@@ -106,7 +106,7 @@ qc_5l <- function(QA, wmin = 0.1){
     return(w)
 }
 
-#' @rdname qc_func
+#' @rdname qcFUN
 qc_NDVIv4 <- function(QA){
     # bit1-2: cloudy, cloud shadow
     QA <- bitwShiftR(bitwAnd(QA, 7), 1) 

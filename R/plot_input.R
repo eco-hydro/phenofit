@@ -1,5 +1,7 @@
 #' Plot INPUT returned by check_input
 #' 
+#' @inheritParams season
+#' @param ... other parameter will be ignored.
 #' @export
 plotdata <- function(INPUT, nptperyear, wmin = 0.1, ...){
     t <- INPUT$t

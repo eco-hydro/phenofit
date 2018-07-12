@@ -7,6 +7,27 @@
 sgfitw(y, w, nptperyear, ylu, wFUN = wTSM, iters = 2,
   frame = floor(nptperyear/7) * 2 + 1, d = 2, ...)
 }
+\arguments{
+\item{y}{Numeric vector, vegetation index time-series}
+
+\item{w}{Numeric vector, weights of \code{y}}
+
+\item{nptperyear}{number of images per year}
+
+\item{ylu}{[low, high] of time-series y (curve fitting values are constrained
+in the range of \code{ylu}.}
+
+\item{wFUN}{weights updating function, can be one of 'wTSM', 'wChen' and 
+'wBisquare'.}
+
+\item{iters}{How many times curve fitting is implemented.}
+
+\item{frame}{Savitzky-Golay windows size}
+
+\item{d}{polynomial of degree}
+
+\item{...}{Additional parameters are passed to \code{wFUN}.}
+}
 \description{
 Weighted Savitzky-Golay
 }

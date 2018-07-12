@@ -3,51 +3,91 @@ library(grid)
 library(gridExtra)
 
 source('test/stable/load_pkgs.R')
+dir_gdrive   <- "D:/Document/GoogleDrive/phenofit/gee_point" #data/gee_phenofit/v2/
 
-dir_gdrive  <- "D:/Document/GoogleDrive/" #phenofit/data/gee_phenofit/v2/
-mat_cam  <- readwhitMAT(dir_gdrive, "phenocam")
-mat_flux <- readwhitMAT(dir_gdrive, "fluxnet")
+k = 1
+if (k == 1){
+    mat_whit <- readwhitMAT(dir_gdrive, "phenoflux166")
+    st       <- fread(file_st_flux)
+    full     <-  fread(file_flux)
+} else{
+    mat_whit <- readwhitMAT(dir_gdrive, "phenocam133")
+    st       <- fread(file_st_cam)
+    full     <- fread(file_cam)
+}
+full$date %<>% ymd()
 
-full_cam  <- tidyMOD13INPUT_gee(file_cam)  %>% merge(st_cam[, .(site)])
-full_flux <- tidyMOD13INPUT_gee(file_flux) %>% merge(st_flux[, .(site)])
-
-df_full = merge(df_gee, df, by = c("site", "date"))
-df_full[is.na(qc), qc := 3]
-df_full$qc %<>% as.factor()
+df_full = merge(full, mat_whit, by = c("site", "date"))
+df_full[is.na(SummaryQA), SummaryQA := "cloud"]
+df_full$SummaryQA %<>% factor(qc_levels)
 ## visualization
 sites <- unique(df_full$site)
-lgd   <- phenofit:::make_legend()
+lgd   <- phenofit:::make_legend(linename = c("iter1", "iter2"),
+                                linecolor = c("blue", "red"))
 
 file <- "whit_GEE.pdf"
 Cairo::CairoPDF(file, 10, 4)
 # par(mfrow = c(4, 1), mar = c(1, 2, 3, 1), mgp = c(1.5, 0.6, 0))
 ## sometimes sample and reduceRegions result is different
+ps  <- list()
+lwd <- 0.6
+
+fmt_label <- function(x) sprintf("%.2f", x)
 for (i in seq_along(sites)){
     runningId(i)
     d <- df_full[site == sites[i], ]
     titlestr <- sprintf("[%03d] %s", i, sites[i])
-    p <- ggplot(d, aes(date, EVI, color = iters)) +
-        geom_point(aes(color = qc, shape = qc)) +
-        geom_line (aes(date, iter1), color = "blue", size = 0.8) +
-        geom_line (aes(date, iter2), color = "red", size = 0.8) +
-        geom_vline(xintercept = ymd(0101 + (2001:2017)*1e4), aes(color = NULL, shape = NULL),
-                   size = 0.4, linetype=2, color = "grey60") +
-        # scale_x_date(breaks = ymd(0101 + (2001:2017)*1e4))
-        scale_color_manual(values = c("0" = "grey60", "1" = "#00BFC4",
-                                      "2" = "#F8766D", "3" = "#C77CFF",
-                                      "iter1" = "blue", "iter2" = "red"), drop = F) +
-        scale_shape_manual(values = c(19, 15, 4, 17), drop = F) +
-        theme_light()+
-        theme(legend.position="none",
-              panel.grid.minor = element_blank()) +
-        ggtitle(titlestr) +
-        labs(y = "EVI")
-    p2 <- gridExtra::arrangeGrob(p, lgd, nrow = 2, heights = c(15, 1), padding = unit(1, "line"))
 
-    if (i != 1) grid.newpage()
-    grid.draw(p2)
+    p <- ggplot(d, aes(date, y)) +
+        geom_vline(xintercept = ymd(0101 + (2001:2017)*1e4), aes(color = NULL, shape = NULL),
+                   size = 0.3, linetype=2, color = "white") +
+        geom_point(aes(color = SummaryQA, shape = SummaryQA), size = 1.2) +
+        geom_line (aes(date, iter1), color = "blue", size = lwd) +
+        geom_line (aes(date, iter2), color = "red", size = lwd) +
+        geom_text(data = d[1, ], label = titlestr, x = -Inf, y =Inf, vjust = 1.5, hjust = -0.08) +
+        # scale_x_date(breaks = ymd(0101 + (2001:2017)*1e4))
+        scale_color_manual(values = qc_colors, drop = F) +
+        scale_shape_manual(values = qc_shapes, drop = F) +
+        # theme_light()+
+        theme(legend.position = "none",
+              panel.grid.minor = element_blank(),
+              axis.title.x = element_blank(),
+              axis.title.y = element_blank(),
+              axis.text.x = element_blank(),
+              plot.margin = margin(2, 3, 2, 0))+
+        scale_y_continuous(labels = fmt_label)
+        # ggtitle(titlestr) +
+        # labs(y = "")
+    # p2 <- gridExtra::arrangeGrob(p, lgd, nrow = 2, heights = c(15, 1), padding = unit(1, "line"))
+    ps[[i]] <- p
+    # if (i != 1) grid.newpage()
+    # grid.draw(p2)
 }
 
 dev.off()
 file.show(file)
 
+file = "Fig3_whit_point_example.pdf"
+Cairo::CairoPDF(file, 10, nrow*1.6)
+
+nrow  <- 6
+npage <- ceiling(length(ps)/nrow)
+for (i in 1:npage){
+    runningId(i)
+
+    I_beg <- (i - 1) * nrow + 1
+    I_end <- min(i*nrow, length(ps))
+
+    x  <- c(ps[I_beg:I_end], list(lgd))
+    nx <- length(x)
+    x[[nx - 1]] <- x[[nx - 1]] +
+        theme(axis.title.x = element_text(),
+              axis.text.x = element_text())
+    p2 <- gridExtra::arrangeGrob(grobs = x, nrow = nx, ncol = 1,
+                                 heights = c(rep(5, nx - 2), 5.5, 1),padding = unit(1, "line"),
+                                 left = textGrob("EVI", rot = 90, gp=gpar(fontsize=14)))
+    if (i != 1) grid.newpage();
+    grid.draw(p2)
+}
+dev.off()
+file.show(file)

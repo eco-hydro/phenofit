@@ -2,11 +2,27 @@
 % Please edit documentation in R/smooth_whit_lambda.R
 \name{v_curve}
 \alias{v_curve}
-\title{update 20180605 add weights updating to whittaker lambda selecting}
+\title{v_curve}
 \usage{
-v_curve(INPUT, nptperyear, llas, d = 2, show = F, wFUN = wTSM,
+v_curve(INPUT, nptperyear, lambdas, d = 2, IsPlot = F, wFUN = wTSM,
   iters = 2)
 }
+\arguments{
+\item{nptperyear}{number of images per year}
+
+\item{lambdas}{whittaker parameter (2-15 is suitable for 16-day VI). Multiple
+lambda values also are accept, then a list object return.}
+
+\item{d}{difference order}
+
+\item{IsPlot}{Boolean. Whether to plot figure?}
+
+\item{wFUN}{weights updating function, can be one of 'wTSM', 'wChen' and 
+'wBisquare'.}
+
+\item{iters}{How many times curve fitting is implemented.}
+}
 \description{
-update 20180605 add weights updating to whittaker lambda selecting
+V-curve is used to optimize Whittaker parameter lambda.
+Update 20180605 add weights updating to whittaker lambda selecting
 }

@@ -10,13 +10,21 @@
 #
 #' optim_pheno
 #'
-#' Interface of optimization functions for double logistics and many other
+#' Interface of optimization functions for double logistics and other parametric
 #' curve fitting functions
-#'
-#' @param prior Initial parameters for curve fitting function
-#' @param FUN_name Curve fitting function name, can be one of ''
-#' If using weights updating method, need to set `nptperyear` as global parameter.
-#'
+#' 
+#' @inheritParams wHANTS
+#' @param prior A vector of initial values for the parameters for which optimal 
+#' values are to be found.
+#' @param FUN_name Curve fitting function name, can be one of 'FitDL.Zhang', 
+#' 'FitAG', 'FitDL.Beck', 'FitDL.Elmore', 'FitDL.Gu' and 'FitDL.Klos'.
+#' @param tout corresponding \code{t} of curve fitting result
+#' @param optimFun optimization function, can be \code{I_optim} or \code{I_optimx}.
+#' @param method String, optimization method, passed to \code{optimFun}.
+#' @param w0 original weighted, is just used for visualization.
+#' @param debug boolean
+#' @param ... other parameters passed to \code{optimFUN}
+#' 
 #' @return list(pred, par, fun)
 #' @import optimx
 #' @export
@@ -115,6 +123,7 @@ optim_pheno <- function(prior, FUN_name, y, t, tout, optimFUN = I_optim, method,
 #'
 #' Interface of self defined optimization functions.
 #'
+#' @inheritParams optim_pheno
 #' @param pfun with prefixion of 'p_', pfun was self modified and unified
 #'  optimization function for double logistics and many other functions.
 #' @param method was only used for `p_optim` function. Other pfun, e.g. p_nlm, p_nlminb
@@ -138,6 +147,7 @@ methods <- c('BFGS','CG','Nelder-Mead','L-BFGS-B','nlm','nlminb',
 #' Should be caution that optimx speed is not so satisfied. So `I_optim` is also
 #' present.
 #'
+#' @inheritParams optim_pheno
 #' @param method Method passed to optimx function, which can be one of:
 #'  'BFGS','CG','Nelder-Mead','L-BFGS-B','nlm','nlminb', spg','ucminf',
 #'  'Rcgmin','Rvmmin','newuoa','bobyqa','nmkb','hjkb'
@@ -175,12 +185,46 @@ I_optimx <- function(prior, FUN, y, t, tout, method, debug = FALSE, ...){
     return(opt.df)
 }
 
-#' modify nlm function to unify final output format
+#' Unified optim function
+#' 
+#' \itemize{
+#'    \item \code{p_nlminb} Optimization using PORT routines, see 
+#'                          \code{\link[stats]{nlminb}}.
+#'    \item \code{p_ncminf} General-Purpose Unconstrained Non-Linear 
+#'                          Optimization, see \code{\link[ucminf]{ucminf}}.
+#'    \item \code{p_nlm} Non-Linear Minimization, \code{\link[stats]{nlm}}.
+#'    \item \code{p_optim} General-purpose Optimization, see 
+#'                         \code{\link[stats]{optim}}.
+#' }
+#' 
+#' @param par0 Initial values for the parameters to be optimized over.
+#' @param objective A function to be minimized (or maximized), with first 
+#' argument the vector of parameters over which minimization is to take place. 
+#' It should return a scalar result.
+#' @param method optimization method to be used in \code{p_optim}. See 
+#' \code{\link[stats]{optim}}.
+#' @param ... other parameters passed to \code{objective}.
+#' 
+#' @return
+#' \describe{
+#'    \item{convcode}{ An integer code. 0 indicates successful convergence. 
+#'    Various methods may or may not return sufficient information to allow all 
+#'    the codes to be specified. An incomplete list of codes includes }
+#'    \item{value}{ The value of fn corresponding to par }
+#'    \item{par}{ The best parameter found }
+#'    \item{nitns}{ the number of iterations }
+#'    \item{fevals}{ The number of calls to fn. }
+#'    \item{gevals}{ The number of calls to gr. This excludes those calls needed
+#'    to compute the Hessian, if requested, and any calls to fn to compute a 
+#'    finite-difference approximation to the gradient. }
+#' }
+#' @rdname optim
 #' @export
 p_nlminb <- function(par0, objective, ...){
     npar <- length(par0)
     ans <- try(nlminb(start=par0, objective=objective, ...,
-        control = list(eval.max = 1000, iter.max = 1000, trace = 0, abs.tol = 0)), silent=TRUE)
+      control = list(eval.max=1000, iter.max=1000, trace=0, abs.tol=0)), 
+                     silent=TRUE)
     # unify the format of optimization results
     if (class(ans)[1] != "try-error") {
         ans$convcode    <- ans$convergence
@@ -207,6 +251,8 @@ p_nlminb <- function(par0, objective, ...){
     return(ans)
 }
 
+#' @rdname optim
+#' @importFrom ucminf ucminf
 #' @export
 p_ncminf <- function(par0, objective, ...){
     npar <- length(par0)
@@ -252,6 +298,7 @@ p_ncminf <- function(par0, objective, ...){
     return(ans)
 }
 
+#' @rdname optim
 #' @export
 p_nlm <- function(par0, objective, ...){
     npar <- length(par0)
@@ -289,7 +336,7 @@ p_nlm <- function(par0, objective, ...){
 # c(p_nlminb, p_ncminf, p_nlm, p_optim)
 # methods = c("Nelder-Mead", "BFGS", "L-BFGS-B", "CG", "SANN")
 
-#' p_optim
+#' @rdname optim
 #' @export
 p_optim <- function(par0, objective, method = "BFGS", ...){
     npar <- length(par0)
