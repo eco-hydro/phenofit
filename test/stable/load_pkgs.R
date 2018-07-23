@@ -20,6 +20,8 @@ library(pbmcapply)
 library(MASS)
 library(broom)
 
+fontsize  <- 14
+
 qc_values <- c("0", "1", "2", "3")
 qc_levels <- c("good", "margin", "snow/ice", "cloud")
 qc_colors <- c("grey60", "#00BFC4", "#F8766D", "#C77CFF") %>% set_names(qc_levels)
@@ -34,7 +36,7 @@ file_st_flux <- paste0(dir_data, "st_phenoflux166.csv")
 file_flux <- paste0(dir_data, "phenoflux166_MOD13A1_INPUT.csv")
 file_cam  <- paste0(dir_data, "phenocam133_MOD13A1_INPUT.csv")
 
-## 
+##
 if (.Platform$OS.type == "unix"){
     dir_climate <- "/OSM/CBR/CoRE/working/timeseries/Climate/"
     dir_flush   <- "/flush1/kon055/"
@@ -46,12 +48,12 @@ if (.Platform$OS.type == "unix"){
 # MCD12Q1.006 land cover 1-17 and 255, IGBP scheme
 IGBPnames_006 <- c("ENF", "EBF", "DNF", "DBF", "MF" , "CSH",
                    "OSH", "WSA", "SAV", "GRA", "WET", "CRO",
-                   "URB", "CNV", "SNOW", "BSV", "water", "UNC")
+                   "URB", "CNV", "SNO", "BSV", "water", "UNC")
 # MCD12Q1.005 land cover 0-16 and 254, IGBP scheme
 # https://code.earthengine.google.com/dataset/MODIS/051/MCD12Q1
 IGBPnames_005 <- c("water", "ENF", "EBF", "DNF", "DBF", "MF" , "CSH",
                    "OSH", "WSA", "SAV", "GRA", "WET", "CRO",
-                   "URB", "CNV", "SNOW", "BSV", "UNC")
+                   "URB", "CNV", "SNO", "BSV", "UNC")
 
 get_phenofit <- function(sitename, df, st, prefix_fig = 'phenofit_v3'){
     d     <- df[site == sitename, ] # get the first site data
@@ -124,17 +126,17 @@ get_phenofit <- function(sitename, df, st, prefix_fig = 'phenofit_v3'){
 # rename phenofit phenology metrics names
 fix_level <- function(x){
     phenophase <- c(
-        'TRS1.sos', 'TRS2.sos', 'ZHANG.Greenup', 'GU.UD', 
+        'TRS1.sos', 'TRS2.sos', 'ZHANG.Greenup', 'GU.UD',
         'TRS5.sos', 'TRS6.sos', 'DER.sos',
-        'ZHANG.Maturity','GU.SD', 'DER.pop', 
-        'ZHANG.Senescence', 'GU.DD', 
+        'ZHANG.Maturity','GU.SD', 'DER.pop',
+        'ZHANG.Senescence', 'GU.DD',
         'TRS5.eos', 'TRS6.eos','DER.eos',
         rev(c('TRS1.eos', 'TRS2.eos', 'ZHANG.Dormancy', 'GU.RD')))
     phenophase_spl <- c(
-        'TRS1.SOS', 'TRS2.SOS', 'Greenup', 'UD', 
+        'TRS1.SOS', 'TRS2.SOS', 'Greenup', 'UD',
         'TRS5.SOS', 'TRS6.SOS', 'DER.SOS',
-        'Maturity', 'SD', 'POP', 
-        'Senescence', 'DD', 
+        'Maturity', 'SD', 'POP',
+        'Senescence', 'DD',
         'TRS5.EOS', 'TRS6.EOS','DER.EOS',
         rev(c('TRS1.EOS', 'TRS2.EOS', 'Dormancy', 'RD')))
     factor(x, phenophase) %>% mapvalues(phenophase, phenophase_spl)#return
@@ -200,7 +202,7 @@ read_whitMat.gee <- function(file){
 
 
 #' read gee_phenofit whittaker from multiple json files
-#' 
+#'
 #' @examples
 #' indir <- "D:/Document/GoogleDrive/phenofit/data/gee_phenofit/v2/"
 #' files <- dir(indir, "*.geojson", full.names = T)
@@ -217,12 +219,88 @@ read_whitMats.gee <- function(files){
 }
 
 #' read gee whit matrix
-#' 
+#'
 readwhitMAT <- function(indir, prefix){
     pattern <- paste0(prefix, "_.*.geojson")
     files   <- dir(indir, pattern, full.names = T)
     df      <- read_whitMats.gee(files)
     df
+}
+
+#' FigsToPages
+#'
+#' Subplots xlab and ylab are unified, and only keet singe one.
+#' Currently, only support ggplot figures; And only support arrange figures
+#' into rows (nrow*1).
+#'
+#' @param ps A list of ggplot figure objects. And
+#' @param lgd A grid grob object, legend to show in the bottom.
+#' @param ylab y label title
+#' @param width
+#' @param height
+#'
+#' @param
+FigsToPages <- function(ps, lgd, ylab.right, file, width = 10, height){
+    nrow  <- 6
+    npage <- ceiling(length(ps)/nrow)
+    if (missing(height)) height = nrow*1.6
+
+    ylab.left        <- ps[[1]]$labels$y
+    ylab.left.color <- ps[[1]]$theme$axis.title.y.left$colour
+    ylab.right.color <- ps[[1]]$theme$axis.title.y.right$colour
+
+    params <- list(ncol = 1, padding = unit(1, "line"),
+        left  = textGrob(ylab.left , rot = 90, 
+                         gp=gpar(fontsize=14, col=ylab.left.color)) )
+
+    # parameters for arrangeGrob
+    if (!missing(ylab.right))
+        params$right = textGrob(ylab.right, rot = 270,
+                                gp=gpar(fontsize=14, col=ylab.right.color))
+
+    Cairo::CairoPDF(file, width, height)
+    for (i in 1:npage){
+        runningId(i)
+        I_beg <- (i - 1) * nrow + 1
+        I_end <- min(i*nrow, length(ps))
+
+        I  <- I_beg:I_end
+        n  <- length(I)
+
+        ps_i <- ps[I]
+        for (j in seq_along(I)){
+            theme_j <- theme(
+                axis.text.x = element_blank(),
+                axis.title = element_blank(),
+                axis.title.y.right = element_blank(),
+                axis.title.y.left  = element_blank()
+            )
+            if (j == n)
+                theme_j <- theme(
+                    axis.title.y.right = element_blank(),
+                    axis.title.y.left  = element_blank() )
+            ps_i[[j]] <- ps_i[[j]] + theme_j
+        }
+
+        ps_i  <- c(ps_i, list(lgd))
+        nx    <- length(ps_i)
+
+        params$grobs <- ps_i
+        params$nrow  <- nx
+
+        if (missing(lgd)){
+            params$heights <- c(rep(5, nx - 1), 5.5)
+        } else{
+            params$heights <- c(rep(5, nx - 2), 5.5, 1)
+        }
+
+        g <- do.call(gridExtra::arrangeGrob, params)
+
+        if (i != 1) grid.newpage();
+        grid::grid.draw(g)
+    }
+    dev.off()
+    file.show(file)
 }
 
 # nptperyear = 46

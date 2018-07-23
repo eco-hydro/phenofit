@@ -20,10 +20,11 @@ nptperyear <- 23
 
 optim_lambda <- function(sitename, df, IsPlot = F){
     # sitename <- sites[i]#; grp = 1
-    d    <- df[site == sitename]
+    d     <- df[site == sitename]
+    dnew  <- add_HeadTail(d) # 
     cat(sprintf('site: %s ...\n', sitename))
 
-    IGBP <- d$IGBPcode[1]
+    IGBP  <- d$IGBPcode[1]
     INPUT <- check_input(d$t, d$y, d$w, trim = T, maxgap = nptperyear / 4, alpha = 0.02)
 
     # optim lambda by group

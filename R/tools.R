@@ -199,22 +199,39 @@ cv_coef <- function(x, w){
 #' @param Y_sim Numeric vector, corresponding simulated values
 #' @param w Numeric vector, weights of every points
 #' @param include.cv If true, cv will be returned. 
+#' 
+#' @return 
+#' \itemize{
+#' \item \code{RMSE} root mean square error
+#' \item \code{NSE} NASH coefficient
+#' \item \code{R2} correlation of determination
+#' \item \code{Bias} bias
+#' \item \code{Bias_perc} bias percentage 
+#' \item \code{MAE} mean absolute error 
+#' \item \code{pvalue} pvalue of \code{R}
+#' \item \code{n_sim} number of valid obs.
+#' \item \code{R} pearson correlation
+#' }
 #' @export
 GOF <- function(Y_obs, Y_sim, w, include.cv = FALSE){
     if (missing(w)) w <- rep(1, length(Y_obs))
 
-    # remove NA values in Y_sim, Y_obs and w
-    I <- which(!(is.na(Y_sim) | is.na(Y_obs) | is.na(w)))
+    # remove NA and Inf values in Y_sim, Y_obs and w
+    valid <- function(x) !is.na(x) & is.finite(x) 
+    
+    I <- which(valid(Y_sim) & valid(Y_obs) & valid(w))
     # n_obs <- length(Y_obs)
     n_sim <- length(I)
 
     Y_sim <- Y_sim[I]
     Y_obs <- Y_obs[I]
+    w     <- w[I]
 
     if (include.cv) CV <- cv_coef(Y_obs, w)
     if (is_empty(Y_obs)){
-        out <- c(Bias = NA, MAE = NA,RMSE = NA, NSE = NA, R2 = NA,
-             pvalue = NA, n_sim = NA, R = NA)
+        out <- c(RMSE = RMSE, NSE = NSE, R2 = R2, MAE = MAE, 
+            Bias = Bias, Bias_perc = Bias_perc, 
+            R = NA, pvalue = NA, n_sim = NA)
         if (include.cv) out <- c(out, CV)
         return(out) #R = R,
     }
@@ -228,10 +245,12 @@ GOF <- function(Y_obs, Y_sim, w, include.cv = FALSE){
 
     SSR    <- sum( (Y_sim - y_mean)^2 * w) 
     SST    <- sum( (Y_obs - y_mean)^2 * w)
-    R2     <- SSR / SST
+    # R2     <- SSR / SST
+    R2     <- summary(lm(Y_sim ~ Y_obs))$r.squared
 
     RE     <- Y_sim - Y_obs
     Bias   <- sum ( w*RE)     /sum(w)                     # bias
+    Bias_perc <- Bias/y_mean                              # bias percentage        
     MAE    <- sum ( w*abs(RE))/sum(w)                     # mean absolute error
     RMSE   <- sqrt( sum(w*(RE)^2)/sum(w) )                # root mean sqrt error
 
@@ -251,11 +270,13 @@ GOF <- function(Y_obs, Y_sim, w, include.cv = FALSE){
         message(e$message)
     })
 
-    out <- c(Bias = Bias, MAE = MAE,RMSE = RMSE, NSE = NSE, R2 = R2,
-             pvalue = pvalue, n_sim = n_sim, R = R)
+    out <- c(RMSE = RMSE, NSE = NSE, R2 = R2, MAE = MAE, 
+             Bias = Bias, Bias_perc = Bias_perc, 
+             R = R, pvalue = pvalue, n_sim = n_sim)
     if (include.cv) out <- c(out, CV)
     return(out)
 }
+
 
 
 #' Determinated correlation critical value

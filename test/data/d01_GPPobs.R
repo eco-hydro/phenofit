@@ -1,22 +1,8 @@
 rm(list = ls())
-
-reorder_name <- function (d,
-                          headvars = c("site", "date", "year", "doy", "d8", "d16"),
-                          tailvars = "")
-{
-    headvars %<>% intersect(colnames(d))
-    tailvars %<>% intersect(colnames(d))
-    varnames <- c(headvars, setdiff(colnames(d), union(headvars,
-                                                       tailvars)), tailvars)
-    if (is.data.table(d)) {
-        d[, ..varnames]
-    } else {
-        d[, varnames]
-    }
-}
-# prepare gpp input data, 04 March, 2018
 source("test/stable/load_pkgs.R")
 stations <- fread("F:/Github/MATLAB/PML/data/flux_166.csv")
+
+# prepare gpp input data, 04 March, 2018
 
 # 1. fluxsite observations -----------------------------------------------------
 df_raw <- fread("F:/Github/PML_v2/fluxsites_tidy/data/fluxsites166_official_dd.csv")
@@ -52,14 +38,20 @@ save("d_obs", file = "Y:/R/phenofit/data/phenofit_INPUT_flux136_obs.rda")
 
 rm(list = ls())
 
-# 2. zhang yao, 2017, scientific data, VPMGPP, 8day -------------------------------
-files <- dir("C:/Users/kon055/Desktop/VPMGPP", full.names = T) %>%
-    set_names(gsub(".csv","", basename(.)))
-d_vpm <- ldply(files, fread, .id = "site")[, c(1, 3, 4)] %>%
-    set_names(c("site", "date", "GPP")) %>% as.data.table()
-d_vpm[, date := as.Date(date, "%Y%j")]
-d_vpm %<>% set_colnames(c("site", "date", "GPP_vpm"))
-d_vpm$w <- 1
+# 2. zhang yao, 2017, scientific data, VPMGPP, 8day ----------------------------
+indir <- paste0(dir_flush, "ET&GPP/fluxnet212/GPP_vpm")
+file_vpm <- paste0(dirname(indir), "/flux212_GPP_vpm(zhang2017).csv")
+if (!file.exists(file_vpm)){
+    files <- dir(indir, full.names = T) %>% set_names(gsub(".csv","", basename(.)))
+    d_vpm <- ldply(files, fread, .id = "site")[, c(1, 3, 4)] %>%
+        set_names(c("site", "date", "GPP")) %>% as.data.table()
+    d_vpm[, date := as.Date(as.character(date), "%Y%j")]
+    d_vpm %<>% set_colnames(c("site", "date", "GPP_vpm"))
+    d_vpm$w <- 1
+    fwrite(d_vpm, file_vpm)
+} else{
+    d_vpm <- fread(file_vpm)
+}
 
 # main functions ----------------------------------------------------------
 clip_selectedSite <- function(INPUT){

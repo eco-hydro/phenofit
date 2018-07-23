@@ -15,6 +15,19 @@ GOF(Y_obs, Y_sim, w, include.cv = FALSE)
 
 \item{include.cv}{If true, cv will be returned.}
 }
+\value{
+\itemize{
+\item \code{RMSE} root mean square error
+\item \code{NSE} NASH coefficient
+\item \code{R2} correlation of determination
+\item \code{Bias} bias
+\item \code{Bias_perc} bias percentage 
+\item \code{MAE} mean absolute error 
+\item \code{pvalue} pvalue of \code{R}
+\item \code{n_sim} number of valid obs.
+\item \code{R} pearson correlation
+}
+}
 \description{
 Good of fitting
 }

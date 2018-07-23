@@ -26,7 +26,7 @@ lgd   <- phenofit:::make_legend(linename = c("iter1", "iter2"),
                                 linecolor = c("blue", "red"))
 
 file <- "whit_GEE.pdf"
-Cairo::CairoPDF(file, 10, 4)
+# Cairo::CairoPDF(file, 10, 4)
 # par(mfrow = c(4, 1), mar = c(1, 2, 3, 1), mgp = c(1.5, 0.6, 0))
 ## sometimes sample and reduceRegions result is different
 ps  <- list()
@@ -64,30 +64,7 @@ for (i in seq_along(sites)){
     # grid.draw(p2)
 }
 
-dev.off()
-file.show(file)
+# dev.off()
+# file.show(file)
 
 file = "Fig3_whit_point_example.pdf"
-Cairo::CairoPDF(file, 10, nrow*1.6)
-
-nrow  <- 6
-npage <- ceiling(length(ps)/nrow)
-for (i in 1:npage){
-    runningId(i)
-
-    I_beg <- (i - 1) * nrow + 1
-    I_end <- min(i*nrow, length(ps))
-
-    x  <- c(ps[I_beg:I_end], list(lgd))
-    nx <- length(x)
-    x[[nx - 1]] <- x[[nx - 1]] +
-        theme(axis.title.x = element_text(),
-              axis.text.x = element_text())
-    p2 <- gridExtra::arrangeGrob(grobs = x, nrow = nx, ncol = 1,
-                                 heights = c(rep(5, nx - 2), 5.5, 1),padding = unit(1, "line"),
-                                 left = textGrob("EVI", rot = 90, gp=gpar(fontsize=14)))
-    if (i != 1) grid.newpage();
-    grid.draw(p2)
-}
-dev.off()
-file.show(file)

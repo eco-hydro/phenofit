@@ -6,9 +6,14 @@ fontsize = 14
 save_pdf <- function(file = "Rplot.pdf", width = 10, height = 5, p, open = F){
     if (missing(p)) p <- last_plot()
 
-    FUN <- print
-    if ("grob" %in% class(p)) FUN <- grid::grid.draw
 
+    if ("grob" %in% class(p)) {
+        FUN <- grid::grid.draw
+    } else{
+        FUN <- print
+    }
+    print(FUN)
+    # Cairo::CairoPDF, if only one figure cairo_pdf is the best
     Cairo::CairoPDF(file, width = width, height = height)
     FUN(p)
     dev.off()
@@ -68,13 +73,18 @@ agree_index <- function(Y_obs, Y_sim){
 }
 
 # boxplot for over all correlation and agreement index
-boxplot <- function(p, width = 0.9){
+boxplot <- function(p, width = 0.95){
+    # width  <- 0.95
+    width2 <- width - 0.15
+    dodge <- position_dodge(width = width)
+
     p + stat_summary(fun.data = box_qtl,
-                 position = position_dodge(width = width),
-                 geom = "errorbar", width = width) +
-    geom_boxplot2(coef = 0, width = width,
+                     position = dodge,
+                     geom = "errorbar", width = width2) +
+        geom_boxplot2(coef = 0,
+                  width = width2,
                  lwd = 0.3,
-                 notch = F, outlier.shape = NA) +
+                 notch = F, outlier.shape = NA, position=dodge) +
     theme_light(base_size = fontsize, base_family = "Arial") +
     theme(legend.position = c(1-0.01, 0.01), legend.justification = c(1, 0),
           panel.grid.major = element_line(linetype = 2),
@@ -133,30 +143,60 @@ get_phenofit_result <- function(infile){
 methods <- c('AG', 'BECK', 'ELMORE', 'ZHANG', 'whit_R', 'whit_gee')[-5]
 #' @examples
 #' over_perform(df, formula, prefix)
-over_perform <- function(df, formula, prefix){
+over_perform <- function(d, formula, prefix, ylim2, IGBP.all = F){
     # only period when all curve fitting methods have result is kept.
-    df_trim <- dcast(df, formula, value.var = "value", fun.aggregate = mean) %>% na.omit()
-    df_trim <- melt(df_trim, measure.vars = methods, variable.name = "meth")
+    df_trim <- dcast(d, formula, value.var = "value", fun.aggregate = mean) %>% na.omit()
+    df_trim[, raw := y]
+    df_trim <- melt(df_trim, measure.vars = c( "raw", methods), variable.name = "meth")
 
+    new_levels <- c("raw ", "AG ", "Beck ", "Elmore ", "Zhang ", "WH")
+    cols <- hue_pal()(5) %>% c("black", .)%>% set_names(new_levels)
+
+    df_trim$meth %<>% mapvalues(c("raw", methods), new_levels)
     # visualization
-    info_ai <- df_trim[SummaryQA == "good", .(ai = agree_index(y, value)), .(site, meth)] %>% merge(st)
+    info_ai <- df_trim[SummaryQA == "good" & meth != "raw ",
+                       .(ai = agree_index(y, value)), .(site, meth)] %>% merge(st)
     if(i == 1){
         info_r  <- df_trim[, .(R = stat_fun(value, GPP_DT)), .(site, meth)] %>% merge(st)
     }else{
         info_r  <- df_trim[, .(R = stat_fun(value, vci)), .(site, meth)] %>% merge(st)
     }
 
-    # 1. show correlation
-    p1 <- ggplot(info_r, aes(IGBPname, R, colour = meth), position = "dodge") %>%
-        boxplot() %>% `+`(labs(x = "IGBP", y = "Correlation (r)"))
+    # add a column 'all', independent of IGBP
+    add_IGBPall <- . %>% {
+        temp <- .; temp$IGBPname <- "all"
+        rbind(., temp)
+    }
+    if (IGBP.all){
+        info_ai %<>% add_IGBPall()
+        info_r  %<>% add_IGBPall()
+    }
 
-    p2 <- ggplot(info_ai, aes(IGBPname, ai, colour = meth), position = "dodge") %>%
+    # 1. show correlation, , alpha = 0.6, fill = meth
+    p1 <- { ggplot(info_r, aes(IGBPname, R, color = meth), position = "dodge") +
+                scale_colour_manual(values = cols,
+                                    guide = guide_legend(direction = "horizontal", nrow = 1, keywidth = 1)) +
+                # scale_fill_manual(values = cols) +
+                labs(x = "IGBP", y = "Correlation (r)")
+          } %>% boxplot()
+    p1 <- p1 +
+        # geom_text(data = info_r[1, ], aes(fontface = "bold"), x = -Inf, y = -Inf,
+        #           label = c("(a)"), hjust = -1, vjust = -2.6,
+        #           show.legend = F, size = 4) +
+        theme(axis.text.x = element_blank(),
+              axis.title.x = element_blank(),
+              plot.margin = margin(3, 3, 2, 3))
+
+    p2 <- {ggplot(info_ai, aes(IGBPname, ai, colour = meth), position = "dodge") +
+        scale_colour_manual(values = cols) } %>%
         boxplot() %>% `+`(labs(x = "IGBP", y = "Agreement Index (AI)"))
-    p2 <-p2 + theme(legend.position = 'none')
+    p2 <-p2 + theme(legend.position = 'none',
+                    plot.margin = margin(3, 3, 2, 3))
 
-    p <- gridExtra::arrangeGrob(p1, p2, nrow = 2, heights = c(1, 1), padding = unit(1, "line"))
-
-    save_pdf(sprintf("valid_%s.pdf", prefix), 9, 8, p)
+    if (!missing(ylim2)) p2 <- p2 + coord_cartesian(ylim = ylim2)
+    p <- gridExtra::arrangeGrob(p1, p2, nrow = 2, heights = c(0.9, 1), padding = unit(1, "line"))
+    # grid.draw(p)
+    save_pdf(sprintf("valid_%s.pdf", prefix), 9, 8, p, open = T)
     # save_pdf(sprintf("valid_%s_AI.pdf", prefix), 12, 5, p2)
 }
 
@@ -200,36 +240,69 @@ get_range <- function(d, alpha = c(0, 1)){
     unlist(res)
 }
 
-lgd_vci <- phenofit:::make_legend(linename = c("Curve fitting", "VCI"),
-                   linecolor = c("black", "blue"))
-lgd_gpp <- phenofit:::make_legend(linename = c("Curve fitting", "GPP"),
-                   linecolor = c("black", "blue"))
+# re-select colors
+cols <- colors()[c(74, 134, 50)]
+cols <- c("blue", "red", cols[3]) #"#B2B302"
+color_valid <- cols[3] #"green4"
 
+lgd_vci <- phenofit:::make_legend(linename = c("iter1", "iter2", "VCI"),
+                   linecolor = cols)
+lgd_gpp <- phenofit:::make_legend(linename = c("iter1", "iter2", "GPP"),
+                   linecolor = cols)
+
+#' plot_methods
+#'
+#' plot curve fitting series and validation data (i.e.GPP or VCI ) to check the
+#' smoothing performance
+#'
+#' @param df_trim A data.table of two iters curve fitting result.
+#' For MODIS product, the current year last value maybe same as
+#' the coming year first value. Need to remove the duplicated data. Besides,
+#' We don't constrain the equal length of different curve fitting series as
+#' performance index part.
+#' @param st A dataframe of station information, ID, site, IGBPname, lat, lon.
+#' @param methods one of 'AG', 'BECK', 'ELMORE', 'ZHANG', 'whit_R' and 'whit_gee'.
+#'
 #' @examples
+#' \dontrun{
 #' plot_whit(sitename, df_trim, st, prefix_fig = "whit")
-plot_whit <- function(sitename, df_trim, st, prefix_fig = "whit"){
+#' }
+plot_methods <- function(sitename, df_trim, st, prefix_fig = "whit", methods, show.legend = T){
     ## figure title and filename
     sp    <- st[site == sitename, ] # station point
-    titlestr <- with(sp, sprintf('[%03d,%s] %s, lat = %5.2f, lon = %6.2f',
+    # titlestr <- with(sp, sprintf('[%03d,%s] %s, lat = %5.2f, lon = %6.2f',
+    #                                  ID, site, IGBPname, lat, lon))
+    titlestr <- sp$titlestr
+    if ( length(titlestr) == 0 || is.na(titlestr) ){
+        titlestr <- with(sp, sprintf('[%03d,%s] %s, lat = %5.2f, lon = %6.2f',
                                      ID, site, IGBPname, lat, lon))
+    }
     file_pdf <- sprintf('Figure/%s_[%03d]_%s.pdf', prefix_fig, sp$ID[1], sp$site[1])
 
     ##
-    x <- df_trim[site == sitename, ]
+    x <- df_trim[site == sitename , ]
     if (all(is.na(x$whit_gee))) return()
     # d <- melt(x, measure.vars = methods, variable.name = "meth")
-    d <- melt(x, measure.vars = c(colnames(x)[c(4, 5:6)], methods), variable.name = "meth")
-    ## scale validation variable (e.g. GPP or VCI), to keep the same range as
-    # `whit_gee`
-    lim_fit   <- get_range(d[ grep("whit_gee", meth)], alpha = c(0.01, 0.99))
-    lim_valid <- get_range(d[ grep("GPP|vci", meth)], alpha = c(0.01, 0.99))
+    d <- melt(x,
+              measure.vars = c(contain(x, "^y$|GPP_NT|GPP_DT|vci|gcc"), methods),
+              variable.name = "meth")
+    pdat  <- d[meth %in% methods]
 
+    ## scale validation variable (e.g. GPP or VCI)
+    # The range of validation variable and \code{whit_gee} should be equal.
+    d_valid_scale <- d[meth %in% c("whit_gee", "GPP_DT", "vci") & iters == "iter2"] %>%
+        dcast(site+date~meth, value.var = "value") %>% na.omit() %>%
+        melt(id.vars = c("site", "date"), variable.name = "meth")
+    lim_fit   <- get_range(d_valid_scale[ grep("whit_gee", meth)], alpha = c(0.01, 0.99))
+    lim_valid <- get_range(d_valid_scale[ grep("GPP|vci", meth)], alpha = c(0.01, 0.99))
     lim_raw   <- get_range(d[ grep("y", meth)]) # ylim
 
     # r <- phenofit:::.normalize(y_fit, y_raw)
     # lim_valid_adj <- lm(lim_valid~r) %>% predict(data.frame(r = c(0, 1)))
     coef <- lm(lim_valid~lim_fit) %>% coef() # coefs used to rescale validation data
 
+    ## only keep iter2
+    x <- df_trim[site == sitename & iters == "iter2", ]
     if ("vci" %in% colnames(x)){
         d_valid <- x[, .(valid = (vci - coef[1])/coef[2]), .(site, date, t)]
         ylab_r  <- "VCI"
@@ -244,34 +317,58 @@ plot_whit <- function(sitename, df_trim, st, prefix_fig = "whit"){
 
     ## ggplot, not only whit_gee, I also need to know all curve fitting methods
     #  performance
-    p1 <- ggplot(d[-grep("y|GPP|vci|gcc", meth)], aes(date, value)) +
-        geom_line(color = "black", size = 0.9) +
-        geom_line(data = d_valid, aes(date, valid), size = 0.9, color = "blue") +
-        geom_point(data = d_raw, aes(date, y, shape = SummaryQA, color = SummaryQA), size = 1.2) +
+    # y|GPP|vci|gcc|
+
+    IsSingle <- length(methods) == 1
+    if (IsSingle){
+        d_lab <- data.frame(meth = methods, lab = titlestr)
+    }else{
+        d_lab <- data.frame(meth = methods,
+                         lab = sprintf("(%s) %-8s", letters[1:length(methods)], methods))
+    }
+    lwd <- 0.65
+    # color_valid <- "green4" # set as global variable
+    p1 <- ggplot(pdat, aes(date, value)) +
+        geom_vline(xintercept = ymd(0101 + (2001:2017)*1e4),
+                   color = "white", linetype = 3, size = 0.4) +
+        geom_point(data = d_raw, aes(date, y, shape = SummaryQA, color = SummaryQA), size = 1.4) +
+        geom_line(data = pdat[iters == "iter1"], color = "blue", size = lwd) +
+        geom_line(data = pdat[iters == "iter2"], color = "red", size = lwd) +
+        geom_line(data = d_valid, aes(date, valid), size = lwd, color = color_valid) +
         labs(y = "EVI") +
         theme(legend.position = "none",
-              axis.text.y.right = element_text(color = "blue"),
-              axis.title.y.right = element_text(color = "blue"),
+              # axis.text.y.left = element_text(color = cols[2]), #iter2 color
+              # axis.title.y.left = element_text(color = cols[2]),
+              axis.text.y.right = element_text(color = color_valid),
+              axis.title.y.right = element_text(color = color_valid),
               plot.margin = margin(t = 4, r = 2, b = 0, l = 2, unit = "pt"),
               legend.margin = margin(),
+              strip.text = element_blank(),
+              panel.grid.minor = element_blank(),
+              # panel.grid.major.x = element_blank(),
+              # panel.grid.major.y = element_line(size = 0.2),
+              panel.grid = element_line(size = 0.4) #linetype = 2
               # axis.ticks.y.right = element_text(color = "blue"),
               ) +
         scale_y_continuous(lim = lim_raw,
                            sec.axis = sec_axis(~.*coef[2]+coef[1], name = ylab_r)) +
+        scale_x_date(breaks = ymd(0101 + seq(2001, 2017, 4)*1e4)) +
         facet_wrap(~meth, ncol = 1) +
         scale_color_manual(values = qc_colors, drop = F) +
         scale_shape_manual(values = qc_shapes, drop = F) +
-        ggtitle(titlestr)
+        geom_text(data = d_lab, aes(label = lab), fontface = "bold",
+            x = -Inf, y =Inf, vjust = 1.5, hjust = -0.08)
 
-    df_lab <- data.frame(meth = methods,
-                         lab = sprintf("(%s) %-8s", letters[1:length(methods)], methods))
+    if (!IsSingle) p1 <- p1 + ggtitle(titlestr)
 
-    p1 <- p1 + geom_text(data = df_lab, x = -Inf, y =Inf, vjust = 1.5, hjust = -0.08,
-                   aes(label = lab), fontface = "bold") +
-        theme(strip.text = element_blank())
+    if (show.legend)
+        p1 <- gridExtra::arrangeGrob(p1, lgd, nrow = 2,
+            heights = c(20, 1), padding = unit(0.5, "line")) #return,
 
-    #
-    p1 <- gridExtra::arrangeGrob(p1, lgd, nrow = 2, heights = c(20, 1), padding = unit(0.5, "line")) #return,
-
-    save_pdf(file_pdf, 11, 7, p = p1)
+    if (!IsSingle) save_pdf(file_pdf, 11, 7, p = p1)
+    p1
 }
+
+
+
+
