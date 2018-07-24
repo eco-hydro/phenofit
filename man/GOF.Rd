@@ -11,7 +11,8 @@ GOF(Y_obs, Y_sim, w, include.cv = FALSE)
 
 \item{Y_sim}{Numeric vector, corresponding simulated values}
 
-\item{w}{Numeric vector, weights of every points}
+\item{w}{Numeric vector, weights of every points. If w included, when 
+calculating mean, Bias, MAE, RMSE and NSE, w will be taken into considered.}
 
 \item{include.cv}{If true, cv will be returned.}
 }
@@ -20,14 +21,20 @@ GOF(Y_obs, Y_sim, w, include.cv = FALSE)
 \item \code{RMSE} root mean square error
 \item \code{NSE} NASH coefficient
 \item \code{R2} correlation of determination
+\item \code{MAE} mean absolute error 
+\item \code{AI} Agreement index (only good points (w == 1)) participate to 
+calculate. See details in Zhang et al., (2015).
 \item \code{Bias} bias
 \item \code{Bias_perc} bias percentage 
-\item \code{MAE} mean absolute error 
-\item \code{pvalue} pvalue of \code{R}
-\item \code{n_sim} number of valid obs.
 \item \code{R} pearson correlation
+\item \code{pvalue} pvalue of \code{R}
+\item \code{n_sim} number of valid obs
+\item \code{cv} Coefficient of variation
 }
 }
 \description{
 Good of fitting
+}
+\references{
+Zhang Xiaoyang (2015), http://dx.doi.org/10.1016/j.rse.2014.10.012
 }

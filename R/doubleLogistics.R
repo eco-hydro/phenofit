@@ -205,7 +205,7 @@ attr(doubleLog.klos, 'formula') <- expression((a1*t + b1) + (a2*t^2 + b2*t + c) 
 #' Common goal function of those curve fitting methods
 #' 
 #' @inheritParams optim_pheno
-#' @param fun A curve fitting function, see \link{logistics}.
+#' @param fun A curve fitting function, see \code{\link{logistics}}.
 #' @param ... other parameters passed to \code{fun}.
 #' 
 #' @return RMSE root mean square error of curve fitting values.

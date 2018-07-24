@@ -82,7 +82,6 @@ rmNonSeasonality <- function(dt, IsPlot = T, file = 'SI.pdf'){
 #' 
 #' Add one year data in the head and tail
 #' 
-#' 
 #' @param d A data.table, should have \code{t} (compositing date) column 
 #' (\code{Date} variable).
 #' 

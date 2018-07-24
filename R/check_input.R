@@ -44,7 +44,7 @@
 #' @export
 check_input <- function(t, y, w, Tn = NULL, wmin = 0.2, missval, maxgap = 10, alpha = 0.01){
     n   <- length(y)
-    if (missing(w)) w <- rep(1, n)
+    if (missing(w) || is.null(w)) w <- rep(1, n)
 
     # ylu   <- quantile(y[w == 1], c(alpha/2, 1 - alpha), na.rm = T) #only consider good value
     # ylu   <- range(y, na.rm = T)

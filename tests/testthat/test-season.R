@@ -1,18 +1,18 @@
 context("season")
 
-test_that("findpeak works", {
-    expect_silent({
-        x <- seq(0, 1, len = 1024)
-        pos <- c(0.1, 0.13, 0.15, 0.23, 0.25, 0.40, 0.44, 0.65, 0.76, 0.78, 0.81)
-        hgt <- c(4, 5, 3, 4, 5, 4.2, 2.1, 4.3, 3.1, 5.1, 4.2)
-        wdt <- c(0.005, 0.005, 0.006, 0.01, 0.01, 0.03, 0.01, 0.01, 0.005, 0.008, 0.005)
-        pSignal <- numeric(length(x))
-        for (i in seq(along=pos)) {
-            pSignal <- pSignal + hgt[i]/(1 + abs((x - pos[i])/wdt[i]))^4
-        }
+# source('helper_MOD13A1.R')
+lambda   <- init_lambda(INPUT$y) # lambda for whittaker
 
-        plot(pSignal, type="l", col="navy"); grid()
-        x <- findpeaks(pSignal, npeaks=3, threshold_min=4, sortstr=TRUE)
-        points(val~pos, x$X, pch=20, col="maroon")
-    })
+param = listk(
+    INPUT, nptperyear, 
+    FUN = whitsmw2, wFUN = wBisquare, iters = 2,
+    lambda,
+    IsPlot = IsPlot, plotdat = d,
+    south = sp$lat[1] < 0,
+    rymin_less = 0.6, ypeak_min = ypeak_min,
+    max_MaxPeaksperyear =2.5, max_MinPeaksperyear = 3.5
+)
+
+test_that("`season` yearly growing season divding works", {
+    expect_silent(brks <- do.call(season, param))
 })

@@ -55,6 +55,8 @@ IGBPnames_005 <- c("water", "ENF", "EBF", "DNF", "DBF", "MF" , "CSH",
                    "OSH", "WSA", "SAV", "GRA", "WET", "CRO",
                    "URB", "CNV", "SNO", "BSV", "UNC")
 
+siteorder <- function(sites){ factor(sites) %>% as.numeric() }
+
 get_phenofit <- function(sitename, df, st, prefix_fig = 'phenofit_v3'){
     d     <- df[site == sitename, ] # get the first site data
     sp    <- st[site == sitename, ] # station point
@@ -140,43 +142,6 @@ fix_level <- function(x){
         'TRS5.EOS', 'TRS6.EOS','DER.EOS',
         rev(c('TRS1.EOS', 'TRS2.EOS', 'Dormancy', 'RD')))
     factor(x, phenophase) %>% mapvalues(phenophase, phenophase_spl)#return
-}
-
-siteorder <- function(sites){ factor(sites) %>% as.numeric() }
-
-#' Use exact date not image date
-getRealDate <- function(df){
-    df[, `:=`(date = ymd(date), year = year(date), doy = as.integer(yday(date)))]
-    df[is.na(DayOfYear), DayOfYear := doy] # If DayOfYear is missing
-
-    # In case of last scene of a year, doy of last scene could in the next year
-    df[abs(DayOfYear - doy) >= 300, t := as.Date(sprintf("%d-%03d", year+1, DayOfYear), "%Y-%j")] # last scene
-    df[abs(DayOfYear - doy) <  300, t := as.Date(sprintf("%d-%03d", year  , DayOfYear), "%Y-%j")]
-    df
-}
-
-#' Tidy phenofit INPUT data from raw original data exported from gee
-#' This function only suit for MODIS VI products (e.g. MOD13A1, MOD13A2, ...)
-tidyMOD13INPUT_gee <- function(infile, outfile){
-    df   <- fread(infile)
-    df %<>% getRealDate()
-
-    # Initial weights
-    df[, w := qc_summary(SummaryQA, wmin = 0.2)]
-    # Remap SummaryQA factor level, plot_phenofit use this variable. For other
-    # remote sensing data without `SummaryQA`, need to modify `plot_phenofit`
-    if ('SummaryQA' %in% colnames(df)){
-        df$SummaryQA %<>% factor() %>% mapvalues(qc_values, qc_levels)
-    }
-
-    df <- df[, .(site, y = EVI/1e4, t, w, date, SummaryQA
-                 # IGBPcode,
-                 # IGBPname = as.factor(IGBPnames[IGBPcode]),
-                 )]
-    df
-    # merge coordinate info
-    # df <- merge(df, st[, .(Id = site, lat, lon = long, IGBPname = IGBP)], by = "Id")
-    # fwrite(df, outfile)
 }
 
 ############################# GEE WHITTAKER ####################################

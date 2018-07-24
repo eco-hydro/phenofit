@@ -17,7 +17,7 @@ whit2(y, lambda, w = rep(1, ny))
 A numeric vector, smoothed signal.
 }
 \description{
-This function smoothes signals with a finite difference penalty of order 2. 
+This function smoothes signals with a finite difference penalty of order 2.
 This function is modified from `ptw` package.
 }
 \examples{
@@ -30,9 +30,9 @@ lines(whit2(gaschrom[1,], lambda = 1e7), col = 4)
 }
 }
 \references{
-[1]. Eilers, P.H.C. (2004) "Parametric Time Warping", Analytical Chemistry, 
+[1]. Eilers, P.H.C. (2004) "Parametric Time Warping", Analytical Chemistry,
 \bold{76} (2), 404 -- 411. \cr
-[2]. Eilers, P.H.C. (2003) "A perfect smoother", Analytical Chemistry, 
+[2]. Eilers, P.H.C. (2003) "A perfect smoother", Analytical Chemistry,
 \bold{75}, 3631 -- 3636.
 }
 \author{

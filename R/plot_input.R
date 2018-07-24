@@ -28,7 +28,12 @@ plotdata <- function(INPUT, nptperyear, wmin = 0.1, ...){
         points(t[I], y[I], pch = pch[i], col = colors[i], cex = 0.8)
     }
     # ylab = expression(paste('GPP ( gC ', m^-2, d^-1, ')'))
-    abline(v = t[seq(1, length(y), nptperyear)], col = "grey60", lty = 3)
+    years    <- year(t)
+    date_beg <- ymd( min(years) *1e4 + 0101 )
+    date_end <- ymd( max(years) *1e4 + 0101 )
+    
+    t_grids  <- seq.Date(date_beg, date_end, by = "year")
+    abline(v = t_grids, col = "grey60", lty = 3)
     grid(nx = NA, NULL)
     ylu <- INPUT$ylu
     if (!is.null(ylu)) abline(h=ylu, col="red", lty=2) # show ylims

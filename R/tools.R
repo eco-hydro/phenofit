@@ -197,7 +197,8 @@ cv_coef <- function(x, w){
 #'
 #' @param Y_obs Numeric vector, observations
 #' @param Y_sim Numeric vector, corresponding simulated values
-#' @param w Numeric vector, weights of every points
+#' @param w Numeric vector, weights of every points. If w included, when 
+#' calculating mean, Bias, MAE, RMSE and NSE, w will be taken into considered.
 #' @param include.cv If true, cv will be returned. 
 #' 
 #' @return 
@@ -205,13 +206,20 @@ cv_coef <- function(x, w){
 #' \item \code{RMSE} root mean square error
 #' \item \code{NSE} NASH coefficient
 #' \item \code{R2} correlation of determination
+#' \item \code{MAE} mean absolute error 
+#' \item \code{AI} Agreement index (only good points (w == 1)) participate to 
+#' calculate. See details in Zhang et al., (2015).
 #' \item \code{Bias} bias
 #' \item \code{Bias_perc} bias percentage 
-#' \item \code{MAE} mean absolute error 
-#' \item \code{pvalue} pvalue of \code{R}
-#' \item \code{n_sim} number of valid obs.
 #' \item \code{R} pearson correlation
+#' \item \code{pvalue} pvalue of \code{R}
+#' \item \code{n_sim} number of valid obs
+#' \item \code{cv} Coefficient of variation
 #' }
+#' 
+#' @references
+#' Zhang Xiaoyang (2015), http://dx.doi.org/10.1016/j.rse.2014.10.012
+#' 
 #' @export
 GOF <- function(Y_obs, Y_sim, w, include.cv = FALSE){
     if (missing(w)) w <- rep(1, length(Y_obs))
@@ -229,8 +237,8 @@ GOF <- function(Y_obs, Y_sim, w, include.cv = FALSE){
 
     if (include.cv) CV <- cv_coef(Y_obs, w)
     if (is_empty(Y_obs)){
-        out <- c(RMSE = RMSE, NSE = NSE, R2 = R2, MAE = MAE, 
-            Bias = Bias, Bias_perc = Bias_perc, 
+        out <- c(RMSE = NA, NSE = NA, R2 = NA, MAE = NA, AI = NA,
+            Bias = NA, Bias_perc = NA, 
             R = NA, pvalue = NA, n_sim = NA)
         if (include.cv) out <- c(out, CV)
         return(out) #R = R,
@@ -270,7 +278,17 @@ GOF <- function(Y_obs, Y_sim, w, include.cv = FALSE){
         message(e$message)
     })
 
-    out <- c(RMSE = RMSE, NSE = NSE, R2 = R2, MAE = MAE, 
+    # AI: Agreement Index (only good values(w==1) calculate AI)
+    AI <- NA
+    I2 <- which(w == 1)
+    if (length(I2) >= 2) {
+        Y_obs = Y_obs[I2]
+        Y_sim = Y_sim[I2]
+        y_mean = mean(Y_obs)
+        AI = 1 - sum( (Y_sim - Y_obs)^2 ) / sum( (abs(Y_sim - y_mean) + abs(Y_obs - y_mean))^2 )        
+    }
+
+    out <- c(RMSE = RMSE, NSE = NSE, R2 = R2, MAE = MAE, AI = AI,  
              Bias = Bias, Bias_perc = Bias_perc, 
              R = R, pvalue = pvalue, n_sim = n_sim)
     if (include.cv) out <- c(out, CV)

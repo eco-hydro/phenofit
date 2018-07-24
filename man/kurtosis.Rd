@@ -10,13 +10,13 @@ kurtosis(x, na.rm = FALSE, type = 3)
 skewness(x, na.rm = FALSE, type = 3)
 }
 \arguments{
-\item{x}{a numeric vector containing the values whose skewness is to be 
+\item{x}{a numeric vector containing the values whose skewness is to be
 computed.}
 
-\item{na.rm}{a logical value indicating whether NA values should be stripped 
+\item{na.rm}{a logical value indicating whether NA values should be stripped
 before the computation proceeds.}
 
-\item{type}{an integer between 1 and 3 selecting one of the algorithms for 
+\item{type}{an integer between 1 and 3 selecting one of the algorithms for
 computing \code{\link[e1071]{skewness}}.}
 }
 \description{

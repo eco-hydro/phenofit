@@ -34,13 +34,13 @@ in the range of \code{ylu}.}
 \item{...}{Additional parameters are passed to \code{wFUN}.}
 }
 \value{
-amp returned array of amplitudes, first element is the average of
-        the curve
-phi returned array of phases, first element is zero
-yr array holding reconstructed time series
+\itemize{
+   \item \code{ws} weights of every iteration
+   \item \code{zs} curve fittings of every iteration
+}
 }
 \description{
-Modified by Dongdong Kong, 2018-05-29
+Weighted HANTS smoother
 }
 \author{
 Wout Verhoef, NLR, Remote Sensing Dept. June 1998

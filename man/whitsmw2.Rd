@@ -25,10 +25,10 @@ in the range of \code{ylu}.}
 \item{lambdas}{whittaker parameter (2-15 is suitable for 16-day VI). Multiple
 lambda values also are accept, then a list object return.}
 
-\item{second}{If true, in every iteration, Whittaker will be implemented 
-twice to make sure curve fitting is smooth. If curve has been smoothed 
-enough, it will not care about the second smooth. If no, the second one is 
-just prepared for this situation. If lambda value has been optimized, second 
+\item{second}{If true, in every iteration, Whittaker will be implemented
+twice to make sure curve fitting is smooth. If curve has been smoothed
+enough, it will not care about the second smooth. If no, the second one is
+just prepared for this situation. If lambda value has been optimized, second
 smoothing is unnecessary.}
 
 \item{...}{Additional parameters are passed to \code{wFUN}.}
@@ -38,6 +38,6 @@ Weigthed Whittaker Smoother
 }
 \references{
 [1]. Eilers, P.H.C., 2003. A perfect smoother. Anal. Chem. https://doi.org/10.1021/ac034173t \cr
-[2]. Frasso, G., Eilers, P.H.C., 2015. L- and V-curves for optimal smoothing. Stat. 
+[2]. Frasso, G., Eilers, P.H.C., 2015. L- and V-curves for optimal smoothing. Stat.
      Modelling 15, 91–111. https://doi.org/10.1177/1471082X14549288
 }

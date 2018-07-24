@@ -7,7 +7,7 @@
 season(INPUT, nptperyear = 46, south = FALSE, FUN = whitsmw2,
   wFUN = wTSM, iters = 2, wmin = 0.1, lambda, nf = 2,
   frame = floor(nptperyear/7) * 2 + 1, minpeakdistance = nptperyear/6,
-  threshold_max = 0.2, threshold_min = 0.05, ypeak_min = 0.5,
+  threshold_max = 0.2, threshold_min = 0.05, ypeak_min = 0.1,
   rytrough_max = 0.6, MaxPeaksPerYear = 2, MaxTroughsPerYear = 3,
   IsPlot = FALSE, plotdat = INPUT, print = FALSE, ...)
 }

@@ -9,23 +9,24 @@ season_3y(INPUT, nptperyear = 23, south = FALSE, FUN = whitsmw2,
   partial = TRUE, ...)
 }
 \arguments{
-\item{INPUT}{A list object with the elements of 't', 'y', 'w', 'Tn' (option) 
+\item{INPUT}{A list object with the elements of 't', 'y', 'w', 'Tn' (option)
 and 'ylu', returned by \code{check_input}.}
 
 \item{nptperyear}{Integer, points per year.}
 
-\item{south}{Boolean. In south hemisphere, growing year is 1 July to the 
+\item{south}{Boolean. In south hemisphere, growing year is 1 July to the
 following year 31 June; In north hemisphere, growing year is 1 Jan to 31 Dec.}
 
-\item{FUN}{Coarse curve fitting function, can be one of `sgfitw`, `whitsmw2` 
+\item{FUN}{Coarse curve fitting function, can be one of `sgfitw`, `whitsmw2`
 and `wHANTS`.}
 
 \item{wmin}{Double, minimum weigth value (i.e. weight for snow, ice and cloud).}
 
 \item{IsPlot}{Boolean}
 
-\item{plotdat}{Is IsPlot = true, plotdata is used to plot original input, 
-known that y and w in \code{INPUT} have been changed.}
+\item{plotdat}{A list or data.table, with 't', 'y' and 'w'. Only if 
+IsPlot=true, plotdata will be used to plot. Known that y and w in \code{INPUT} 
+have been changed, we suggest using the original data.table.}
 
 \item{print}{Whether to print progress information}
 
