@@ -4,7 +4,7 @@
 \alias{tidy_MOD13.gee}
 \title{tidy_MOD13.gee}
 \usage{
-tidy_MOD13.gee(infile, outfile)
+tidy_MOD13.gee(infile, outfile, wmin = 0.2)
 }
 \arguments{
 \item{infile}{A character csv file path or a data.table}

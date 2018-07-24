@@ -1,21 +1,25 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-phenofit
---------
 
-[![Travis Build Status](https://travis-ci.org/kongdd/phenofit.svg?branch=master)](https://travis-ci.org/kongdd/phenofit) [![codecov](https://codecov.io/gh/kongdd/phenofit/branch/master/graph/badge.svg)](https://codecov.io/gh/kongdd/phenofit)
+## phenofit
 
-A state-of-the-art **remote sensing vegetation phenology** extraction package: `phenofit`
+[![Travis Build
+Status](https://travis-ci.org/kongdd/phenofit.svg?branch=master)](https://travis-ci.org/kongdd/phenofit)
+[![codecov](https://codecov.io/gh/kongdd/phenofit/branch/master/graph/badge.svg)](https://codecov.io/gh/kongdd/phenofit)
 
--   `phenofit` combine merits of TIMESAT and phenopix
--   A simple and stable growing season dividing methods was proposed
--   Provide a practical snow elimination method, based on Whittaker
--   7 curve fitting methods and 4 phenology extraction methods
--   We add parameters boundary for every curve fitting methods according to their ecological meaning.
--   `optimx` is used to select best optimization method for different curve fitting methods.
+A state-of-the-art **remote sensing vegetation phenology** extraction
+package: `phenofit`
 
-Installation
-------------
+  - `phenofit` combine merits of TIMESAT and phenopix
+  - A simple and stable growing season dividing methods was proposed
+  - Provide a practical snow elimination method, based on Whittaker
+  - 7 curve fitting methods and 4 phenology extraction methods
+  - We add parameters boundary for every curve fitting methods according
+    to their ecological meaning.
+  - `optimx` is used to select best optimization method for different
+    curve fitting methods.
+
+## Installation
 
 You can install phenofit from github with:
 
@@ -24,21 +28,20 @@ You can install phenofit from github with:
 devtools::install_github("kongdd/phenofit")
 ```
 
-Example
--------
+## Example
 
-Here, we illustrate how to use `phenofit` to extract vegetation phenology from MOD13A1 in the sampled points. Regional analysis also can be conducted in the similar way.
+Here, we illustrate how to use `phenofit` to extract vegetation
+phenology from MOD13A1 in the sampled points. Regional analysis also can
+be conducted in the similar way.
 
-1. Preparing input data
-=======================
+## 1.1 Download MOD13A1 data
 
-1.1 Download MOD13A1 data
--------------------------
+Upload point shapefile into GEE, clip MOD13A1 and download vegetation
+index data.
+[Here](https://code.earthengine.google.com/ee3ec39cf3061374dab435c358d008a3)
+is the corresponding GEE script.
 
-Upload point shapefile into GEE, clip MOD13A1 and download vegetation index data. [Here](https://code.earthengine.google.com/ee3ec39cf3061374dab435c358d008a3) is the corresponding GEE script.
-
-1.2 Initial weights for input data
-----------------------------------
+## 1.2 Initial weights for input data
 
 Load packages.
 
@@ -51,20 +54,36 @@ library(purrr)
 library(plyr)
 ```
 
-Read the point shapefile to get points coordinate information. Read Enhanced Vegetation Index (EVI) exported by `GEE`.
+Set global parameters for
+`phenofit`
 
--   Add date according to composite day of the year (DayOfYear), other than image date.
--   Add weights according to `SummaryQA`.
+``` r
+# lambda   <- 5    # non-parameter Whittaker, only suit for 16-day. Other time-scale
+# should assign a lambda.
+ymax_min   <- 0.1  # the maximum ymax shoud be greater than `ymax_min` 
+rymin_less <- 0.8  # trough < ymin + A*rymin_less
+nptperyear <- 23   # How many points for a single year
+wFUN       <- wTSM #wBisquare # Weights updating function, could be one of `wTSM`, 'wBisquare', `wChen` and `wSELF`. 
+```
 
-For MOD13A1, Weights can by initialed by `SummaryQA` band (also suit for MOD13A2 and MOD13Q1). We have written a qc function for `SummaryQA`, `qc_summary`.
+Read the point shapefile to get points coordinate information. Read
+Enhanced Vegetation Index (EVI) exported by `GEE`.
 
-| SummaryQA       | Pixel reliability summary QA                        | weight |
-|-----------------|-----------------------------------------------------|--------|
-| -1 Fill/No data | Not processed                                       | `wmin` |
-| 0 Good data     | Use with confidence                                 | 1      |
-| 1 Marginal data | Useful but look at detailed QA for more information | 0.5    |
-| 2 Snow/ice      | Pixel covered with snow/ice                         | `wmin` |
-| 3 Cloudy        | Pixel is cloudy                                     | `wmin` |
+  - Add date according to composite day of the year (DayOfYear), other
+    than image date.
+  - Add weights according to `SummaryQA`.
+
+For MOD13A1, Weights can by initialed by `SummaryQA` band (also suit for
+MOD13A2 and MOD13Q1). We have written a qc function for `SummaryQA`,
+`qc_summary`.
+
+| SummaryQA        | Pixel reliability summary QA                        | weight |
+| ---------------- | --------------------------------------------------- | ------ |
+| \-1 Fill/No data | Not processed                                       | `wmin` |
+| 0 Good data      | Use with confidence                                 | 1      |
+| 1 Marginal data  | Useful but look at detailed QA for more information | 0.5    |
+| 2 Snow/ice       | Pixel covered with snow/ice                         | `wmin` |
+| 3 Cloudy         | Pixel is cloudy                                     | `wmin` |
 
 ``` r
 data('MOD13A1')
@@ -95,22 +114,13 @@ if ('SummaryQA' %in% colnames(df)){
 df <- df[, .(site, y = EVI/1e4, t, w, date, SummaryQA)]
 ```
 
-Add one year in head and tail, for growing season dividing. For example, the input data period is 20000218 ~ 20171219. After adding one year in head and tail, it becomes 19990101 ~ 20181219.
+Add one year in head and tail, for growing season dividing. For example,
+the input data period is 20000218 ~ 20171219. After adding one year in
+head and tail, it becomes 19990101 ~ 20181219.
 
-2. Running `phenofit`
-=====================
-
-2.1 Set global parameters for `phenofit`
-----------------------------------------
+## 2.1 load data
 
 ``` r
-# lambda   <- 5    # non-parameter Whittaker, only suit for 16-day. Other time-scale
-# should assign a lambda.
-ymax_min   <- 0.1  # the maximum ymax shoud be greater than `ymax_min` 
-rymin_less <- 0.8  # trough < ymin + A*rymin_less
-nptperyear <- 23   # How many points for a single year
-wFUN       <- wTSM # Weights updating function, could be one of `wTSM`, 'wBisquare', `wChen` and `wSELF`. 
-
 sites        <- unique(df$site)
 sitename     <- df$site[1]
 d            <- df[site == sitename] # get the first site data
@@ -125,15 +135,15 @@ titlestr   <- with(sp, sprintf('[%03d,%s] %s, lat = %5.2f, lon = %6.2f',
 file_pdf   <- sprintf('Figure/%s_[%03d]_%s.pdf', prefix_fig, sp$ID[1], sp$site[1])
 ```
 
-If need night temperature (Tn) to constrain ungrowing season backgroud value, NA values in Tn should be filled.
+If need night temperature (Tn) to constrain ungrowing season backgroud
+value, NA values in Tn should be filled.
 
 ``` r
 d$Tn %<>% zoo::na.approx(maxgap = 4)
 plot(d$Tn, type = "l"); abline(a = 5, b = 0, col = "red")
 ```
 
-2.1 Check input data
---------------------
+## 2.1 Check input data
 
 ``` r
 dnew  <- add_HeadTail(d) # add additional one year in head and tail
@@ -142,14 +152,18 @@ INPUT <- check_input(dnew$t, dnew$y, dnew$w, maxgap = nptperyear/4, alpha = 0.02
 INPUT$y0 <- dnew$y 
 ```
 
-2.2 Divide growing seasons
---------------------------
+## 2.2 Divide growing seasons
 
-Simply treating calendar year as a complete growing season will induce a considerable error for phenology extraction. A simple growing season dividing method was proposed in `phenofit`.
+Simply treating calendar year as a complete growing season will induce a
+considerable error for phenology extraction. A simple growing season
+dividing method was proposed in `phenofit`.
 
-The growing season dividing method rely on heavily in Whittaker smoother.
+The growing season dividing method rely on heavily in Whittaker
+smoother.
 
-Procedures of initial weight, growing season dividing and curve fitting are separated. Phenology extraction and curve fitting are combined together.
+Procedures of initial weight, growing season dividing and curve fitting
+are separated. Phenology extraction and curve fitting are combined
+together.
 
 ``` r
 par(mar = c(3, 2, 2, 1), mgp = c(3, 0.6, 0))
@@ -163,7 +177,8 @@ lambda <- init_lambda(INPUT$y)
 #                rymin_less = 0.6, ymax_min = ymax_min,
 #                max_MaxPeaksperyear =2.5, max_MinPeaksperyear = 3.5) #, ...
 # get growing season breaks in a 3-year moving window
-brks2 <- season_3y(INPUT, nptperyear, south = sp$lat[1] < 0, FUN = whitsmw2,
+brks2 <- season_3y(INPUT, nptperyear, south = sp$lat[1] < 0, 
+                   FUN = whitsmw2, wFUN = wFUN,
                    IsPlot = IsPlot, print = print, partial = F)
 #   [season_3y]  running 1 ...
 #   [season_3y]  running 2 ...
@@ -187,8 +202,7 @@ brks2 <- season_3y(INPUT, nptperyear, south = sp$lat[1] < 0, FUN = whitsmw2,
 
 <img src="man/Figure/divide growing season-1.png" style="display: block; margin: auto;" />
 
-2.3 Curve fitting
------------------
+## 2.3 Curve fitting
 
 ``` r
 fit  <- curvefits(INPUT, brks2, lambda =lambda,
@@ -205,6 +219,11 @@ fit  <- curvefits(INPUT, brks2, lambda =lambda,
 #   [curvefits]  running 6 ...
 #   [curvefits]  running 7 ...
 #   [curvefits]  running 8 ...
+# Warning in optim_pheno(prior, FUN, y, t, tout, optimFUN, method, w, lower =
+# lower, : Not convergent!
+
+# Warning in optim_pheno(prior, FUN, y, t, tout, optimFUN, method, w, lower =
+# lower, : Not convergent!
 #   [curvefits]  running 9 ...
 #   [curvefits]  running 10 ...
 #   [curvefits]  running 11 ...
@@ -268,7 +287,7 @@ fit$stat <- stat
 print(head(stat))
 #   meth   flag      RMSE         NSE         R       pvalue  n
 # 1   AG 2000_1 0.2632999 -0.13463590 0.7813034 2.462271e-06 26
-# 2   AG 2001_1 0.1624429  0.27917479 0.8328435 2.798427e-06 21
+# 2   AG 2001_1 0.1624429  0.27917478 0.8328435 2.798426e-06 21
 # 3   AG 2002_1 0.1810090  0.15679409 0.8284686 1.051100e-06 23
 # 4   AG 2003_1 0.1824374 -0.01015221 0.7843137 5.738810e-06 24
 # 5   AG 2004_1 0.2396933 -0.22206966 0.8652529 4.848286e-08 24
@@ -285,8 +304,7 @@ grid::grid.newpage(); grid::grid.draw(g)# plot to check the curve fitting
 
 <img src="man/Figure/curve fitting-1.png" style="display: block; margin: auto;" />
 
-2.4 Extract phenology.
-----------------------
+## 2.4 Extract phenology.
 
 ``` r
 # pheno: list(p_date, p_doy)
@@ -324,14 +342,14 @@ print(str(pheno, 2))
 # NULL
 head(pheno$doy$AG)
 # # A tibble: 6 x 21
-#   flag   origin     TRS1.sos TRS1.eos TRS2.sos TRS2.eos TRS5.sos TRS5.eos
-#   <fct>  <date>        <dbl>    <dbl>    <dbl>    <dbl>    <dbl>    <dbl>
-# 1 2000_1 2000-01-01       57      291       68      287       91      281
-# 2 2001_1 2001-01-01      105      310      119      287      141      251
-# 3 2002_1 2002-01-01       86      320       98      290      117      243
-# 4 2003_1 2003-01-01      103      321      110      289      121      237
-# 5 2004_1 2004-01-01       42      316       69      306      137      292
-# 6 2005_1 2005-01-01       87      274      114      268      158      258
+#   flag  origin     TRS1.sos TRS1.eos TRS2.sos TRS2.eos TRS5.sos TRS5.eos
+#   <fct> <date>        <dbl>    <dbl>    <dbl>    <dbl>    <dbl>    <dbl>
+# 1 2000… 2000-01-01       57      291       68      287       91      281
+# 2 2001… 2001-01-01      105      310      119      287      141      251
+# 3 2002… 2002-01-01       86      320       98      290      117      243
+# 4 2003… 2003-01-01      103      321      110      289      121      237
+# 5 2004… 2004-01-01       42      316       69      306      137      292
+# 6 2005… 2005-01-01       87      274      114      268      158      258
 # # ... with 13 more variables: TRS6.sos <dbl>, TRS6.eos <dbl>,
 # #   DER.sos <dbl>, DER.pop <dbl>, DER.eos <dbl>, GU.UD <dbl>, GU.SD <dbl>,
 # #   GU.DD <dbl>, GU.RD <dbl>, ZHANG.Greenup <dbl>, ZHANG.Maturity <dbl>,
