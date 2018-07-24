@@ -5,7 +5,7 @@ source('R/smooth_whit_lambda.R')
 file = 'data_whit_lambda_01.csv'
 
 if (!file.exists(file)){
-    dt = fread('test/GEE/data/MOD13A1_st_1e3.csv')
+    dt = fread('data_test/temp/MOD13A1_st_1e3.csv')
     dt[, `:=`(y    = EVI/1e4,
               t    = ymd(date),
               w    = qc_summary(dt$SummaryQA))]
@@ -18,41 +18,13 @@ df         <- fread(file)
 sites      <- unique(df$site)
 nptperyear <- 23
 
-optim_lambda <- function(sitename, df, IsPlot = F){
-    # sitename <- sites[i]#; grp = 1
-    d     <- df[site == sitename]
-    dnew  <- add_HeadTail(d) # 
-    cat(sprintf('site: %s ...\n', sitename))
+# 1. I need to know whether lambda values are significant different among
+# different \code{dt}.
+#
+# years <- 2000:2017
 
-    IGBP  <- d$IGBPcode[1]
-    INPUT <- check_input(d$t, d$y, d$w, trim = T, maxgap = nptperyear / 4, alpha = 0.02)
-
-    # optim lambda by group
-    get_lambda <- function(j = NULL){
-        tryCatch({
-            if (is.null(j)){
-                input <- INPUT
-            } else{
-                I  <- ((j-1)*3*23+1):(j*3*23)
-                input <- lapply(INPUT[1:3], `[`, I) %>% c(INPUT[5])
-            }
-
-            vc    <- v_curve(input, nptperyear, llas = seq(-2, 3, by = 0.01), d = 2,
-                show = IsPlot, iters = 1)
-            listk(site = sitename, IGBP, lambda = vc$lambda) #, vc
-        }, error = function(e){
-            message(sprintf("[e] %s, %d: %s", as.character(sitename), j, e$message))
-        })   
-    }
-
-    # group = F # three year group
-    if (group) {
-        temp <- llply(1:6, get_lambda)  
-    }else{
-        temp <- get_lambda()
-    }
-    temp # return
-}
+# deltaT <- 1 # current is 4 at GEE
+res <- optim_lambda(sitename, df, deltaT = 1, extent = T, IsPlot = F, IsSave = T)
 
 group = F # three year group
 outdir <- ifelse(group, '_grp', '')

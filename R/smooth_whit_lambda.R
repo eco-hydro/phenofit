@@ -28,37 +28,37 @@ v_point = function(y, w = 0 * y + 1, lambda = 100, d = 2) {
 v_opt = function(y, w = 0 * y + 1, d = 2, lambdas = c(0, 4), tol = 0.01) {
     # Locate the optimal value of log10(lambda) with optimizer
     # Specify bounds of search range for log10(lambda) in paramter 'lambdas'
-    
+
     v_fun = function(lla, y, w, d) v_point(y, w, 10 ^ lla, d)
     op = optimize(v_fun, lambdas, y, w, d, tol = tol)
     return(op$minimum)
 }
 
 #' v_curve
-#' 
+#'
 #' V-curve is used to optimize Whittaker parameter lambda.
 #' Update 20180605 add weights updating to whittaker lambda selecting
-#' 
+#'
 #' @inheritParams whitsmw2
 #' @param d difference order
 #' @param IsPlot Boolean. Whether to plot figure?
-#' 
+#'
 #' @export
-v_curve = function(INPUT, nptperyear, lambdas,  d = 2, IsPlot = F, 
+v_curve = function(INPUT, nptperyear, lambdas,  d = 2, IsPlot = F,
     wFUN = wTSM, iters=2) {
     # Compute the V-cure
     y <- INPUT$y
     w <- INPUT$w
-    
-    param <- c(INPUT, nptperyear = nptperyear, wFUN = wFUN, iters=iters, 
+
+    param <- c(INPUT, nptperyear = nptperyear, wFUN = wFUN, iters=iters,
         second = FALSE, lambdas=NA)
-    # whitsmw2(y, w, ylu, nptperyear, wFUN = wTSM, iters=1, lambdas=1000,
 
     fits = pens = NULL
     for (lla in lambdas) {
-        # param$lambdas <- 10^lla
-        # z    <- do.call(whitsmw2, param) %>% dplyr::last()
-        z    = whit2(y, 10 ^ lla, w)
+        param$lambdas <- 10^lla
+        z    <- do.call(whitsmw2, param) %>% dplyr::last()
+
+        # z    = whit2(y, 10 ^ lla, w)
         fit  = log(sum(w * (y - z) ^ 2))
         pen  = log(sum(diff(z, diff = d) ^2))
         fits = c(fits, fit)
@@ -75,7 +75,7 @@ v_curve = function(INPUT, nptperyear, lambdas,  d = 2, IsPlot = F,
     lamids  = (lambdas[-1] + lambdas[-nla]) / 2
     k       = which.min(v)
     lambda  = 10 ^ lamids[k]
-    
+
     # param$lambdas <- lambda
     # z    <- do.call(whitsmw2, param) %>% dplyr::last()
     z       = whit2(y, lambda, w)
@@ -87,10 +87,87 @@ v_curve = function(INPUT, nptperyear, lambdas,  d = 2, IsPlot = F,
         points(lamids, v, pch = 16, cex = 0.5, col = 'blue' )
         abline(h = 0, lty = 2, col = 'gray')
         abline(v = lamids[k], lty = 2, col = 'gray', lwd = 2)
-        title('V-curve')
+        title(sprintf("v-curve, lambda = %5.2f", lambda))
         grid()
     }
     return(list(z = z, lambdas = lamids, lambda = lambda, v = v, vmin = v[k]))
+}
+
+## The goal of whittaker in this study is used to simulate vegetation seasonality
+# Whittaker balanced the fidelity and smooth.
+optim_lambda <- function(sitename, df, deltaT, extent = T, IsPlot = F, IsSave = F,
+    wFUN = wBisquare, iters = 2){
+    # sitename <- sites[i]#; grp = 1
+    nperiod <- ceiling(length(2000:2017)/deltaT)
+
+    d     <- df[site == sitename]
+    dnew  <- add_HeadTail(d) #
+    INPUT <- check_input(dnew$t, dnew$y, dnew$w, maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
+    years <- year(ymd(dnew$t))
+
+    cat(sprintf('site: %s ...\n', sitename))
+
+    res <- numeric(nperiod)*NA_real_
+    res <- list()
+
+    for (i in 1:nperiod){
+        year      <- (i - 1)*deltaT + 2000
+        year_beg  <- year
+        year_end  <- min(year + deltaT - 1, 2017)
+
+        year_beg_ext <- ifelse(extent, year_beg-1, year_beg)
+        year_end_ext <- ifelse(extent, year_end+1, year_end)
+
+        I     <- which(years >= year_beg & years <= year_end)
+        I_ext <- which(years >= year_beg_ext & years <= year_end_ext)
+
+        INPUT_i <- lapply(INPUT[1:3], `[`, I_ext) %>% c(INPUT[5])
+
+        res[[i]] <- tryCatch({
+            if (IsPlot) par(mfrow = c(2, 1), mar = c(2.5, 2.5, 1, 0.2),
+                mgp = c(1.3, 0.6, 0), oma = c(0, 0, 0.5, 0))
+
+            vc <- v_curve(INPUT_i, nptperyear, lambdas = seq(-2, 3, by = 0.01), d = 2,
+                          wFUN = wFUN, iters = iters,
+                IsPlot = IsPlot)
+
+            ind <- match(I, I_ext)
+            vc$z <- vc$z[ind]
+            vc$t <- INPUT_i$t[ind]
+
+            if (IsPlot){
+                plotdata(INPUT_i, nptperyear, wmin = 0.1)
+                lines(vc$t, vc$z, col = "red", lwd = 1.2)
+            }
+            vc
+            # listk(lambda = vc$lambda) #, vc
+        }, error = function(e){
+            message(sprintf("[e] %s, %d: %s", as.character(sitename), i, e$message))
+            #return(NA)
+        })
+    }
+    ## visualization
+    lambda <- map_dbl(res, "lambda")
+    df_sm  <- res %>% map_df(~as.data.table(.x[c("t", "z")]))
+
+    info <- merge(df_sm, d) %$% GOF(y, z) %>% as.list()
+
+    if (IsSave){
+        titlestr <- info[c(1:3, 5, 7)] %>%
+            {sprintf("%s = %.2f", names(.), .) %>% paste(collapse = ", ") }
+        file <- "test_whit_lambda.pdf"
+        cairo_pdf(file, 10, 4)
+        par(mar = c(2.5, 2.5, 1, 0.2),
+            mgp = c(1.3, 0.6, 0), oma = c(0, 0, 0.5, 0))
+        plotdata(d, nptperyear)
+        lines(z~t, df_sm, col = "red", lwd = 1.2)
+        title(titlestr)
+        dev.off()
+        file.show(file)
+    }
+
+    # res$info <- info
+    listk(lambda, info)
 }
 
 #' Initial lambda value of whittaker taker
@@ -106,24 +183,23 @@ init_lambda  <- function(y){
     # lambda was transformed by log10
     # lambda   <- 0.555484 + 1.671514*mean - 3.434064*sd - 0.052609*skewness + 0.009057*kurtosis
     # lambda   <- 0.555465 + 1.501239*mean - 3.204295*sd - 0.031902*skewness # Just three year result
-    
-    lambda <- 0.831120 + 1.599970*mean - 4.094027*sd - 0.035160*cv - 0.063533*skewness # all year 
+
+    lambda <- 0.831120 + 1.599970*mean - 4.094027*sd - 0.035160*cv - 0.063533*skewness # all year
     # lambda <- 0.817783 + 1.803588*mean - 4.263469*sd - 0.038240*cv - 0.066914*skewness - 0.011289*kurtosis  #3y
     return(10^lambda)
 }
 
-
 ## All year togather
 # Call:
-# lm_fun(formula = lambda ~ mean + sd + cv + skewness, data = d, 
+# lm_fun(formula = lambda ~ mean + sd + cv + skewness, data = d,
 #     na.action = na.exclude)
 
 # Residuals:
-#     Min      1Q  Median      3Q     Max 
-# -2.4662 -0.4267  0.1394  0.4144  2.5824 
+#     Min      1Q  Median      3Q     Max
+# -2.4662 -0.4267  0.1394  0.4144  2.5824
 
 # Coefficients:
-#              Estimate Std. Error t value Pr(>|t|)    
+#              Estimate Std. Error t value Pr(>|t|)
 # (Intercept)  0.831120   0.021897  37.956  < 2e-16 ***
 # mean         1.599970   0.089914  17.794  < 2e-16 ***
 # sd          -4.094027   0.168844 -24.247  < 2e-16 ***
@@ -133,7 +209,7 @@ init_lambda  <- function(y){
 # Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 # Residual standard error: 0.5851 on 15135 degrees of freedom
-# Multiple R-squared:  0.1572,    Adjusted R-squared:  0.1569 
+# Multiple R-squared:  0.1572,    Adjusted R-squared:  0.1569
 # F-statistic: 705.5 on 4 and 15135 DF,  p-value: < 2.2e-16
 
 #          term    estimate   std.error  statistic       p.value
@@ -145,15 +221,15 @@ init_lambda  <- function(y){
 
 ## Three year fitting result
 # Call:
-# lm_fun(formula = lambda ~ (mean + sd + cv + skewness + kurtosis), 
+# lm_fun(formula = lambda ~ (mean + sd + cv + skewness + kurtosis),
 #     data = d, na.action = na.exclude)
 
 # Residuals:
-#     Min      1Q  Median      3Q     Max 
-# -2.6601 -0.4564  0.0490  0.4418  2.7551 
+#     Min      1Q  Median      3Q     Max
+# -2.6601 -0.4564  0.0490  0.4418  2.7551
 
 # Coefficients:
-#              Estimate Std. Error t value Pr(>|t|)    
+#              Estimate Std. Error t value Pr(>|t|)
 # (Intercept)  0.817783   0.010569  77.379  < 2e-16 ***
 # mean         1.803588   0.042016  42.926  < 2e-16 ***
 # sd          -4.263469   0.081937 -52.033  < 2e-16 ***
@@ -164,7 +240,7 @@ init_lambda  <- function(y){
 # Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 # Residual standard error: 0.6639 on 90639 degrees of freedom
-# Multiple R-squared:  0.1541,    Adjusted R-squared:  0.1541 
+# Multiple R-squared:  0.1541,    Adjusted R-squared:  0.1541
 # F-statistic:  3303 on 5 and 90639 DF,  p-value: < 2.2e-16
 
 #          term    estimate   std.error  statistic      p.value
@@ -176,22 +252,22 @@ init_lambda  <- function(y){
 # 6    kurtosis  0.01128888 0.001505916   7.496350 6.621350e-14
 
 #' skewness and kurtosis
-#' 
+#'
 #' Inherit from package `e1071`
-#' @param x a numeric vector containing the values whose skewness is to be 
+#' @param x a numeric vector containing the values whose skewness is to be
 #' computed.
-#' @param na.rm a logical value indicating whether NA values should be stripped 
+#' @param na.rm a logical value indicating whether NA values should be stripped
 #' before the computation proceeds.
-#' @param type an integer between 1 and 3 selecting one of the algorithms for 
+#' @param type an integer between 1 and 3 selecting one of the algorithms for
 #' computing \code{\link[e1071]{skewness}}.
-#' 
+#'
 #' @export
 kurtosis <- function (x, na.rm = FALSE, type = 3) {
     if (any(ina <- is.na(x))) {
         if (na.rm) {
-            x <- x[!ina]            
+            x <- x[!ina]
         } else {
-            return(NA)   
+            return(NA)
         }
     }
     if (!(type %in% (1:3))) stop("Invalid 'type' argument.")
@@ -215,16 +291,16 @@ kurtosis <- function (x, na.rm = FALSE, type = 3) {
 skewness <- function (x, na.rm = FALSE, type = 3) {
     if (any(ina <- is.na(x))) {
         if (na.rm) {
-            x <- x[!ina]            
+            x <- x[!ina]
         } else {
-            return(NA)   
+            return(NA)
         }
     }
     if (!(type %in% (1:3))) stop("Invalid 'type' argument.")
     n <- length(x)
     x <- x - mean(x)
     y <- sqrt(n) * sum(x^3)/(sum(x^2)^(3/2))
-    
+
     if (type == 2) {
         if (n < 3) stop("Need at least 3 complete observations.")
         y <- y * sqrt(n * (n - 1))/(n - 2)
