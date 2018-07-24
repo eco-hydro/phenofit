@@ -18,7 +18,10 @@ sgfitw <- function(y, w, nptperyear, ylu, wFUN = wTSM, iters = 2,
     
     yiter <- y
     fits  <- list()
+    ws    <- list()
+
     for (i in 1:iters){
+        ws[[i]] <- w
         z <- sgfitw_rcpp(yiter, w, S)[, 1]
         w <- wFUN(y, z, w, i, nptperyear, ...)
 
@@ -29,5 +32,7 @@ sgfitw <- function(y, w, nptperyear, ylu, wFUN = wTSM, iters = 2,
     }
 
     fits %<>% set_names(paste0('iter', 1:iters))
-    c(list(w = w), fits)
+    ws   %<>% set_names(paste0('w', 1:iters))
+    
+    list(ws = ws, zs = fits)
 }

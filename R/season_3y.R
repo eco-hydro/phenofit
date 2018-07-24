@@ -1,19 +1,20 @@
 #' Growing season dividing in the 3-year length moving window
 #'
-#' @param INPUT A list object with the elements of 't', 'y', 'w', 'Tn' (option) 
+#' @param INPUT A list object with the elements of 't', 'y', 'w', 'Tn' (option)
 #' and 'ylu', returned by \code{check_input}.
 #' @param nptperyear Integer, points per year.
-#' @param south Boolean. In south hemisphere, growing year is 1 July to the 
+#' @param south Boolean. In south hemisphere, growing year is 1 July to the
 #' following year 31 June; In north hemisphere, growing year is 1 Jan to 31 Dec.
-#' @param FUN Coarse curve fitting function, can be one of `sgfitw`, `whitsmw2` 
+#' @param FUN Coarse curve fitting function, can be one of `sgfitw`, `whitsmw2`
 #' and `wHANTS`.
 #' @param wmin Double, minimum weigth value (i.e. weight for snow, ice and cloud).
 #' @param IsPlot Boolean
-#' @param plotdat Is IsPlot = true, plotdata is used to plot original input, 
-#' known that y and w in \code{INPUT} have been changed.
+#' @param plotdat A list or data.table, with 't', 'y' and 'w'. Only if 
+#' IsPlot=true, plotdata will be used to plot. Known that y and w in \code{INPUT} 
+#' have been changed, we suggest using the original data.table.
 #' @param print Whether to print progress information
 #' @param partial If true, only plot partial figures whose NSE < 0.3
-#' 
+#'
 #' @return List object, list(whit, dt, stat)
 #' @export
 season_3y <- function(INPUT, nptperyear = 23, south = FALSE,
@@ -76,12 +77,12 @@ season_3y <- function(INPUT, nptperyear = 23, south = FALSE,
         warning( 'No growing season found!')
         return(NULL)
     }
-    
+
     dt %<>% subset(len < 650 & len > 45) # mask too long and short gs
     phenofit:::fix_dt(dt) # c++ address operation, fix growing season overlap
     # after fix_dt, growing season length will become shorter
     dt %<>% subset(len < 650 & len > 45) # mask too long and short gs
-    
+
     brks$dt <- dt
 
     ## statistics
@@ -109,15 +110,16 @@ season_3y <- function(INPUT, nptperyear = 23, south = FALSE,
         pdat     <- as.list(d[, .(t, y, w)]) %>% c(INPUT[5])
         plotdata(pdat, nptperyear)
 
-        whit <- brks$whit
+        whit <- brks$whit %>% {.[, contain(., "^t|ziter"), with = F]}
         pos  <- brks$dt
         pos_max <- pos$peak
 
+        iters   <- ncol(whit) - 1 # first row is \code{t}
         colors  <- c("red", "blue", "green")
-        if (ncol(whit) - 3 < 3) colors <- c("red", "green")
+        if (iters < 3) colors <- c("red", "green")
 
-        for (i in 1:(ncol(whit) - 3)){
-            lines(whit$t, whit[[i+3]], col = colors[i], lwd = 2)
+        for (i in 1:iters){
+            lines(whit$t, whit[[i+1]], col = colors[i], lwd = 2)
         }
         # subfunction to plot breaks points
         subplot <- function(t, ...) {

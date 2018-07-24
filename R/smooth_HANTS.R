@@ -1,6 +1,6 @@
 #' Weighted HANTS SMOOTH
 #'
-#' Modified by Dongdong Kong, 2018-05-29
+#' Weighted HANTS smoother
 #' 
 #' @template INPUT
 #' @param nf number of frequencies to be considered above the zero frequency
@@ -17,10 +17,10 @@
 #' Mohammad Abouali (2011), Converted to MATLAB
 #' Dongdong Kong (2018), introduced to R and modified into weighted model.
 #' @return
-#' amp returned array of amplitudes, first element is the average of
-#'         the curve
-#' phi returned array of phases, first element is zero
-#' yr array holding reconstructed time series
+#' \itemize{
+#'    \item \code{ws} weights of every iteration
+#'    \item \code{zs} curve fittings of every iteration
+#' }
 #' @export
 # Modified:
 #   Apply suppression of high amplitudes for near-singular case by
@@ -31,6 +31,11 @@
 #
 #   Change call and input arguments to accommodate a base period length (nptperyear)
 #   All frequencies from 1 (base period) until nf are included
+# RESULT:
+# amp returned array of amplitudes, first element is the average of
+#         the curve
+# phi returned array of phases, first element is zero
+# yr array holding reconstructed time series
 wHANTS <- function(y, t, w, nf = 3, ylu, periodlen = 365, nptperyear,
                    wFUN = wTSM, iters = 2, wmin = 0.1, ...){
     if (is.Date(t)) t <- as.numeric(t - t[1])
@@ -56,7 +61,9 @@ wHANTS <- function(y, t, w, nf = 3, ylu, periodlen = 365, nptperyear,
     }
 
     fits <- list()
+    ws   <- list()
     for (i in 1:iters){
+        ws[[i]] <- w
         za = t(mat) %*% (w*y)
 
         A = t(mat*w) %*% mat # mat' * diag(w) * mat
@@ -65,10 +72,11 @@ wHANTS <- function(y, t, w, nf = 3, ylu, periodlen = 365, nptperyear,
         b <- solve(A, za) # coefficients
         z <- mat %*% b; z <- z[, 1]
         # w = wFUN(y, yr, w, 0.5, i, nptperyear) #%wfact = 0.5
-        wnew <- wFUN(y, z, w, 1, nptperyear, ...)
+        w <- wFUN(y, z, w, 1, nptperyear, ...)
+        # \code{check_fit} has constrained ylu
         # print(unique(wnew - w))
-        w <- wnew
-        w[z < ylu[1] | z > ylu[2] ] <- wmin
+        # w <- wnew
+        # w[z < ylu[1] | z > ylu[2] ] <- wmin
 
         z <- check_fit(z, ylu) # very necessary
         fits[[i]] <- z
@@ -88,6 +96,7 @@ wHANTS <- function(y, t, w, nf = 3, ylu, periodlen = 365, nptperyear,
     phi[ifr] = phase
 
     fits %<>% set_names(paste0('iter', 1:iters))
-    c(list(w = w), fits) # quickly return
+    ws   %<>% set_names(paste0('w', 1:iters))
+    list(ws = ws, zs = fits)
     # list(fit = fits, amp = amp, phi = phi) #quickly return
 }

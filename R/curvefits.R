@@ -61,7 +61,7 @@ curvefits <- function(INPUT, brks, nptperyear = 23,
     I_fix <- which(w[I_w] == wmin)
     I_y   <- I_w[I_fix]
     INPUT$y[I_y] <- dplyr::last(brks$whit)[I_fix]
-    w[I_w] <- brks$whit$w
+    w[I_w] <- brks$whit %>% {.[, contain(., "witer"), with = F]} %>% last()
     #w[I_fix]       <- wmin + 0.1 # exert the function of whitaker smoother
 
     di <- brks$di
