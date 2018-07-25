@@ -2,11 +2,11 @@ colors    <- c("blue", "green3", "orange", "red")
 linewidth <- 1.2
 
 #' PhenoPlot
-#' 
+#'
 #' @inheritParams check_input
 #' @param main figure title
 #' @param ... ignored parameters
-#' 
+#'
 #' @export
 PhenoPlot <- function(t, y, main = "", ...){
     plot(t, y, main = main, ...,
@@ -18,11 +18,11 @@ PhenoPlot <- function(t, y, main = "", ...){
 #' ExtractPheno
 #'
 #' Get yearly vegetation phenological metrics of a curve fitting method
-#' 
+#'
 #' @param fits Multiple \code{phenofit} object.
 #' @param TRS Threshold for \code{PhenoTrs}.
 #' @param IsPlot Boolean. Whether to plot figure?
-#' 
+#'
 #' @export
 ExtractPheno <- function(fits, TRS = c(0.1, 0.2, 0.5, 0.6), IsPlot = FALSE){
     names <- names(fits)
@@ -72,7 +72,7 @@ ExtractPheno <- function(fits, TRS = c(0.1, 0.2, 0.5, 0.6), IsPlot = FALSE){
             }
             stat     <- statistic.phenofit(fit)
             stat_txt <- sprintf("  R=%.2f, p=%.3f\n RMSE=%.3f\nNSE=%.2f\n",
-                                stat[['RMSE']], stat[['NSE']], stat[['R']], stat[['pvalue']])
+                                stat[['R']], stat[['pvalue']], stat[['RMSE']], stat[['NSE']])
             legend('topleft', stat_txt, adj = c(0.2, 0.2), bty='n', text.col = "red")
             mtext(names[i], side = 2)
         }
@@ -110,14 +110,14 @@ ExtractPheno <- function(fits, TRS = c(0.1, 0.2, 0.5, 0.6), IsPlot = FALSE){
 }
 
 #' Phenology extraction functions
-#' 
-#' 
+#'
+#'
 #' @inheritParams D1.phenofit
-#' 
+#'
 #' @rdname PhenoExtractMeth
 #' @export
 PhenoTrs <- function(fit, approach = c("White", "Trs"), trs = 0.5, #, min.mean = 0.1
-    IsPlot = TRUE, ...) { 
+    IsPlot = TRUE, ...) {
     metrics <- c(sos = NA, eos = NA)
 
     t      <- fit$tout
@@ -207,7 +207,7 @@ PhenoTrs <- function(fit, approach = c("White", "Trs"), trs = 0.5, #, min.mean =
 
 
 #' PhenoDeriv
-#' 
+#'
 #' @rdname PhenoExtractMeth
 #' @export
 PhenoDeriv <- function(fit, IsPlot = TRUE, smspline = TRUE, show.lgd = T, ...){

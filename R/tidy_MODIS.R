@@ -1,10 +1,10 @@
 #' getRealDate
-#' 
+#'
 #' convert MODIS \code{DayOfYear} to the exact compositing date.
-#' @param dt A data.table, at least with columns of \code{date}, and 
+#' @param dt A data.table, at least with columns of \code{date}, and
 #' \code{DayOfYear}.
-#' 
-#' @return 
+#'
+#' @return
 #' A data.table with a new column \code{t}, which is the exact compositing date.
 #' @export
 getRealDate <- function(df){
@@ -23,18 +23,18 @@ qc_colors <- c("grey60", "#00BFC4", "#F8766D", "#C77CFF") %>% set_names(qc_level
 qc_shapes <- c(19, 15, 4, 17) %>% set_names(qc_levels)
 
 #' tidy_MOD13.gee
-#' 
-#' Tidy MODIS 'MOD13' VI products' (e.g. MOD13A1, MOD13A2, ...) raw data exported from 
-#' Google Earth Engine.  
+#'
+#' Tidy MODIS 'MOD13' VI products' (e.g. MOD13A1, MOD13A2, ...) raw data exported from
+#' Google Earth Engine.
 #' Tidy contents include: \cr
 #' 1. add exact compositing date, see \code{\link{getRealDate}}. \cr
-#' 2. Init weigths according \code{SummaryQA}, see \code{\link{qcFUN}}. \cr
-#' 
+#' 2. Init weigths according \code{SummaryQA}, see \code{\link{qc_summary}}. \cr
+#'
 #' @param infile A character csv file path or a data.table
 #' @param outfile Output file name. If missing, will not be written to file.
-#' 
-#' @return 
-#' A tidied data.table, with columns of 'site', 'y', 't', 'w', 'date' and 
+#'
+#' @return
+#' A tidied data.table, with columns of 'site', 'y', 't', 'w', 'date' and
 #' 'SummaryQA'.
 #' \describe{
 #' \item{site}{site name}
@@ -42,7 +42,7 @@ qc_shapes <- c(19, 15, 4, 17) %>% set_names(qc_levels)
 #' \item{date}{image date}
 #' \item{t}{exact compositing date constructed from \code{DayOfYear}}
 #' \item{w}{weights}
-#' \item{SummaryQA}{A factor, QA types, one of "good", "margin", "snow/ice" 
+#' \item{SummaryQA}{A factor, QA types, one of "good", "margin", "snow/ice"
 #' or "cloud".}
 #' }
 #' @export

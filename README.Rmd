@@ -4,13 +4,15 @@ output: github_document
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
+
 ```{r, echo = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#",
   fig.width = 10, fig.height = 5,
   fig.align = "center",
-  fig.path  = "man/Figure/"
+  fig.path  = "man/Figure/",
+  dev = 'svg'
 )
 ```
 ## phenofit  
@@ -41,8 +43,6 @@ Here, we illustrate how to use `phenofit` to extract vegetation phenology from
 MOD13A1 in the sampled points. Regional analysis also can be conducted in the 
 similar way.
 
-# 1. Preparing input data
-
 ## 1.1 Download MOD13A1 data
 
 Upload point shapefile into GEE, clip MOD13A1 and download vegetation index
@@ -58,6 +58,15 @@ library(magrittr)
 library(lubridate)
 library(purrr)
 library(plyr)
+```
+Set global parameters for `phenofit`
+```{r phenofit_parameters}
+# lambda   <- 5    # non-parameter Whittaker, only suit for 16-day. Other time-scale
+# should assign a lambda.
+ymax_min   <- 0.1  # the maximum ymax shoud be greater than `ymax_min` 
+rymin_less <- 0.8  # trough < ymin + A*rymin_less
+nptperyear <- 23   # How many points for a single year
+wFUN       <- wBisquare #wTSM #wBisquare # Weights updating function, could be one of `wTSM`, 'wBisquare', `wChen` and `wSELF`. 
 ```
 
 Read the point shapefile to get points coordinate information. Read Enhanced 
@@ -110,19 +119,10 @@ Add one year in head and tail, for growing season dividing. For example, the
 input data period is 20000218 ~ 20171219. After adding one year in head and 
 tail, it becomes 19990101 ~ 20181219. 
 
-# 2. Running `phenofit`
-## 2.1 Set global parameters for `phenofit`
-
-```{r Init parameter}
-# lambda   <- 5    # non-parameter Whittaker, only suit for 16-day. Other time-scale
-# should assign a lambda.
-ymax_min   <- 0.1  # the maximum ymax shoud be greater than `ymax_min` 
-rymin_less <- 0.8  # trough < ymin + A*rymin_less
-nptperyear <- 23   # How many points for a single year
-wFUN       <- wTSM # Weights updating function, could be one of `wTSM`, 'wBisquare', `wChen` and `wSELF`. 
-
+## 2.1 load data
+```{r load_data}
 sites        <- unique(df$site)
-sitename     <- df$site[1]
+sitename     <- sites[3]
 d            <- df[site == sitename] # get the first site data
 sp           <- st[site == sitename]
 
@@ -170,15 +170,17 @@ lambda <- init_lambda(INPUT$y)
 #                rymin_less = 0.6, ymax_min = ymax_min,
 #                max_MaxPeaksperyear =2.5, max_MinPeaksperyear = 3.5) #, ...
 # get growing season breaks in a 3-year moving window
-brks2 <- season_3y(INPUT, nptperyear, south = sp$lat[1] < 0, FUN = whitsmw2,
+brks2 <- season_3y(INPUT, nptperyear, south = sp$lat[1] < 0, 
+                   FUN = whitsmw2, wFUN = wFUN,
                    IsPlot = IsPlot, print = print, partial = F)
 ```
 
 ## 2.3 Curve fitting
-```{r curve fitting, fig.height=6, fig.align="center"}
+```{r curve fitting, fig.height=7, fig.align="center"}
 fit  <- curvefits(INPUT, brks2, lambda =lambda,
                   methods = c("AG", "zhang", "beck", "elmore"), #,"klos",, 'Gu'
-                  nptperyear = nptperyear, debug = F, wFUN = wTSM,
+                  nptperyear = nptperyear, debug = F, 
+                  wFUN = wFUN,
                   nextent = 2, maxExtendMonth = 3, minExtendMonth = 1,
                   qc = as.numeric(dnew$SummaryQA), minPercValid = 0.2,
                   print = print)
@@ -197,6 +199,7 @@ stat  <- ldply(fit$fits, function(fits_meth){
 fit$stat <- stat
 print(head(stat))
 
+print(fit$fits$AG$`2002_1`$ws)
 ## visualization
 # svg("Figure1_phenofit_curve_fitting.svg", 11, 7)
 # Cairo::CairoPDF(file_pdf, 11, 6) #
@@ -206,7 +209,7 @@ grid::grid.newpage(); grid::grid.draw(g)# plot to check the curve fitting
 ```
 
 ## 2.4 Extract phenology.
-```{r Extract phenology, fig.height=5, fig.width=10}
+```{r Extract phenology, fig.height=5, fig.width=8, fig.align="center"}
 # pheno: list(p_date, p_doy)
 p <- lapply(fit$fits, ExtractPheno)
 pheno  <- map(p, tidyFitPheno, origin = INPUT$t[1]) %>% purrr::transpose()

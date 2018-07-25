@@ -1,26 +1,25 @@
 #' Weight updating functions
-#' 
+#'
 #' \itemize{
 #'    \item \code{wSELF} weigth are not changed and return the original.
 #'    \item \code{wTSM} weight updating method in TIMESAT.
-#'    \item \code{wBisquare} Bisquare weight update method. wBisquare has been 
+#'    \item \code{wBisquare} Bisquare weight update method. wBisquare has been
 #' modified to emphasis on upper envelope.
 #'    \item \code{wChen} Chen et al., (2004) weight updating method.
 #'    \item \code{wBeck} Beck et al., (2006) weigth updating method. wBeck need
-#' sos and eos input. The function parameter is different from others. It is 
+#' sos and eos input. The function parameter is different from others. It is
 #' still not finished.
-#'  
 #' }
-#' 
+#'
 #' @inheritParams wHANTS
 #' @param yfit Numeric vector curve fitting values.
 #' @param iter iteration of curve fitting.
-#' @param wfact weight adaptation factor (0-1), equal to the reciprocal of 
+#' @param wfact weight adaptation factor (0-1), equal to the reciprocal of
 #' 'Adaptation strength' in TIMESAT.
 #' @param ... other parameters are ignored.
-#' 
+#'
 #' @return wnew Numeric Vector, adjusted weights.
-#' 
+#'
 #' @references
 #' [1]. Per J\"onsson, P., Eklundh, L., 2004. TIMESAT - A program for analyzing
 #'     time-series of satellite sensor data. Comput. Geosci. 30, 833-845.
@@ -29,24 +28,24 @@
 #' [3]. Garcia, D., 2010. Robust smoothing of gridded data in one and higher
 #' dimensions with missing values. Computational statistics & data analysis,
 #' 54(4), pp.1167-1178. \cr
-#' [4]. Chen, J., J\"onsson, P., Tamura, M., Gu, Z., Matsushita, B., Eklundh, L., 
-#'      2004. A simple method for reconstructing a high-quality NDVI time-series 
+#' [4]. Chen, J., J\"onsson, P., Tamura, M., Gu, Z., Matsushita, B., Eklundh, L.,
+#'      2004. A simple method for reconstructing a high-quality NDVI time-series
 #'      data set based on the Savitzky-Golay filter. Remote Sens. Environ. 91,
 #'      332-344. https://doi.org/10.1016/j.rse.2004.03.014. \cr
-#' [5]. Beck, P.S.A., Atzberger, C., Hogda, K.A., Johansen, B., Skidmore, A.K., 
-#'      2006. Improved monitoring of vegetation dynamics at very high latitudes: 
-#'      A new method using MODIS NDVI. Remote Sens. Environ. 
+#' [5]. Beck, P.S.A., Atzberger, C., Hogda, K.A., Johansen, B., Skidmore, A.K.,
+#'      2006. Improved monitoring of vegetation dynamics at very high latitudes:
+#'      A new method using MODIS NDVI. Remote Sens. Environ.
 #'      https://doi.org/10.1016/j.rse.2005.10.021 \cr
 #' [6]. https://github.com/kongdd/phenopix/blob/master/R/FitDoubleLogBeck.R
-#' 
+#'
 #' @rdname wFUN
 #' @export
 wSELF <- function(y, yfit, w, ...){w}
 
-#' @author 
-#' wTSM is implemented by Per J\"onsson, Malm\"o University, Sweden 
-#' \email{per.jonsson@ts.mah.se} and Lars Eklundh, Lund University, Sweden 
-#' \email{lars.eklundh@nateko.lu.se}. And Translated into Rcpp by Dongdong Kong, 
+#' @author
+#' wTSM is implemented by Per J\"onsson, Malm\"o University, Sweden
+#' \email{per.jonsson@ts.mah.se} and Lars Eklundh, Lund University, Sweden
+#' \email{lars.eklundh@nateko.lu.se}. And Translated into Rcpp by Dongdong Kong,
 #' 01 May 2018.
 #'
 #' @rdname wFUN
@@ -57,19 +56,25 @@ wTSM <- function(y, yfit, w, iter = 2, nptperyear, wfact = 0.5, ...){
 
 #' @rdname wFUN
 #' @export
-wBisquare <- function(y, yfit, w, wmin, ...){
+wBisquare <- function(y, yfit, w, ...){
+    wmin = 0.2
     if (missing(w)) w  <- rep(1, length(y))
     wnew <- w
 
+    # Update to avoid decrease the weights ungrowing season points too much
+    # This idea is also occur in wTSM and wBeck;
+    # 2018-07-25
+    A = diff(range(yfit, na.rm = T))
     re     <- yfit - y
     re_abs <- abs(re)
 
     sc     <- 6 * median(re_abs, na.rm = T)
 
-    I_pos        <- which(re > 0 & re < sc)
-    wnew[I_pos]  <- (1 - (re_abs[I_pos]/sc)^2)^2 * w[I_pos]
+    # only decrease the weights of growing season `& yfit > 1/3*A`.
+    I_pos        <- which(re > 0 & re < sc & yfit > 1/3*A)
+    wnew[I_pos]  <- (1 - (re_abs[I_pos]/sc)^2)^2 #* w[I_pos]
     # have a problem, in this way, original weights will be ignored.
-    
+
     I_zero       <- which(re >= sc) # update 20180723
     wnew[I_zero] <- wmin
     wnew[wnew < wmin] <- wmin
@@ -86,7 +91,7 @@ wBisquare <- function(y, yfit, w, wmin, ...){
 wChen <- function(y, yfit, w, ...){
     if (missing(w)) w  <- rep(1, length(y))
     wnew <- w
-    
+
     re     <- yfit - y
     re_abs <- abs(re)
 
@@ -100,7 +105,7 @@ wChen <- function(y, yfit, w, ...){
 
 # ' #@export
 #' @rdname wFUN
-wBeck <- function(y, yfit, w, ...){ 
+wBeck <- function(y, yfit, w, ...){
     # get optimized parameters
     t   <- seq_along(y)
     sos <- opt$par[3]
@@ -110,7 +115,7 @@ wBeck <- function(y, yfit, w, ...){
     tr <- coef(m)[2] * t + coef(m)[1]
     tr[tr < 0] <- 0
     tr[tr > 100] <- 100
-            
+
     # estimate weights
     res <- xpred - x
     weights <- 1/((tr * res + 1)^2)

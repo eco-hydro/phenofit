@@ -52,6 +52,9 @@ FitDL.Zhang <- function(y, t = index(y), tout = t, optimFUN = I_optimx,
     lower  <- sapply(param_lims, `[`, 1)
     upper  <- sapply(param_lims, `[`, 2)
 
+    # lower[["r"]] %>% multiply_by(1/3)
+    # upper[["r"]] %>% multiply_by(3)
+    # browser()
     optim_pheno(prior, FUN, y, t, tout, optimFUN, method, w, lower = lower, upper = upper, ...)#quick return
 }
 
@@ -138,9 +141,9 @@ FitDL.Elmore <- function(y, t = index(y), tout = t, optimFUN = I_optimx,
 #'      in: Noormets, A. (Ed.), Phenology of Ecosystem Processes: Applications
 #'      in Global Change Research. Springer New York, New York, NY, pp. 35-58.
 #'      https://doi.org/10.1007/978-1-4419-0026-5_2. \cr
-#' 
+#'
 #' [4]. https://github.com/kongdd/phenopix/blob/master/R/FitDoubleLogGu.R
-#' 
+#'
 #' @rdname FitDL
 #' @export
 FitDL.Gu <- function(y, t = index(y), tout = t, optimFUN = I_optimx,
@@ -210,7 +213,11 @@ Init_param <- function(y, t, w){
         stop("NA in the time series are not allowed: fill them with e.g. na.approx()")
     if (missing(w)) w <- rep(1, length(y))
 
+
     w_min  <- 0.5 # weights greater than w_min are treated as good values.
+    # fixed 2018-07-25, If have no enough good points, then set w_min=0
+    if (sum(w >= w_min)/length(y) < .4) w_min <- 0
+
     mx     <- max(y[w >= w_min], na.rm = TRUE)
     mn     <- min(y[w >= w_min], na.rm = TRUE)
     avg    <- mean(y, na.rm = TRUE)

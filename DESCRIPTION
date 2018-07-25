@@ -1,7 +1,7 @@
 Package: phenofit
 Type: Package
 Title: phenofit
-Version: 0.1.2
+Version: 0.1.3
 Author: Dongdong Kong
 Maintainer: kongdd<kongdd.sysu@gmail.com>
 Description: A remote sensing vegetation index phenology extraction package.

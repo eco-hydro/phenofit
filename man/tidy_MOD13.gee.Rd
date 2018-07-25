@@ -4,7 +4,7 @@
 \alias{tidy_MOD13.gee}
 \title{tidy_MOD13.gee}
 \usage{
-tidy_MOD13.gee(infile, outfile)
+tidy_MOD13.gee(infile, outfile, wmin = 0.2)
 }
 \arguments{
 \item{infile}{A character csv file path or a data.table}
@@ -12,7 +12,7 @@ tidy_MOD13.gee(infile, outfile)
 \item{outfile}{Output file name. If missing, will not be written to file.}
 }
 \value{
-A tidied data.table, with columns of 'site', 'y', 't', 'w', 'date' and 
+A tidied data.table, with columns of 'site', 'y', 't', 'w', 'date' and
 'SummaryQA'.
 \describe{
 \item{site}{site name}
@@ -20,14 +20,14 @@ A tidied data.table, with columns of 'site', 'y', 't', 'w', 'date' and
 \item{date}{image date}
 \item{t}{exact compositing date constructed from \code{DayOfYear}}
 \item{w}{weights}
-\item{SummaryQA}{A factor, QA types, one of "good", "margin", "snow/ice" 
+\item{SummaryQA}{A factor, QA types, one of "good", "margin", "snow/ice"
 or "cloud".}
 }
 }
 \description{
-Tidy MODIS 'MOD13' VI products' (e.g. MOD13A1, MOD13A2, ...) raw data exported from 
-Google Earth Engine.  
+Tidy MODIS 'MOD13' VI products' (e.g. MOD13A1, MOD13A2, ...) raw data exported from
+Google Earth Engine.
 Tidy contents include: \cr
 1. add exact compositing date, see \code{\link{getRealDate}}. \cr
-2. Init weigths according \code{SummaryQA}, see \code{\link{qcFUN}}. \cr
+2. Init weigths according \code{SummaryQA}, see \code{\link{qc_summary}}. \cr
 }

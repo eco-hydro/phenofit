@@ -12,7 +12,7 @@ wSELF(y, yfit, w, ...)
 
 wTSM(y, yfit, w, iter = 2, nptperyear, wfact = 0.5, ...)
 
-wBisquare(y, yfit, w, wmin, ...)
+wBisquare(y, yfit, w, ...)
 
 wChen(y, yfit, w, ...)
 
@@ -31,10 +31,8 @@ wBeck(y, yfit, w, ...)
 
 \item{nptperyear}{number of images per year}
 
-\item{wfact}{weight adaptation factor (0-1), equal to the reciprocal of 
+\item{wfact}{weight adaptation factor (0-1), equal to the reciprocal of
 'Adaptation strength' in TIMESAT.}
-
-\item{wmin}{Double, minimum weigth (i.e. weight of snow, ice and cloud).}
 }
 \value{
 wnew Numeric Vector, adjusted weights.
@@ -43,13 +41,12 @@ wnew Numeric Vector, adjusted weights.
 \itemize{
    \item \code{wSELF} weigth are not changed and return the original.
    \item \code{wTSM} weight updating method in TIMESAT.
-   \item \code{wBisquare} Bisquare weight update method. wBisquare has been 
+   \item \code{wBisquare} Bisquare weight update method. wBisquare has been
 modified to emphasis on upper envelope.
    \item \code{wChen} Chen et al., (2004) weight updating method.
    \item \code{wBeck} Beck et al., (2006) weigth updating method. wBeck need
-sos and eos input. The function parameter is different from others. It is 
+sos and eos input. The function parameter is different from others. It is
 still not finished.
- 
 }
 }
 \references{
@@ -60,19 +57,19 @@ still not finished.
 [3]. Garcia, D., 2010. Robust smoothing of gridded data in one and higher
 dimensions with missing values. Computational statistics & data analysis,
 54(4), pp.1167-1178. \cr
-[4]. Chen, J., J\"onsson, P., Tamura, M., Gu, Z., Matsushita, B., Eklundh, L., 
-     2004. A simple method for reconstructing a high-quality NDVI time-series 
+[4]. Chen, J., J\"onsson, P., Tamura, M., Gu, Z., Matsushita, B., Eklundh, L.,
+     2004. A simple method for reconstructing a high-quality NDVI time-series
      data set based on the Savitzky-Golay filter. Remote Sens. Environ. 91,
      332-344. https://doi.org/10.1016/j.rse.2004.03.014. \cr
-[5]. Beck, P.S.A., Atzberger, C., Hogda, K.A., Johansen, B., Skidmore, A.K., 
-     2006. Improved monitoring of vegetation dynamics at very high latitudes: 
-     A new method using MODIS NDVI. Remote Sens. Environ. 
+[5]. Beck, P.S.A., Atzberger, C., Hogda, K.A., Johansen, B., Skidmore, A.K.,
+     2006. Improved monitoring of vegetation dynamics at very high latitudes:
+     A new method using MODIS NDVI. Remote Sens. Environ.
      https://doi.org/10.1016/j.rse.2005.10.021 \cr
 [6]. https://github.com/kongdd/phenopix/blob/master/R/FitDoubleLogBeck.R
 }
 \author{
-wTSM is implemented by Per J\"onsson, Malm\"o University, Sweden 
-\email{per.jonsson@ts.mah.se} and Lars Eklundh, Lund University, Sweden 
-\email{lars.eklundh@nateko.lu.se}. And Translated into Rcpp by Dongdong Kong, 
+wTSM is implemented by Per J\"onsson, Malm\"o University, Sweden
+\email{per.jonsson@ts.mah.se} and Lars Eklundh, Lund University, Sweden
+\email{lars.eklundh@nateko.lu.se}. And Translated into Rcpp by Dongdong Kong,
 01 May 2018.
 }

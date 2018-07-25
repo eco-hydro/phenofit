@@ -71,7 +71,7 @@ season <- function(INPUT, nptperyear = 46, south = FALSE,
                    lambda, nf  = 2, frame = floor(nptperyear/7) * 2 + 1,
                    minpeakdistance = nptperyear/6,
                    threshold_max = 0.2, threshold_min = 0.05,
-                   ypeak_min   = 0.5, rytrough_max = 0.6,
+                   ypeak_min   = 0.1, rytrough_max = 0.6,
                    MaxPeaksPerYear = 2, MaxTroughsPerYear = 3,
                    IsPlot  = FALSE, plotdat = INPUT, print = FALSE,
                    ...)
@@ -101,7 +101,8 @@ season <- function(INPUT, nptperyear = 46, south = FALSE,
         )
 
         yfits <- do.call(FUN, param)
-        ypred <- last(yfits) #as.numeric(runmed(ypred, frame))
+        zs    <- yfits$zs
+        ypred <- last(zs) #as.numeric(runmed(ypred, frame))
         alpha <- 0.01
 
         # default is three year data input, median will be much better
@@ -239,8 +240,8 @@ season <- function(INPUT, nptperyear = 46, south = FALSE,
         # need to plot outside, because y, w have been changed.
         plotdata(plotdat, nptperyear)
         colors <- c("red", "blue", "green")
-        for (i in 1:(length(yfits) - 1)){
-            lines(INPUT$t, yfits[[i+1]], col = colors[i], lwd = 2)
+        for (i in 1:(length(zs))){
+            lines(INPUT$t, zs[[i]], col = colors[i], lwd = 2)
         }
         if (is.null(INPUT$ylu)) abline(h=INPUT$ylu, col="red", lty=2) # show ylims
 
@@ -250,7 +251,7 @@ season <- function(INPUT, nptperyear = 46, south = FALSE,
         points(t[I_max], ypred[I_max], pch=20, cex = 1.5, col="red")
         points(t[I_min], ypred[I_min], pch=20, cex = 1.5, col="blue")
     }
-    return(list(whit = as.data.table(c(list(t = t, y = y), yfits)),
+    return(list(whit = as.data.table(c(list(t = t, y = y), yfits$ws, yfits$zs)),
                 pos = pos, dt = dt, di = di))
 }
 

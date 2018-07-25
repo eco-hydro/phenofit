@@ -12,7 +12,7 @@ f_goal(par, y, t, fun = c(doubleLog.elmore, doubleLog.beck, doubleLog.klos,
 
 \item{t}{Numeric vector, \code{Date} variable}
 
-\item{fun}{A curve fitting function, see \code{\link{logistics}}.}
+\item{fun}{A curve fitting function, see \code{\link{Logistic}}.}
 
 \item{w}{Numeric vector, weights of \code{y}}
 

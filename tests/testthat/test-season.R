@@ -1,10 +1,11 @@
 context("season")
 
-# source('helper_MOD13A1.R')
+source('helper_MOD13A1.R')
+# source('tests/testthat/helper_MOD13A1.R')
 lambda   <- init_lambda(INPUT$y) # lambda for whittaker
 
 param = listk(
-    INPUT, nptperyear, 
+    INPUT, nptperyear,
     FUN = whitsmw2, wFUN = wBisquare, iters = 2,
     lambda,
     IsPlot = IsPlot, plotdat = d,
