@@ -73,7 +73,7 @@ whitsmw2 <- function(y, w, ylu, nptperyear, wFUN = wTSM, iters=1, lambdas=1000,
         for (i in 1:iters){
             ws[[i]] <- w
             z <- whit2(yiter, lambda, w)
-            w <- wFUN(y, z, w, i+1, nptperyear, ...)
+            w <- wFUN(y, z, w, i, nptperyear, ...)
 
             # If curve has been smoothed enough, it will not care about the
             # second smooth. If no, the second one is just prepared for this

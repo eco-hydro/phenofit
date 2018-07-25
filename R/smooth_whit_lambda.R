@@ -56,7 +56,7 @@ v_curve = function(INPUT, nptperyear, lambdas,  d = 2, IsPlot = F,
     fits = pens = NULL
     for (lla in lambdas) {
         param$lambdas <- 10^lla
-        z    <- do.call(whitsmw2, param) %>% dplyr::last()
+        z    <- do.call(whitsmw2, param)$zs %>% dplyr::last()
 
         # z    = whit2(y, 10 ^ lla, w)
         fit  = log(sum(w * (y - z) ^ 2))
@@ -78,7 +78,10 @@ v_curve = function(INPUT, nptperyear, lambdas,  d = 2, IsPlot = F,
 
     # param$lambdas <- lambda
     # z    <- do.call(whitsmw2, param) %>% dplyr::last()
-    z       = whit2(y, lambda, w)
+    # z       = whit2(y, lambda, w)
+    param$lambdas <- lambda
+    fit <- do.call(whitsmw2, param)
+    d_sm <- fit %$% c(ws, zs) %>% as.data.table() %>% cbind(t = INPUT$t, .)
 
     if (IsPlot) {
         ylim = c(0, max(v))
@@ -90,12 +93,14 @@ v_curve = function(INPUT, nptperyear, lambdas,  d = 2, IsPlot = F,
         title(sprintf("v-curve, lambda = %5.2f", lambda))
         grid()
     }
-    return(list(z = z, lambdas = lamids, lambda = lambda, v = v, vmin = v[k]))
+
+    return( list(fit = d_sm, lambdas = lamids, v = v, lambda = lambda, vmin = v[k]))
 }
 
 ## The goal of whittaker in this study is used to simulate vegetation seasonality
 # Whittaker balanced the fidelity and smooth.
-optim_lambda <- function(sitename, df, deltaT, extent = T, IsPlot = F, IsSave = F,
+optim_lambda <- function(sitename, df, deltaT, extent = T,
+    IsPlot = F, IsSave = F, file = "test_whit_lambda.pdf",
     wFUN = wBisquare, iters = 2){
     # sitename <- sites[i]#; grp = 1
     nperiod <- ceiling(length(2000:2017)/deltaT)
@@ -121,23 +126,30 @@ optim_lambda <- function(sitename, df, deltaT, extent = T, IsPlot = F, IsSave = 
         I     <- which(years >= year_beg & years <= year_end)
         I_ext <- which(years >= year_beg_ext & years <= year_end_ext)
 
+        # coefficient to construct Whittaker lambda formula
+        coef <- dnew[I_ext, .(mean = mean(y),
+                            sd = sd(y),
+                            kurtosis = kurtosis(y, type = 2),
+                            skewness = skewness(y, type = 2))] %>% as.list()
+
         INPUT_i <- lapply(INPUT[1:3], `[`, I_ext) %>% c(INPUT[5])
 
         res[[i]] <- tryCatch({
             if (IsPlot) par(mfrow = c(2, 1), mar = c(2.5, 2.5, 1, 0.2),
                 mgp = c(1.3, 0.6, 0), oma = c(0, 0, 0.5, 0))
 
-            vc <- v_curve(INPUT_i, nptperyear, lambdas = seq(-2, 3, by = 0.01), d = 2,
+            vc <- v_curve(INPUT_i, nptperyear, lambdas = seq(-1, 3, by = 0.01), d = 2,
                           wFUN = wFUN, iters = iters,
                 IsPlot = IsPlot)
 
             ind <- match(I, I_ext)
-            vc$z <- vc$z[ind]
-            vc$t <- INPUT_i$t[ind]
+            vc$fit <- vc$fit[ind, ]
+            vc$coef <- coef
 
             if (IsPlot){
                 plotdata(INPUT_i, nptperyear, wmin = 0.1)
-                lines(vc$t, vc$z, col = "red", lwd = 1.2)
+                lines(vc$fit$t, vc$fit$ziter1, col = "blue", lwd = 1.2)
+                lines(vc$fit$t, vc$fit$ziter2, col = "red" , lwd = 1.2)
             }
             vc
             # listk(lambda = vc$lambda) #, vc
@@ -148,26 +160,29 @@ optim_lambda <- function(sitename, df, deltaT, extent = T, IsPlot = F, IsSave = 
     }
     ## visualization
     lambda <- map_dbl(res, "lambda")
-    df_sm  <- res %>% map_df(~as.data.table(.x[c("t", "z")]))
+    df_sm  <- res %>% map_df("fit") %>% data.table()
+    coefs  <- res %>% map_df("coef")
 
-    info <- merge(df_sm, d) %$% GOF(y, z) %>% as.list()
+    # browser()
+    info <- merge(df_sm, d, by = "t") %$% GOF(y, ziter2) %>% as.list()
 
+    # browser()
     if (IsSave){
         titlestr <- info[c(1:3, 5, 7)] %>%
             {sprintf("%s = %.2f", names(.), .) %>% paste(collapse = ", ") }
-        file <- "test_whit_lambda.pdf"
         cairo_pdf(file, 10, 4)
         par(mar = c(2.5, 2.5, 1, 0.2),
             mgp = c(1.3, 0.6, 0), oma = c(0, 0, 0.5, 0))
         plotdata(d, nptperyear)
-        lines(z~t, df_sm, col = "red", lwd = 1.2)
+        lines(ziter1~t, df_sm, col = "blue", lwd = 1.2)
+        lines(ziter2~t, df_sm, col = "red", lwd = 1.2)
         title(titlestr)
         dev.off()
         file.show(file)
     }
 
     # res$info <- info
-    listk(lambda, info)
+    listk(data = df_sm, coef = coefs, gof = info, lambda)
 }
 
 #' Initial lambda value of whittaker taker

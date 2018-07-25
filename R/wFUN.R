@@ -64,15 +64,16 @@ wBisquare <- function(y, yfit, w, ...){
     # Update to avoid decrease the weights ungrowing season points too much
     # This idea is also occur in wTSM and wBeck;
     # 2018-07-25
-    A = diff(range(yfit, na.rm = T))
+    ylu <- range(yfit, na.rm = T)
+    A = diff(ylu)
     re     <- yfit - y
     re_abs <- abs(re)
 
     sc     <- 6 * median(re_abs, na.rm = T)
 
     # only decrease the weights of growing season `& yfit > 1/3*A`.
-    I_pos        <- which(re > 0 & re < sc & yfit > 1/3*A)
-    wnew[I_pos]  <- (1 - (re_abs[I_pos]/sc)^2)^2 #* w[I_pos]
+    I_pos        <- which(re > 0 & re < sc & (yfit > 0.3*A + ylu[1]) )
+    wnew[I_pos]  <- (1 - (re_abs[I_pos]/sc)^2)^2 * w[I_pos]
     # have a problem, in this way, original weights will be ignored.
 
     I_zero       <- which(re >= sc) # update 20180723
