@@ -35,7 +35,8 @@ NumericVector wTSM_cpp(NumericVector y, NumericVector yfit, NumericVector w,
       // Adjust the weights dependent on if the values are above or below the
       // fitted values
       if (y[i] < yfit[i] - 1e-8){
-          if (yi_min > yfitmean){ //  || iter < 2
+          if (yi_min > yfitmean){
+          // if (yi_min > yfitmean || iter < 2){
             /**
              * If there is a low variation in an interval, i.e. if the interval
              * is at a peak or at a minima compute the normalized distance

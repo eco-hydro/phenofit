@@ -1,11 +1,11 @@
 #' Double logistics functions
-#' 
+#'
 #' Define double logistics, piecewise logistics and many other functions to
 #' curve fit VI time-series
 #' \itemize{
-#'    \item \code{Logistic} The traditional simplest logistic function. It can 
-#'      be only used in half growing season, i.e. vegetation green-up or senescence 
-#'      period. 
+#'    \item \code{Logistic} The traditional simplest logistic function. It can
+#'      be only used in half growing season, i.e. vegetation green-up or senescence
+#'      period.
 #'    \item \code{doubleLog.zhang} Piecewise logistics, Zhang Xiaoyang, RME, 2003.
 #'    \item \code{doubleAG} Asymmetric Gaussian.
 #'    \item \code{doubleLog.beck} Beck logistics.
@@ -13,13 +13,13 @@
 #'    \item \code{doubleLog.elmore} Elmore logistics.
 #'    \item \code{doubleLog.klos} Klos logistics.
 #' }
-#' 
-#' All of those function have \code{par} and \code{formula} attributes for the 
+#'
+#' All of those function have \code{par} and \code{formula} attributes for the
 #' convenience for analytical D1 and D2
-#' 
+#'
 #' @references
 #' Peter M. Atkinson, et al., 2012, RSE, 123:400-417
-#' 
+#'
 #' @rdname logistics
 #' @export
 Logistic <- function(par, t){
@@ -49,7 +49,7 @@ doubleLog.zhang <- function(par, t){
     if (t0 - sos <= 1 || t0 - eos >= -1) return(rep(NA, length(t)))
     # In order to make sure the shape of S curve, should be satisfy:
     # t0 < eos, t0 > sos
-    
+
     # xpred1 <- (mx - mn)/(1 + exp(-rsp*(t - sos))) + mn
     # xpred2 <- (mx - mn)/(1 + exp(rau*(t - eos))) + mn
     # pred  <- xpred1*(t <= t0) + xpred2*(t > t0)
@@ -99,7 +99,7 @@ doubleLog.beck <- function(par, t) {
     rau <- par[6]
     # if (sos >= eos) return(rep(9999, length(t)))
     try(if (eos < sos) return(rep(99, length(t))), silent = T)
-    
+
     pred <- mn + (mx - mn)*(1/(1 + exp(-rsp*(t - sos))) + 1/(1 + exp(rau*(t - eos))) - 1)
     return(pred)
 }
@@ -203,11 +203,13 @@ attr(doubleLog.klos, 'formula') <- expression((a1*t + b1) + (a2*t^2 + b2*t + c) 
 # return: stdError=std.error
 
 #' Common goal function of those curve fitting methods
-#' 
+#'
 #' @inheritParams optim_pheno
-#' @param fun A curve fitting function, see \code{\link{logistics}}.
+#' @inheritParams Logistic
+#'
+#' @param fun A curve fitting function, see \code{\link{Logistic}}.
 #' @param ... other parameters passed to \code{fun}.
-#' 
+#'
 #' @return RMSE root mean square error of curve fitting values.
 #' @export
 f_goal <- function(
@@ -234,7 +236,7 @@ f_goal <- function(
     }
     SSE  <- sum((y - pred)^2 * w)
     RMSE <- sqrt(SSE/length(y))
-    NSE  <- sum((y - pred)^2 * w)/sum((y - mean(pred))^2) 
+    NSE  <- sum((y - pred)^2 * w)/sum((y - mean(pred))^2)
 
     # 1. better handle low and high values simulation
     # xpred_2 <- sqrt(xpred_2)
@@ -243,14 +245,14 @@ f_goal <- function(
     # x_2     <- log(x_2+1)
     # xpred_2 <- 1/pred          # inverse NSE
     # x_2     <- 1/y
-    
+
     # xpred_2 <- pred - mean(y)
     # x_2     <- y - mean(y)
     # NSE2 <- sum((x_2 - xpred_2)^2 * w)/sum((x_2 - mean(x_2))^2) #NSE
-    
+
     # const <- ylu[2]
     # xpred_2 <- pred - ylu[1]; xpred_2[xpred_2 < 0] <- const
-    # x_2     <- y     - ylu[1]; x_2[x_2 < 0] <- const    
+    # x_2     <- y     - ylu[1]; x_2[x_2 < 0] <- const
     return(RMSE)
 }
 

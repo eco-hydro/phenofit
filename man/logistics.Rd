@@ -28,9 +28,9 @@ doubleLog.klos(par, t)
 Define double logistics, piecewise logistics and many other functions to
 curve fit VI time-series
 \itemize{
-   \item \code{Logistic} The traditional simplest logistic function. It can 
-     be only used in half growing season, i.e. vegetation green-up or senescence 
-     period. 
+   \item \code{Logistic} The traditional simplest logistic function. It can
+     be only used in half growing season, i.e. vegetation green-up or senescence
+     period.
    \item \code{doubleLog.zhang} Piecewise logistics, Zhang Xiaoyang, RME, 2003.
    \item \code{doubleAG} Asymmetric Gaussian.
    \item \code{doubleLog.beck} Beck logistics.
@@ -40,7 +40,7 @@ curve fit VI time-series
 }
 }
 \details{
-All of those function have \code{par} and \code{formula} attributes for the 
+All of those function have \code{par} and \code{formula} attributes for the
 convenience for analytical D1 and D2
 }
 \references{

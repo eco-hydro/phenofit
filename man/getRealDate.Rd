@@ -7,7 +7,7 @@
 getRealDate(df)
 }
 \arguments{
-\item{dt}{A data.table, at least with columns of \code{date}, and 
+\item{dt}{A data.table, at least with columns of \code{date}, and
 \code{DayOfYear}.}
 }
 \value{
