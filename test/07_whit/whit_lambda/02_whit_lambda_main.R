@@ -1,9 +1,8 @@
-
 source('test/stable/load_pkgs.R')
-source('R/smooth_whit.R')
-source('R/smooth_whit_lambda.R')
+source('test/07_whit/whit_lambda/smooth_whit_lambda.R')
+# source('test/07_whit/whit_lambda/02_whit_lambda_main.R')
+# source('R/smooth_whit.R')
 # source('test/GEE/V-pack.r')
-
 
 file ="data_test/whit_lambda/MOD13A1_st_1e3_20180725.rda"
 
@@ -37,7 +36,7 @@ if (file.exists(file)){
     save(df, st, file = file)
 }
 
-sites      <- unique(df$site)
+sites      <- unique(df$site) %>% set_names(., .)
 nptperyear <- 23
 
 sitename <- sites[2]
@@ -49,14 +48,14 @@ sitename <- sites[2]
 deltaT = 1
 subfix <- sprintf("_grp%d", deltaT)
 
-optim_lambda_FUN <- function(sitename){
+optim_lambda_FUN <- function(sitename, wFUN = wSELF){
     optim_lambda(sitename, df, deltaT = deltaT, extent = T, IsPlot = F, IsSave = F,
-                 wFUN = wBisquare, file = "whit_formual_wBisquare.pdf")
+                 wFUN = wFUN, file = "whit_formual_wBisquare.pdf")
 }
-
+# res <- optim_lambda_FUN(102)
 # deltaT <- 1 # current is 4 at GEE
-res.bisquare <- optim_lambda(sitename, df, deltaT = 1, extent = T, IsPlot = F, IsSave = T,
-                    wFUN = wBisquare, file = "whit_formual_wBisquare.pdf")
+# res.bisquare <- optim_lambda(sitename, df, deltaT = 1, extent = T, IsPlot = F, IsSave = F,
+#                     wFUN = wBisquare, file = "whit_formual_wBisquare.pdf")
 # res.TSM <- optim_lambda(sitename, df, deltaT = 1, extent = T, IsPlot = F, IsSave = T,
 #                     wFUN = wTSM, file = "whit_formual_wTSM.pdf")
 # res.self <- optim_lambda(sitename, df, deltaT = 1, extent = T, IsPlot = F, IsSave = T,
@@ -67,11 +66,22 @@ res.bisquare <- optim_lambda(sitename, df, deltaT = 1, extent = T, IsPlot = F, I
 # outdir <- paste0("result", outdir)
 
 # cpus_per_node <- as.numeric(Sys.getenv('SLURM_CPUS_ON_NODE'))
-# par_sbatch(sites, optim_lambda_FUN, save = T,
-#            outdir = paste0("result/whit_lambda/wBisquare", subfix) )
-# par_sbatch(sites, optim_lambda_FUN, save = T,
+#par_sbatch(sites, optim_lambda_FUN, wFUN = wBisquare, Save = T,
+ #          outdir = paste0("result/whit_lambda/wBisquare", subfix) )
+# par_sbatch(sites, optim_lambda_FUN, wFUN = wTSM, Save = T,
 #            outdir = paste0("result/whit_lambda/wTSM", subfix) )
-# par_sbatch(sites, optim_lambda_FUN, save = T,
-#            outdir = paste0("result/whit_lambda/wSELF", subfix) )
+res <- par_sbatch(sites[1:200], optim_lambda_FUN, wFUN = wSELF,
+                  return.res = F, Save = T,
+            outdir = paste0("result/whit_lambda/wSELF", subfix))
+
+# a <- readRDS("result/whit_lambda/wSELF_grp1/results_0.RDS")
+# a <- get_sbatch("result/whit_lambda/wSELF_grp1/")
 #
+# sapply(a, length) %>% {which(. == 1)}
+#
+# res <- list()
+# for (i in seq_along(sites)){
+#     sitename <- sites[i]
+#     res[[i]] <- optim_lambda_FUN(sitename, wSELF)
+# }
 # system.time({ res <- pbmclapply(sites, optim_lambda, df = df, mc.cores = cpus_per_node) })

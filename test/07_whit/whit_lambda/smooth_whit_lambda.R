@@ -108,6 +108,7 @@ optim_lambda <- function(sitename, df, deltaT, extent = T,
     d     <- df[site == sitename]
     dnew  <- add_HeadTail(d) #
     INPUT <- check_input(dnew$t, dnew$y, dnew$w, maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
+    if (length(unique(INPUT$y)) == 1) return(NULL)
     years <- year(ymd(dnew$t))
 
     cat(sprintf('site: %s ...\n', sitename))
