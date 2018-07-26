@@ -49,8 +49,9 @@ deltaT = 1
 subfix <- sprintf("_grp%d", deltaT)
 
 optim_lambda_FUN <- function(sitename, wFUN = wSELF){
-    optim_lambda(sitename, df, deltaT = deltaT, extent = T, IsPlot = F, IsSave = F,
-                 wFUN = wFUN, file = "whit_formual_wBisquare.pdf")
+    optim_lambda(sitename, df, deltaT = deltaT, extent = T,
+                 IsPlot = F, IsSave = F, file = "whit_formual_wBisquare.pdf",
+                 wFUN = wFUN)
 }
 # res <- optim_lambda_FUN(102)
 # deltaT <- 1 # current is 4 at GEE
@@ -70,15 +71,22 @@ optim_lambda_FUN <- function(sitename, wFUN = wSELF){
  #          outdir = paste0("result/whit_lambda/wBisquare", subfix) )
 # par_sbatch(sites, optim_lambda_FUN, wFUN = wTSM, Save = T,
 #            outdir = paste0("result/whit_lambda/wTSM", subfix) )
-res <- par_sbatch(sites[1:200], optim_lambda_FUN, wFUN = wSELF,
+
+res <- par_sbatch(sites, optim_lambda_FUN, wFUN = wBisquare,
                   return.res = F, Save = T,
-            outdir = paste0("result/whit_lambda/wSELF", subfix))
+            outdir = paste0("result/whit_lambda/wBisquare", subfix))
+res <- par_sbatch(sites, optim_lambda_FUN, wFUN = wTSM,
+                  return.res = F, Save = T,
+            outdir = paste0("result/whit_lambda/wTSM", subfix))
+# res <- par_sbatch(sites, optim_lambda_FUN, wFUN = wSELF,
+#                   return.res = F, Save = T,
+#             outdir = paste0("result/whit_lambda/wSELF", subfix))
 
 # a <- readRDS("result/whit_lambda/wSELF_grp1/results_0.RDS")
 # a <- get_sbatch("result/whit_lambda/wSELF_grp1/")
 #
 # sapply(a, length) %>% {which(. == 1)}
-#
+#l
 # res <- list()
 # for (i in seq_along(sites)){
 #     sitename <- sites[i]
