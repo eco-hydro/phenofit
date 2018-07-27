@@ -99,8 +99,11 @@ v_curve = function(INPUT, nptperyear, lambdas,  d = 2, IsPlot = F,
     return( list(fit = d_sm, lambdas = lamids, v = v, lambda = lambda, vmin = v[k]))
 }
 
-## The goal of whittaker in this study is used to simulate vegetation seasonality
-# Whittaker balanced the fidelity and smooth.
+# According to v-curve theory, get the optimal lambda value.
+# 
+# Whittaker balanced the fidelity and smooth. The agreement index maybe poor 
+# than others. But it'is much smoothing.
+# 
 optim_lambda <- function(sitename, df, deltaT, extent = T,
     IsPlot = F, IsSave = F, file = "test_whit_lambda.pdf",
     wFUN = wBisquare, iters = 2){
@@ -110,13 +113,12 @@ optim_lambda <- function(sitename, df, deltaT, extent = T,
     d     <- df[site == sitename]
     dnew  <- add_HeadTail(d) #
     INPUT <- check_input(dnew$t, dnew$y, dnew$w, maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
-    if (length(unique(INPUT$y)) == 1) return(NULL)
+    if (length(unique(INPUT$y)) <= 5) return(NULL)
 
     years <- year(ymd(dnew$t))
-
     cat(sprintf('site: %s ...\n', sitename))
 
-    res <- numeric(nperiod)*NA_real_
+    # res <- numeric(nperiod)*NA_real_
     res <- list()
 
     for (i in 1:nperiod){
@@ -130,12 +132,6 @@ optim_lambda <- function(sitename, df, deltaT, extent = T,
         I     <- which(years >= year_beg & years <= year_end)
         I_ext <- which(years >= year_beg_ext & years <= year_end_ext)
 
-        # coefficient to construct Whittaker lambda formula
-        coef <- dnew[I_ext, .(mean = mean(y),
-                            sd = sd(y),
-                            kurtosis = kurtosis(y, type = 2),
-                            skewness = skewness(y, type = 2))] %>% as.list()
-
         INPUT_i <- lapply(INPUT[1:3], `[`, I_ext) %>% c(INPUT[5])
 
         res[[i]] <- tryCatch({
@@ -148,7 +144,12 @@ optim_lambda <- function(sitename, df, deltaT, extent = T,
 
             ind <- match(I, I_ext)
             vc$fit <- vc$fit[ind, ]
-            vc$coef <- coef
+
+            # coefficient to construct Whittaker lambda formula
+            vc$coef <- dnew[I_ext, .(mean = mean(y),
+                            sd = sd(y),
+                            kurtosis = kurtosis(y, type = 2),
+                            skewness = skewness(y, type = 2))] %>% as.list()
 
             if (IsPlot){
                 plotdata(INPUT_i, nptperyear, wmin = 0.1)
@@ -163,31 +164,35 @@ optim_lambda <- function(sitename, df, deltaT, extent = T,
             #return(NA)
         })
     }
-    ## visualization
-    lambda <- map(res, "lambda")
-    df_sm  <- res %>% map_df("fit") %>% data.table()
-    coefs  <- res %>% map_df("coef")
 
-    # browser(), iter2
-    info <- merge(df_sm, d, by = "t") %$% GOF(y, z) %>% as.list()
+    tryCatch({
+        ## visualization
+        res %<>% rm_empty()
+        lambda <- map_dbl(res, "lambda")
+        df_sm  <- res %>% map_df("fit") %>% data.table()
+        coefs  <- res %>% map_df("coef")
 
-    # browser()
-    if (IsSave){
-        titlestr <- info[c(1:3, 5, 7)] %>%
-            {sprintf("%s = %.2f", names(.), .) %>% paste(collapse = ", ") }
-        cairo_pdf(file, 10, 4)
-        par(mar = c(2.5, 2.5, 1, 0.2),
-            mgp = c(1.3, 0.6, 0), oma = c(0, 0, 0.5, 0))
-        plotdata(d, nptperyear)
-        lines(ziter1~t, df_sm, col = "blue", lwd = 1.2)
-        lines(ziter2~t, df_sm, col = "red", lwd = 1.2)
-        title(titlestr)
-        dev.off()
-        file.show(file)
-    }
+        # browser(), iter2
+        info <- merge(df_sm, d, by = "t") %$% GOF(y, z) %>% as.list()
 
-    # res$info <- info
-    listk(data = df_sm, coef = coefs, gof = info, lambda)
+        if (IsSave){
+            titlestr <- info[c(1:3, 5, 7)] %>%
+                {sprintf("%s = %.2f", names(.), .) %>% paste(collapse = ", ") }
+            cairo_pdf(file, 10, 4)
+            par(mar = c(2.5, 2.5, 1, 0.2),
+                mgp = c(1.3, 0.6, 0), oma = c(0, 0, 0.5, 0))
+            plotdata(d, nptperyear)
+            lines(ziter1~t, df_sm, col = "blue", lwd = 1.2)
+            lines(ziter2~t, df_sm, col = "red", lwd = 1.2)
+            title(titlestr)
+            dev.off()
+            file.show(file)
+        }
+        listk(data = df_sm, coef = coefs, gof = info, lambda) # return
+    }, error = function(e){
+        message(sprintf("[e] %s, %d: %s", as.character(sitename), i, e$message))
+        #return(NULL)
+    })
 }
 
 #' Initial lambda value of whittaker taker

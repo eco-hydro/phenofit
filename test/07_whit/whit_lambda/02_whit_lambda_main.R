@@ -54,6 +54,11 @@ optim_lambda_FUN <- function(sitename, wFUN = wSELF){
                  IsPlot = F, IsSave = F, file = "whit_formual_wBisquare.pdf",
                  wFUN = wFUN)
 }
+
+res <- par_sbatch(sites, optim_lambda_FUN, wFUN = wTSM,
+                  return.res = F, Save = T,
+                  outdir = paste0("result/whit_lambda/whit2", subfix))
+
 # res <- optim_lambda_FUN(102)
 # deltaT <- 1 # current is 4 at GEE
 # res.bisquare <- optim_lambda(sitename, df, deltaT = 1, extent = T, IsPlot = F, IsSave = F,
@@ -73,9 +78,6 @@ optim_lambda_FUN <- function(sitename, wFUN = wSELF){
 # par_sbatch(sites, optim_lambda_FUN, wFUN = wTSM, Save = T,
 #            outdir = paste0("result/whit_lambda/wTSM", subfix) )
 
-res <- par_sbatch(sites, optim_lambda_FUN, wFUN = wTSM,
-                  return.res = F, Save = T,
-                  outdir = paste0("result/whit_lambda/whit2", subfix))
 # res <- par_sbatch(sites, optim_lambda_FUN, wFUN = wBisquare,
 #                   return.res = F, Save = T,
 #             outdir = paste0("result/whit_lambda/wBisquare", subfix))
