@@ -1,5 +1,6 @@
 source('test/stable/load_pkgs.R')
 source('test/07_whit/whit_lambda/smooth_whit_lambda.R')
+# source('R/smooth_whit_lambda.R')
 # source('test/07_whit/whit_lambda/02_whit_lambda_main.R')
 # source('R/smooth_whit.R')
 # source('test/GEE/V-pack.r')
@@ -72,12 +73,15 @@ optim_lambda_FUN <- function(sitename, wFUN = wSELF){
 # par_sbatch(sites, optim_lambda_FUN, wFUN = wTSM, Save = T,
 #            outdir = paste0("result/whit_lambda/wTSM", subfix) )
 
-res <- par_sbatch(sites, optim_lambda_FUN, wFUN = wBisquare,
-                  return.res = F, Save = T,
-            outdir = paste0("result/whit_lambda/wBisquare", subfix))
 res <- par_sbatch(sites, optim_lambda_FUN, wFUN = wTSM,
                   return.res = F, Save = T,
-            outdir = paste0("result/whit_lambda/wTSM", subfix))
+                  outdir = paste0("result/whit_lambda/whit2", subfix))
+# res <- par_sbatch(sites, optim_lambda_FUN, wFUN = wBisquare,
+#                   return.res = F, Save = T,
+#             outdir = paste0("result/whit_lambda/wBisquare", subfix))
+# res <- par_sbatch(sites, optim_lambda_FUN, wFUN = wTSM,
+#                   return.res = F, Save = T,
+#             outdir = paste0("result/whit_lambda/wTSM", subfix))
 # res <- par_sbatch(sites, optim_lambda_FUN, wFUN = wSELF,
 #                   return.res = F, Save = T,
 #             outdir = paste0("result/whit_lambda/wSELF", subfix))
@@ -88,7 +92,7 @@ res <- par_sbatch(sites, optim_lambda_FUN, wFUN = wTSM,
 # sapply(a, length) %>% {which(. == 1)}
 #l
 # res <- list()
-# for (i in seq_along(sites)){
+# for (i in seq_along(sites)[101:1000]){
 #     sitename <- sites[i]
 #     res[[i]] <- optim_lambda_FUN(sitename, wSELF)
 # }

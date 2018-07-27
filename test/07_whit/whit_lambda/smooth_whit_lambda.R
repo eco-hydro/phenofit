@@ -50,15 +50,17 @@ v_curve = function(INPUT, nptperyear, lambdas,  d = 2, IsPlot = F,
     y <- INPUT$y
     w <- INPUT$w
 
+    if (length(unique(y)) == 0) return(NULL)
+
     param <- c(INPUT, nptperyear = nptperyear, wFUN = wFUN, iters=iters,
         second = FALSE, lambdas=NA)
 
     fits = pens = NULL
     for (lla in lambdas) {
-        param$lambdas <- 10^lla
-        z    <- do.call(whitsmw2, param)$zs %>% dplyr::last()
+        # param$lambdas <- 10^lla
+        # z    <- do.call(whitsmw2, param)$zs %>% dplyr::last()
 
-        # z    = whit2(y, 10 ^ lla, w)
+        z    = whit2(y, 10 ^ lla, w)
         fit  = log(sum(w * (y - z) ^ 2))
         pen  = log(sum(diff(z, diff = d) ^2))
         fits = c(fits, fit)
@@ -77,11 +79,11 @@ v_curve = function(INPUT, nptperyear, lambdas,  d = 2, IsPlot = F,
     lambda  = 10 ^ lamids[k]
 
     # param$lambdas <- lambda
-    # z    <- do.call(whitsmw2, param) %>% dplyr::last()
-    # z       = whit2(y, lambda, w)
-    param$lambdas <- lambda
-    fit <- do.call(whitsmw2, param)
-    d_sm <- fit %$% c(ws, zs) %>% as.data.table() %>% cbind(t = INPUT$t, .)
+    # fit <- do.call(whitsmw2, param)
+    # d_sm <- fit %$% c(ws, zs) %>% as.data.table() %>% cbind(t = INPUT$t, .)
+
+    z    <- whit2(y, lambda, w)
+    d_sm <- data.table(z, t = INPUT$t)
 
     if (IsPlot) {
         ylim = c(0, max(v))
@@ -99,19 +101,17 @@ v_curve = function(INPUT, nptperyear, lambdas,  d = 2, IsPlot = F,
 
 ## The goal of whittaker in this study is used to simulate vegetation seasonality
 # Whittaker balanced the fidelity and smooth.
-optim_lambda <- function(sitename, df, 
-    nptperyear = 23, 
-    wFUN = wBisquare, iters = 2, 
-    deltaT = 1, extent = T,
-    IsPlot = F, IsSave = F, file = "test_whit_lambda.pdf"){
+optim_lambda <- function(sitename, df, deltaT, extent = T,
+    IsPlot = F, IsSave = F, file = "test_whit_lambda.pdf",
+    wFUN = wBisquare, iters = 2){
     # sitename <- sites[i]#; grp = 1
     nperiod <- ceiling(length(2000:2017)/deltaT)
-    d     <- df[site == sitename]
-    if (nrow(d) < nptperyear) return(NULL)
 
+    d     <- df[site == sitename]
     dnew  <- add_HeadTail(d) #
     INPUT <- check_input(dnew$t, dnew$y, dnew$w, maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
     if (length(unique(INPUT$y)) == 1) return(NULL)
+
     years <- year(ymd(dnew$t))
 
     cat(sprintf('site: %s ...\n', sitename))
@@ -152,47 +152,42 @@ optim_lambda <- function(sitename, df,
 
             if (IsPlot){
                 plotdata(INPUT_i, nptperyear, wmin = 0.1)
-                lines(vc$fit$t, vc$fit$ziter1, col = "blue", lwd = 1.2)
-                lines(vc$fit$t, vc$fit$ziter2, col = "red" , lwd = 1.2)
+                colors <- c("blue", "red")
+                lines(vc$fit$t, last(vc$fit), col = "blue", lwd = 1.2)
+                # lines(vc$fit$t, vc$fit$ziter2, col = "red" , lwd = 1.2)
             }
             vc
             # listk(lambda = vc$lambda) #, vc
         }, error = function(e){
             message(sprintf("[e] %s, %d: %s", as.character(sitename), i, e$message))
-            # return(NULL)
-            # return(NA)
+            #return(NA)
         })
     }
-    
-    tryCatch({
-        res %<>% rm_empty()
-        lambda <- map_dbl(res, "lambda")
-        df_sm  <- res %>% map_df("fit") %>% data.table()
-        coefs  <- res %>% map_df("coef")
+    ## visualization
+    lambda <- map(res, "lambda")
+    df_sm  <- res %>% map_df("fit") %>% data.table()
+    coefs  <- res %>% map_df("coef")
 
-        # browser()
-        info <- merge(df_sm, d, by = "t") %$% GOF(y, ziter2) %>% as.list()
-        
-        ## visualization
-        # browser()
-        if (IsSave){
-            titlestr <- info[c(1:3, 5, 7)] %>%
-                {sprintf("%s = %.2f", names(.), .) %>% paste(collapse = ", ") }
-            cairo_pdf(file, 10, 4)
-            par(mar = c(2.5, 2.5, 1, 0.2),
-                mgp = c(1.3, 0.6, 0), oma = c(0, 0, 0.5, 0))
-            plotdata(d, nptperyear)
-            lines(ziter1~t, df_sm, col = "blue", lwd = 1.2)
-            lines(ziter2~t, df_sm, col = "red", lwd = 1.2)
-            title(titlestr)
-            dev.off()
-            file.show(file)
-        }
-        # res$info <- info
-        listk(data = df_sm, coef = coefs, gof = info, lambda)    
-    }, error = function(e){
-        message(sprintf("[e] %s, %s", as.character(sitename), e$message))
-    })
+    # browser(), iter2
+    info <- merge(df_sm, d, by = "t") %$% GOF(y, z) %>% as.list()
+
+    # browser()
+    if (IsSave){
+        titlestr <- info[c(1:3, 5, 7)] %>%
+            {sprintf("%s = %.2f", names(.), .) %>% paste(collapse = ", ") }
+        cairo_pdf(file, 10, 4)
+        par(mar = c(2.5, 2.5, 1, 0.2),
+            mgp = c(1.3, 0.6, 0), oma = c(0, 0, 0.5, 0))
+        plotdata(d, nptperyear)
+        lines(ziter1~t, df_sm, col = "blue", lwd = 1.2)
+        lines(ziter2~t, df_sm, col = "red", lwd = 1.2)
+        title(titlestr)
+        dev.off()
+        file.show(file)
+    }
+
+    # res$info <- info
+    listk(data = df_sm, coef = coefs, gof = info, lambda)
 }
 
 #' Initial lambda value of whittaker taker
