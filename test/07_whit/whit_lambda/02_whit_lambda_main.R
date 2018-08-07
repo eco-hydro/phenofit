@@ -5,14 +5,17 @@ source('test/07_whit/whit_lambda/smooth_whit_lambda.R')
 # source('R/smooth_whit.R')
 # source('test/GEE/V-pack.r')
 
-file ="data_test/whit_lambda/MOD13A1_st_1e3_20180725.rda"
+nptperyear <- 23
+
+# file ="data_test/whit_lambda/MOD13A1_st_1e3_20180725.rda"
+file ="data_test/whit_lambda/MOD13A1_st_1e3_20180731.rda"
 
 if (file.exists(file)){
     load(file)
 }else{
     library(sf)
 
-    indir <- "data_test/whit_lambda/raw-csv/"
+    indir <- "data_test/whit_lambda/raw-csv/mask/"
     files <- dir(indir, "*.csv", full.names = T)
 
     lst <- llply(files, fread, .progress = "text")
@@ -29,17 +32,21 @@ if (file.exists(file)){
     setkeyv(dt, c("index", "t"))
 
     # site info
-    st <- read_sf("data_test/whit_lambda/shp/st_1e3_gee.shp") %>% data.table() %>% .[, 1:3]
+    st <- read_sf("data_test/whit_lambda/shp/st_1e3_mask.shp") %>% data.table() %>% .[, 1:3]
 
     df <- merge(st, dt, by = "index")
     df <- df[order(site), .(site, y = EVI/1e4, t, w, SummaryQA)]
+
+    # remove sites less then 3y valid data
+    info <- df[, .N, site][order(N)]
+    site_rm <- info[N < nptperyear*3, site]
+    I_rm <- which(df$site %in% site_rm)
+    df <- df[-I_rm, ]
 
     save(df, st, file = file)
 }
 
 sites      <- unique(df$site) %>% set_names(., .)
-nptperyear <- 23
-
 sitename <- sites[2]
 # 1. I need to know whether lambda values are significant different among
 # different \code{dt}.
@@ -99,3 +106,5 @@ res <- par_sbatch(sites, optim_lambda_FUN, wFUN = wTSM,
 #     res[[i]] <- optim_lambda_FUN(sitename, wSELF)
 # }
 # system.time({ res <- pbmclapply(sites, optim_lambda, df = df, mc.cores = cpus_per_node) })
+
+# x$`system:index` %<>% str_sub( 1, 31)

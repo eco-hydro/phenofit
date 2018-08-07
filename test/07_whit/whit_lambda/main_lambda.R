@@ -1,6 +1,21 @@
 #' before regression, scale x to 0-1
 #' Also return sd, and mean, for the future reconstructure
-zscore   <- function(x) (x - mean(x, na.rm = T)) / sd(x, na.rm = T)
+zscore <- function(x) UseMethod("zscore")
+
+zscore   <- function(x) {
+    x2 <- x[!is.na(x)]
+    mean <- mean(x2)
+    sd <- sd(x2)
+    return(list(data = (x - mean)/sd,
+        mean = mean, sd = sd))
+}
+
+zscore.data.frame <- function(d){
+    res <- llply(d, zscore) %>% transpose()
+    res$data %<>% do.call(cbind, .) %>% set_colnames(colnames(d))
+    res
+}
+
 f_sample <- function(x) sort(sample(x, length(x)*0.1))
 self <- function(x, ...) x
 
@@ -48,14 +63,6 @@ load_data <- function(indir = "Y:/Github/phenofit/result"){
     stat
 }
 
-znorm <- function(d){
-    vars   <- c("mean", "sd", "cv", "skewness", "kurtosis")
-
-    sd   <- sapply(d[, ..vars],   sd, na.rm = T)
-    mean <- sapply(d[, ..vars], mean, na.rm = T)
-    newd <- d[, (vars) := lapply(.SD, zscore), .SDcols = vars]
-    list(d = newd, mean = mean, sd = sd)
-}
 
 select_model <- function(d, index = NULL, IsPlot = F, file = "a.png", type = "coef",
                          optim = T, robust = F){
@@ -73,15 +80,23 @@ select_model <- function(d, index = NULL, IsPlot = F, file = "a.png", type = "co
     }
     d$fitted <- predict(l_opt)
 
+    info <- d[, .(R2 = GOF(lambda, fitted)[["R2"]]), IGBP]
+    # info$R2 %<>% round(3)
+    info[, label := sprintf("R^2=='%4.2f'", R2)]
     if (IsPlot){
         print(summary(l_opt))
         # file <- "b.png"
         CairoPNG(file, 10, 7, units = "in", dpi = 300)
         p <- ggplot(d, aes(lambda, fitted)) + #, color = IGBP
-            geom_point(alpha = 0.07) + #, color = "blue"
+            geom_point(alpha = 0.05) + #, color = "blue"
             # geom_density_2d() +
             geom_abline(slope = 1, intercept = 0, color = "red", size = 1) +
-            facet_wrap(~IGBP)
+            facet_wrap(~IGBP) +
+            geom_text(data = info, aes(x = Inf, y = Inf, label = label),
+                      vjust = 1.2, hjust = 1, parse = T, size = 5) +
+            labs(x = expression("Optimized "* log(lambda)),
+                 y = expression("Simulated "* log(lambda))) +
+            theme_grey(base_size = 15)
         print(p)
         dev.off()
         file.show(file)

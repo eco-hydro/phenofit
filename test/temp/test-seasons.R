@@ -18,10 +18,8 @@
     plot(bp)
     abline(v = x$date[bp$breakpoints], col = "red", lty = 2)
 
-
     nptperyear <- 46
     y <- na.approx(x$GPPobs)
-
 
     plot(y, type = "b")
     # points(x$GPPobs, col = "blue")

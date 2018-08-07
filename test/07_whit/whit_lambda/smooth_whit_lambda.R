@@ -208,12 +208,42 @@ init_lambda  <- function(y){
     # lambda was transformed by log10
     # lambda   <- 0.555484 + 1.671514*mean - 3.434064*sd - 0.052609*skewness + 0.009057*kurtosis
     # lambda   <- 0.555465 + 1.501239*mean - 3.204295*sd - 0.031902*skewness # Just three year result
+    # lambda <- 0.831120 + 1.599970*mean - 4.094027*sd - 0.035160*cv - 0.063533*skewness # all year
 
-    lambda <- 0.831120 + 1.599970*mean - 4.094027*sd - 0.035160*cv - 0.063533*skewness # all year
+    ## update 2018-07-31
+    # lambda <- 0.7835 +1.5959*mean -4.0371*sd +0.0048*cv -0.1032*skewness +0.0036*kurtosis # yearly
+    lambda <- 0.8209 +1.5008*mean -4.0286*sd -0.1017*skewness -0.0041*kurtosis            # 4-year
+
     # lambda <- 0.817783 + 1.803588*mean - 4.263469*sd - 0.038240*cv - 0.066914*skewness - 0.011289*kurtosis  #3y
     return(10^lambda)
 }
 
+
+## 4 year group, 2018-07-31
+# Call:
+# lm_fun(formula = lambda ~ mean + sd + skewness + kurtosis, data = d, 
+#     na.action = na.exclude)
+#     
+# Residuals:
+#      Min       1Q   Median       3Q      Max 
+# -2.32247 -0.41889  0.05531  0.40772  3.06478 
+# 
+# Coefficients:
+#              Estimate Std. Error t value Pr(>|t|)    
+# (Intercept)  0.820927   0.006844 119.950  < 2e-16 ***
+# mean         1.500799   0.017574  85.399  < 2e-16 ***
+# sd          -4.028618   0.045536 -88.471  < 2e-16 ***
+# skewness    -0.101746   0.003102 -32.796  < 2e-16 ***
+# kurtosis    -0.004148   0.001112  -3.729 0.000192 ***
+# ---
+# Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+# Residual standard error: 0.5689 on 75480 degrees of freedom
+# Multiple R-squared:  0.2165,    Adjusted R-squared:  0.2164 
+# F-statistic:  5213 on 4 and 75480 DF,  p-value: < 2.2e-16
+################################################################################
+################################################################################
+################################################################################
 ## All year togather
 # Call:
 # lm_fun(formula = lambda ~ mean + sd + cv + skewness, data = d,
@@ -236,7 +266,7 @@ init_lambda  <- function(y){
 # Residual standard error: 0.5851 on 15135 degrees of freedom
 # Multiple R-squared:  0.1572,    Adjusted R-squared:  0.1569
 # F-statistic: 705.5 on 4 and 15135 DF,  p-value: < 2.2e-16
-
+# 
 #          term    estimate   std.error  statistic       p.value
 # 1 (Intercept)  0.83112003 0.021897138  37.955647 3.306152e-301
 # 2        mean  1.59997023 0.089914112  17.794428  4.039120e-70
@@ -275,68 +305,3 @@ init_lambda  <- function(y){
 # 4          cv -0.03823967 0.004041253  -9.462331 3.080333e-21
 # 5    skewness -0.06691403 0.003762368 -17.785083 1.216689e-70
 # 6    kurtosis  0.01128888 0.001505916   7.496350 6.621350e-14
-
-#' skewness and kurtosis
-#'
-#' Inherit from package `e1071`
-#' @param x a numeric vector containing the values whose skewness is to be
-#' computed.
-#' @param na.rm a logical value indicating whether NA values should be stripped
-#' before the computation proceeds.
-#' @param type an integer between 1 and 3 selecting one of the algorithms for
-#' computing \code{\link[e1071]{skewness}}.
-#'
-#' @export
-kurtosis <- function (x, na.rm = FALSE, type = 3) {
-    if (any(ina <- is.na(x))) {
-        if (na.rm) {
-            x <- x[!ina]
-        } else {
-            return(NA_real_)
-        }
-    }
-    if (!(type %in% (1:3))) stop("Invalid 'type' argument.")
-    n <- length(x)
-    x <- x - mean(x)
-    r <- n * sum(x^4)/(sum(x^2)^2)
-
-    y <- if (type == 1) {
-        r - 3
-    } else if (type == 2) {
-        if (n < 4) {
-            warning("Need at least 4 complete observations.")
-            return(NA_real_)
-        }
-        ((n + 1) * (r - 3) + 6) * (n - 1)/((n - 2) * (n - 3))
-    } else{
-        r * (1 - 1/n)^2 - 3
-    }
-    y
-}
-
-#' @rdname kurtosis
-#' @export
-skewness <- function (x, na.rm = FALSE, type = 3) {
-    if (any(ina <- is.na(x))) {
-        if (na.rm) {
-            x <- x[!ina]
-        } else {
-            return(NA_real_)
-        }
-    }
-    if (!(type %in% (1:3))) stop("Invalid 'type' argument.")
-    n <- length(x)
-    x <- x - mean(x)
-    y <- sqrt(n) * sum(x^3)/(sum(x^2)^(3/2))
-
-    if (type == 2) {
-        if (n < 3){
-            warning("Need at least 3 complete observations.")
-            return(NA_real_)
-        }
-        y <- y * sqrt(n * (n - 1))/(n - 2)
-    } else if (type == 3){
-        y <- y * ((1 - 1/n))^(3/2)
-    }
-    y
-}

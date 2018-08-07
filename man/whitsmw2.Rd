@@ -4,8 +4,8 @@
 \alias{whitsmw2}
 \title{Weigthed Whittaker Smoother}
 \usage{
-whitsmw2(y, w, ylu, nptperyear, wFUN = wTSM, iters = 1, lambdas = 1000,
-  second = FALSE, ...)
+whitsmw2(y, w, ylu, nptperyear, wFUN = wTSM, iters = 1,
+  lambdas = 1000, second = FALSE, ...)
 }
 \arguments{
 \item{y}{Numeric vector, vegetation index time-series}

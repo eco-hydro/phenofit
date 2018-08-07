@@ -14,7 +14,7 @@ files_grp  <- split(files, sites_type)
 
 # make sure land cover is consistent
 files_grp_check <- files_grp %>% {.[sapply(., length) > 1]} #%>% names()
-stat <- map(files_grp_check, ~str_extract(.x, "_\\w{2}_") %>% gsub("_", "", .) %>% unique()) %>%
+stat <- map(files_grp_check, ~str_extract(.x, "_\\w{2}_(?=00)") %>% gsub("_", "", .) %>% unique()) %>%
     sapply(length) %>% unique()
 if (length(stat) == 1 && stat == 1) cat("Only single landcover left for all sites.")
 
@@ -63,9 +63,10 @@ flux_16d[, date := format(parse_date_time(paste0(year, (d16-1)*16+1), "%Y%j"))]
 # flux_16d <- merge(stations, flux_16d)
 
 ## rm sites less than 1y
-df_sm_16d[, .N, site][N>=23, ]
+cam_16d[, .N, site][N>=23, ]
 flux_16d[, .N, site][N>=23, ]
 
+# cedarcreek, rosemount
 ## actually, 166 and 131 sites
-fwrite(cam_16d, paste0(dir_data, "valid_phenocam133_16day.csv"))
-fwrite(flux_16d, paste0(dir_data, "valid_phenoflux166_16day.csv"))
+# fwrite(cam_16d, paste0(dir_data, "valid_phenocam133_16day.csv"))
+# fwrite(flux_16d, paste0(dir_data, "valid_phenoflux166_16day.csv"))

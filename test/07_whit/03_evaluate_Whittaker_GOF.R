@@ -20,8 +20,17 @@ if (!file.exists(file)){
     load(file)
 }
 
-# load("D:/Documents/GoogleDrive/phenofit.rda")
+st_cam <- st_cam[!(site %in% c("cedarcreek", "rosemount"))]
 
+
+sites_sel <- c("RU-Fyo", "FR-Pue", "US-UMB", "BE-Vie", "US-KS2", "US-Whs",
+    "AU-How", "AU-Dry", "CH-Fru", "US-Los", "DE-Geb")
+st_flux[site %in% sites_sel, selected := 1]
+
+df2sp(st_flux) %>% writePointsShape("st_flux166.shp")
+df2sp(st_cam)  %>% writePointsShape("st_cam133.shp")
+
+# load("D:/Documents/GoogleDrive/phenofit.rda")
 methods <- c('AG', 'BECK', 'ELMORE', 'ZHANG', 'whit_R', 'whit_gee')[-5]
 
 ##
@@ -79,8 +88,6 @@ plot_whits <- function(sites, df_trim, file){
 plot_whits(sites, df_trim, "gee_whit_flux166.pdf") # all sites
 
 ## 2. select representative points for fluxnet
-sites_sel <- c("RU-Fyo", "FR-Pue", "US-UMB", "BE-Vie", "US-KS2", "US-Whs",
-    "AU-How", "AU-Dry", "CH-Fru", "US-Los", "DE-Geb")
 plot_whits(sites_sel, df_trim, "gee_whit_flux11.pdf") # all sites
 
 # merge_pdf('../whit_phenoflux166.pdf', indir = "./")

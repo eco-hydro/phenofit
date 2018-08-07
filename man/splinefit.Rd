@@ -5,8 +5,8 @@
 \title{using cubic spline function to avoid the difficult in setting parameter
 lambda in smooth.spline}
 \usage{
-splinefit(y, t = index(y), tout = t, plot = FALSE, df.factor = 0.06,
-  ...)
+splinefit(y, t = index(y), tout = t, plot = FALSE,
+  df.factor = 0.06, ...)
 }
 \description{
 cubic spline is inappropriate for daily inputs. Its smooth is not enough.
