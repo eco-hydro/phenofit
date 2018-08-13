@@ -3,15 +3,37 @@ library(grid)
 library(gridExtra)
 
 source('test/stable/load_pkgs.R')
-dir_gdrive   <- "D:/Document/GoogleDrive/phenofit/gee_point" #data/gee_phenofit/v2/
+
+dir_gdrive   <- "D:/Document/GoogleDrive/whit" #data/gee_phenofit/v2/
+
+files    <- dir(dir_gdrive, "*.geojson", full.names = T)
+patterns <- str_extract(basename(files), ".*(?=_\\d{4}_)") %>% unique()
+
+df <- llply(patterns, function(pattern) readwhitMAT(dir_gdrive, pattern),
+            .progress = "text") %>% set_names(patterns) %>% melt_list("meth")
+df$meth %<>% as.factor()
+
+df_flux <- df[grep("phenoflux", meth), ]
+df_cam  <- df[grep("phenocam", meth), ]
+
+## rename meth
+sub_levels <- . %>% {
+    level <- levels(.); mapvalues(., level, gsub("phenoflux166_|phenocam133_", "", level))
+}
+df_flux$meth %<>% sub_levels
+df_cam$meth  %<>% sub_levels
+
+fwrite(df_flux, "data_test/gee_whit_phenoflux166.csv")
+fwrite(df_cam , "data_test/gee_whit_phenocam133.csv")
+################################################################################
 
 k = 1
 if (k == 1){
-    mat_whit <- readwhitMAT(dir_gdrive, "phenoflux166")
+    mat_whit <- df_flux
     st       <- fread(file_st_flux)
     full     <-  fread(file_flux)
 } else{
-    mat_whit <- readwhitMAT(dir_gdrive, "phenocam133")
+    mat_whit <- df_cam
     st       <- fread(file_st_cam)
     full     <- fread(file_cam)
 }
