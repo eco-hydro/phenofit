@@ -6,13 +6,12 @@ fontsize = 14
 save_pdf <- function(file = "Rplot.pdf", width = 10, height = 5, p, open = F){
     if (missing(p)) p <- last_plot()
 
-
     if ("grob" %in% class(p)) {
         FUN <- grid::grid.draw
     } else{
-        FUN <- print
+        FUN <- base::print
     }
-    print(FUN)
+    # print(FUN)
     # Cairo::CairoPDF, if only one figure cairo_pdf is the best
     Cairo::CairoPDF(file, width = width, height = height)
     FUN(p)
@@ -95,66 +94,112 @@ boxplot <- function(p, width = 0.95){
 
 ################################################################################
 # merge phenofit INPUT, OUTPUT, GEE whittaker result and validation data
-get_phenofit_result <- function(infile){
-    prefix  <- str_extract(infile, "\\w*(?=_MOD)")
+#
+# Update 2018-08-09
+# -----------------
+# separate data preparing and tidying procedure
 
-    ## 1. INPUT
-    df_in   <- fread(infile, strip.white = T)                               # phenofit INPUT
-    df_in$t    %<>% ymd()
-    df_in$date %<>% ymd()
+# get phenofit curve fitting result
+# (input, fitting, validation data)
+get_phenofit_fitting <- function(infile, outfile, overwrite = F){
+    if (file.exists(outfile) && !overwrite){
+        load(outfile)
+    } else {
+        prefix  <- str_extract(infile, "\\w*(?=_MOD)")
+        file_whit <- sprintf('data_test/gee_whit_%s.csv', prefix)
+        ## 1. INPUT
+        df_in   <- fread(infile, strip.white = T)                               # phenofit INPUT
+        df_in$t    %<>% ymd()
+        df_in$date %<>% ymd()
 
-    ## 2.1 phenofit curve fitting
-    lst     <- get_slurm_out(paste0("Y:/github/phenofit_cluster/result/", prefix, "/"))
-    df_temp <- llply(lst, getFittings2, .progress = "text")
-    df_out  <- melt_list(df_temp, "site") %>% data.table() # phenofit OUTPUT
+        ## 2.1 phenofit curve fitting
+        lst     <- get_sbatch(paste0("Y:/github/phenofit_cluster/result/", prefix, "/"))
+        df_temp <- llply(lst, getFittings2, .progress = "text")
+        df_out  <- melt_list(df_temp, "site") %>% data.table() # phenofit OUTPUT
 
+        ## 3. validation data
+        valid_file <- sprintf("%svalid_%s_16day.csv", dir_data, prefix)
+        df_valid   <- fread(valid_file)
+        df_valid$date %<>% ymd()
+
+        # remove NA values
+        varnames <- colnames(df_valid)[4:5]
+        eval(parse(text = sprintf("df_valid = df_valid[!(is.na(%s) & is.na(%s))]",
+            varnames[1], varnames[2])))
+
+        res <- list(data = df_in, fits = df_out, valid = df_valid)
+        save(res, file = outfile)
+    }
+    res
+}
+
+get_phenofit_result <- function(infile, df_whit, df_out){
     ## 2.2 whit curve fitting
-    df_whit  <- readwhitMAT(dir_gdrive, prefix)            # GEE whit smoothing
-    measure.vars <- colnames(df_whit) %>% .[grep("iter", .)]
-    # unify curve fitting output format as phenofit
-    df_whit <- merge(df_in[, .(site, t, date)], df_whit[, -1], by = c("site", "date")) #rm raw data in gee
-    df_whit <- melt(df_whit, id.vars = c("site", "t"), measure.vars = measure.vars,
-         variable.name = "iters")
-    df_whit$meth <- "whit_gee"
-
-    df_fits <- rbind(df_out[, .(site, t, iters, value, meth)],
-                     df_whit[, .(site, t, iters, value, meth)])
-
-    ## 3. validation data
-    valid_file <- sprintf("%svalid_%s_16day.csv", dir_data, prefix)
-    df_valid <- fread(valid_file)
-    df_valid$date %<>% ymd()
-
-    # remove NA values
-    varnames <- colnames(df_valid)[4:5]
-    eval(parse(text = sprintf("df_valid = df_valid[!(is.na(%s) & is.na(%s))]",
-        varnames[1], varnames[2])))
-
-    res <- merge(df_in, df_fits, c("site", "t"), all.x = T) %>%
-        .[date < ymd(20180101) & date >= ymd(20000218)] %>%
-        merge(df_valid[, c(1, 6, 4:5)], c("site", "date"), all.x = T)
+    # df_whit  <- readwhitMAT(dir_gdrive, prefix)            # GEE whit smoothing
+    # add df_whit and merge
+    df_list <- listk(df_in, df_out, df_valid)
+    get_phenofit_update_whit(df_list, df_whit)
 
     ## 4. station info
     # st_file <- sprintf("%sst_%s.csv", dir_data, prefix)
     # st <- fread(st_file)   # station info
-    res
+}
+
+get_phenofit_update_whit <- function(df_list, df_whit){
+    df_list$fits_merge <- with(df_list, {
+        # df_whit      <- fread(file_whit); df_whit$date %<>% ymd()
+        measure.vars <- colnames(df_whit) %>% .[grep("iter", .)]
+
+        # unify curve fitting output format as phenofit
+        df_whit <- merge(data[, .(site, t, date)], df_whit[, -1], by = c("site", "date")) #rm raw data in gee
+        df_whit <- melt(df_whit, id.vars = c("site", "t", "meth"), measure.vars = measure.vars,
+             variable.name = "iters")
+        # df_whit$meth <- "whit_gee"
+
+        rbind(fits[, .(site, t, iters, value, meth)],
+             df_whit[, .(site, t, iters, value, meth)])
+    })
+    get_phenofit_result_merge(df_list)
+}
+
+#' merge phenofit list result
+#' @param df_list List object returned from get_phenofit_result
+get_phenofit_result_merge <- function(df_list){
+    df_list$all <- with(df_list, {
+        merge(data, fits_merge, c("site", "t"), all.x = T) %>%
+            .[date < ymd(20180101) & date >= ymd(20000218)] %>%
+            merge(valid[, c(1, 6, 4:5)], c("site", "date"), all.x = T)
+    })
+    df_list
 }
 
 methods <- c('AG', 'BECK', 'ELMORE', 'ZHANG', 'whit_R', 'whit_gee')[-5]
 #' @examples
 #' over_perform(df, formula, prefix)
-over_perform <- function(d, formula, prefix, ylim2, IGBP.all = F){
+over_perform <- function(d, formula, prefix, xlab, ylim2 = NULL, IGBP.all = F, outfile){
     # only period when all curve fitting methods have result is kept.
     df_trim <- dcast(d, formula, value.var = "value", fun.aggregate = mean) %>% na.omit()
     df_trim[, raw := y]
-    df_trim <- melt(df_trim, measure.vars = c( "raw", methods), variable.name = "meth")
 
-    new_levels <- c("raw ", "AG ", "Beck ", "Elmore ", "Zhang ", "WH")
-    cols <- hue_pal()(5) %>% c("black", .)%>% set_names(new_levels)
+    I_var   <- 1:8
 
-    df_trim$meth %<>% mapvalues(c("raw", methods), new_levels)
-    # visualization
-    info_ai <- df_trim[SummaryQA == "good" & meth != "raw ",
+    id_vars <- colnames(df_trim)[I_var]
+    methods <- colnames(df_trim)[-I_var] %>% sort() %>% .[c(4, 1:3, 12, 5:11)] %>% rm_empty()
+    methods %<>% setdiff(c("whit_R", "wWH_p2", "wWH_p15", "WH_p2","WH_p15")) #,"AG", "BECK", "ELMORE", "ZHANG"
+    methods <- c("raw", "AG", "BECK", "ELMORE", "ZHANG", "wHANTS", "wSG", "wWH")
+    nmeth   <- length(methods)
+
+    df_trim <- melt(df_trim, id.vars = id_vars, measure.vars = methods, variable.name = "meth")
+
+    # new_levels <- c("raw ", "AG ", "Beck ", "Elmore ", "Zhang ", "WH")
+    methods2 <- methods %>% map_chr(~paste0(.x, " "))
+    cols <- scales::hue_pal()(nmeth-1) %>% c("black", .) %>% set_names(methods2)
+    cols2 <- cols; cols2[1] <- "transparent"
+
+    df_trim$meth %<>% mapvalues(methods, methods2)
+
+    # visualization,
+    info_ai <- df_trim[SummaryQA == "good", # & meth != "raw "
                        .(ai = agree_index(y, value)), .(site, meth)] %>% merge(st)
     if(i == 1){
         info_r  <- df_trim[, .(R = stat_fun(value, GPP_DT)), .(site, meth)] %>% merge(st)
@@ -172,6 +217,10 @@ over_perform <- function(d, formula, prefix, ylim2, IGBP.all = F){
         info_r  %<>% add_IGBPall()
     }
 
+    th <- theme(panel.grid.major.x = element_blank(),
+                panel.grid.major.y = element_line(size = 0.2))
+    grid_x <- geom_vline(data = xlab, xintercept = (1:(nrow(xlab) - 1)) + 0.5,
+        linetype = 2, size = 0.2, color = "grey70")
     # 1. show correlation, , alpha = 0.6, fill = meth
     p1 <- { ggplot(info_r, aes(IGBPname, R, color = meth), position = "dodge") +
                 scale_colour_manual(values = cols,
@@ -179,24 +228,28 @@ over_perform <- function(d, formula, prefix, ylim2, IGBP.all = F){
                 # scale_fill_manual(values = cols) +
                 labs(x = "IGBP", y = "Correlation (r)")
           } %>% boxplot()
-    p1 <- p1 +
+    p1 <- p1 + grid_x +
         # geom_text(data = info_r[1, ], aes(fontface = "bold"), x = -Inf, y = -Inf,
         #           label = c("(a)"), hjust = -1, vjust = -2.6,
         #           show.legend = F, size = 4) +
+        th +
         theme(axis.text.x = element_blank(),
               axis.title.x = element_blank(),
               plot.margin = margin(3, 3, 2, 3))
 
     p2 <- {ggplot(info_ai, aes(IGBPname, ai, colour = meth), position = "dodge") +
-        scale_colour_manual(values = cols) } %>%
+        scale_colour_manual(values = cols2) } %>%
         boxplot() %>% `+`(labs(x = "IGBP", y = "Agreement Index (AI)"))
-    p2 <-p2 + theme(legend.position = 'none',
-                    plot.margin = margin(3, 3, 2, 3))
+    p2 <- p2 + grid_x + th +
+        theme(legend.position = 'none',
+                    plot.margin = margin(3, 3, 2, 3)) +
+        scale_x_discrete(breaks = xlab$IGBPname, labels = xlab$label)
 
-    if (!missing(ylim2)) p2 <- p2 + coord_cartesian(ylim = ylim2)
+    if (!is.null(ylim2)) p2 <- p2 + coord_cartesian(ylim = ylim2)
     p <- gridExtra::arrangeGrob(p1, p2, nrow = 2, heights = c(0.9, 1), padding = unit(1, "line"))
     # grid.draw(p)
-    save_pdf(sprintf("valid_%s.pdf", prefix), 9, 8, p, open = T)
+    if (missing(outfile)) outfile <- sprintf("valid_%s.pdf", prefix)
+    save_pdf(outfile, 10, 8, p, open = T)
     # save_pdf(sprintf("valid_%s_AI.pdf", prefix), 12, 5, p2)
 }
 
@@ -281,7 +334,7 @@ plot_methods <- function(sitename, df_trim, st, prefix_fig = "whit", methods, sh
 
     ##
     x <- df_trim[site == sitename , ]
-    if (all(is.na(x$whit_gee))) return()
+    #if (all(is.na(x$whit_gee))) return()
     # d <- melt(x, measure.vars = methods, variable.name = "meth")
     d <- melt(x,
               measure.vars = c(contain(x, "^y$|GPP_NT|GPP_DT|vci|gcc"), methods),
@@ -290,10 +343,11 @@ plot_methods <- function(sitename, df_trim, st, prefix_fig = "whit", methods, sh
 
     ## scale validation variable (e.g. GPP or VCI)
     # The range of validation variable and \code{whit_gee} should be equal.
-    d_valid_scale <- d[meth %in% c("whit_gee", "GPP_DT", "vci") & iters == "iter2"] %>%
+    var_wh <- "wWH"
+    d_valid_scale <- d[meth %in% c(var_wh, "GPP_DT", "vci") & iters == "iter2"] %>%
         dcast(site+date~meth, value.var = "value") %>% na.omit() %>%
         melt(id.vars = c("site", "date"), variable.name = "meth")
-    lim_fit   <- get_range(d_valid_scale[ grep("whit_gee", meth)], alpha = c(0.01, 0.99))
+    lim_fit   <- get_range(d_valid_scale[ grep(var_wh, meth)], alpha = c(0.01, 0.99))
     lim_valid <- get_range(d_valid_scale[ grep("GPP|vci", meth)], alpha = c(0.01, 0.99))
     lim_raw   <- get_range(d[ grep("y", meth)]) # ylim
 
@@ -352,7 +406,7 @@ plot_methods <- function(sitename, df_trim, st, prefix_fig = "whit", methods, sh
               ) +
         scale_y_continuous(lim = lim_raw,
                            sec.axis = sec_axis(~.*coef[2]+coef[1], name = ylab_r)) +
-        scale_x_date(breaks = ymd(0101 + seq(2001, 2017, 4)*1e4)) +
+        scale_x_date(breaks = ymd(0101 + seq(2004, 2017, 4)*1e4)) +
         facet_wrap(~meth, ncol = 1) +
         scale_color_manual(values = qc_colors, drop = F) +
         scale_shape_manual(values = qc_shapes, drop = F) +

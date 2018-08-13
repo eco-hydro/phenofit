@@ -147,6 +147,13 @@ fix_level <- function(x){
 ############################# GEE WHITTAKER ####################################
 #' This function is only used to read gee_phenofit whittaker result.
 read_whitMat.gee <- function(file){
+    # file: phenoflux166_WH_p2_2008_2011.geojson
+    years <- str_extract_all(basename(file), "\\d{4}")[[1]] %>% map_dbl(as.numeric)
+    years <- years[1]:years[2]
+    doy   <- seq(1, 366, 16)
+    date  <- sprintf("%4d%03d", rep(years, each = 23), doy) %>% parse_date_time("%Y%j") %>% date()
+    if (years[1] == 2000) date <- date[-(1:3)]
+
     lst   <- read_json(file)$features
     ncol  <- length(lst[[1]]$properties$array[[1]])
     names <- c("raw", paste0("iter", 1:(ncol-1) ) )
@@ -162,6 +169,7 @@ read_whitMat.gee <- function(file){
     sites <- map_chr(lst, ~.x$properties$site)
     # sites <- map_chr(lst, "id") %>% str_extract(".*(?=_)")
     df <- set_names(data, sites) %>% melt_list(var.name = "site")
+    df$date <- date
     df
 }
 
@@ -175,11 +183,7 @@ read_whitMat.gee <- function(file){
 read_whitMats.gee <- function(files){
     lst   <- llply(files, read_whitMat.gee, .progress = "text")
     df    <- do.call(rbind, lst) %>% {.[order(site), ]}
-
-    years <- 2000:2017
-    doy   <- seq(1, 366, 16)
-    date    <- sprintf("%4d%03d", rep(years, each = 23), doy)[-(1:3)] %>% parse_date_time("%Y%j") %>% date()
-    df$date <- date # 20180705, Simon has fixed image missing
+    # 20180705, Simon has fixed image missing
     df
 }
 

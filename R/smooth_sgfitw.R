@@ -31,8 +31,8 @@ sgfitw <- function(y, w, nptperyear, ylu, wFUN = wTSM, iters = 2,
         fits[[i]] <- z
     }
 
-    fits %<>% set_names(paste0('iter', 1:iters))
-    ws   %<>% set_names(paste0('w', 1:iters))
+    fits %<>% set_names(paste0('ziter', 1:iters))
+    ws   %<>% set_names(paste0('witer', 1:iters))
     
     list(ws = ws, zs = fits)
 }

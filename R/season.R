@@ -40,8 +40,9 @@
 #' @param MaxTroughsPerYear This parameter is used to adjust lambda in iterations.
 #' If TroughsPerYear > MaxTroughsPerYear, then lambda = lambda*2.
 #' @param IsPlot Boolean
-#' @param plotdat Is IsPlot = true, plotdata is used to plot original input, 
-#' known that y and w in \code{INPUT} have been changed.
+#' @param plotdat A list or data.table, with 't', 'y' and 'w'. Only if 
+#' IsPlot=true, plotdata will be used to plot. Known that y and w in \code{INPUT} 
+#' have been changed, we suggest using the original data.table.
 #' @param print Whether to print progress information
 #' @param ... Other parameters passed to findpeaks
 #'
@@ -68,7 +69,7 @@
 # (smaller) one
 season <- function(INPUT, nptperyear = 46, south = FALSE,
                    FUN = whitsmw2, wFUN = wTSM, iters = 2, wmin = 0.1,
-                   lambda, nf  = 2, frame = floor(nptperyear/7) * 2 + 1,
+                   lambda, nf  = 3, frame = floor(nptperyear/5) * 2 + 1,
                    minpeakdistance = nptperyear/6,
                    threshold_max = 0.2, threshold_min = 0.05,
                    ypeak_min   = 0.1, rytrough_max = 0.6,
@@ -85,7 +86,7 @@ season <- function(INPUT, nptperyear = 46, south = FALSE,
     nyear <- ceiling(npt/nptperyear)
     ylu0  <- INPUT$ylu
 
-    frame <- floor(nptperyear/7) * 2 + 1 #13, reference by TSM SG filter
+    # frame <- floor(nptperyear/7) * 2 + 1 #13, reference by TSM SG filter
     if (missing(lambda)) lambda <- max(nyear*frame, 15)
 
     ## 1. weighted curve fitting help to divide growing season
@@ -188,7 +189,7 @@ season <- function(INPUT, nptperyear = 46, south = FALSE,
     }
     pos$t    <- t[pos$pos]
     # print(nrow(pos))
-    if (nrow(pos) == 0){
+    if (nrow(pos) < 2){ # at least two points, begin and end
         warning("Can't find a complete growing season before!")
         return(NULL)
     }

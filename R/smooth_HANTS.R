@@ -72,7 +72,7 @@ wHANTS <- function(y, t, w, nf = 3, ylu, periodlen = 365, nptperyear,
         b <- solve(A, za) # coefficients
         z <- mat %*% b; z <- z[, 1]
         # w = wFUN(y, yr, w, 0.5, i, nptperyear) #%wfact = 0.5
-        w <- wFUN(y, z, w, 1, nptperyear, ...)
+        w <- wFUN(y, z, w, i, nptperyear, ...)
         # \code{check_fit} has constrained ylu
         # print(unique(wnew - w))
         # w <- wnew
@@ -95,8 +95,8 @@ wHANTS <- function(y, t, w, nf = 3, ylu, periodlen = 365, nptperyear,
     phase[phase<0] = phase[phase<0] + 360
     phi[ifr] = phase
 
-    fits %<>% set_names(paste0('iter', 1:iters))
-    ws   %<>% set_names(paste0('w', 1:iters))
+    fits %<>% set_names(paste0('ziter', 1:iters))
+    ws   %<>% set_names(paste0('witer', 1:iters))
     list(ws = ws, zs = fits)
     # list(fit = fits, amp = amp, phi = phi) #quickly return
 }

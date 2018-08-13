@@ -5,22 +5,34 @@
 \title{Growing season dividing in the 3-year length moving window}
 \usage{
 season_3y(INPUT, nptperyear = 23, south = FALSE, FUN = whitsmw2,
-  wFUN = wTSM, wmin = 0.2, IsPlot = T, plotdat = INPUT,
-  print = TRUE, partial = TRUE, ...)
+  wFUN = wTSM, wmin = 0.2, lambda = NULL, nf = 3,
+  frame = floor(nptperyear/5) * 2 + 1, IsPlot = T, plotdat = INPUT,
+  print = TRUE, titlestr = "", partial = TRUE, ...)
 }
 \arguments{
-\item{INPUT}{A list object with the elements of 't', 'y', 'w', 'Tn' (option)
+\item{INPUT}{A list object with the elements of 't', 'y', 'w', 'Tn' (option) 
 and 'ylu', returned by \code{check_input}.}
 
 \item{nptperyear}{Integer, points per year.}
 
-\item{south}{Boolean. In south hemisphere, growing year is 1 July to the
+\item{south}{Boolean. In south hemisphere, growing year is 1 July to the 
 following year 31 June; In north hemisphere, growing year is 1 Jan to 31 Dec.}
 
-\item{FUN}{Coarse curve fitting function, can be one of `sgfitw`, `whitsmw2`
+\item{FUN}{Coarse curve fitting function, can be one of `sgfitw`, `whitsmw2` 
 and `wHANTS`.}
 
-\item{wmin}{Double, minimum weigth value (i.e. weight for snow, ice and cloud).}
+\item{wFUN}{weights updating function, can be one of 'wTSM', 'wChen' and 
+'wBisquare'.}
+
+\item{wmin}{Double, minimum weigth (i.e. weight of snow, ice and cloud).}
+
+\item{lambda}{If lambda is not null, \code{initial_lambda} will be not used.}
+
+\item{nf}{the parameter of \code{wHANTS}, number of frequencies to be 
+considered above the zero frequency}
+
+\item{frame}{the parameter of \code{sgfitw}, moving window size. Suggested by 
+TIMESAT, default frame = floor(nptperyear/7)*2 + 1.}
 
 \item{IsPlot}{Boolean}
 
@@ -30,7 +42,11 @@ have been changed, we suggest using the original data.table.}
 
 \item{print}{Whether to print progress information}
 
+\item{titlestr}{string for title}
+
 \item{partial}{If true, only plot partial figures whose NSE < 0.3}
+
+\item{...}{Other parameters passed to findpeaks}
 }
 \value{
 List object, list(whit, dt, stat)

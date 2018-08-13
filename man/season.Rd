@@ -5,8 +5,8 @@
 \title{season}
 \usage{
 season(INPUT, nptperyear = 46, south = FALSE, FUN = whitsmw2,
-  wFUN = wTSM, iters = 2, wmin = 0.1, lambda, nf = 2,
-  frame = floor(nptperyear/7) * 2 + 1, minpeakdistance = nptperyear/6,
+  wFUN = wTSM, iters = 2, wmin = 0.1, lambda, nf = 3,
+  frame = floor(nptperyear/5) * 2 + 1, minpeakdistance = nptperyear/6,
   threshold_max = 0.2, threshold_min = 0.05, ypeak_min = 0.1,
   rytrough_max = 0.6, MaxPeaksPerYear = 2, MaxTroughsPerYear = 3,
   IsPlot = FALSE, plotdat = INPUT, print = FALSE, ...)
@@ -61,8 +61,9 @@ If TroughsPerYear > MaxTroughsPerYear, then lambda = lambda*2.}
 
 \item{IsPlot}{Boolean}
 
-\item{plotdat}{Is IsPlot = true, plotdata is used to plot original input, 
-known that y and w in \code{INPUT} have been changed.}
+\item{plotdat}{A list or data.table, with 't', 'y' and 'w'. Only if 
+IsPlot=true, plotdata will be used to plot. Known that y and w in \code{INPUT} 
+have been changed, we suggest using the original data.table.}
 
 \item{print}{Whether to print progress information}
 
