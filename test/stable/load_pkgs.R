@@ -57,7 +57,7 @@ IGBPnames_005 <- c("water", "ENF", "EBF", "DNF", "DBF", "MF" , "CSH",
 
 siteorder <- function(sites){ factor(sites) %>% as.numeric() }
 
-get_phenofit <- function(sitename, df, st, prefix_fig = 'phenofit_v3'){
+get_phenofit <- function(sitename, df, st, prefix_fig = 'phenofit_v3', IsPlot = F){
     d     <- df[site == sitename, ] # get the first site data
     sp    <- st[site == sitename, ] # station point
     titlestr <- with(sp, sprintf('[%03d,%s] %s, lat = %5.2f, lon = %6.2f',
@@ -69,7 +69,7 @@ get_phenofit <- function(sitename, df, st, prefix_fig = 'phenofit_v3'){
         # 1. Check input data and initial parameters for phenofit
         INPUT <- check_input(dnew$t, dnew$y, dnew$w, maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
         INPUT$y0 <- dnew$y
-        IsPlot   <- FALSE # for brks
+        IsPlot2   <- FALSE # for brks
         # 2. The detailed information of those parameters can be seen in `season`.
         lambda <- init_lambda(INPUT$y)#*2
         # brks   <- season(INPUT, nptperyear,
@@ -81,7 +81,7 @@ get_phenofit <- function(sitename, df, st, prefix_fig = 'phenofit_v3'){
         #                max_MaxPeaksperyear =2.5, max_MinPeaksperyear = 3.5) #, ...
         # get growing season breaks in a 3-year moving window
         brks2 <- season_3y(INPUT, nptperyear, south = sp$lat[1] < 0, FUN = whitsmw2,
-                           IsPlot = IsPlot, print = print, partial = F)
+                           IsPlot = IsPlot2, print = print, partial = F)
 
         # 3. curve fitting
         fit  <- curvefits(INPUT, brks2, lambda =lambda,
@@ -93,12 +93,14 @@ get_phenofit <- function(sitename, df, st, prefix_fig = 'phenofit_v3'){
         fit$INPUT   <- INPUT
         fit$seasons <- brks2
 
-        # svg("Figure1_phenofit_curve_fitting.svg", 11, 7)
-        Cairo::CairoPDF(file_pdf, 11, 6) #
-        # grid::grid.newpage()
-        plot_phenofit(fit, d, titlestr) %>% grid::grid.draw()# plot to check the curve fitting
-        dev.off()
-
+        if (IsPlot){
+            # svg("Figure1_phenofit_curve_fitting.svg", 11, 7)
+            Cairo::CairoPDF(file_pdf, 11, 6) #
+            # grid::grid.newpage()
+            plot_phenofit(fit, d, titlestr) %>% grid::grid.draw()# plot to check the curve fitting
+            dev.off()    
+        }
+        
         # temp <- ExtractPheno(fit$fits$ELMORE[1:5], IsPlot = T) # check extracted phenology
         ## 3.2 Get GOF information
         stat  <- ldply(fit$fits, function(fits_meth){
@@ -270,6 +272,58 @@ FigsToPages <- function(ps, lgd, ylab.right, file, width = 10, height){
     }
     dev.off()
     file.show(file)
+}
+
+
+############################### VALIDATION FUNCTIONS ###########################
+select_validI <- function(Id, perc = 0.2) {
+    n <- length(Id)
+    set.seed(100)
+    I <- sample(1:n, n*perc)
+    unique(Id[I])
+}
+
+# only select good points (with the percentage of noise_perc)
+select_valid <- function(df, noise_perc = 0.3, group = F){
+    df     <- unique(df) # sometimes data is duplicated at begin and end.
+    if (class(df$SummaryQA[1]) != "factor") {
+        df[, `:=`( SummaryQA = factor(SummaryQA, qc_levels))]
+    }
+    if (class(df$t[1]) != "Date") df[, `:=`( t = ymd(t))]
+
+    ## 1.1 get range for every site and divide grp
+    alpha = 0.05
+    d_range <- df[SummaryQA == "good", .(ymin = quantile(y, alpha/2, na.rm = T),
+                                         ymax = quantile(y, 1-alpha/2, na.rm = T)), .(site)] %>%
+        plyr::mutate(A = ymax - ymin,
+                     brk_min = ymin + 0.2*A,
+                     brk_max = ymin + 0.6*A) %>% .[, c(1, 4:6)]
+    if (!group) d_range <- d_range[, .(site, A)]
+
+    df <- merge(df, d_range, all.x = T) # rm points has no good points
+    df[, `:=`(Id = 1:.N, y0 = y, w0 = w, I_valid = 0)]
+
+    if (group){
+        df[, grp:=1]
+        df[y >= brk_max, grp := 2]
+        df[y <= brk_min, grp := 0]
+    }
+
+    # 1. select cross-validation points ---------------------------------------
+
+    ## 1.2 select validation points
+    # & grp == 1
+    I <- df[SummaryQA == "good", select_validI(Id, noise_perc), .(site)]$V1
+
+    set.seed(I[1])
+    desc_perc <- runif(length(I), .05, .5)
+
+    ## 1.3 adjust y and w
+    # randomly reduced by 5%–50% with of their amplitude; w set to wmin
+
+    # df_val <- df[I, ]
+    df[I, `:=`(w=0, y=y-A*desc_perc, I_valid = 1)]
+    return(df)
 }
 
 # nptperyear = 46
