@@ -108,8 +108,6 @@ source("test/07_whit/main_phenofit_test.R")
 over_perform(df[iters == "iter2"], formula, prefix, xlab, ylim2, IGBP.all = IGBP.all, outfile)
 
 
-
-
 # site figure data input
 df_trim <- dcast(df, formula, value.var = "value", fun.aggregate = mean) # %>% na.omit()
 df_trim$SummaryQA %<>% factor(qc_levels)

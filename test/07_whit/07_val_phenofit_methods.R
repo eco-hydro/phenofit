@@ -42,13 +42,14 @@ load("data_test/whit_lambda/MOD13A1_st_1e3_20180731.rda")
 
 # too much negative values will lead to fitting failure (negative will be 
 # replaced to zero).
-for (k in 3){
+for (k in 1){
     runningId(k)
 
     ############################################################################
     noise_perc <- noise_percs[k]
     # df <- fread(infile) # , strip.white = T
-    df_org <- select_valid(df, noise_perc = noise_perc)[, 1:10]
+    df_org <- df
+    # df_org <- select_valid(df, noise_perc = noise_perc)[, 1:10]
 
     # setkeyv(df, c("t", "site"))
     site = unique(df_org$site)
@@ -56,7 +57,8 @@ for (k in 3){
 
     # t as here is image date, other than pixel data.
     df_org = merge(df_org, temp, by = c("t", "site"), all = T) # fill missing values
-    outdir <- sprintf("/flush1/kon055/result/valid/%s_%2d%%", "phenofit", noise_perc*100)
+    # outdir <- sprintf("/flush1/kon055/result/valid/%s_%2d%%", "phenofit", noise_perc*100)
+    outdir <- sprintf("/flush1/kon055/result/valid/%s", "phenofit")
     main(df_org, st, outdir)
     # main(file_flux, st_flux)
 }

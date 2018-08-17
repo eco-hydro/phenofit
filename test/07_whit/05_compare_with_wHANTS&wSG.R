@@ -73,16 +73,17 @@ lst <- list()
 noise_percs = c(0.1, 0.3, 0.5)
 k = 2
 
+# df <- fread(infile) # , strip.white = T
+load("data_test/whit_lambda/MOD13A1_st_1e3_20180731.rda")
+# setkeyv(df, c("site", "t"))
+
+# no noise in this version
+
 for (k in 3){
     runningId(k)
-
     ############################################################################
     noise_perc <- noise_percs[k]
-    # df <- fread(infile) # , strip.white = T
-    load("data_test/whit_lambda/MOD13A1_st_1e3_20180731.rda")
-    # setkeyv(df, c("site", "t"))
-
-    df <- select_valid(df, noise_perc = noise_perc)[, 1:10]
+    # df <- select_valid(df, noise_perc = noise_perc)[, 1:10]
     sites <- unique(df$site) %>% set_names(., .)
     ############################################################################
     
@@ -103,7 +104,8 @@ for (k in 3){
         #              .progress = "text") #lst[[i]]
         # rough_fitting(sitename, df, st, FUN = whitsmw2, lambda = lambda)
 
-        outdir <- sprintf("result/whit_lambda/valid/%s_%2d%%", methods2[i], noise_perc*100)
+        # outdir <- sprintf("result/whit_lambda/valid/%s_%2d%%", methods2[i], noise_perc*100)
+        outdir <- sprintf("/flush1/kon055/result/valid/%s_0", methods2[i])
         temp <- par_sbatch(sites, rough_fitting,
                            df = df, st = st, .FUN = get(method), lambda = lambda,
                            return.res = F, Save = T, outdir = outdir)

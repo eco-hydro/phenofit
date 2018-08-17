@@ -2,91 +2,8 @@ source('test/stable/load_pkgs.R')
 source("test/07_whit/main_phenofit_test.R")
 # library(ggrepel)
 
-tidy_rough_fitting <- function(x){
-    # if (is.character(file)){
-    #     x <- readRDS(file)
-    # } else{
-    #     x <- file
-    # }
-    x <- rm_empty(x)
-    d_rough <- map(x, "whit") %>% melt_list("site") #%>% melt_list("meth")
-
-    d_melt <- d_rough %>% .[, .(site, t, iter1 = ziter1, iter2 = ziter2)] %>%
-        melt(id.vars = c("site", "t"),
-             measure.vars = c("iter1", "iter2"), variable.name = "iters") %>%
-        .[, .(site, t, iters, value)]
-
-    # list(rough = d_rough, melt = d_melt)
-    d_melt
-}
-
-get_GOF <- function(d, is_valid = 1, by_site = T){
-    grp <- if(by_site) .(meth, site) else .(meth)
-    info <- ddply(d[I_valid == is_valid & iters == "iter1"], grp,function(d){
-        with(d, GOF(y0, value))
-    }) %>% data.table()
-}
-
-# newest
-get_GOF2 <- function(d, is_valid = 1, by_site = T){
-    # grp <- if(by_site) .(meth, site) else .(meth)
-    grp <- .(site)
-    info <- ddply(d[I_valid == is_valid & iters == "iter1"], grp,function(d){
-        with(d, GOF(y0, value))
-    }) %>% data.table()
-}
-
-# The neckness of speed is GOF
-get_GOF3 <- function(df_org, df_fit){
-    d <- merge(df_org[, .(site, t, y0, w0, I_valid)], df_fit, by = c("site", "t"))
-    setkeyv(d, c("site", "t"))
-
-    byname = c("site", "meth") %>% intersect(colnames(d)) # make sure by name exist
-
-    # user  system elapsed
-    # 18.87    0.03   19.09
-    get_info <- function(is_valid){
-        info <- d[I_valid == is_valid & iters == "iter1",
-            .(info = list(GOF(y0, value))), byname]
-        info$info %>% do.call(rbind, .) %>% data.table() %>% cbind(info[, ..byname], .)
-    }
-    list(cal = get_info(is_valid = 0), val = get_info(is_valid = 1)) %>% melt_list("type")
-}
-
-# Get GOF info for every
-get_GOF_rds <- function(file, df_org){
-    lst  <- readRDS(file)
-    is_fine <- grepl("phenofit", basename(dirname(file))) # Is fine curve fitting?
-    if (is_fine){
-        # 1. read phenofit object
-        df_fit <- llply(rm_empty(lst), getFittings2, .progress = "text") %>% melt_list("site")
-    }else{
-        # 2. read rough fitting
-        df_fit <- readRDS(file) %>% rm_empty() %>% tidy_rough_fitting()
-    }
-    # info <- tryCatch(
-    #     get_GOF3(df_org, df_fit), # GOF info
-    #     error = function(e){ message(sprintf("%s : %s", file, e$message)) }
-    # )
-    df_fit
-    # return(list(fit = df_fit, info = info)) # df_fit also input
-}
-
-# get GOF from df_fitting RDS files
-get_GOF_fromFitting <- function(file, df_org){
-    lst <- readRDS(file)
-    info_lst <- llply(lst, function(df_fit){
-        varnames <- c("site", "t", "iters", "value", "meth") %>%
-            intersect(colnames(df_fit))
-        df_fit <- df_fit[, ..varnames] %>% setkeyv(c("site", "t"))
-        info <- suppressMessages(get_GOF3(df_org, df_fit))
-        return(info)
-    }, .progress = "text")
-    info_lst
-}
-
 ################################################################################
-noise_percs = c(0.1, 0.3, 0.5) %>% set_names(paste0("p", .*100, "%"))
+noise_percs = c(0.1, 0.3, 0.5, 0) %>% set_names(paste0("p", .*100, "%"))
 # lst %<>% set_names(paste0("p",noise_percs*100, "%"))
 # df_org <- melt_list(lst, "perc")
 
@@ -110,17 +27,21 @@ df$site %<>% as.character()
 
 # To save memory, evaluate GOF for every method
 info <- list()
-for (i in 1:3){
+for (i in 4){
     runningId(i)
     ############################################################################
     noise_perc <- noise_percs[i]
-    pattern    <- sprintf("%2d%%", noise_perc*100)
-    # df <- fread(infile) # , strip.white = T
+    pattern    <- sprintf("_%2d%%", noise_perc*100)
 
     df_org <- select_valid(df, noise_perc = noise_percs)[, 1:10]
     setkeyv(df_org, c("site", "t"))
-    
-    ## 1. save df_fit 
+
+    # df_org  <- df
+    if (i == 4) pattern <- "_0"
+
+    # df <- fread(infile) # , strip.white = T
+
+    ## 1. save df_fit
     issave_fitting = F
     if (issave_fitting){
         dirs = dirs_raw %>% .[grep(pattern, basename(.))] #%>% melt_list('meth')
@@ -128,8 +49,8 @@ for (i in 1:3){
         # reoder files to balance speed
         files %<>% .[order(str_extract(basename(.), "\\d{1,}"))]
 
-        temp  <- par_sbatch(files, get_GOF_rds, df_org = df_org, 
-            Save=T, outdir=sprintf("%sresult/fitting/fitting_%s", dir_root, pattern))        
+        temp  <- par_sbatch(files, get_GOF_rds, df_org = df_org,
+            Save=T, outdir=sprintf("%sresult/fitting/fitting%s", dir_root, pattern))
     }
 
     ## 2. get GOF
@@ -137,9 +58,11 @@ for (i in 1:3){
     if (iscal_gof){
         dirs  <- dirs_fit %>% .[grep(pattern, basename(.))]
         files <- llply(dirs, dir, pattern = "*.RDS", full.names = T) %>% unlist()
-        temp  <- par_sbatch(files, get_GOF_fromFitting, df_org = df_org, 
-            Save=T, outdir=sprintf("%sresult/val_info/info_%s", dir_root, pattern))    
+        temp  <- par_sbatch(files, get_GOF_fromFitting, df_org = df_org,
+            Save=T, outdir=sprintf("%sresult/val_info/info%s", dir_root, pattern))
+        # d <- get_GOF_fromFitting(files[1], df_org)
     }
+
     # res <- list()
     # for (j in 1:length(files)){
     #     runningId(j, prefix = "j = ")
@@ -152,6 +75,7 @@ for (i in 1:3){
     # saveRDS(res, file = sprintf("val_info_%s.RDS", pattern))
     # info[[i]] <- res
 }
+
 # info %<>% set_names(names(noise_percs))
 # save(info, file = file_info)
 
@@ -174,7 +98,7 @@ for (i in 1:3){
 # }
 
 # load oringal data
-# 
+#
 # methods <- basename(dirs_k[-1]) %>% str_extract(".*(?=_)")
 
 # df_info <- info %>% map(function(infoI){
@@ -252,3 +176,8 @@ for (i in 1:3){
 
 # save(d_rough_cam, d_rough_flux, file = "data_test/phenofit_rough.rda")
 # d2 <- readRDS("data_test/phenocam133_rough.RDS")
+
+readRDS_tidy <- function(file){
+    file <- gsub("file:///", "", file)
+    readRDS(file)
+}

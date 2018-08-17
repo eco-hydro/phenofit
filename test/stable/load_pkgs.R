@@ -310,19 +310,20 @@ select_valid <- function(df, noise_perc = 0.3, group = F){
     }
 
     # 1. select cross-validation points ---------------------------------------
+    if (noise_perc > 0){
+        ## 1.2 select validation points
+        # & grp == 1
+        I <- df[SummaryQA == "good", select_validI(Id, noise_perc), .(site)]$V1
 
-    ## 1.2 select validation points
-    # & grp == 1
-    I <- df[SummaryQA == "good", select_validI(Id, noise_perc), .(site)]$V1
+        set.seed(I[1])
+        desc_perc <- runif(length(I), .05, .5)
 
-    set.seed(I[1])
-    desc_perc <- runif(length(I), .05, .5)
+        ## 1.3 adjust y and w
+        # randomly reduced by 5%–50% with of their amplitude; w set to wmin
 
-    ## 1.3 adjust y and w
-    # randomly reduced by 5%–50% with of their amplitude; w set to wmin
-
-    # df_val <- df[I, ]
-    df[I, `:=`(w=0, y=y-A*desc_perc, I_valid = 1)]
+        # df_val <- df[I, ]
+        df[I, `:=`(w=0, y=y-A*desc_perc, I_valid = 1)]    
+    }
     return(df)
 }
 

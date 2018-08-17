@@ -48,24 +48,46 @@ if (file.exists(file)){
 
 sites      <- unique(df$site) %>% set_names(., .)
 sitename <- sites[2]
+
+################################################################################
+# fill missing values
+years <- 2000:2018
+doy   <- seq(1, 366, 16)
+date  <- sprintf("%4d%03d", rep(years, each = 23), doy) %>% parse_date_time("%Y%j") %>% date()
+if (years[1] == 2000) date <- date[-(1:3)]
+date  <- date[1:(length(date)-11)] # for 2018
+
+# fill missing template
+temp = data.table(t = date, site = rep(sites, rep(length(date), length(sites))))
+    # t as here is image date, other than pixel data.
+df_org = merge(df, temp, by = c("t", "site"), all = T) # fill missing values
+################################################################################
 # 1. I need to know whether lambda values are significant different among
 # different \code{dt}.
 #
 # years <- 2000:2017
 
-deltaT = 1
-subfix <- sprintf("_grp%d", deltaT)
+## parameters
+deltaT    = 1
+is_extent = F
 
+subfix <- sprintf("_grp%d", ifelse(is_extent, deltaT, 0))
+
+deltaT = c(1, 2, 3, 6, 18)
+is_extent = c(T, F)
+
+expand.grid(deltaT = deltaT, is_extent = is_extent)
+
+# set extent = false, it will not enclude previous and subsequent year' data.
 optim_lambda_FUN <- function(sitename, wFUN = wSELF){
-    optim_lambda(sitename, df, deltaT = deltaT, extent = T,
+    optim_lambda(sitename, df = df_org, deltaT = deltaT, extent = is_extent,
                  IsPlot = F, IsSave = F, file = "whit_formual_wBisquare.pdf",
                  wFUN = wFUN)
 }
-
+# optim_lambda_FUN(sitename)
 res <- par_sbatch(sites, optim_lambda_FUN, wFUN = wTSM,
                   return.res = F, Save = T,
                   outdir = paste0("result/whit_lambda/whit2", subfix))
-
 # res <- optim_lambda_FUN(102)
 # deltaT <- 1 # current is 4 at GEE
 # res.bisquare <- optim_lambda(sitename, df, deltaT = 1, extent = T, IsPlot = F, IsSave = F,

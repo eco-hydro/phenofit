@@ -70,7 +70,7 @@ check_input <- function(t, y, w, Tn = NULL, wmin = 0.2, missval, maxgap = 10, al
         missval <- ylu[1] #- diff(ylu)/10
 
     # generally, w == 0 mainly occur in winter. So it's seasonable to be assigned as minval
-    y[w <= wmin]  <- missval # na is much appropriate, na.approx will replace it.
+    ## 20180717 error fixed: y[w <= wmin]  <- missval # na is much appropriate, na.approx will replace it.
     # values out of range are setted to wmin weight.
     w[y < ylu[1] | y > ylu[2]] <- wmin
     # based on out test marginal extreme value also often occur in winter

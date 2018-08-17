@@ -426,5 +426,116 @@ plot_methods <- function(sitename, df_trim, st, prefix_fig = "whit", methods, sh
 }
 
 
+################################################################################
+#############################   GOF functions  #################################
+################################################################################
+tidy_rough_fitting <- function(x){
+    # if (is.character(file)){
+    #     x <- readRDS(file)
+    # } else{
+    #     x <- file
+    # }
+    x <- rm_empty(x)
+    d_rough <- map(x, "whit") %>% melt_list("site") #%>% melt_list("meth")
 
+    d_melt <- d_rough %>% .[, .(site, t, iter1 = ziter1, iter2 = ziter2)] %>%
+        melt(id.vars = c("site", "t"),
+             measure.vars = c("iter1", "iter2"), variable.name = "iters") %>%
+        .[, .(site, t, iters, value)]
 
+    # list(rough = d_rough, melt = d_melt)
+    d_melt
+}
+
+get_GOF <- function(d, is_valid = 1, by_site = T){
+    grp <- if(by_site) .(meth, site) else .(meth)
+    info <- ddply(d[I_valid == is_valid & iters == "iter1"], grp,function(d){
+        with(d, GOF(y0, value))
+    }) %>% data.table()
+}
+
+# newest
+get_GOF2 <- function(d, is_valid = 1, by_site = T){
+    # grp <- if(by_site) .(meth, site) else .(meth)
+    grp <- .(site)
+    info <- ddply(d[I_valid == is_valid & iters == "iter1"], grp,function(d){
+        with(d, GOF(y0, value))
+    }) %>% data.table()
+}
+
+# The neckness of speed is GOF
+get_GOF3 <- function(d, iter = "iter1"){
+    # d <- merge(df_org[, .(site, t, y0, w0, I_valid)], df_fit, by = c("site", "t"))
+    # setkeyv(d, c("site", "t"))
+
+    byname = c("site", "meth") %>% intersect(colnames(d)) # make sure by name exist
+
+    # user  system elapsed
+    # 18.87    0.03   19.09
+    get_info <- function(is_valid){
+        info <- d[I_valid == is_valid & iters == iter,
+            .(info = list(GOF(y0, value))), byname]
+        info$info %>% do.call(rbind, .) %>% data.table() %>% cbind(info[, ..byname], .)
+    }
+
+    list(cal = get_info(is_valid = 0), val = get_info(is_valid = 1)) %>% melt_list("type")
+}
+
+# Get GOF info for every
+get_GOF_rds <- function(file, df_org){
+    lst  <- readRDS(file)
+    is_fine <- grepl("phenofit", basename(dirname(file))) # Is fine curve fitting?
+    if (is_fine){
+        # 1. read phenofit object
+        df_fit <- llply(rm_empty(lst), getFittings2, .progress = "text") %>% melt_list("site")
+    }else{
+        # 2. read rough fitting
+        df_fit <- readRDS(file) %>% rm_empty() %>% tidy_rough_fitting()
+    }
+    # info <- tryCatch(
+    #     get_GOF3(df_org, df_fit), # GOF info
+    #     error = function(e){ message(sprintf("%s : %s", file, e$message)) }
+    # )
+    df_fit
+    # return(list(fit = df_fit, info = info)) # df_fit also input
+}
+
+GOF_extra <- function(Y_obs, Y_pred){
+    # the autocorrelation of residuals
+    acf = acf(Y_pred - Y_obs, lag.max = 10, plot = F, na.action = na.pass)$acf[,,1][-1]
+    # roughness
+    temp = diff(Y_pred)^2 %>% .[!is.na(.)]
+    Rg = sqrt(sum(temp)/length(temp))
+    c(Rg = Rg, acf = list(acf)) #GOF(Y_obs, Y_pred),
+}
+
+get_GOF_fromFitting_I <- function(df_fit, df_org){
+    d_perc <- df_org[, .(perc_good     = sum(w0 == 1)/.N,
+                         perc_good_val = sum(w  == 1)/.N), .(site)]
+
+    varnames <- c("site", "t", "iters", "value", "meth") %>%
+        intersect(colnames(df_fit))
+    df_fit <- df_fit[, ..varnames] %>% setkeyv(c("site", "t"))
+    d      <- merge(df_org[, .(site, t, y0, w0, I_valid)], df_fit, by = c("site", "t"))
+
+    setkeyv(d, c("site", "t"))
+    byname = c("site", "meth") %>% intersect(colnames(d)) # make sure by name exist
+
+    iter1 <- suppressMessages(get_GOF3(d, "iter1"))
+    iter2 <- suppressMessages(get_GOF3(d, "iter2"))
+
+    info_rough <- d[, .(info = list(GOF_extra(y0, value))), byname]
+    info_rough <- info_rough$info %>% do.call(rbind, .) %>% data.table() %>%
+        cbind(info_rough[, ..byname], .) %>% merge(d_perc, by = c("site"))
+
+    info <- listk(iter1, iter2) %>% melt_list("iter")
+    list(info = info, rough = info_rough)
+}
+
+# get GOF from df_fitting RDS files
+get_GOF_fromFitting <- function(file, df_org){
+    lst <- readRDS(file)
+    a <- get_GOF_fromFitting_I(lst[[i]], df_org) # debug
+    res <- llply(lst, get_GOF_fromFitting_I, df_org = df_org, .progress = "text")
+    res
+}

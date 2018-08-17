@@ -40,6 +40,7 @@ v_opt = function(y, w = 0 * y + 1, d = 2, lambdas = c(0, 4), tol = 0.01) {
 #' Update 20180605 add weights updating to whittaker lambda selecting
 #'
 #' @inheritParams whitsmw2
+#' @param INPUT only require `w` and `y`
 #' @param d difference order
 #' @param IsPlot Boolean. Whether to plot figure?
 #'
@@ -100,10 +101,10 @@ v_curve = function(INPUT, nptperyear, lambdas,  d = 2, IsPlot = F,
 }
 
 # According to v-curve theory, get the optimal lambda value.
-# 
-# Whittaker balanced the fidelity and smooth. The agreement index maybe poor 
+#
+# Whittaker balanced the fidelity and smooth. The agreement index maybe poor
 # than others. But it'is much smoothing.
-# 
+#
 optim_lambda <- function(sitename, df, deltaT, extent = T,
     IsPlot = F, IsSave = F, file = "test_whit_lambda.pdf",
     wFUN = wBisquare, iters = 2){
@@ -146,10 +147,11 @@ optim_lambda <- function(sitename, df, deltaT, extent = T,
             vc$fit <- vc$fit[ind, ]
 
             # coefficient to construct Whittaker lambda formula
-            vc$coef <- dnew[I_ext, .(mean = mean(y),
+            y <- INPUT_i$y; y = y[!is.na(y)]# should be NA values now
+            vc$coef <- list(mean = mean(y),
                             sd = sd(y),
                             kurtosis = kurtosis(y, type = 2),
-                            skewness = skewness(y, type = 2))] %>% as.list()
+                            skewness = skewness(y, type = 2)) #%>% as.list()
 
             if (IsPlot){
                 plotdata(INPUT_i, nptperyear, wmin = 0.1)
@@ -221,15 +223,15 @@ init_lambda  <- function(y){
 
 ## 4 year group, 2018-07-31
 # Call:
-# lm_fun(formula = lambda ~ mean + sd + skewness + kurtosis, data = d, 
+# lm_fun(formula = lambda ~ mean + sd + skewness + kurtosis, data = d,
 #     na.action = na.exclude)
-#     
+#
 # Residuals:
-#      Min       1Q   Median       3Q      Max 
-# -2.32247 -0.41889  0.05531  0.40772  3.06478 
-# 
+#      Min       1Q   Median       3Q      Max
+# -2.32247 -0.41889  0.05531  0.40772  3.06478
+#
 # Coefficients:
-#              Estimate Std. Error t value Pr(>|t|)    
+#              Estimate Std. Error t value Pr(>|t|)
 # (Intercept)  0.820927   0.006844 119.950  < 2e-16 ***
 # mean         1.500799   0.017574  85.399  < 2e-16 ***
 # sd          -4.028618   0.045536 -88.471  < 2e-16 ***
@@ -239,7 +241,7 @@ init_lambda  <- function(y){
 # Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 # Residual standard error: 0.5689 on 75480 degrees of freedom
-# Multiple R-squared:  0.2165,    Adjusted R-squared:  0.2164 
+# Multiple R-squared:  0.2165,    Adjusted R-squared:  0.2164
 # F-statistic:  5213 on 4 and 75480 DF,  p-value: < 2.2e-16
 ################################################################################
 ################################################################################
@@ -266,7 +268,7 @@ init_lambda  <- function(y){
 # Residual standard error: 0.5851 on 15135 degrees of freedom
 # Multiple R-squared:  0.1572,    Adjusted R-squared:  0.1569
 # F-statistic: 705.5 on 4 and 15135 DF,  p-value: < 2.2e-16
-# 
+#
 #          term    estimate   std.error  statistic       p.value
 # 1 (Intercept)  0.83112003 0.021897138  37.955647 3.306152e-301
 # 2        mean  1.59997023 0.089914112  17.794428  4.039120e-70
