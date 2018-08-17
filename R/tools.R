@@ -254,7 +254,6 @@ GOF <- function(Y_obs, Y_sim, w, include.cv = FALSE){
     SSR    <- sum( (Y_sim - y_mean)^2 * w) 
     SST    <- sum( (Y_obs - y_mean)^2 * w)
     # R2     <- SSR / SST
-    R2     <- summary(lm(Y_sim ~ Y_obs))$r.squared
 
     RE     <- Y_sim - Y_obs
     Bias   <- sum ( w*RE)     /sum(w)                     # bias
@@ -277,6 +276,10 @@ GOF <- function(Y_obs, Y_sim, w, include.cv = FALSE){
     }, error = function(e){
         message(e$message)
     })
+    
+    # In Linear regression, R2 = R^2 (R is pearson cor)
+    # R2     <- summary(lm(Y_sim ~ Y_obs))$r.squared # low efficient
+    R2 = R^2
 
     # AI: Agreement Index (only good values(w==1) calculate AI)
     AI <- NA

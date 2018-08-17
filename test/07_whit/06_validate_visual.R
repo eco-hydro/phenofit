@@ -1,4 +1,5 @@
 source('test/stable/load_pkgs.R')
+source("test/07_whit/main_phenofit_test.R")
 # library(ggrepel)
 
 tidy_rough_fitting <- function(x){
@@ -8,7 +9,6 @@ tidy_rough_fitting <- function(x){
     #     x <- file
     # }
     x <- rm_empty(x)
-
     d_rough <- map(x, "whit") %>% melt_list("site") #%>% melt_list("meth")
 
     d_melt <- d_rough %>% .[, .(site, t, iter1 = ziter1, iter2 = ziter2)] %>%
@@ -36,93 +36,152 @@ get_GOF2 <- function(d, is_valid = 1, by_site = T){
     }) %>% data.table()
 }
 
+# The neckness of speed is GOF
 get_GOF3 <- function(df_org, df_fit){
     d <- merge(df_org[, .(site, t, y0, w0, I_valid)], df_fit, by = c("site", "t"))
     setkeyv(d, c("site", "t"))
 
+    byname = c("site", "meth") %>% intersect(colnames(d)) # make sure by name exist
+
     # user  system elapsed
     # 18.87    0.03   19.09
-    info <- d[I_valid == 1 & iters == "iter1", .(info = list(GOF(y0, value))), .(site)]
-    val <- info$info %>% do.call(rbind, .) %>% data.table() %>% cbind(info[, site], .)
+    get_info <- function(is_valid){
+        info <- d[I_valid == is_valid & iters == "iter1",
+            .(info = list(GOF(y0, value))), byname]
+        info$info %>% do.call(rbind, .) %>% data.table() %>% cbind(info[, ..byname], .)
+    }
+    list(cal = get_info(is_valid = 0), val = get_info(is_valid = 1)) %>% melt_list("type")
+}
 
-    info <- d[I_valid == 0 & iters == "iter1", .(info = list(GOF(y0, value))), .(site)]
-    cal <- info$info %>% do.call(rbind, .) %>% data.table() %>% cbind(info[, site], .)
+# Get GOF info for every
+get_GOF_rds <- function(file, df_org){
+    lst  <- readRDS(file)
+    is_fine <- grepl("phenofit", basename(dirname(file))) # Is fine curve fitting?
+    if (is_fine){
+        # 1. read phenofit object
+        df_fit <- llply(rm_empty(lst), getFittings2, .progress = "text") %>% melt_list("site")
+    }else{
+        # 2. read rough fitting
+        df_fit <- readRDS(file) %>% rm_empty() %>% tidy_rough_fitting()
+    }
+    # info <- tryCatch(
+    #     get_GOF3(df_org, df_fit), # GOF info
+    #     error = function(e){ message(sprintf("%s : %s", file, e$message)) }
+    # )
+    df_fit
+    # return(list(fit = df_fit, info = info)) # df_fit also input
+}
 
-    list(cal = cal, val = val)
+# get GOF from df_fitting RDS files
+get_GOF_fromFitting <- function(file, df_org){
+    lst <- readRDS(file)
+    info_lst <- llply(lst, function(df_fit){
+        varnames <- c("site", "t", "iters", "value", "meth") %>%
+            intersect(colnames(df_fit))
+        df_fit <- df_fit[, ..varnames] %>% setkeyv(c("site", "t"))
+        info <- suppressMessages(get_GOF3(df_org, df_fit))
+        return(info)
+    }, .progress = "text")
+    info_lst
 }
 
 ################################################################################
 noise_percs = c(0.1, 0.3, 0.5) %>% set_names(paste0("p", .*100, "%"))
-
 # lst %<>% set_names(paste0("p",noise_percs*100, "%"))
 # df_org <- melt_list(lst, "perc")
 
 ################################################################################
-
-dir_root <- ifelse(.Platform$OS.type == "windows", "Y:/Github/phenofit_cluster/", "")
-file = "data_test/val_fitting_rough.rda" %>% paste0(dir_root, .)
-
-if (file.exists(file)){
-    load(file)
-} else{
-    ## run the following script in cluster
-    indir <- "result/whit_lambda/valid" %>%  paste0(dir_root, .)#Y:/Github/phenofit_cluster/
-    dirs <- list.dirs(indir)[-1] %>% set_names(basename(.))
-
-    # lst <- llply(dirs[1], get_sbatch, .progress = "text")
-    # lst <- llply(dirs, function(indir){
-    #     d <- get_sbatch(indir) %>% tidy_rough_fitting()
-    # }, .progress = "text") #, .progress = "text"
-
-    lst <- mclapply(dirs, function(indir){
-        d <- get_sbatch(indir) %>% tidy_rough_fitting()
-    }, mc.cores = 4) #, .progress = "text"
-    save(lst, file = file)
+# dir_root <- ifelse(.Platform$OS.type == "windows", "Y:/Github/phenofit_cluster/", "")
+if (.Platform$OS.type == "windows"){
+    dir_root <- "V:/"
+} else {
+    dir_root <- "/flush1/kon055/"
 }
 
-# load oringal data
+dirs_raw  <- "result/valid" %>%  paste0(dir_root, .) %>%
+    {list.dirs(.)[-1]} %>% set_names(basename(.)) # 1th is indir
+dirs_fit  <- "result/fitting" %>%  paste0(dir_root, .) %>%
+    {list.dirs(.)[-1]} %>% set_names(basename(.)) # 1th is indir
+
+file_info = "val_fittings.rda" #%>% paste0(dir_root, .)
 
 load("data_test/whit_lambda/MOD13A1_st_1e3_20180731.rda")
+df$site %<>% as.character()
 
+# To save memory, evaluate GOF for every method
 info <- list()
-for (k in 1:3){
-    runningId(k)
+for (i in 1:3){
+    runningId(i)
     ############################################################################
-    noise_perc <- noise_percs[k]
+    noise_perc <- noise_percs[i]
     pattern    <- sprintf("%2d%%", noise_perc*100)
     # df <- fread(infile) # , strip.white = T
 
-    # setkeyv(df, c("site", "t"))
-    df_org <- select_valid(df, noise_perc = noise_perc)[, 1:10]
+    df_org <- select_valid(df, noise_perc = noise_percs)[, 1:10]
+    setkeyv(df_org, c("site", "t"))
+    
+    ## 1. save df_fit 
+    issave_fitting = F
+    if (issave_fitting){
+        dirs = dirs_raw %>% .[grep(pattern, basename(.))] #%>% melt_list('meth')
+        files <- llply(dirs, dir, pattern = "*.RDS", full.names = T) %>% unlist()
+        # reoder files to balance speed
+        files %<>% .[order(str_extract(basename(.), "\\d{1,}"))]
 
-    dirs_k = dirs %>% .[grep("10", basename(.))] #%>% melt_list('meth')
-
-
-    res <- list()
-    for (j in 2:length(dirs_k)){
-        runningId(j, prefix = "j|")
-
-        df_fit <- get_sbatch(dirs_k[j]) %>% tidy_rough_fitting()
-        df_fit[, site := as.integer(site)]
-
-        res[[j]] <- get_GOF3(df_org, df_fit)
+        temp  <- par_sbatch(files, get_GOF_rds, df_org = df_org, 
+            Save=T, outdir=sprintf("%sresult/fitting/fitting_%s", dir_root, pattern))        
     }
 
-    #list(cal = get_GOF2(d, 0), val = get_GOF2(d, 1))
+    ## 2. get GOF
+    iscal_gof = T
+    if (iscal_gof){
+        dirs  <- dirs_fit %>% .[grep(pattern, basename(.))]
+        files <- llply(dirs, dir, pattern = "*.RDS", full.names = T) %>% unlist()
+        temp  <- par_sbatch(files, get_GOF_fromFitting, df_org = df_org, 
+            Save=T, outdir=sprintf("%sresult/val_info/info_%s", dir_root, pattern))    
+    }
+    # res <- list()
+    # for (j in 1:length(files)){
+    #     runningId(j, prefix = "j = ")
+    #     res[[j]] <- get_GOF_rds(file = files[j], df_org = df_org)
+    # }
+    # res <- mclapply(files, get_GOF_rds, df_org = df_org, mc.cores = 16)
+    # res <- llply(files, get_GOF_rds, .progress = "text")
+    # list(cal = get_GOF2(d, 0), val = get_GOF2(d, 1))
     # lst[[k]] <- list(cal = cal, val = val)
-    info[[k]] <- res
+    # saveRDS(res, file = sprintf("val_info_%s.RDS", pattern))
+    # info[[i]] <- res
 }
+# info %<>% set_names(names(noise_percs))
+# save(info, file = file_info)
 
-info %<>% set_names(names(noise_percs))
-save(info, file = "val_rough_info.rda")
+# if (file.exists(file)){
+#     load(file)
+# } else{
+#     ## run the following script in cluster
+#     indir <- "result/valid" %>%  paste0(dir_root, .)#Y:/Github/phenofit_cluster/
+#     dirs <- list.dirs(indir)[-1] %>% set_names(basename(.))
+#
+#     # lst <- llply(dirs[1], get_sbatch, .progress = "text")
+#     # lst <- llply(dirs, function(indir){
+#     #     d <- get_sbatch(indir) %>% tidy_rough_fitting()
+#     # }, .progress = "text") #, .progress = "text"
+#
+#     lst <- mclapply(dirs, function(indir){
+#         d <- get_sbatch(indir) %>% tidy_rough_fitting()
+#     }, mc.cores = 4) #, .progress = "text"
+#     save(lst, file = file)
+# }
 
-methods <- basename(dirs_k[-1]) %>% str_extract(".*(?=_)")
+# load oringal data
+# 
+# methods <- basename(dirs_k[-1]) %>% str_extract(".*(?=_)")
 
-df_info <- info %>% map(function(infoI){
-    infoI %>% rm_empty() %>% set_names(methods) %>%
-        map(~melt_list(., "type")) %>% melt_list("meth")
-}) %>% melt_list("perc")
-colnames(df_info)[1] <- "site"
+# df_info <- info %>% map(function(infoI){
+#     infoI %>% rm_empty() %>% set_names(methods) %>%
+#         map(~melt_list(., "type")) %>% melt_list("meth")
+# }) %>% melt_list("perc")
+# colnames(df_info)[1] <- "site"
 
 ## Whittaker is overfitting in some extent.
 # lst_tidy <- lst[[1]] %>% tidy_rough_fitting()

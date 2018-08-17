@@ -1,5 +1,6 @@
-windowsFonts(Times = windowsFont("Times New Roman"),
-             Arial = windowsFont("Arial"))
+# source("test/07_whit/main_phenofit_test.R")
+# windowsFonts(Times = windowsFont("Times New Roman"),
+#              Arial = windowsFont("Arial"))
 fontsize = 14
 
 # save pdf just like `ggsave`
@@ -23,7 +24,8 @@ save_pdf <- function(file = "Rplot.pdf", width = 10, height = 5, p, open = F){
 getFittings2 <- function(fit){
     df_fit <- getFittings(fit) %>% data.table()
 
-    whit <- melt(fit$seasons$whit, measure.vars = c("iter1", "iter2"),
+    whit <- melt(fit$seasons$whit[, .(t, y, w = witer2, iter1 = ziter1, iter2 = ziter2)],
+                 measure.vars = c("iter1", "iter2"),
                  variable.name = "iters")
     whit$meth <- "whit_R"
     df_fit <- rbind(df_fit, whit)
