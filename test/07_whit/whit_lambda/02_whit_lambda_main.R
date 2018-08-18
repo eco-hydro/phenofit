@@ -68,26 +68,42 @@ df_org = merge(df, temp, by = c("t", "site"), all = T) # fill missing values
 # years <- 2000:2017
 
 ## parameters
-deltaT    = 1
-is_extent = F
+# deltaT    = 1
+# is_extent = F
 
-subfix <- sprintf("_grp%d", ifelse(is_extent, deltaT, 0))
+# subfix <- sprintf("_grp%d", ifelse(is_extent, deltaT, 0))
 
-deltaT = c(1, 2, 3, 6, 18)
-is_extent = c(T, F)
+deltaTs    = c(1, 2, 3, 4, 6, 18)
+is_extends = c(T, F)
 
-expand.grid(deltaT = deltaT, is_extent = is_extent)
+pars <- expand.grid(deltaT = deltaTs, is_extend = is_extends)
+
+# i <- 1:nrow(pars) %>% set_names(pars$deltaT, )
 
 # set extent = false, it will not enclude previous and subsequent year' data.
-optim_lambda_FUN <- function(sitename, wFUN = wSELF){
-    optim_lambda(sitename, df = df_org, deltaT = deltaT, extent = is_extent,
+optim_lambda_FUN <- function(sitename, wFUN = wSELF, deltaT, extend){
+    optim_lambda(sitename, df = df_org, deltaT, extend,
                  IsPlot = F, IsSave = F, file = "whit_formual_wBisquare.pdf",
                  wFUN = wFUN)
 }
-# optim_lambda_FUN(sitename)
-res <- par_sbatch(sites, optim_lambda_FUN, wFUN = wTSM,
-                  return.res = F, Save = T,
-                  outdir = paste0("result/whit_lambda/whit2", subfix))
+
+for (i in 4){ # length(deltaTs)
+    deltaT <- deltaTs[i]
+
+    for (j in 1:length(is_extends)){
+        is_extend  <- is_extends[j]
+        extend_str <- ifelse(is_extend, "Extend", "nonExtend")
+        subfix <- sprintf("grp%02d_%s", deltaTs[i], extend_str)
+        print(subfix)
+
+        # optim_lambda_FUN(sitename)
+        res <- par_sbatch(sites, optim_lambda_FUN, wFUN = wTSM, deltaT, is_extend,
+                          return.res = T, Save = T,
+                          outdir = paste0("result/whit_lambda/whit2", subfix))
+    }
+}
+
+# a <- optim_lambda_FUN(sitename)
 # res <- optim_lambda_FUN(102)
 # deltaT <- 1 # current is 4 at GEE
 # res.bisquare <- optim_lambda(sitename, df, deltaT = 1, extent = T, IsPlot = F, IsSave = F,

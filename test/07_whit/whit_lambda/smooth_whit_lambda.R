@@ -105,7 +105,7 @@ v_curve = function(INPUT, nptperyear, lambdas,  d = 2, IsPlot = F,
 # Whittaker balanced the fidelity and smooth. The agreement index maybe poor
 # than others. But it'is much smoothing.
 #
-optim_lambda <- function(sitename, df, deltaT, extent = T,
+optim_lambda <- function(sitename, df, deltaT, extend = T,
     IsPlot = F, IsSave = F, file = "test_whit_lambda.pdf",
     wFUN = wBisquare, iters = 2){
     # sitename <- sites[i]#; grp = 1
@@ -127,8 +127,8 @@ optim_lambda <- function(sitename, df, deltaT, extent = T,
         year_beg  <- year
         year_end  <- min(year + deltaT - 1, 2017)
 
-        year_beg_ext <- ifelse(extent, year_beg-1, year_beg)
-        year_end_ext <- ifelse(extent, year_end+1, year_end)
+        year_beg_ext <- ifelse(extend, year_beg-1, year_beg)
+        year_end_ext <- ifelse(extend, year_end+1, year_end)
 
         I     <- which(years >= year_beg & years <= year_end)
         I_ext <- which(years >= year_beg_ext & years <= year_end_ext)
@@ -170,7 +170,8 @@ optim_lambda <- function(sitename, df, deltaT, extent = T,
     tryCatch({
         ## visualization
         res %<>% rm_empty()
-        lambda <- map_dbl(res, "lambda")
+        # For bare land, all y is equal will lead lambda is empty
+        lambda <- map_dbl(res, ~first(.$lambda, default = NA_real_))
         df_sm  <- res %>% map_df("fit") %>% data.table()
         coefs  <- res %>% map_df("coef")
 
