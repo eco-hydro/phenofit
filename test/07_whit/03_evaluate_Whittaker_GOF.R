@@ -72,10 +72,14 @@ sites_sel <- c("RU-Fyo", "GF-Guy", "US-UMB", "CN-Cha", "US-KS2", "US-Whs",
                "AU-How", "ZA-Kru", "CN-HaM", "US-Los", "DE-Geb")
 
 {
-    st_flux[site %in% sites_sel, selected := 1]
+    library(maptools)
+    st_flux[match(sites_sel, site), `:=`(
+        selected = 1,
+        label    = sprintf("(%s) %s", letters[1:.N], IGBPname)
+    )]
 
-    df2sp(st_flux) %>% writePointsShape("st_flux166.shp")
-    df2sp(st_cam)  %>% writePointsShape("st_cam133.shp")
+    df2sp(st_flux) %>% writePointsShape("F:/Github/GEE/gee_whittaker/ArcGIS/shp/st_flux166.shp")
+    # df2sp(st_cam)  %>% writePointsShape("st_cam133.shp") 
 }
 
 

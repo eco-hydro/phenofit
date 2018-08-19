@@ -55,6 +55,32 @@ IGBPnames_005 <- c("water", "ENF", "EBF", "DNF", "DBF", "MF" , "CSH",
                    "OSH", "WSA", "SAV", "GRA", "WET", "CRO",
                    "URB", "CNV", "SNO", "BSV", "UNC")
 
+readRDS_tidy <- function(file){
+    file <- gsub("file:///", "", file)
+    readRDS(file)
+}
+
+
+ddply_dt <- function(d, j, by){
+    byname  <- names(by) %>% paste(collapse = ", ")
+    operate <- j[[1]] %>% deparse()
+    eval(parse(text = sprintf("res <- d[, .(res = list(%s)), .(%s)]", operate, byname)))
+
+    # print(res)
+    res$res %>% do.call(rbind, .) %>% data.table() %>% cbind(res[, ..byname], .)
+}
+
+
+GOF_extra <- function(Y_obs, Y_pred){
+    # the autocorrelation of residuals
+    acf = acf(Y_pred - Y_obs, lag.max = 10, plot = F, na.action = na.pass)$acf[,,1][-1]
+    # roughness
+    temp = diff(Y_pred)^2 %>% .[!is.na(.)]
+    Rg = sqrt(sum(temp)/length(temp))
+    c(Rg = Rg, acf = list(acf)) #GOF(Y_obs, Y_pred),
+}
+
+
 siteorder <- function(sites){ factor(sites) %>% as.numeric() }
 
 get_phenofit <- function(sitename, df, st, prefix_fig = 'phenofit_v3', IsPlot = F){

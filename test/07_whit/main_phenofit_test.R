@@ -500,14 +500,6 @@ get_GOF_rds <- function(file, df_org){
     # return(list(fit = df_fit, info = info)) # df_fit also input
 }
 
-GOF_extra <- function(Y_obs, Y_pred){
-    # the autocorrelation of residuals
-    acf = acf(Y_pred - Y_obs, lag.max = 10, plot = F, na.action = na.pass)$acf[,,1][-1]
-    # roughness
-    temp = diff(Y_pred)^2 %>% .[!is.na(.)]
-    Rg = sqrt(sum(temp)/length(temp))
-    c(Rg = Rg, acf = list(acf)) #GOF(Y_obs, Y_pred),
-}
 
 get_GOF_fromFitting_I <- function(df_fit, df_org){
     d_perc <- df_org[, .(perc_good     = sum(w0 == 1)/.N,
