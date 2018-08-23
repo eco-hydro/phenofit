@@ -19,7 +19,6 @@ rough_fitting <- function(sitename, df, st, .FUN = whitsmw2, lambda = NULL){
 
         ## 20180819 fixed lambda bug, lambda will overwrite new lambda in season_3y
         # if (is.null(lambda)) lambda <- init_lambda(INPUT$y)#*2w
-
         brks2 <- season_3y(INPUT, nptperyear, south = sp$lat[1] < 0, FUN = .FUN,
                            lambda = lambda, nf = nf, frame = frame,
                            plotdat = d, IsPlot = IsPlot, print = print,
@@ -78,7 +77,7 @@ date  <- sprintf("%4d%03d", rep(years, each = 23), doy) %>% parse_date_time("%Y%
 if (years[1] == 2000) date <- date[-(1:3)]
 date  <- date[1:(length(date)-11)] # for 2018
 
-
+#
 # 1.3 global parameters
 nptperyear = 23
 print  = F
@@ -102,13 +101,12 @@ for (k in 1:nrow(coefs)){
 # for (k in 3){
     # noise_perc <- noise_percs[k]
     # df <- select_valid(df, noise_perc = noise_perc)[, 1:10]
-    runningId(k, i, "k | " )
+    runningId(k, prefix = "k | " )
     pattern <- rownames(coefs)[k]
-    param   <- as.list(coef$mean[k, ])
+    param   <- as.list(coefs[k, ])
     ############################################################################
     ############################################################################
-
-    for (i in 1:4){
+    for (i in 3){ # only wWH2 this time
         method <- methods[i] #"sgfitw", "whitsmw2" and "wHANTS".
         FUN    <- get(method, envir = as.environment("package:phenofit"))
 
@@ -127,7 +125,7 @@ for (k in 1:nrow(coefs)){
 
         # outdir <- sprintf("result/whit_lambda/valid/%s_%2d%%", methods2[i], noise_perc*100)
         # outdir <- sprintf("/flush1/kon055/result/whit_lambda/%s_0", methods2[i])
-        outdir <- sprintf("/flush1/kon055/result/whit_lambda/%s", pattern)
+        outdir <- sprintf("/flush1/kon055/result/whit_lambda2/%s", pattern)
         temp <- par_sbatch(sites, rough_fitting,
                            df = df, st = st, .FUN = get(method), lambda = lambda,
                            return.res = F, Save = T, outdir = outdir)
