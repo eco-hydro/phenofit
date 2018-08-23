@@ -56,3 +56,5 @@ test/Figs/phenofit_OUTPUT.rda
 data_test/
 data_test/*/
 temp/
+*.jpg
+*.tif

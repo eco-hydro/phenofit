@@ -176,8 +176,3 @@ for (i in 4){
 
 # save(d_rough_cam, d_rough_flux, file = "data_test/phenofit_rough.rda")
 # d2 <- readRDS("data_test/phenocam133_rough.RDS")
-
-readRDS_tidy <- function(file){
-    file <- gsub("file:///", "", file)
-    readRDS(file)
-}

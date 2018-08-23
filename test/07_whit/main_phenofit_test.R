@@ -3,22 +3,6 @@
 #              Arial = windowsFont("Arial"))
 fontsize = 14
 
-# save pdf just like `ggsave`
-save_pdf <- function(file = "Rplot.pdf", width = 10, height = 5, p, open = F){
-    if (missing(p)) p <- last_plot()
-
-    if ("grob" %in% class(p)) {
-        FUN <- grid::grid.draw
-    } else{
-        FUN <- base::print
-    }
-    # print(FUN)
-    # Cairo::CairoPDF, if only one figure cairo_pdf is the best
-    Cairo::CairoPDF(file, width = width, height = height)
-    FUN(p)
-    dev.off()
-    if (open) file.show(file)
-}
 
 # get curve fitting results from phenofit object
 getFittings2 <- function(fit){

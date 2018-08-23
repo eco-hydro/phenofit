@@ -55,19 +55,64 @@ IGBPnames_005 <- c("water", "ENF", "EBF", "DNF", "DBF", "MF" , "CSH",
                    "OSH", "WSA", "SAV", "GRA", "WET", "CRO",
                    "URB", "CNV", "SNO", "BSV", "UNC")
 
+# save pdf just like `ggsave`
+write_fig <- function(p, file = "Rplot.pdf", width = 10, height = 5, show = T){
+    if (missing(p)) p <- last_plot()
+
+    if ("grob" %in% class(p)) {
+        FUN <- grid::grid.draw
+    } else{
+        FUN <- base::print
+    }
+
+    file_ext <- str_extract(basename(file), "(?<=\\.).*$")
+
+    param <- list(file, width = width, height = height)
+    if (file_ext == "pdf"){
+        devicefun <- Cairo::CairoPDF # cairo_pdf
+    } else {
+        if (file_ext %in% c("tif", "tiff")){
+            devicefun <- tiff
+        } else if (file_ext == "png") {
+            devicefun <- Cairo::CairoPNG
+        }
+        param %<>% c(list(units = "in", res = 300, compression = "lzw")) #, dpi = 300
+    }
+
+    # print(FUN)
+    # Cairo::CairoPDF, if only one figure cairo_pdf is the best
+    do.call(devicefun, param)
+    FUN(p)
+    dev.off()
+    if (show) file.show(file)
+}
+
+transparent_color <- function(color, alpha = 0.5){
+    rgb_col <- col2rgb(color)/255
+    rgb(rgb_col[, 1], rgb_col[, 2], rgb_col[, 3], alpha)
+}
+
+# export high resolution tiff 
+write_tiff <- function(p, file, width, height, show = T){
+    tiff(file, width, height, units = "in", res = 300, compression = "lzw")
+    print(p)
+    dev.off()
+    if (show) file.show(file)
+}
+
 readRDS_tidy <- function(file){
     file <- gsub("file:///", "", file)
     readRDS(file)
 }
 
-
 ddply_dt <- function(d, j, by){
-    byname  <- names(by) %>% paste(collapse = ", ")
+    by <- names(by)
+    byname  <- paste(by, collapse = ", ")
     operate <- j[[1]] %>% deparse()
-    eval(parse(text = sprintf("res <- d[, .(res = list(%s)), .(%s)]", operate, byname)))
 
+    eval(parse(text = sprintf("res <- d[, .(res = list(%s)), .(%s)]", operate, byname)))
     # print(res)
-    res$res %>% do.call(rbind, .) %>% data.table() %>% cbind(res[, ..byname], .)
+    res$res %>% do.call(rbind, .) %>% data.table() %>% cbind(res[, ..by], .)
 }
 
 
@@ -80,6 +125,29 @@ GOF_extra <- function(Y_obs, Y_pred){
     c(Rg = Rg, acf = list(acf)) #GOF(Y_obs, Y_pred),
 }
 
+
+# function to separate data to steps of x, obtain 95 quantile value for smooth
+upper_envelope <- function(x, y, step = 0.2, alpha = 0.95){
+    xrange <- range(x, na.rm = T)
+
+    brks <- seq(xrange[1], xrange[2], by = step)
+    n    <- length(brks)
+    xmid <- (brks[-n] + brks[-1])/2
+
+    brks[n] <- Inf
+
+    res <- numeric(n-1)*NA_real_
+
+    for (i in 1:(n-1)){
+        val_min <- brks[i]
+        val_max <- brks[i+1]
+
+        I <- x >= val_min & x < val_max
+        res[i] <- quantile(y[I], alpha, na.rm = T)
+    }
+
+    data.table(x = xmid, y = res)
+}
 
 siteorder <- function(sites){ factor(sites) %>% as.numeric() }
 
@@ -124,9 +192,9 @@ get_phenofit <- function(sitename, df, st, prefix_fig = 'phenofit_v3', IsPlot = 
             Cairo::CairoPDF(file_pdf, 11, 6) #
             # grid::grid.newpage()
             plot_phenofit(fit, d, titlestr) %>% grid::grid.draw()# plot to check the curve fitting
-            dev.off()    
+            dev.off()
         }
-        
+
         # temp <- ExtractPheno(fit$fits$ELMORE[1:5], IsPlot = T) # check extracted phenology
         ## 3.2 Get GOF information
         stat  <- ldply(fit$fits, function(fits_meth){
@@ -247,7 +315,7 @@ FigsToPages <- function(ps, lgd, ylab.right, file, width = 10, height){
     ylab.right.color <- ps[[1]]$theme$axis.title.y.right$colour
 
     params <- list(ncol = 1, padding = unit(1, "line"),
-        left  = textGrob(ylab.left , rot = 90, 
+        left  = textGrob(ylab.left , rot = 90,
                          gp=gpar(fontsize=14, col=ylab.left.color)) )
 
     # parameters for arrangeGrob
@@ -348,7 +416,7 @@ select_valid <- function(df, noise_perc = 0.3, group = F){
         # randomly reduced by 5%–50% with of their amplitude; w set to wmin
 
         # df_val <- df[I, ]
-        df[I, `:=`(w=0, y=y-A*desc_perc, I_valid = 1)]    
+        df[I, `:=`(w=0, y=y-A*desc_perc, I_valid = 1)]
     }
     return(df)
 }

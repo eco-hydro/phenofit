@@ -30,7 +30,7 @@ StatProb2d <- ggproto("StatProb2d", Stat,
         # print(str(df))
         # print(scales)
         if (contour) {
-            temp = StatContour$compute_panel(df, scales, bins, binwidth, breaks = breaks)
+            StatContour$compute_panel(df, scales, bins, binwidth, breaks = breaks)
             # temp$level %<>% as.factor()
             # print(str(temp))
             # print(unique(temp$level))
@@ -56,7 +56,7 @@ stat_prob_2d <- function(mapping = NULL, data = NULL,
   layer(
     data        = data,
     mapping     = mapping,
-    stat        = StatProb2d,
+    stat        = StatProb2d, #StatDensity2d, 
     geom        = geom,
     position    = position,
     show.legend = show.legend,
