@@ -33,7 +33,7 @@ for (i in 4){
     noise_perc <- noise_percs[i]
     pattern    <- sprintf("_%2d%%", noise_perc*100)
 
-    df_org <- select_valid(df, noise_perc = noise_percs)[, 1:10]
+    df_org <- select_valid(df, noise_perc = noise_perc)[, 1:10]
     setkeyv(df_org, c("site", "t"))
 
     # df_org  <- df
@@ -49,7 +49,7 @@ for (i in 4){
         # reoder files to balance speed
         files %<>% .[order(str_extract(basename(.), "\\d{1,}"))]
 
-        temp  <- par_sbatch(files, get_GOF_rds, df_org = df_org,
+        temp  <- par_sbatch(files, get_Fitting,
             Save=T, outdir=sprintf("%sresult/fitting/fitting%s", dir_root, pattern))
     }
 
