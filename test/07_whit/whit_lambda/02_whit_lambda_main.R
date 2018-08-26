@@ -87,7 +87,7 @@ optim_lambda_FUN <- function(sitename, wFUN = wSELF, deltaT, extend){
                  wFUN = wFUN)
 }
 
-for (i in 4){ # length(deltaTs)
+for (i in 1:6){ # length(deltaTs)
     deltaT <- deltaTs[i]
 
     for (j in 1:length(is_extends)){
@@ -99,7 +99,7 @@ for (i in 4){ # length(deltaTs)
         # optim_lambda_FUN(sitename)
         res <- par_sbatch(sites, optim_lambda_FUN, wFUN = wTSM, deltaT, is_extend,
                           return.res = T, Save = T,
-                          outdir = paste0("result/whit_lambda/whit2", subfix))
+                          outdir = paste0("result/whit_lambda/v013/whit2", subfix))
     }
 }
 

@@ -28,13 +28,13 @@ st$site %<>% as.character()
 st$IGBPcode %<>% factor(levels = 1:16, labels = IGBPnames_006[1:16])
 colnames(st)[3] <- "IGBP"
 
-dirs <- dir("Y:/Github/phenofit_cluster/result/whit_lambda/", full.names = T)[-1] %>%
+dirs <- dir("Y:/Github/phenofit_cluster/result/whit_lambda/v013", full.names = T) %>%
     set_names(gsub("whit2", "", basename(.)))
 
 ## 2. lambda info
 
 res_formula <- list()
-for (k in 1:10){ #length(dirs)
+for (k in 1:12){ #length(dirs)
     indir <- dirs[k]
     runningId(k, prefix = indir)
 
@@ -64,7 +64,7 @@ for (k in 1:10){ #length(dirs)
 
     ## get formula now
     temp <- merge(d, st[, c(1, 3:5)], by = "site")
-    temp$lambda %<>% log10()
+    # temp$lambda %<>% log10()
 
     predictors <- c("mean", "sd", "cv", "skewness", "kurtosis", "lat")
     response   <- c("lambda")
@@ -116,7 +116,7 @@ a <- transpose(res_formula)
 coef <- a$info %>% transpose() %>% map(~do.call(rbind, .))
 
 coef$perc <- with(coef, sd/mean*100)
-save(res_formula, coef, file = "data_test/lambda_formula.rda")
+save(res_formula, coef, file = "data_test/lambda_formula_v013.rda")
 
 # var formula = 0.8214 +1.5025*b('mean') -4.0315*b('sd') -0.1018*b('skewness')
 
@@ -133,6 +133,15 @@ save(res_formula, coef, file = "data_test/lambda_formula.rda")
 # $sd
 # cv    kurtosis        mean          sd    skewness
 # 0.006084250 0.001470645 0.022139485 0.052780635 0.003400217
+
+info <- as.list(coef$mean[7, ])
+
+{info %>% sprintf("%+.4f*b('%s')", ., names(.))}[-1] %>%
+    c(sprintf("+%.4f", info[[1]]), .) %>%
+    paste(collapse = " ") %>%
+    gsub("^[+-]", "var formula = ", .) %>%
+    gsub("\\*\\(Intercept\\)", "", .) %T>%
+    cat %T>% writeLines("clipboard")
 
 get_formula <- function(){
     I <- sample(1:n, n*0.4)

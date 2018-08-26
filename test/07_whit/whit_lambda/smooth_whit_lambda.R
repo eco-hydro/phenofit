@@ -147,7 +147,9 @@ optim_lambda <- function(sitename, df, deltaT, extend = T,
             vc$fit <- vc$fit[ind, ]
 
             # coefficient to construct Whittaker lambda formula
-            y <- INPUT_i$y; y = y[!is.na(y)]# should be NA values now
+            y <- INPUT_i$y
+            # y <- dnew$y[I_ext] # fixed 20180824 
+            y <- y[!is.na(y)] # should be NA values now
             vc$coef <- list(mean = mean(y),
                             sd = sd(y),
                             kurtosis = kurtosis(y, type = 2),
