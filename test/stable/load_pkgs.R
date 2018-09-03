@@ -56,7 +56,7 @@ IGBPnames_005 <- c("water", "ENF", "EBF", "DNF", "DBF", "MF" , "CSH",
                    "URB", "CNV", "SNO", "BSV", "UNC")
 
 # save pdf just like `ggsave`
-write_fig <- function(p, file = "Rplot.pdf", width = 10, height = 5, show = T){
+write_fig <- function(p, file = "Rplot.pdf", width = 10, height = 5, show = T, res = 300){
     if (missing(p)) p <- last_plot()
 
     if ("grob" %in% class(p)) {
@@ -69,14 +69,14 @@ write_fig <- function(p, file = "Rplot.pdf", width = 10, height = 5, show = T){
 
     param <- list(file, width = width, height = height)
     if (file_ext == "pdf"){
-        devicefun <- Cairo::CairoPDF # cairo_pdf
+        devicefun <- cairo_pdf # Cairo::CairoPDF # 
     } else {
         if (file_ext %in% c("tif", "tiff")){
             devicefun <- tiff
         } else if (file_ext == "png") {
             devicefun <- Cairo::CairoPNG
         }
-        param %<>% c(list(units = "in", res = 300, compression = "lzw")) #, dpi = 300
+        param %<>% c(list(units = "in", res = res, compression = "lzw")) #, dpi = 300
     }
 
     # print(FUN)
@@ -87,18 +87,13 @@ write_fig <- function(p, file = "Rplot.pdf", width = 10, height = 5, show = T){
     if (show) file.show(file)
 }
 
-transparent_color <- function(color, alpha = 0.5){
-    rgb_col <- col2rgb(color)/255
-    rgb(rgb_col[, 1], rgb_col[, 2], rgb_col[, 3], alpha)
+g_legend<-function(a.gplot){
+    tmp <- ggplot_gtable(ggplot_build(a.gplot))
+    leg <- which(sapply(tmp$grobs, function(x) x$name) == "guide-box")
+    legend <- tmp$grobs[[leg]]
+    return(legend)
 }
 
-# export high resolution tiff 
-write_tiff <- function(p, file, width, height, show = T){
-    tiff(file, width, height, units = "in", res = 300, compression = "lzw")
-    print(p)
-    dev.off()
-    if (show) file.show(file)
-}
 
 readRDS_tidy <- function(file){
     file <- gsub("file:///", "", file)
@@ -305,8 +300,7 @@ readwhitMAT <- function(indir, prefix){
 #' @param height
 #'
 #' @param
-FigsToPages <- function(ps, lgd, ylab.right, file, width = 10, height){
-    nrow  <- 6
+FigsToPages <- function(ps, lgd, ylab.right, file, width = 10, height, nrow = 6){
     npage <- ceiling(length(ps)/nrow)
     if (missing(height)) height = nrow*1.6
 

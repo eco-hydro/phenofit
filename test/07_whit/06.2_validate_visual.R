@@ -1,5 +1,6 @@
 source('test/stable/load_pkgs.R')
 source("test/07_whit/main_phenofit_test.R")
+source("test/07_whit/dat_flux&cam_phenofit.R")
 source('test/stable/ggplot/geom_boxplot_no_outlier.R')
 
 load("data_test/whit_lambda/MOD13A1_st_1e3_20180731.rda")
@@ -15,7 +16,6 @@ quantile_envelope <- function(x, alpha){
     res <- quantile(x, alpha, na.rm = T)
     set_names(res, names)
 }
-
 
 fix_name <- function(x) {
     names(x) %<>% str_extract(".*(?=_)")
@@ -90,13 +90,11 @@ d1 <- d[meth %in% c("wWH", "wWH2") & iter == "iter1"] %>%
     dcast(site+IGBPname+index~meth, value.var = "value")
 # wWH vs wWH2 -------------------------------------------------------------
 
-
 dmin <- 0.1
 d1[, `:=`(diff = wWH - wWH2, kind = 0)]
 d1[diff >  dmin, kind := 1]
 d1[diff < -dmin, kind := -1]
 table(d1[index == "R^2", ]$kind)
-
 
 source("test/stable/ggplot/stat_prop.R")
 brks <- c(0.8, 0.5, 0.2)
@@ -199,12 +197,32 @@ p2 <- boxplot2(p, width = 0.88, size = 0.62); #p2
 
 file <- "Fig8_compare_with_other_methods_iter1.pdf"
 file_tiff <-  gsub(".pdf", ".tif", file)
-write_fig(p2, file_tiff, 11, 9, T)
+write_fig(p2, file_tiff, 11, 9, T, res = 200)
 
 write_fig(p2, file, 11, 9, T)
 
 # write_fig(p1, , 9, 7, T)
 # write_tiff(p2, gsub(".pdf", ".tiff", file), 11, 9)
+
+
+
+colors <- scales::hue_pal()(3)
+colors <- c(colors[2], "grey50", colors[1])
+
+ggplot(d2[meth == "wWH2"], aes(wWH, value)) +
+    geom_point(aes(color = kind), alpha = 0.2) +
+    # facet_wrap(~label, scales = "free") +
+    facet_wrap(~meth+index, labeller = label_value, scales = "free", ncol = 2) +
+    geom_abline(slope = 1, color ="red", size = 0.1) +
+    scale_color_manual(values = colors)
+    # geom_text(data = d_dominant, aes(label = Bigger), fontface = "bold",
+    #           x = -Inf, y = Inf, hjust = -0.3, vjust = 1.5, show.legend = F, color = colors[1]) +
+    # geom_text(data = d_dominant, label = " vs ", fontface = "bold",
+    #           x = -Inf, y = Inf, hjust = -0.6, vjust = 1.5, show.legend = F) +
+    # geom_text(data = d_dominant, aes(label = Smaller), fontface = "bold",
+    #           x = -Inf, y = Inf, hjust = -1.3, vjust = 1.5, show.legend = F, color = colors[3])
+
+
 
 ###############################################################################
 ## 2. acf

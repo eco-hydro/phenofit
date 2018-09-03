@@ -1,4 +1,8 @@
+rm(list = ls())
 source('test/stable/load_pkgs.R')
+source("test/07_whit/main_phenofit_test.R")
+source("test/07_whit/dat_flux&cam_phenofit.R")
+# library(ggrepel)
 
 #' @param lambda Unless lambda is constant, lambda should be null.
 rough_fitting <- function(sitename, df, st, .FUN = whitsmw2, lambda = NULL){
@@ -9,7 +13,7 @@ rough_fitting <- function(sitename, df, st, .FUN = whitsmw2, lambda = NULL){
 
     tryCatch({
         # fill missing values
-        d <- merge(d, data.table(t = date), by = "t", all = T)
+        d <- merge(d, data.table(date = date), by = "date", all = T)
         ############################################################################
         dnew  <- add_HeadTail(d)
         # 1. Check input data and initial parameters for phenofit
@@ -55,9 +59,31 @@ init_lambda <- function(y){
     return(10^lambda)
 }
 
+################################################################################
+noise_percs = c(0.1, 0.3, 0.5, 0) %>% set_names(paste0("p", .*100, "%"))
+# dir_root <- ifelse(.Platform$OS.type == "windows", "Y:/Github/phenofit_cluster/", "")
+if (.Platform$OS.type == "windows"){
+    dir_root <- "V:/"
+} else {
+    dir_root <- "/flush1/kon055/"
+}
+dir_root %<>% paste0("result/flux&cam")
+
+# dirs_raw <- "result/valid" %>%  paste0(dir_root, .) %>%
+#     {list.dirs(.)[-1]} %>% set_names(basename(.)) # 1th is indir
+# dirs_fit  <- "result/fitting" %>%  paste0(dir_root, .) %>%
+#     {list.dirs(.)[-1]} %>% set_names(basename(.)) # 1th is indir
+
+file_info = "val_fittings.rda" #%>% paste0(dir_root, .)
+
+df <- df_org
+df$t %<>% ymd()
+# load("data_test/whit_lambda/MOD13A1_st_1e3_20180731.rda")
+# df$site %<>% as.character()
+
+
 ###############################################################################
-load("data_test/whit_lambda/MOD13A1_st_1e3_20180731.rda")
-load("data_test/lambda_formula.rda")
+load("data_test/lambda_formula_v013.rda")
 
 sites    <- unique(df$site) %>% set_names(., .)
 sitename <- sites[1]
@@ -74,7 +100,7 @@ years <- 2000:2018
 doy   <- seq(1, 366, 16)
 date  <- sprintf("%4d%03d", rep(years, each = 23), doy) %>% parse_date_time("%Y%j") %>% date()
 if (years[1] == 2000) date <- date[-(1:3)]
-date  <- date[1:(length(date)-11)] # for 2018
+date  <- date[1:(length(date)-12)] # for 2018
 
 # 1.3 global parameters
 nptperyear = 23
@@ -95,16 +121,16 @@ k = 2
 source("R/season_3y.R")
 source("R/curvefits.R")
 
-for (k in 1:nrow(coefs)){
+for (k in 4){ # 1:nrow(coefs), grp01_Extend
 # for (k in 3){
     # noise_perc <- noise_percs[k]
     # df <- select_valid(df, noise_perc = noise_perc)[, 1:10]
-    runningId(k, prefix = "k | " )
+    runningId(k, prefix = "k | ")
     pattern <- rownames(coefs)[k]
     param   <- as.list(coefs[k, ])
     ############################################################################
     ############################################################################
-    for (i in 3){ # only wWH2 this time
+    for (i in 1:4){ # only wWH2 this time
         method <- methods[i] #"sgfitw", "whitsmw2" and "wHANTS".
         FUN    <- get(method, envir = as.environment("package:phenofit"))
 
@@ -119,14 +145,14 @@ for (k in 1:nrow(coefs)){
         # a <- llply(sites[23:100], rough_fitting,
         #              df = df, st = st, FUN = get(method), lambda = lambda,
         #              .progress = "text") #lst[[i]]
-        # rough_fitting(sitename, df, st, FUN = whitsmw2, lambda = lambda)
+        # rough_fitting(sitename, df, st, .FUN = whitsmw2, lambda = lambda)
 
         # outdir <- sprintf("result/whit_lambda/valid/%s_%2d%%", methods2[i], noise_perc*100)
-        # outdir <- sprintf("/flush1/kon055/result/whit_lambda/%s_0", methods2[i])
-        outdir <- sprintf("/flush1/kon055/result/whit_lambda2/%s", pattern)
+        outdir <- sprintf("%s/%s_0", dir_root, methods2[i])
+        # outdir <- sprintf("/flush1/kon055/result/whit_lambda2/%s", pattern)
         temp <- par_sbatch(sites, rough_fitting,
                            df = df, st = st, .FUN = get(method), lambda = lambda,
-                           return.res = F, Save = T, outdir = outdir)
+                           return.res = F, Save = T, outdir = outdir, overwrite = F)
 
         if (IsPlot) dev.off()
         # brks2 <- season_3y(INPUT, nptperyear, south = sp$lat[1] < 0, FUN =FUN,
@@ -135,6 +161,12 @@ for (k in 1:nrow(coefs)){
     }
 }
 
+files <- dir(dir_root, recursive = T, full.names = T)
+names <- basename(dirname(files)) %>% gsub("_0", "", .)
+
+lst <- llply(files, get_Fitting, .progress = "text") %>% set_names(names)
+d_rough <- melt_list(lst, "meth")
+save(d_rough, file = "rought_fitting.rda")
 # lst %<>% set_names(methods2)
 # save(df, lst, file = outfile)
 

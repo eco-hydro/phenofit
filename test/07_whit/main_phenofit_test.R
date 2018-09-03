@@ -30,7 +30,7 @@ stat_fun <- function(Y_obs, Y_sim){
     })
     # c(R = R, pvalue = pvalue)[1]
     # pvalue
-    R
+    R^2
 }
 
 table_count <- function(x, levels){
@@ -162,7 +162,7 @@ get_phenofit_result_merge <- function(df_list){
 methods <- c('AG', 'BECK', 'ELMORE', 'ZHANG', 'whit_R', 'whit_gee')[-5]
 #' @examples
 #' over_perform(df, formula, prefix)
-over_perform <- function(d, formula, prefix, xlab, ylim2 = NULL, IGBP.all = F, outfile){
+over_perform <- function(d, st, i, formula, prefix, xlab, ylim2 = NULL, IGBP.all = F, outfile){
     # only period when all curve fitting methods have result is kept.
     df_trim <- dcast(d, formula, value.var = "value", fun.aggregate = mean) %>% na.omit()
     df_trim[, raw := y]
@@ -172,17 +172,17 @@ over_perform <- function(d, formula, prefix, xlab, ylim2 = NULL, IGBP.all = F, o
     id_vars <- colnames(df_trim)[I_var]
     methods <- colnames(df_trim)[-I_var] %>% sort() %>% .[c(4, 1:3, 12, 5:11)] %>% rm_empty()
     methods %<>% setdiff(c("whit_R", "wWH_p2", "wWH_p15", "WH_p2","WH_p15")) #,"AG", "BECK", "ELMORE", "ZHANG"
-    methods <- c("raw", "AG", "BECK", "ELMORE", "ZHANG", "wHANTS", "wSG", "wWH")
+    methods <- c("raw", "AG", "ZHANG", "wHANTS", "wSG", "wWH", "wWH2","whit_fluxcam_wWH")
     nmeth   <- length(methods)
 
     df_trim <- melt(df_trim, id.vars = id_vars, measure.vars = methods, variable.name = "meth")
 
     # new_levels <- c("raw ", "AG ", "Beck ", "Elmore ", "Zhang ", "WH")
-    methods2 <- methods %>% map_chr(~paste0(.x, " "))
-    cols <- scales::hue_pal()(nmeth-1) %>% c("black", .) %>% set_names(methods2)
+    # methods2 <- methods %>% map_chr(~paste0(.x, " "))
+    cols  <- scales::hue_pal()(nmeth-1) %>% c("black", .) %>% set_names(methods)
     cols2 <- cols; cols2[1] <- "transparent"
 
-    df_trim$meth %<>% mapvalues(methods, methods2)
+    # df_trim$meth %<>% mapvalues(methods, methods2)
 
     # visualization,
     info_ai <- df_trim[SummaryQA == "good", # & meth != "raw "
@@ -207,6 +207,16 @@ over_perform <- function(d, formula, prefix, xlab, ylim2 = NULL, IGBP.all = F, o
                 panel.grid.major.y = element_line(size = 0.2))
     grid_x <- geom_vline(data = xlab, xintercept = (1:(nrow(xlab) - 1)) + 0.5,
         linetype = 2, size = 0.2, color = "grey70")
+
+    # s <- ggplot(x, aes(x = meth, y = value, fill = kind)) +
+    #     geom_bar(width = 1, stat = "identity",
+    #              position = position_stack(reverse = TRUE)) +
+    #     geom_text(aes(label = value))
+        # coord_flip()
+    # p + geom_subview(s)
+        # ggrepel::geom_text_repel(data = d[raw - wWH > 0.05], # | whit_fluxcam_wWH < 0
+        #                          aes(label = site))
+
     # 1. show correlation, , alpha = 0.6, fill = meth
     p1 <- { ggplot(info_r, aes(IGBPname, R, color = meth), position = "dodge") +
                 scale_colour_manual(values = cols,
@@ -235,7 +245,9 @@ over_perform <- function(d, formula, prefix, xlab, ylim2 = NULL, IGBP.all = F, o
     p <- gridExtra::arrangeGrob(p1, p2, nrow = 2, heights = c(0.9, 1), padding = unit(1, "line"))
     # grid.draw(p)
     if (missing(outfile)) outfile <- sprintf("valid_%s.pdf", prefix)
-    save_pdf(outfile, 10, 8, p, open = T)
+    write_fig(p, outfile, 10, 8, show = T)
+
+    return(info_r)
     # save_pdf(sprintf("valid_%s_AI.pdf", prefix), 12, 5, p2)
 }
 
@@ -329,7 +341,7 @@ plot_methods <- function(sitename, df_trim, st, prefix_fig = "whit", methods, sh
 
     ## scale validation variable (e.g. GPP or VCI)
     # The range of validation variable and \code{whit_gee} should be equal.
-    var_wh <- "wWH"
+    var_wh <- "whit_fluxcam_wWH" #"wWH" #,"whit_fluxcam_wWH"
     d_valid_scale <- d[meth %in% c(var_wh, "GPP_DT", "vci") & iters == "iter2"] %>%
         dcast(site+date~meth, value.var = "value") %>% na.omit() %>%
         melt(id.vars = c("site", "date"), variable.name = "meth")
@@ -405,7 +417,7 @@ plot_methods <- function(sitename, df_trim, st, prefix_fig = "whit", methods, sh
         p1 <- gridExtra::arrangeGrob(p1, lgd, nrow = 2,
             heights = c(20, 1), padding = unit(0.5, "line")) #return,
 
-    if (!IsSingle) save_pdf(file_pdf, 11, 7, p = p1)
+    if (!IsSingle) write_fig(p1, file_pdf, width = 11, height = 7, show = F)
     p1
 }
 
@@ -450,7 +462,7 @@ get_GOF3 <- function(d, iter = "iter1"){
         ddply_dt(d[I_valid == is_valid & iters == iter], .(GOF(y0, value)), byname)
     }
 
-    list(cal = get_info(is_valid = 0), val = get_info(is_valid = 1)) %>% 
+    list(cal = get_info(is_valid = 0), val = get_info(is_valid = 1)) %>%
         {.[sapply(., nrow) > 0]} %>% melt_list("type")
 }
 
