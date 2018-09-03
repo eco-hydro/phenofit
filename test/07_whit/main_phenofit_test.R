@@ -508,9 +508,9 @@ get_GOF_fromFitting_I <- function(df_fit, df_org){
     iter1 <- suppressMessages(get_GOF3(d, "iter1"))
     iter2 <- suppressMessages(get_GOF3(d, "iter2"))
 
-    info_rough <- d[, .(info = list(GOF_extra(y0, value))), byname]
-    info_rough <- info_rough$info %>% do.call(rbind, .) %>% data.table() %>%
-        cbind(info_rough[, ..byname], .) %>% merge(d_perc, by = c("site"))
+    info_rough <- ddply_dt(d, .(GOF_extra(y0, value)), byname)
+    vars <- c("Rg", "Rg_0")
+    info_rough[, (vars) := lapply(.SD, function(x) map_dbl(x, first, default = NA)), .SDcols = vars]
 
     info <- listk(iter1, iter2) %>% melt_list("iter")
     list(info = info, rough = info_rough)

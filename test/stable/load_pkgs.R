@@ -69,7 +69,7 @@ write_fig <- function(p, file = "Rplot.pdf", width = 10, height = 5, show = T, r
 
     param <- list(file, width = width, height = height)
     if (file_ext == "pdf"){
-        devicefun <- cairo_pdf # Cairo::CairoPDF # 
+        devicefun <- cairo_pdf # Cairo::CairoPDF #
     } else {
         if (file_ext %in% c("tif", "tiff")){
             devicefun <- tiff
@@ -101,7 +101,8 @@ readRDS_tidy <- function(file){
 }
 
 ddply_dt <- function(d, j, by){
-    by <- names(by)
+    if (is.quoted(by)) by <- names(by)
+
     byname  <- paste(by, collapse = ", ")
     operate <- j[[1]] %>% deparse()
 
@@ -111,13 +112,40 @@ ddply_dt <- function(d, j, by){
 }
 
 
+#' @return
+#' Rg   : normalized
+#' Rg_0 : no normalized
 GOF_extra <- function(Y_obs, Y_pred){
     # the autocorrelation of residuals
     acf = acf(Y_pred - Y_obs, lag.max = 10, plot = F, na.action = na.pass)$acf[,,1][-1]
     # roughness
-    temp = diff(Y_pred)^2 %>% .[!is.na(.)]
-    Rg = sqrt(sum(temp)/length(temp))
-    c(Rg = Rg, acf = list(acf)) #GOF(Y_obs, Y_pred),
+    Roughness <- function(Y_pred){
+        temp = diff(Y_pred)^2 %>% .[!is.na(.)]
+        if (is_empty(temp)) return(NA_real_) 
+        Rg = sqrt(sum(temp)/length(temp))
+        Rg
+    }
+
+    ## roughness second definition
+    if (all(is.na(Y_pred))){
+        Rg   <- NA_real_
+        Rg_0 <- NA_real_
+    } else{
+        min <- min(Y_pred, na.rm = T)
+        max <- max(Y_pred, na.rm = T)
+        A   <- max - min
+
+        if (is.finite(A)){
+            Yz <- (Y_pred  - min) / A  # normalized
+            Rg <- Roughness(Yz)        
+        } else {
+            Rg <- NA
+        }
+
+        Rg_0 = Roughness(Y_pred)
+    }
+    
+    c(Rg = Rg, Rg_0 = Rg_0, acf = list(acf)) #GOF(Y_obs, Y_pred),
 }
 
 
