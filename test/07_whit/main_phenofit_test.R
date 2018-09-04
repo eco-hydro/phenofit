@@ -513,6 +513,7 @@ get_GOF_fromFitting_I <- function(df_fit, df_org){
     info_rough[, (vars) := lapply(.SD, function(x) map_dbl(x, first, default = NA)), .SDcols = vars]
 
     info <- listk(iter1, iter2) %>% melt_list("iter")
+    info <- merge(info, d_perc, by = c("site")) # add percentage infomation
     list(info = info, rough = info_rough)
 }
 

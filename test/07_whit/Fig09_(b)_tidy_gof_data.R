@@ -80,7 +80,7 @@ boxplot2 <- function(p, width = 0.95, size = 0.7){
 }
 
 ###############################################################################
-indir <- "V:/result/val_info/info_0/"
+indir <- "V:/result/val_info/info_0_v2/"
 files <- dir(indir, full.names = T, recursive = T)
 
 df <- llply(files, tidy_info, .progress = "text") %>%
@@ -95,16 +95,16 @@ df$meth %<>% factor(methods)
 st$site %<>% as.character()
 st$IGBPname %<>% factor(IGBPnames_006)
 
-indice <- c("R^2", "Bias", "RMSE", "Roughness")
-labels <- c("bold((a)*' '*R^2)", "bold((b)*' '*Bias)",
+indice       <- c("R^2", "Bias", "RMSE", "Roughness")
+indice_label <- c("bold((a)*' '*R^2)", "bold((b)*' '*Bias)",
             "bold((c)*' '*RMSE)", "bold((d)*' '*Roughness)")
 
-d <- df[, .(site, meth, type, iter, RMSE, `R^2` = R2, Bias, Roughness = Rg)] %>%
+d <- df[, .(site, meth, type, iter, RMSE, `R^2` = R2, Bias, Roughness = Rg_0)] %>%
     melt(id.vars = c("site", "meth", "type", "iter"), variable.name = "index") #, "perc"
 d <- merge(st[, .(site, IGBPname)], d)
 
 d$index %<>% factor(indice)# <- indice# factor(indices)
-d$index %<>% mapvalues(indice, labels)
+d$index %<>% mapvalues(indice, indice_label)
 
 d1 <- d[meth %in% c("wWH", "wWH2") & iter == "iter1"] %>%
     dcast(site+IGBPname+index~meth, value.var = "value")
@@ -281,129 +281,5 @@ write_fig(p2, file_tiff, 9, 5, T)
 write_fig(p2, file, 10, 5.5, T)
 
 
-###############################################################################
-## 03. Fig10. The influence of good values percentage
-levels <- seq(0, 1, 0.01)
-xmid   <- c((levels[-1] + levels[-length(levels)])/2, 1)
-
-df[, grp_perc := findInterval(perc_good, levels, rightmost.closed = T)]
-df[, xmid := xmid[grp_perc]]
-
-d <- df[, .(site, meth, type, iter, RMSE, R2, Bias, Rg, grp_perc, xmid)] %>% #, "NSE"
-    melt(id.vars = c("site", "meth", "type", "iter", "grp_perc", "xmid"), variable.name = "index")
-
-ggplot(d[index == "R2"], aes(xmid,value)) + geom_point() + geom_density2d() +
-    facet_wrap(~meth)
-# d <- df[meth == "wWH" & iter == "iter1"]
-
-alphas <- c(.05, .1, .25, .5) %>% set_names(., .)
-d_envelope <- llply(alphas, function(alpha){
-    # print(alpha)
-    expr <- substitute(quote(res <- ddply_dt(d, .(quantile_envelope(value, alpha)), .(meth, index, iter, grp_perc))),
-               list(alpha = alpha))
-    # print(eval(expr))
-    eval(eval(expr))
-})
-
-d_enve <- d_envelope %>% melt_list("alpha")
-d_enve[, xmid := xmid[grp_perc]]
-
-# hue_pal()(4) %>% show_col()
-cols <- hue_pal()(4)
-colors <- c(trans_col(cols[1], 0.5), cols[2:3], "white")
-
-pdat <- d_enve[meth == "wWH" & iter == "iter1"]
-
-indice <- c("R2", "Bias", "RMSE", "Rg")
-labels <- c("bold((a)*' '*R^2)", "bold((b)*' '*Bias)",
-            "bold((c)*' '*RMSE)", "bold((d)*' '*Roughness)")
-# pdat <- d[meth != "whit_R" & iter == "iter2" & index %in% indice]
-pdat$index %<>% factor(indice, labels)
-
-# sub_id <- geom_text(data = data.table(index = factor(labels, labels),
-#                                        label = sprintf("(%s)", letters[1:length(labels)])),
-#                     aes(label = label),
-#                     x = -Inf, y = Inf, vjust = 1, hjust = 0)
-d_vline <- data.table(index = factor(labels[1:3], labels),
-                      x = c(.3, .25, .25))
-v_line <- geom_vline(data = d_vline ,
-                     aes(xintercept = x), color = "black", linetype = 2, size = 1)
-v_line_lab <- geom_text(data = d_vline, hjust = -0.1, vjust = -0.4,
-                        aes(x, y = -Inf,label = sprintf("%2d%%", x*100)))
-
-p <- ggplot(pdat, aes(xmid, ymin)) +
-    # geom_point() + geom_density2d() +
-    geom_ribbon(aes(x = xmid, ymin = ymin, ymax = ymax, fill = alpha)) +
-    facet_wrap(~index, scales = "free", labeller=label_parsed) +
-    # sub_id +
-    geom_line(data = pdat[alpha == 0.5, ], color ="white") +
-    v_line + v_line_lab +
-    # geom_vline(xintercept = c(0.25), color= "blue", size = 1, linetype = 2) +
-    scale_fill_manual(values = colors, labels = c("  5% and 95%", "10% and 90%", "25% and 75%", "50%")) +
-    guides(fill = guide_legend(override.aes = list(color = "black"))) +
-    labs(x = "The percentage of good values (%)") +
-    scale_x_continuous(labels = function(x) sprintf("%d", x*100)) +
-    scale_y_continuous(labels = function(x) sprintf("%.2f", x)) +
-    theme_gray(base_size = 14) +
-    theme(
-        legend.title = element_blank(),
-        legend.position = c(0.98, 0.985),
-        legend.justification = c(1, 1),
-        legend.spacing.x = unit(0.1, 'cm'),
-        strip.text = element_text(face = "bold", size = 13, margin = margin(2, 0, 1, 0, "pt")),  # not work for meth expr
-        axis.text = element_text(size = 12),
-        axis.title.x = element_text(face = "bold", size = 13)
-    )+
-    ylab(NULL)
-
-file <- "Fig10_good_values_percentage_impact.pdf"
-cairo_pdf(file, 9.5, 6)
-print(p)
-dev.off(); file.show(file)
-
-file <- gsub(".pdf", ".tiff", file)
-write_tiff(p, file, 9.5, 6)
 
 ## 4. GOF spatial distribution
-
-d <- merge(df[meth == "wWH", .(site, meth, type, iter, RMSE, R2, Bias, Roughtness = Rg)],
-           st[, .(site, lon, lat)]) %>%
-    melt(c("site", "meth", "type", "iter", "lon", "lat"), variable.name = "index")
-d
-ggplot(d, aes(lon, lat)) + geom_point(aes(color = R2))
-
-indice <- c("R2", "Bias", "RMSE", "Roughtness")
-ps <- list()
-for (i in 1:4){
-    pdat <- d[index == indice[i] & iter == "iter1", ]
-    p <- ggplot(pdat) +
-        geom_polygon(data = d_poly, aes(long, lat, group = group), fill = "grey85", colour = "black") +
-        coord_fixed(xlim = c(-180, 180), ylim = c(-55, 85), ratio = 1) +
-        geom_point(aes(lon, lat, color = value), size = 0.8) +
-        scale_colour_gradientn(colors = colors) +
-        theme_void() +
-        guides(color = guide_colorbar(barheight  = 6)) +
-        theme(plot.margin = margin(-50, -10, -50, -10, "pt"),
-              axis.text = element_blank(),
-              axis.title = element_blank()
-              )
-    ps[[i]] <- p
-}
-ps[[1]]
-
-tiff("a.png",10, 15, units = "in", res = 300, dpi = 300)
-CairoPNG()
-p <- arrangeGrob(grobs = ps, nrow = 4, ncol = 1)
-grid.newpage()
-grid.draw(p)
-dev.off()
-# file.show("a.png")
-
-library(rgdal)
-d_poly <- readOGR("F:/ArcGIS/continent.shp") %>%
-    tidy(.[, "CONTINENT"], region = "CONTINENT")
-
-colors <- rev(RColorBrewer::brewer.pal(11, "Spectral"))
-
-
-    # coord_map()
