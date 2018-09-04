@@ -503,16 +503,20 @@ get_GOF_fromFitting_I <- function(df_fit, df_org){
     d      <- merge(df_org[, .(site, t, y0, w0, I_valid)], df_fit, by = c("site", "t"))
 
     setkeyv(d, c("site", "t"))
-    byname = c("site", "meth") %>% intersect(colnames(d)) # make sure by name exist
 
     iter1 <- suppressMessages(get_GOF3(d, "iter1"))
     iter2 <- suppressMessages(get_GOF3(d, "iter2"))
 
+    ## 2. Roughness index and acf
+    # if not include iters, info_rough will be error
+    byname = c("site", "meth", "iters") %>% intersect(colnames(d)) # make sure `byname` exist
+
     info_rough <- ddply_dt(d, .(GOF_extra(y0, value)), byname)
-    vars <- c("Rg", "Rg_0")
+    # vars <- c("Rg", "Rg_0")
+    vars <- c("Rg", "Rg_norm_by_obs", "Rg_norm_by_pred")
     info_rough[, (vars) := lapply(.SD, function(x) map_dbl(x, first, default = NA)), .SDcols = vars]
 
-    info <- listk(iter1, iter2) %>% melt_list("iter")
+    info <- listk(iter1, iter2) %>% melt_list("iters")
     info <- merge(info, d_perc, by = c("site")) # add percentage infomation
     list(info = info, rough = info_rough)
 }

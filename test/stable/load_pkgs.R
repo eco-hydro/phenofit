@@ -126,26 +126,36 @@ GOF_extra <- function(Y_obs, Y_pred){
         Rg
     }
 
-    ## roughness second definition
-    if (all(is.na(Y_pred))){
-        Rg   <- NA_real_
-        Rg_0 <- NA_real_
-    } else{
-        min <- min(Y_pred, na.rm = T)
-        max <- max(Y_pred, na.rm = T)
+    znorm <- function(Y_pred, Y_norm){
+        min <- min(Y_norm, na.rm = T)
+        max <- max(Y_norm, na.rm = T)
         A   <- max - min
 
         if (is.finite(A)){
             Yz <- (Y_pred  - min) / A  # normalized
-            Rg <- Roughness(Yz)        
         } else {
-            Rg <- NA
+            Yz <- Y_pred * NA
         }
-
-        Rg_0 = Roughness(Y_pred)
+        return(Yz)
     }
-    
-    c(Rg = Rg, Rg_0 = Rg_0, acf = list(acf)) #GOF(Y_obs, Y_pred),
+
+    ## roughness second definition
+    if (all(is.na(Y_pred))){
+        Rg   <- NA_real_
+        Rg_0 <- NA_real_
+    } else {
+        # for different methods, using the same `min` and `max` value
+        Y_norm_by_pred <- znorm(Y_pred, Y_pred)
+        Y_norm_by_obs  <- znorm(Y_pred, Y_obs)
+
+        Rg_norm_by_pred <- Roughness(Y_norm_by_pred)        
+        Rg_norm_by_obs  <- Roughness(Y_norm_by_obs)
+        Rg              <- Roughness(Y_pred)
+    }
+
+    c(Rg = Rg, 
+        Rg_norm_by_obs  = Rg_norm_by_obs, 
+        Rg_norm_by_pred = Rg_norm_by_pred, acf = list(acf)) #GOF(Y_obs, Y_pred),
 }
 
 
