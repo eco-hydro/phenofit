@@ -1,7 +1,15 @@
 language: R
 cache: packages
-sudo: true
-dist: trusty
+
+matrix:
+  include:
+    - os: linux
+      dist: trusty
+      sudo: true
+    - os: osx
+  allow_failures:
+    - os: osx
+
 warnings_are_errors: false
 
 r_packages:

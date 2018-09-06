@@ -142,15 +142,16 @@ GOF_extra <- function(Y_obs, Y_pred){
     ## roughness second definition
     if (all(is.na(Y_pred))){
         Rg   <- NA_real_
-        Rg_0 <- NA_real_
+        Rg_norm_by_pred <- NA_real_
+        Rg_norm_by_obs  <- NA_real_
     } else {
         # for different methods, using the same `min` and `max` value
-        Y_norm_by_pred <- znorm(Y_pred, Y_pred)
-        Y_norm_by_obs  <- znorm(Y_pred, Y_obs)
-
+        Y_norm_by_pred  <- znorm(Y_pred, Y_pred)
+        Y_norm_by_obs   <- znorm(Y_pred, Y_obs)
+        
+        Rg              <- Roughness(Y_pred)
         Rg_norm_by_pred <- Roughness(Y_norm_by_pred)        
         Rg_norm_by_obs  <- Roughness(Y_norm_by_obs)
-        Rg              <- Roughness(Y_pred)
     }
 
     c(Rg = Rg, 
