@@ -19,8 +19,8 @@ r_github_packages:
   - r-lib/covr
 
 before_install:
-  - if [ "${TRAVIS_OS_NAME}" == "osx" ]; then xcode-select --install; fi
   - if [ "${TRAVIS_OS_NAME}" == "osx" ]; then brew install llvm; fi
+  - if [ "${TRAVIS_OS_NAME}" == "osx" ]; then export PATH="/usr/local/opt/llvm/bin:$PATH; fi
   
 after_success:
   - Rscript -e 'covr::codecov()'
