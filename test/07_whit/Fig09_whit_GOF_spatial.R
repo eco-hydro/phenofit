@@ -25,7 +25,7 @@ theme.nopadding <-
 
 poly <- readOGR("F:/ArcGIS/continent.shp")
 
-d <- merge(df[meth == "wWH" & iter == "iter1", .(site, R2, Bias, RMSE, Roughtness = Rg_0)],
+d <- merge(df[meth == "wWH" & iters == "iter1", .(site, R2, Bias, RMSE, Roughtness = Rg_0)],
            st[, .(site, lon, lat)]) %>% .[, 2:ncol(.)]
 
 sp <- df2sp(d)
@@ -81,7 +81,7 @@ plot_sppoint <- function(sp, i, brks, sp.layout, cols){
         seq(0, 0.1, 0.02),
         # seq(0.01, 0.03, 0.005)
         # seq(0.02, 0.1, 0.02)
-        seq(0.01, 0.06, 0.01)
+        seq(0.01, 0.04, 0.01)
     )
 
     sp_poly <- list("sp.polygons", poly, col = "grey60", fill = "grey85")
@@ -127,36 +127,36 @@ plot_sppoint <- function(sp, i, brks, sp.layout, cols){
 
 ################################ GGPLOT VERSION ################################
 
-d <- merge(df[meth == "wWH", .(site, meth, type, iter, RMSE, R2, Bias, Roughtness = Rg)],
-           st[, .(site, lon, lat)]) %>%
-    melt(c("site", "meth", "type", "iter", "lon", "lat"), variable.name = "index")
-d
-ggplot(d, aes(lon, lat)) + geom_point(aes(color = R2))
-
-indice <- c("R2", "Bias", "RMSE", "Roughtness")
-ps <- list()
-for (i in 1:4){
-    pdat <- d[index == indice[i] & iter == "iter1", ]
-    p <- ggplot(pdat) +
-        geom_polygon(data = d_poly, aes(long, lat, group = group), fill = "grey85", colour = "black") +
-        coord_fixed(xlim = c(-180, 180), ylim = c(-55, 85), ratio = 1) +
-        geom_point(aes(lon, lat, color = value), size = 0.8) +
-        scale_colour_gradientn(colors = colors) +
-        theme_void() +
-        guides(color = guide_colorbar(barheight  = 6)) +
-        theme(plot.margin = margin(-50, -10, -50, -10, "pt"),
-              axis.text = element_blank(),
-              axis.title = element_blank()
-              )
-    ps[[i]] <- p
-}
-ps[[1]]
-
-tiff("a.png",10, 15, units = "in", res = 300, dpi = 300)
-CairoPNG()
-p <- arrangeGrob(grobs = ps, nrow = 4, ncol = 1)
-grid.newpage()
-grid.draw(p)
-dev.off()
+# d <- merge(df[meth == "wWH", .(site, meth, type, iter, RMSE, R2, Bias, Roughtness = Rg)],
+#            st[, .(site, lon, lat)]) %>%
+#     melt(c("site", "meth", "type", "iter", "lon", "lat"), variable.name = "index")
+# d
+# ggplot(d, aes(lon, lat)) + geom_point(aes(color = R2))
+#
+# indice <- c("R2", "Bias", "RMSE", "Roughtness")
+# ps <- list()
+# for (i in 1:4){
+#     pdat <- d[index == indice[i] & iter == "iter1", ]
+#     p <- ggplot(pdat) +
+#         geom_polygon(data = d_poly, aes(long, lat, group = group), fill = "grey85", colour = "black") +
+#         coord_fixed(xlim = c(-180, 180), ylim = c(-55, 85), ratio = 1) +
+#         geom_point(aes(lon, lat, color = value), size = 0.8) +
+#         scale_colour_gradientn(colors = colors) +
+#         theme_void() +
+#         guides(color = guide_colorbar(barheight  = 6)) +
+#         theme(plot.margin = margin(-50, -10, -50, -10, "pt"),
+#               axis.text = element_blank(),
+#               axis.title = element_blank()
+#               )
+#     ps[[i]] <- p
+# }
+# ps[[1]]
+#
+# tiff("a.png",10, 15, units = "in", res = 300, dpi = 300)
+# CairoPNG()
+# p <- arrangeGrob(grobs = ps, nrow = 4, ncol = 1)
+# grid.newpage()
+# grid.draw(p)
+# dev.off()
 # file.show("a.png")
 # coord_map()

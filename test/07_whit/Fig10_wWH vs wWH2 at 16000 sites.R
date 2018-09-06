@@ -2,6 +2,11 @@
 library(grid)
 library(gridExtra)
 
+itersI <- "iter2"
+
+## when compared with wWH2, iter1 was used. Because weights updating and new
+# generation time-series procedure can offset the difference.
+
 label_value <- function (labels, multi_line = TRUE, sep = "*'~'*")
 {
     out <- do.call("Map", c(list(paste, sep = sep), labels))
@@ -14,16 +19,15 @@ label_value <- function (labels, multi_line = TRUE, sep = "*'~'*")
 }
 
 
-d <- df[, .(site, meth, type, iter, RMSE, `R^2` = R2, Bias, Roughness = Rg_0)] %>%
-    melt(id.vars = c("site", "meth", "type", "iter"), variable.name = "index") #, "perc"
+d <- df[meth %in% methods2, .(site, meth, type, iters, RMSE, R2 = R2, Bias, Rg = Rg_0)] %>%
+    melt(id.vars = c("site", "meth", "type", "iters"), variable.name = "index") #, "perc"
 d <- merge(st[, .(site, IGBPname)], d)
 
-d$index %<>% factor(indice)# <- indice# factor(indices)
-d$index %<>% mapvalues(indice, indice_label)
+d$index %<>% factor(indice, indice_label)# <- indice# factor(indices)
+# d$index %<>% mapvalues(indice, )
 
-d2 <- d[iter == "iter2"] %>%
-    {dcast(., site+IGBPname+iter+index~meth, value.var = "value")[, c(1:5, 8, 10:13)]} %>%
-    melt(c("site", "IGBPname", "iter", "index", "wWH"), variable.name = "meth")
+d2 <- d[iters == itersI] %>% dcast(., site+IGBPname+iters+index~meth, value.var = "value") %>%
+    melt(c("site", "IGBPname", "iters", "index", "wWH"), variable.name = "meth")
 d2[, kind:=0]
 d2 <- d2[meth == "wWH2",]
 
@@ -95,7 +99,7 @@ colors <- c(colors[2], "grey20", colors[1])
 #                  bottom = xtitle,
 #                  left = textGrob("Other methods", gp=gpar(fontsize=14, fontface = "bold"), rot = 90))
 # g <- arrangeGrob(g, bottom = lgd)
-file <- "Fig10_compare_with_wWH2.pdf"
+file <- sprintf("Fig10_compare_with_wWH2_%s.pdf", itersI)
 file_tiff <- gsub(".pdf", ".tif", file)
 width = 8; height = 7
 write_fig(p, file_tiff, width, height, T, res = 300)

@@ -58,9 +58,9 @@ for (i in 4){
     if (iscal_gof){
         dirs  <- dirs_fit %>% .[grep(pattern, basename(.))]
         files <- llply(dirs, dir, pattern = "*.RDS", full.names = T) %>% unlist()
-        temp  <- par_sbatch(files, get_GOF_fromFitting, df_org = df_org,
-            Save=T, outdir=sprintf("%sresult/val_info/info%s_v2", dir_root, pattern))
-        # d <- get_GOF_fromFitting(files[1], df_org)
+        d <- get_GOF_fromFitting(files[1], df_org)
+        # temp  <- par_sbatch(files, get_GOF_fromFitting, df_org = df_org,
+            # Save=T, outdir=sprintf("%sresult/val_info/info%s_v2", dir_root, pattern))
     }
 
     # res <- list()

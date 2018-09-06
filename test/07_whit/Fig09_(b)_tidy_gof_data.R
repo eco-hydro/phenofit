@@ -46,7 +46,7 @@ tidy_info <- function(file){
         d_rough %<>% reorder_name(c("site", "meth"))
 
         a[[i]] <- merge(d_info, d_rough) %>%
-            reorder_name(c("site", "meth", "type", "iter"))#list(info = d_info, rough = d_rough)
+            reorder_name(c("site", "meth", "type", "iters"))#list(info = d_info, rough = d_rough)
     }
     a %<>% do.call(rbind, .) #transpose() %>% map(~
     # a <- fix_name(a)
@@ -55,7 +55,7 @@ tidy_info <- function(file){
     #     .[index %in% c("R2", "NSE", "RMSE")]
 
     # d$meth %<>% factor(methods)
-    a$Rg %<>% unlist()
+    # a$Rg %<>% unlist()
     return(a)
 }
 
@@ -76,37 +76,34 @@ boxplot2 <- function(p, width = 0.95, size = 0.7){
         geom_text(data = d_lab, aes(x = "ENF",
                                     y = Inf, color = NULL, label = label),
                   vjust = 1.5, hjust = 1.1, fontface = "bold", size =5, show.legend = F)
-
 }
 
+st$site %<>% as.character()
+st$IGBPname %<>% factor(IGBPnames_006)
+
+indice       <- c("R2", "Bias", "RMSE", "Rg")
+indice_label <- c("bold((a)*' '*R^2)", "bold((b)*' '*Bias)",
+                  "bold((c)*' '*RMSE)", "bold((d)*' '*Roughness)")
+
 ###############################################################################
-indir <- "V:/result/val_info/info_0_v2/"
+indir <- "V:/result/val_info/info_0_v2_iters/"
 files <- dir(indir, full.names = T, recursive = T)
 
 df <- llply(files, tidy_info, .progress = "text") %>%
     # set_names(c("p10%", "p30%", "p50%")) %>%
     # melt_list("perc")
     do.call(rbind, .)
-df$meth %<>% factor(methods)
+# df$meth %<>% factor(methods2)
 
 # df <- melt_list(lst, "meth")
 # df$Rg %<>% unlist()
 
-st$site %<>% as.character()
-st$IGBPname %<>% factor(IGBPnames_006)
-
-indice       <- c("R^2", "Bias", "RMSE", "Roughness")
-indice_label <- c("bold((a)*' '*R^2)", "bold((b)*' '*Bias)",
-            "bold((c)*' '*RMSE)", "bold((d)*' '*Roughness)")
-
-d <- df[, .(site, meth, type, iter, RMSE, `R^2` = R2, Bias, Roughness = Rg_0)] %>%
-    melt(id.vars = c("site", "meth", "type", "iter"), variable.name = "index") #, "perc"
+d <- df[, .(site, meth, type, iters, RMSE, R2 = R2, Bias, Roughness = Rg_0)] %>%
+    melt(id.vars = c("site", "meth", "type", "iters"), variable.name = "index") #, "perc"
 d <- merge(st[, .(site, IGBPname)], d)
+d$index %<>% factor(indice, indice_label)# <- indice# factor(indices)
 
-d$index %<>% factor(indice)# <- indice# factor(indices)
-d$index %<>% mapvalues(indice, indice_label)
-
-d1 <- d[meth %in% c("wWH", "wWH2") & iter == "iter1"] %>%
+d1 <- d[meth %in% c("wWH", "wWH2") & iters == "iter1"] %>%
     dcast(site+IGBPname+index~meth, value.var = "value")
 # wWH vs wWH2 -------------------------------------------------------------
 
@@ -149,8 +146,8 @@ file.show(file)
 
 
 # vs other methods --------------------------------------------------------
-d <- df[, .(site, meth, type, iter, RMSE, `R^2` = R2, Bias, Roughness = Rg)] %>%
-    melt(id.vars = c("site", "meth", "type", "iter"), variable.name = "index") #, "perc"
+d <- df[, .(site, meth, type, iters, RMSE, `R^2` = R2, Bias, Roughness = Rg)] %>%
+    melt(id.vars = c("site", "meth", "type", "iters"), variable.name = "index") #, "perc"
 d <- merge(st[, .(site, IGBPname)], d)
 
 d$index %<>% factor(indice)# <- indice# factor(indices)
@@ -247,13 +244,13 @@ boxplot <- function(p, width = 0.95, size = 0.7){
               axis.text = element_text(color = "black"))
 }
 
-d_acf <- df[, .(site, meth, type, iter, acf)] %>%
-    melt(id.vars = c("site", "meth", "type", "iter"), variable.name = "index")
+d_acf <- df[, .(site, meth, type, iters, acf)] %>%
+    melt(id.vars = c("site", "meth", "type", "iters"), variable.name = "index")
 
 acf <- df$acf %>% do.call(rbind, .) %>%
     set_colnames(paste0("tag", 1:10)) %>% data.table()
-d_acf <- cbind(df[, .(site, meth, type, iter)], acf) %>%
-    melt(c("site", "meth", "type", "iter"), variable.name = "tag")
+d_acf <- cbind(df[, .(site, meth, type, iters)], acf) %>%
+    melt(c("site", "meth", "type", "iters"), variable.name = "tag")
 d_acf$tag %<>% mapvalues(levels(.), gsub("tag", "", levels(.)))
 
 d_acf <- d_acf[meth %in% methods2, ]

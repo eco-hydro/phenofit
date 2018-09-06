@@ -2,35 +2,36 @@
 ###############################################################################
 ## 03. Fig10. The influence of good values percentage
 levels <- seq(0, 1, 0.01)
-xmid   <- c((levels[-1] + levels[-length(levels)])/2, 1)
+xmid0   <- c((levels[-1] + levels[-length(levels)])/2, 1)
 
 df[, grp_perc := findInterval(perc_good, levels, rightmost.closed = T)]
-df[, xmid := xmid[grp_perc]]
+df[, xmid := xmid0[grp_perc]]
 
-d <- df[, .(site, meth, type, iter, RMSE, R2, Bias, Rg, grp_perc, xmid)] %>% #, "NSE"
-    melt(id.vars = c("site", "meth", "type", "iter", "grp_perc", "xmid"), variable.name = "index")
+d <- df[, .(site, meth, type, iters, RMSE, R2, Bias, Rg = Rg, grp_perc, xmid)] %>% #, "NSE"
+    melt(id.vars = c("site", "meth", "type", "iters", "grp_perc", "xmid"), variable.name = "index")
 
-ggplot(d[index == "R2"], aes(xmid,value)) + geom_point() + geom_density2d() +
-    facet_wrap(~meth)
+# ggplot(d[index == "R2"], aes(xmid,value)) + geom_point() + geom_density2d() +
+#     facet_wrap(~meth)
 # d <- df[meth == "wWH" & iter == "iter1"]
 
 alphas <- c(.05, .1, .25, .5) %>% set_names(., .)
 d_envelope <- llply(alphas, function(alpha){
     # print(alpha)
-    expr <- substitute(quote(res <- ddply_dt(d, .(quantile_envelope(value, alpha)), .(meth, index, iter, grp_perc))),
+    expr <- substitute(quote(res <- ddply_dt(d, .(quantile_envelope(value, alpha)), .(meth, index, iters, grp_perc))),
                list(alpha = alpha))
     # print(eval(expr))
     eval(eval(expr))
 })
 
 d_enve <- d_envelope %>% melt_list("alpha")
-d_enve[, xmid := xmid[grp_perc]]
+d_enve[, xmid := xmid0[grp_perc]]
 
 # hue_pal()(4) %>% show_col()
-cols <- hue_pal()(4)
-colors <- c(trans_col(cols[1], 0.5), cols[2:3], "white")
+library(scales)
+cols <- scales::hue_pal()(4)
+colors <- c(alpha(cols[1], 0.5), cols[2:3], "white")
 
-pdat <- d_enve[meth == "wWH" & iter == "iter1"]
+pdat <- d_enve[meth == "wWH" & iters == "iter2"]
 
 indice <- c("R2", "Bias", "RMSE", "Rg")
 labels <- c("bold((a)*' '*R^2)", "bold((b)*' '*Bias)",
@@ -59,7 +60,7 @@ p <- ggplot(pdat, aes(xmid, ymin)) +
     # geom_vline(xintercept = c(0.25), color= "blue", size = 1, linetype = 2) +
     scale_fill_manual(values = colors, labels = c("  5% and 95%", "10% and 90%", "25% and 75%", "50%")) +
     guides(fill = guide_legend(override.aes = list(color = "black"))) +
-    labs(x = "The percentage of good values (%)") +
+    labs(x = "The percentage of good points (%)") +
     scale_x_continuous(labels = function(x) sprintf("%d", x*100)) +
     scale_y_continuous(labels = function(x) sprintf("%.2f", x)) +
     theme_gray(base_size = 14) +
@@ -80,4 +81,67 @@ file_tiff <- gsub(".pdf", ".tif", file)
 width = 9.5; height = 6
 write_fig(p, file_tiff, width, height, T, res = 300)
 # write_fig(p, file, width, height, T)
-# 
+#
+
+
+# second try --------------------------------------------------------------
+
+which_max <- function(x){
+    if (all(is.na(x))){
+        NA
+    } else {
+        which.max(x)
+    }
+}
+
+which_min <- function(x){
+    if (all(is.na(x))){
+        NA
+    } else {
+        which.min(x)
+    }
+}
+
+methods <- c("AG", "ZHANG", "wHANTS", "wSG", "wWH") %>% factor(., .)
+
+d_perc <- d %>% dcast(site+iters+grp_perc+xmid+index+type~meth, value.var = "value") %>%
+    .[iters == "iter2", ]
+
+I    <- d_perc[index != "R2", .(AG, ZHANG, wHANTS, wSG, wWH)] %>%
+    as.matrix %>% aaply(1, which_min) %>% as.numeric()
+I_r2 <- d_perc[index == "R2", .(AG, ZHANG, wHANTS, wSG, wWH)] %>%
+    as.matrix %>% aaply(1, which_max) %>% as.numeric()
+
+x    <- cbind(d_perc[index != "R2", 1:5], dominant = methods[I])
+x_r2 <- cbind(d_perc[index == "R2", 1:5], dominant = methods[I_r2])
+
+
+x <- rbind(x, x_r2)
+x$index %<>% factor(indice, indice_label)
+x[, grp := cut(xmid*100, seq(0, 1, 0.1)*100)]
+pdat <- x[!is.na(dominant), .(count = .N), .(grp, dominant, index)]
+d_count_grp <- pdat[, .(sum = sum(count)), .(grp, index)]
+pdat <- merge(pdat, d_count_grp)
+pdat[, perc := count/sum]
+
+p <- ggplot(pdat,
+            aes(grp, perc*100, fill = dominant)) +
+    geom_bar(stat = "identity") +
+    labs(x = "The percentage of good points (%)",
+         y = "The pectenage of dominant times (%)") +
+    theme_gray(base_size = 14) +
+    theme(legend.title = element_blank(),
+          legend.position = "bottom",
+          legend.spacing.x = unit(0.2, 'cm'),
+          legend.margin = margin(-2),
+          strip.text = element_text( margin = margin(1, 1, 1, 1, "pt")*1.5, size = 14, face = "bold"),
+          axis.title = element_text(size = 14, face = "bold"),
+          axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1)
+    ) +
+    # coord_flip() +
+    facet_wrap(~index, labeller = label_parsed)
+
+file <- "Figs3_good_values_percentage_vs_dominant_times.pdf"
+file_tiff <- gsub(".pdf", ".tif", file)
+width = 10; height = 7
+write_fig(p, file_tiff, width, height, T, res = 300)
