@@ -8,15 +8,10 @@ noise_percs = c(0.1, 0.3, 0.5, 0) %>% set_names(paste0("p", .*100, "%"))
 # df_org <- melt_list(lst, "perc")
 
 ################################################################################
-# dir_root <- ifelse(.Platform$OS.type == "windows", "Y:/Github/phenofit_cluster/", "")
-if (.Platform$OS.type == "windows"){
-    dir_root <- "V:/"
-} else {
-    dir_root <- "/flush1/kon055/"
-}
+dir_root  <- dir_flush
 
 dirs_raw  <- "result/valid" %>%  paste0(dir_root, .) %>%
-    {list.dirs(.)[-1]} %>% set_names(basename(.)) # 1th is indir
+    {dir(., full.names = T)[-1]} %>% set_names(basename(.)) # 1th is indir
 dirs_fit  <- "result/fitting" %>%  paste0(dir_root, .) %>%
     {list.dirs(.)[-1]} %>% set_names(basename(.)) # 1th is indir
 
@@ -49,8 +44,9 @@ for (i in 4){
         # reoder files to balance speed
         files %<>% .[order(str_extract(basename(.), "\\d{1,}"))]
 
-        temp  <- par_sbatch(files, get_Fitting,
-            Save=T, outdir=sprintf("%sresult/fitting/fitting%s", dir_root, pattern))
+        outdir <- sprintf("%sresult/fitting/fitting%s", dir_root, pattern)
+        temp   <- par_sbatch(files, get_Fitting,
+            Save=T, outdir = outdir)
     }
 
     ## 2. get GOF
@@ -58,9 +54,9 @@ for (i in 4){
     if (iscal_gof){
         dirs  <- dirs_fit %>% .[grep(pattern, basename(.))]
         files <- llply(dirs, dir, pattern = "*.RDS", full.names = T) %>% unlist()
-        d <- get_GOF_fromFitting(files[1], df_org)
-        # temp  <- par_sbatch(files, get_GOF_fromFitting, df_org = df_org,
-            # Save=T, outdir=sprintf("%sresult/val_info/info%s_v2", dir_root, pattern))
+        # d <- get_GOF_fromFitting(files[1], df_org)
+        temp  <- par_sbatch(files, get_GOF_fromFitting, df_org = df_org,
+            Save=T, outdir=sprintf("%sresult/val_info/info%s_v2", dir_root, pattern))
     }
 
     # res <- list()

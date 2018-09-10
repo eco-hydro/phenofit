@@ -4,20 +4,6 @@
 fontsize = 14
 
 
-# get curve fitting results from phenofit object
-getFittings2 <- function(fit){
-    df_fit <- getFittings(fit) %>% data.table()
-
-    whit <- melt(fit$seasons$whit[, .(t, y, w = witer2, iter1 = ziter1, iter2 = ziter2)],
-                 measure.vars = c("iter1", "iter2"),
-                 variable.name = "iters")
-    whit$meth <- "whit_R"
-    df_fit <- rbind(df_fit, whit)
-    df_fit <- unique(df_fit) # remove duplicated value
-
-    return(df_fit)
-}
-
 stat_fun <- function(Y_obs, Y_sim){
     R      <- NA_real_
     pvalue <- NA_real_
@@ -466,6 +452,20 @@ get_GOF3 <- function(d, iter = "iter1"){
         {.[sapply(., nrow) > 0]} %>% melt_list("type")
 }
 
+# get curve fitting results from phenofit object
+getFittings2 <- function(fit){
+    df_fit <- getFittings(fit) %>% data.table()
+
+    whit <- melt(fit$seasons$whit[, .(t, y, w = witer2, iter1 = ziter1, iter2 = ziter2)],
+                 measure.vars = c("iter1", "iter2"),
+                 variable.name = "iters")
+    whit$meth <- "whit_R"
+    df_fit <- rbind(df_fit, whit)
+    df_fit <- unique(df_fit) # remove duplicated value
+
+    return(df_fit)
+}
+
 # Get GOF info for every
 get_Fitting <- function(file){
     if (is(file, "list")){
@@ -513,7 +513,7 @@ get_GOF_fromFitting_I <- function(df_fit, df_org){
 
     info_rough <- ddply_dt(d, .(GOF_extra(y0, value)), byname)
     # vars <- c("Rg", "Rg_0")
-    vars <- c("Rg", "Rg_norm_by_obs", "Rg_norm_by_pred")
+    vars <- c("Rg", "Rg_norm_by_obs", "Rg_norm_by_pred") # , "cv"
     info_rough[, (vars) := lapply(.SD, function(x) map_dbl(x, first, default = NA)), .SDcols = vars]
 
     info <- listk(iter1, iter2) %>% melt_list("iters")
