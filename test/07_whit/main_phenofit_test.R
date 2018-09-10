@@ -429,12 +429,6 @@ tidy_rough_fitting <- function(x){
     d_melt
 }
 
-get_GOF <- function(d, is_valid = 1, by_site = T){
-    grp <- if(by_site) .(meth, site) else .(meth)
-    info <- ddply(d[I_valid == is_valid & iters == "iter1"], grp,function(d){
-        with(d, GOF(y0, value))
-    }) %>% data.table()
-}
 
 # The neckness of speed is GOF
 get_GOF3 <- function(d, iter = "iter1"){
@@ -513,7 +507,7 @@ get_GOF_fromFitting_I <- function(df_fit, df_org){
 
     info_rough <- ddply_dt(d, .(GOF_extra(y0, value)), byname)
     # vars <- c("Rg", "Rg_0")
-    vars <- c("Rg", "Rg_norm_by_obs", "Rg_norm_by_pred") # , "cv"
+    vars <- c("Rg", "Rg_norm_by_obs", "Rg_norm_by_pred" , "cv") #
     info_rough[, (vars) := lapply(.SD, function(x) map_dbl(x, first, default = NA)), .SDcols = vars]
 
     info <- listk(iter1, iter2) %>% melt_list("iters")

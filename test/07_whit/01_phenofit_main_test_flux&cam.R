@@ -1,31 +1,6 @@
 source('test/stable/load_pkgs.R')
+source("test/07_whit/dat_flux&cam_phenofit.R")
 # source("R/plot_phenofit.R")
-
-################################################################################
-if (.Platform$OS.type == "windows"){
-    st_flux <- fread("F:/Github/MATLAB/PML/data/flux_166.csv")
-    st_cam  <- fread("D:/SciData/PhenoCam/PhenoCam_V1_1511/phenocam133_site.csv")
-
-    st_flux <- st_flux[, .(ID = 1:.N, site, lat, lon = long, IGBPname = IGBP)]
-    st_cam  <- st_cam[,  .(ID = 1:.N, site = sitename, lat, lon, primary_veg_type, secondary_veg_type,
-               IGBPname = IGBPnames_006[landcover_igbp])]
-    fwrite(st_cam , file_st_cam)
-    fwrite(st_flux, file_st_flux)
-} else if (.Platform$OS.type == "unix"){
-    st_cam  <- fread(file_st_cam)
-    st_flux <- fread(file_st_flux)
-}
-
-# format raw MODIS VI data exported frorm GEE
-if (!file.exists(file_flux) || !file.exists(file_cam)){
-    # phenoflux
-    infile_flux  <- "file:///D:/Document/GoogleDrive/phenoflux212_MOD13A1_006_0m_buffer.csv"
-    tidy_MOD13.gee(infile_flux) %>% merge(st_flux[, .(site)]) %>% fwrite(file_flux)
-
-    ## phenocam
-    infile_cam  <- "file:///D:/Document/GoogleDrive/phenocam133_MOD13A1_006_0m_buffer.csv"
-    tidy_MOD13.gee(infile_cam) %>% merge(st_cam[, .(site)]) %>% fwrite(file_cam)
-}
 
 ################################################################################
 # lambda     <- 5    # Whittaker parameter
@@ -35,15 +10,20 @@ nptperyear   <- 23   # How many points for a single year
 wFUN         <- wTSM # Weights updating function, could be one of `wTSM`, 'wBisquare', `wChen` and `wSELF`.
 
 print = T
+outdir <- sprintf("%sresult/valid/flux/%s", dir_flush, "phenofit_0%")
 
-main <- function(infile, st){
-    prefix <- str_extract(infile, "\\w*(?=_MOD)")
+
+df <- df_org
+
+# main <- function(infile, st){
+    # prefix <- str_extract(infile, "\\w*(?=_MOD)")
+    prefix <- "fluxcam"
     outdir <- paste0("result/", prefix)
 
-    df     <- fread(infile) # , strip.white = T
+    # df     <- fread(infile) # , strip.white = T
     df     <- unique(df) # sometimes data is duplicated at begin and end.
     df[, `:=`( t = ymd(t),
-        SummaryQA = factor(SummaryQA, qc_levels))]
+               SummaryQA = factor(SummaryQA, qc_levels))]
 
     sites <- unique(df$site) %>% set_names(., .)
     sitename  <- df$site[1]
@@ -51,11 +31,11 @@ main <- function(infile, st){
 
     # sitename = sites[1]; a <- get_phenofit(sitename, df, st, prefix)
     par_sbatch(sites, get_phenofit, df=df, st=st, prefix_fig=prefix,
-        save=T, outdir=outdir)
-}
-
-main(file_cam, st_cam)
-main(file_flux, st_flux)
+               Save=T, outdir=outdir)
+# }
+#
+# main(file_cam, st_cam)
+# main(file_flux, st_flux)
 # check phenocam 85 IGBPname
 
 # phenofit::merge_pdf('phenofit_flux166_MOD13A1_v1.pdf', indir = 'Figure/', 'phenoflux166.*.pdf')
