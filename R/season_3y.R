@@ -8,8 +8,9 @@
 #' @return List object, list(whit, dt, stat)
 #' @export
 season_3y <- function(INPUT, nptperyear = 23, south = FALSE,
-    FUN = whitsmw2, wFUN = wTSM, wmin = 0.2, 
-    lambda = NULL, nf  = 3, frame = floor(nptperyear/5)*2 + 1,
+    FUN = whitsmw2, wFUN = wTSM, wmin = 0.2,
+    lambda = NULL, nf  = 3, frame = floor(nptperyear/5)*2 + 1, 
+    MaxPeaksPerYear = 2.5, MaxTroughsPerYear = 3.5, 
     IsPlot = T, plotdat = INPUT, print = TRUE, titlestr = "",
     partial = TRUE, ...){
 
@@ -29,7 +30,7 @@ season_3y <- function(INPUT, nptperyear = 23, south = FALSE,
             nf  = nf, frame = frame,
             rytrough_max = 0.8, ypeak_min = ypeak_min,
             threshold_min = 0.0, threshold_max = 0.3,
-            MaxPeaksPerYear = 2.5, MaxTroughsPerYear = 3.5,
+            MaxPeaksPerYear = MaxPeaksPerYear, MaxTroughsPerYear = MaxTroughsPerYear,
             IsPlot = debug, plotdat = plotdat)#, ...
 
     has_lambda = !is.null(lambda)
@@ -57,7 +58,7 @@ season_3y <- function(INPUT, nptperyear = 23, south = FALSE,
         if (is.null(brk$dt) || nrow(brk$dt) == 0){
             params_i$threshold_max = 0.2
             brk <- do.call(season, params_i)
-            brk$dt %<>% subset(year == years[i])
+            brk$dt %<>% subset(year == years[i]) # bug found, need to fix for South Hemisphere
         }
         brks[[i]] <- list(whit = brk$whit[(nptperyear+1):(2*nptperyear), ],
                           dt   = brk$dt)

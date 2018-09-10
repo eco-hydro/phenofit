@@ -8,22 +8,22 @@
 #' Then according to season pos, based to local maximum position divide yearly
 #' growing season. lambda need to set carefully.
 #'
-#' @param INPUT A list object with the elements of 't', 'y', 'w', 'Tn' (option) 
+#' @param INPUT A list object with the elements of 't', 'y', 'w', 'Tn' (option)
 #' and 'ylu', returned by \code{check_input}.
 #' @param nptperyear Integer, points per year.
-#' @param south Boolean. In south hemisphere, growing year is 1 July to the 
+#' @param south Boolean. In south hemisphere, growing year is 1 July to the
 #' following year 31 June; In north hemisphere, growing year is 1 Jan to 31 Dec.
-#' 
-#' @param FUN Coarse curve fitting function, can be one of `sgfitw`, `whitsmw2` 
+#'
+#' @param FUN Coarse curve fitting function, can be one of `sgfitw`, `whitsmw2`
 #' and `wHANTS`.
-#' @param wFUN weights updating function, can be one of 'wTSM', 'wChen' and 
+#' @param wFUN weights updating function, can be one of 'wTSM', 'wChen' and
 #' 'wBisquare'.
 #' @param iters How many times curve fitting is implemented.
 #' @param wmin Double, minimum weigth (i.e. weight of snow, ice and cloud).
 #' @param lambda the parameter of \code{whitsmw2}
-#' @param nf the parameter of \code{wHANTS}, number of frequencies to be 
+#' @param nf the parameter of \code{wHANTS}, number of frequencies to be
 #' considered above the zero frequency
-#' @param frame the parameter of \code{sgfitw}, moving window size. Suggested by 
+#' @param frame the parameter of \code{sgfitw}, moving window size. Suggested by
 #' TIMESAT, default frame = floor(nptperyear/7)*2 + 1.
 #' @param minpeakdistance The minimum distance (in indices) peaks have to have
 #' to be counted. If the distance of two maximum extreme value less than
@@ -33,15 +33,15 @@
 #' should be greater than threshold_min.
 #' @param threshold_max Similar as `threshold_min`, The maximum threshold should
 #' be greater than `threshold_max`.
-#' @param ypeak_min ypeak >= ypeak_min 
+#' @param ypeak_min ypeak >= ypeak_min
 #' @param rytrough_max ytrough <= rytrough_max*A, A is the amplitude of y.
 #' @param MaxPeaksPerYear This parameter is used to adjust lambda in iterations.
 #' If PeaksPerYear > MaxPeaksPerYear, then lambda = lambda*2.
 #' @param MaxTroughsPerYear This parameter is used to adjust lambda in iterations.
 #' If TroughsPerYear > MaxTroughsPerYear, then lambda = lambda*2.
 #' @param IsPlot Boolean
-#' @param plotdat A list or data.table, with 't', 'y' and 'w'. Only if 
-#' IsPlot=true, plotdata will be used to plot. Known that y and w in \code{INPUT} 
+#' @param plotdat A list or data.table, with 't', 'y' and 'w'. Only if
+#' IsPlot=true, plotdata will be used to plot. Known that y and w in \code{INPUT}
 #' have been changed, we suggest using the original data.table.
 #' @param print Whether to print progress information
 #' @param ... Other parameters passed to findpeaks
@@ -97,8 +97,8 @@ season <- function(INPUT, nptperyear = 46, south = FALSE,
         param <- c(INPUT, nptperyear = nptperyear,
             wFUN = wFUN, wmin = wmin, iters = iters,
             lambda = lambda,  # param for whittaker
-            nf     = nf,      # param for HANTS,
-            frame  = frame    # param for
+            nf     = nf,      # param for wHANTS,
+            frame  = frame    # param for wSG
         )
 
         yfits <- do.call(FUN, param)
@@ -148,10 +148,18 @@ season <- function(INPUT, nptperyear = 46, south = FALSE,
             cat(sprintf('iloop = %d: lambda = %.1f, ntrough_PerYear = %.2f, npeak_PerYear = %.2f\n',
                 iloop, lambda, ntrough_PerYear, npeak_PerYear))
         # maxpeaksperyear <- 2
+
+        ## This module will automatically update lambda, nf and wHANTS
+        #  Not only wWHd, it has been extended to wHANT and wSG. 20180910
+        delta_frame <- floor(nptperyear/12) # adjust frame in the step of `month`
         if (npeak_PerYear > MaxPeaksPerYear | ntrough_PerYear > MaxTroughsPerYear){
             lambda <- lambda*2
+            nf     <- max(1, nf - 1)
+            frame  <- min(frame + delta_frame, nptperyear*2)
         }else if (npeak_PerYear < 1  | ntrough_PerYear < 1){
             lambda <- lambda/2
+            nf     <- min(5, nf + 1)
+            frame  <- max(frame - delta_frame, delta_frame)
         }else{
             break
         }
@@ -278,7 +286,7 @@ rm_duplicate <- function(d, y, threshold){
 }
 
 # fix across multi-year breaks points, when whole year data are missing
-# 
+#
 # This function is only for fluxsites data
 fix_di <- function(di, t){
     for (i in 1:nrow(di)){

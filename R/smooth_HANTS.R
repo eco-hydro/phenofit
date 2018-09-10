@@ -72,7 +72,7 @@ wHANTS <- function(y, t, w, nf = 3, ylu, periodlen = 365, nptperyear,
         b <- solve(A, za) # coefficients
         z <- mat %*% b; z <- z[, 1]
         # w = wFUN(y, yr, w, 0.5, i, nptperyear) #%wfact = 0.5
-        w <- wFUN(y, z, w, i, nptperyear, ...)
+        wnew <- wFUN(y, z, w, i, nptperyear, ...)
         # \code{check_fit} has constrained ylu
         # print(unique(wnew - w))
         # w <- wnew

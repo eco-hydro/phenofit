@@ -7,7 +7,7 @@
 plotdata(INPUT, nptperyear, wmin = 0.1, ...)
 }
 \arguments{
-\item{INPUT}{A list object with the elements of 't', 'y', 'w', 'Tn' (option) 
+\item{INPUT}{A list object with the elements of 't', 'y', 'w', 'Tn' (option)
 and 'ylu', returned by \code{check_input}.}
 
 \item{nptperyear}{Integer, points per year.}

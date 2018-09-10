@@ -1,3 +1,19 @@
+# Update 20180910
+# ---------------
+## 1. Bug found about Whittaker lambda formula
+# Parameter for Whittaker lambda was not updated according to the latest result.
+#
+# v013 : check_fit first, get statistics of this checked data
+# v014 : check_fit first, get statistics of original data
+# -----
+# v013 is more reasonable. Because, contaminated points are often negative bias.
+## 2. HANTs weights updating not work
+# wTSM not work for HANTS, unknown reason, need to check in the future
+#
+## Examples
+# a <- rough_fitting(sitename, df, st, get(method))
+# a$whit[, .(w = witer1 - witer2, z = ziter1 - ziter2)] %>% unique
+
 source('test/stable/load_pkgs.R')
 
 #' @param lambda Unless lambda is constant, lambda should be null.
@@ -55,14 +71,23 @@ init_lambda <- function(y){
     return(10^lambda)
 }
 
-###############################################################################
-load("data_test/whit_lambda/MOD13A1_st_1e3_20180731.rda")
-load("data_test/lambda_formula.rda")
+################################################################################
+is_flux  <- T
+dir_flux <- ifelse(is_flux, "flux/", "")
 
+if (is_flux){
+    source("test/07_whit/dat_flux&cam_phenofit.R") # load data at flux sites
+    df <- df_org # Get data
+}else{
+    load("data_test/whit_lambda/MOD13A1_st_1e3_20180731.rda")
+}
+
+## examples
 sites    <- unique(df$site) %>% set_names(., .)
 sitename <- sites[1]
 
 # 1.1 lambda formula coefs
+load("data_test/lambda_formula_v013.rda") # v013
 coef_extra <- matrix(c( 0.831120, 0.035160, 0, 1.599970, -4.094027, -0.063533,
    0.8209, 0, 0.0041, 1.5008, -4.0286, -0.1017,
    0.831120, -0.035160, 0, 1.599970, - 4.094027, -0.063533),
@@ -84,19 +109,18 @@ IsPlot = F # for brks
 nf = 4
 frame = floor(nptperyear/5*2) + 1;# print(frame)
 noise_percs = c(0.1, 0.3, 0.5)
-noise_perc  = 0.3
+noise_perc  = 0 # default is zero
 
 methods  <- c("wHANTS", "sgfitw", "whitsmw2", "whitsmw2")
 methods2 <- c("wHANTS", "wSG", "wWH", "wWH2")
 
 lst <- list()
-k = 2
+k = 4 # k = 4 is corresponding to `grp01_Extend`
 
 source("R/season_3y.R")
 source("R/curvefits.R")
 
-for (k in 1:nrow(coefs)){
-# for (k in 3){
+for (k in 4){ # 1:nrow(coefs)
     # noise_perc <- noise_percs[k]
     # df <- select_valid(df, noise_perc = noise_perc)[, 1:10]
     runningId(k, prefix = "k | " )
@@ -104,7 +128,7 @@ for (k in 1:nrow(coefs)){
     param   <- as.list(coefs[k, ])
     ############################################################################
     ############################################################################
-    for (i in 3){ # only wWH2 this time
+    for (i in 1:4){ # only wWH2 this time
         method <- methods[i] #"sgfitw", "whitsmw2" and "wHANTS".
         FUN    <- get(method, envir = as.environment("package:phenofit"))
 
@@ -121,9 +145,10 @@ for (k in 1:nrow(coefs)){
         #              .progress = "text") #lst[[i]]
         # rough_fitting(sitename, df, st, FUN = whitsmw2, lambda = lambda)
 
-        # outdir <- sprintf("result/whit_lambda/valid/%s_%2d%%", methods2[i], noise_perc*100)
+        outdir <- sprintf("%s/result/whit_lambda/valid/%s%s_%2d%%",
+                          "/flush1/kon055", dir_flux, methods2[i], noise_perc*100)
         # outdir <- sprintf("/flush1/kon055/result/whit_lambda/%s_0", methods2[i])
-        outdir <- sprintf("/flush1/kon055/result/whit_lambda2/%s", pattern)
+        # outdir <- sprintf("/flush1/kon055/result/valid_whit_lambda2/%s", pattern)
         temp <- par_sbatch(sites, rough_fitting,
                            df = df, st = st, .FUN = get(method), lambda = lambda,
                            return.res = F, Save = T, outdir = outdir)
@@ -134,6 +159,10 @@ for (k in 1:nrow(coefs)){
         #                    IsPlot = IsPlot, print = print, partial = F)
     }
 }
+
+# sitename <- "GF-Guy"
+# a <- rough_fitting(sitename, df, st, get(method))
+# plot(a$whit$ziter2, type = "b")
 
 # lst %<>% set_names(methods2)
 # save(df, lst, file = outfile)

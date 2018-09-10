@@ -12,6 +12,8 @@ df_org.flux <- fread(file_flux)
 df_org.cam  <- fread(file_cam)
 df_org <- list(df_org.flux, df_org.cam) %>% set_names(types) %>% melt_list("type")
 df_org$date %<>% ymd()
+df_org$t    %<>% ymd()
+
 ## merge GEE whit result
 df_org[is.na(SummaryQA), SummaryQA := "cloud"]
 df_org$SummaryQA %<>% factor(qc_levels)

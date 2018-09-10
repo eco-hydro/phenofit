@@ -12,18 +12,18 @@ season(INPUT, nptperyear = 46, south = FALSE, FUN = whitsmw2,
   IsPlot = FALSE, plotdat = INPUT, print = FALSE, ...)
 }
 \arguments{
-\item{INPUT}{A list object with the elements of 't', 'y', 'w', 'Tn' (option) 
+\item{INPUT}{A list object with the elements of 't', 'y', 'w', 'Tn' (option)
 and 'ylu', returned by \code{check_input}.}
 
 \item{nptperyear}{Integer, points per year.}
 
-\item{south}{Boolean. In south hemisphere, growing year is 1 July to the 
+\item{south}{Boolean. In south hemisphere, growing year is 1 July to the
 following year 31 June; In north hemisphere, growing year is 1 Jan to 31 Dec.}
 
-\item{FUN}{Coarse curve fitting function, can be one of `sgfitw`, `whitsmw2` 
+\item{FUN}{Coarse curve fitting function, can be one of `sgfitw`, `whitsmw2`
 and `wHANTS`.}
 
-\item{wFUN}{weights updating function, can be one of 'wTSM', 'wChen' and 
+\item{wFUN}{weights updating function, can be one of 'wTSM', 'wChen' and
 'wBisquare'.}
 
 \item{iters}{How many times curve fitting is implemented.}
@@ -32,10 +32,10 @@ and `wHANTS`.}
 
 \item{lambda}{the parameter of \code{whitsmw2}}
 
-\item{nf}{the parameter of \code{wHANTS}, number of frequencies to be 
+\item{nf}{the parameter of \code{wHANTS}, number of frequencies to be
 considered above the zero frequency}
 
-\item{frame}{the parameter of \code{sgfitw}, moving window size. Suggested by 
+\item{frame}{the parameter of \code{sgfitw}, moving window size. Suggested by
 TIMESAT, default frame = floor(nptperyear/7)*2 + 1.}
 
 \item{minpeakdistance}{The minimum distance (in indices) peaks have to have
@@ -61,8 +61,8 @@ If TroughsPerYear > MaxTroughsPerYear, then lambda = lambda*2.}
 
 \item{IsPlot}{Boolean}
 
-\item{plotdat}{A list or data.table, with 't', 'y' and 'w'. Only if 
-IsPlot=true, plotdata will be used to plot. Known that y and w in \code{INPUT} 
+\item{plotdat}{A list or data.table, with 't', 'y' and 'w'. Only if
+IsPlot=true, plotdata will be used to plot. Known that y and w in \code{INPUT}
 have been changed, we suggest using the original data.table.}
 
 \item{print}{Whether to print progress information}
