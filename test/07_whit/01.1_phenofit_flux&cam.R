@@ -10,15 +10,27 @@ nptperyear   <- 23   # How many points for a single year
 wFUN         <- wTSM # Weights updating function, could be one of `wTSM`, 'wBisquare', `wChen` and `wSELF`.
 
 print = T
-outdir <- sprintf("%sresult/valid/flux/%s", dir_flush, "phenofit_0%")
 
 
+# fill missing values
+years <- 2000:2018
+doy   <- seq(1, 366, 16)
+date  <- sprintf("%4d%03d", rep(years, each = 23), doy) %>% parse_date_time("%Y%j") %>% date()
+if (years[1] == 2000) date <- date[-(1:3)]
+date  <- date[1:(length(date)-11)] # for 2018
+
+site = unique(df_org$site)
+temp = data.table(t = date, site = rep(site, rep(length(date), length(site))))
+
+# t as here is image date, other than pixel data.
+df_org = merge(df_org, temp, by = c("t", "site"), all = T) # fill missing values
 df <- df_org
+################################################################################
+outdir <- sprintf("/flush1/kon055/result/valid/flux/%s", "phenofit_0%")
 
 # main <- function(infile, st){
     # prefix <- str_extract(infile, "\\w*(?=_MOD)")
     prefix <- "fluxcam"
-    outdir <- paste0("result/", prefix)
 
     # df     <- fread(infile) # , strip.white = T
     df     <- unique(df) # sometimes data is duplicated at begin and end.

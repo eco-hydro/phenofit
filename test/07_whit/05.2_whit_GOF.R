@@ -8,12 +8,7 @@ source("test/07_whit/main_phenofit_test.R")
 # df_org <- melt_list(lst, "perc")
 
 ################################################################################
-# dir_root <- ifelse(.Platform$OS.type == "windows", "Y:/Github/phenofit_cluster/", "")
-if (.Platform$OS.type == "windows"){
-    dir_root <- "V:/"
-} else {
-    dir_root <- "/flush1/kon055/"
-}
+dir_root <- dir_flush
 
 load("data_test/whit_lambda/MOD13A1_st_1e3_20180731.rda")
 df$site %<>% as.character()

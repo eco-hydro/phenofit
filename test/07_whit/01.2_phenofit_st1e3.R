@@ -34,6 +34,12 @@ date  <- sprintf("%4d%03d", rep(years, each = 23), doy) %>% parse_date_time("%Y%
 if (years[1] == 2000) date <- date[-(1:3)]
 date  <- date[1:(length(date)-11)] # for 2018
 
+# site = unique(df_org$site)
+# temp = data.table(t = date, site = rep(site, rep(length(date), length(site))))
+
+# # t as here is image date, other than pixel data.
+# df_org = merge(df_org, temp, by = c("t", "site"), all = T) # fill missing values
+
 
 noise_percs = c(0.1, 0.3, 0.5)
 k = 2

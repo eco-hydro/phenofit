@@ -117,6 +117,7 @@ get_phenofit_result <- function(infile, df_whit, df_out){
     # st <- fread(st_file)   # station info
 }
 
+# merge gee_whit into phenofit
 get_phenofit_update_whit <- function(df_list, df_whit){
     df_list$fits_merge <- with(df_list, {
         # df_whit      <- fread(file_whit); df_whit$date %<>% ymd()
