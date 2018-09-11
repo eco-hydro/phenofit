@@ -161,7 +161,7 @@ p  <- do.call(grid.arrange,
 
 file <- 'Fig9_density_contour2.pdf'
 cairo_pdf(file, 10, 7.5)
-grid.arrange(p, lgd,nrow = 2, heights = c(15, 1))#add legend and export to pdf
+grid.arrange(p, lgd, nrow = 2, heights = c(15, 1))#add legend and export to pdf
 dev.off()
 file.show(file)
 

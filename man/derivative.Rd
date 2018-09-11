@@ -16,7 +16,8 @@ hess.phenofit(fit, tout)
 
 \method{D2}{phenofit}(fit, numDeriv = FALSE, smspline = FALSE, ...)
 
-\method{curvature}{phenofit}(fit, numDeriv = FALSE, smspline = FALSE, ...)
+\method{curvature}{phenofit}(fit, numDeriv = FALSE, smspline = FALSE,
+  ...)
 }
 \arguments{
 \item{fit}{Curve fitting result returned by \code{curvefit}.}

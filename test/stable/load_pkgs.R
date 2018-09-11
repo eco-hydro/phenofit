@@ -1,24 +1,26 @@
 # source('test/stable/load_pkgs.R')
-library(Matrix)
-library(plyr)
-library(data.table)
-library(tidyverse)
+suppressMessages({
+    library(Matrix)
+    library(plyr)
+    library(data.table)
+    library(tidyverse)
 
-library(magrittr)
-library(lubridate)
-library(purrr)
-library(zoo)
+    library(magrittr)
+    library(lubridate)
+    library(purrr)
+    library(zoo)
 
-library(Ipaper)
-library(phenofit)
-# library(plotly)
-library(devtools)
-library(Cairo)
-library(jsonlite)
-library(openxlsx)
-library(pbmcapply)
-library(MASS)
-library(broom)
+    library(Ipaper)
+    library(phenofit)
+    # library(plotly)
+    library(devtools)
+    library(Cairo)
+    library(jsonlite)
+    library(openxlsx)
+    # library(pbmcapply)
+    library(MASS)
+    library(broom)
+})
 
 fontsize  <- 14
 
@@ -55,9 +57,139 @@ IGBPnames_005 <- c("water", "ENF", "EBF", "DNF", "DBF", "MF" , "CSH",
                    "OSH", "WSA", "SAV", "GRA", "WET", "CRO",
                    "URB", "CNV", "SNO", "BSV", "UNC")
 
+# save pdf just like `ggsave`
+write_fig <- function(p, file = "Rplot.pdf", width = 10, height = 5, show = T, res = 300){
+    if (missing(p)) p <- last_plot()
+
+    if ("grob" %in% class(p)) {
+        FUN <- grid::grid.draw
+    } else{
+        FUN <- base::print
+    }
+
+    file_ext <- str_extract(basename(file), "(?<=\\.).*$")
+
+    param <- list(file, width = width, height = height)
+    if (file_ext == "pdf"){
+        devicefun <- cairo_pdf # Cairo::CairoPDF #
+    } else {
+        if (file_ext %in% c("tif", "tiff")){
+            devicefun <- tiff
+        } else if (file_ext == "png") {
+            devicefun <- Cairo::CairoPNG
+        }
+        param %<>% c(list(units = "in", res = res, compression = "lzw")) #, dpi = 300
+    }
+
+    # print(FUN)
+    # Cairo::CairoPDF, if only one figure cairo_pdf is the best
+    do.call(devicefun, param)
+    FUN(p)
+    dev.off()
+    if (show) file.show(file)
+}
+
+g_legend<-function(a.gplot){
+    tmp <- ggplot_gtable(ggplot_build(a.gplot))
+    leg <- which(sapply(tmp$grobs, function(x) x$name) == "guide-box")
+    legend <- tmp$grobs[[leg]]
+    return(legend)
+}
+
+
+readRDS_tidy <- function(file){
+    file <- gsub("file:///", "", file)
+    readRDS(file)
+}
+
+ddply_dt <- function(d, j, by){
+    if (is.quoted(by)) by <- names(by)
+
+    byname  <- paste(by, collapse = ", ")
+    operate <- j[[1]] %>% deparse()
+
+    eval(parse(text = sprintf("res <- d[, .(res = list(%s)), .(%s)]", operate, byname)))
+    # print(res)
+    res$res %>% do.call(rbind, .) %>% data.table() %>% cbind(res[, ..by], .)
+}
+
+
+#' @return
+#' Rg   : normalized
+#' Rg_0 : no normalized
+GOF_extra <- function(Y_obs, Y_pred){
+    # the autocorrelation of residuals
+    acf = acf(Y_pred - Y_obs, lag.max = 10, plot = F, na.action = na.pass)$acf[,,1][-1]
+    # roughness
+    Roughness <- function(Y_pred){
+        temp = diff(Y_pred)^2 %>% .[!is.na(.)]
+        if (is_empty(temp)) return(NA_real_) 
+        Rg = sqrt(sum(temp)/length(temp))
+        Rg
+    }
+
+    znorm <- function(Y_pred, Y_norm){
+        min <- min(Y_norm, na.rm = T)
+        max <- max(Y_norm, na.rm = T)
+        A   <- max - min
+
+        if (is.finite(A)){
+            Yz <- (Y_pred  - min) / A  # normalized
+        } else {
+            Yz <- Y_pred * NA
+        }
+        return(Yz)
+    }
+
+    ## roughness second definition
+    if (sum(is.finite(Y_pred)) <= 1){
+        Rg              <- NA_real_
+        Rg_norm_by_pred <- NA_real_
+        Rg_norm_by_obs  <- NA_real_
+        cv              <- NA_real_
+    } else {
+        # for different methods, using the same `min` and `max` value
+        Y_norm_by_pred  <- znorm(Y_pred, Y_pred)
+        Y_norm_by_obs   <- znorm(Y_pred, Y_obs)
+        
+        Rg              <- Roughness(Y_pred)
+        Rg_norm_by_pred <- Roughness(Y_norm_by_pred)        
+        Rg_norm_by_obs  <- Roughness(Y_norm_by_obs)
+        cv <- cv_coef(Y_pred)[['cv']]
+    }
+
+    c(Rg = Rg, 
+        Rg_norm_by_obs  = Rg_norm_by_obs, 
+        Rg_norm_by_pred = Rg_norm_by_pred, cv = cv, acf = list(acf)) #GOF(Y_obs, Y_pred),
+}
+
+
+# function to separate data to steps of x, obtain 95 quantile value for smooth
+upper_envelope <- function(x, y, step = 0.2, alpha = 0.95){
+    xrange <- range(x, na.rm = T)
+
+    brks <- seq(xrange[1], xrange[2], by = step)
+    n    <- length(brks)
+    xmid <- (brks[-n] + brks[-1])/2
+
+    brks[n] <- Inf
+
+    res <- numeric(n-1)*NA_real_
+
+    for (i in 1:(n-1)){
+        val_min <- brks[i]
+        val_max <- brks[i+1]
+
+        I <- x >= val_min & x < val_max
+        res[i] <- quantile(y[I], alpha, na.rm = T)
+    }
+
+    data.table(x = xmid, y = res)
+}
+
 siteorder <- function(sites){ factor(sites) %>% as.numeric() }
 
-get_phenofit <- function(sitename, df, st, prefix_fig = 'phenofit_v3'){
+get_phenofit <- function(sitename, df, st, prefix_fig = 'phenofit_v3', IsPlot = F){
     d     <- df[site == sitename, ] # get the first site data
     sp    <- st[site == sitename, ] # station point
     titlestr <- with(sp, sprintf('[%03d,%s] %s, lat = %5.2f, lon = %6.2f',
@@ -69,7 +201,7 @@ get_phenofit <- function(sitename, df, st, prefix_fig = 'phenofit_v3'){
         # 1. Check input data and initial parameters for phenofit
         INPUT <- check_input(dnew$t, dnew$y, dnew$w, maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
         INPUT$y0 <- dnew$y
-        IsPlot   <- FALSE # for brks
+        IsPlot2   <- FALSE # for brks
         # 2. The detailed information of those parameters can be seen in `season`.
         lambda <- init_lambda(INPUT$y)#*2
         # brks   <- season(INPUT, nptperyear,
@@ -81,7 +213,7 @@ get_phenofit <- function(sitename, df, st, prefix_fig = 'phenofit_v3'){
         #                max_MaxPeaksperyear =2.5, max_MinPeaksperyear = 3.5) #, ...
         # get growing season breaks in a 3-year moving window
         brks2 <- season_3y(INPUT, nptperyear, south = sp$lat[1] < 0, FUN = whitsmw2,
-                           IsPlot = IsPlot, print = print, partial = F)
+                           IsPlot = IsPlot2, print = print, partial = F)
 
         # 3. curve fitting
         fit  <- curvefits(INPUT, brks2, lambda =lambda,
@@ -93,11 +225,13 @@ get_phenofit <- function(sitename, df, st, prefix_fig = 'phenofit_v3'){
         fit$INPUT   <- INPUT
         fit$seasons <- brks2
 
-        # svg("Figure1_phenofit_curve_fitting.svg", 11, 7)
-        Cairo::CairoPDF(file_pdf, 11, 6) #
-        # grid::grid.newpage()
-        plot_phenofit(fit, d, titlestr) %>% grid::grid.draw()# plot to check the curve fitting
-        dev.off()
+        if (IsPlot){
+            # svg("Figure1_phenofit_curve_fitting.svg", 11, 7)
+            Cairo::CairoPDF(file_pdf, 11, 6) #
+            # grid::grid.newpage()
+            plot_phenofit(fit, d, titlestr) %>% grid::grid.draw()# plot to check the curve fitting
+            dev.off()
+        }
 
         # temp <- ExtractPheno(fit$fits$ELMORE[1:5], IsPlot = T) # check extracted phenology
         ## 3.2 Get GOF information
@@ -147,6 +281,13 @@ fix_level <- function(x){
 ############################# GEE WHITTAKER ####################################
 #' This function is only used to read gee_phenofit whittaker result.
 read_whitMat.gee <- function(file){
+    # file: phenoflux166_WH_p2_2008_2011.geojson
+    years <- str_extract_all(basename(file), "\\d{4}")[[1]] %>% map_dbl(as.numeric)
+    years <- years[1]:years[2]
+    doy   <- seq(1, 366, 16)
+    date  <- sprintf("%4d%03d", rep(years, each = 23), doy) %>% parse_date_time("%Y%j") %>% date()
+    if (years[1] == 2000) date <- date[-(1:3)]
+
     lst   <- read_json(file)$features
     ncol  <- length(lst[[1]]$properties$array[[1]])
     names <- c("raw", paste0("iter", 1:(ncol-1) ) )
@@ -162,6 +303,7 @@ read_whitMat.gee <- function(file){
     sites <- map_chr(lst, ~.x$properties$site)
     # sites <- map_chr(lst, "id") %>% str_extract(".*(?=_)")
     df <- set_names(data, sites) %>% melt_list(var.name = "site")
+    df$date <- date
     df
 }
 
@@ -175,11 +317,7 @@ read_whitMat.gee <- function(file){
 read_whitMats.gee <- function(files){
     lst   <- llply(files, read_whitMat.gee, .progress = "text")
     df    <- do.call(rbind, lst) %>% {.[order(site), ]}
-
-    years <- 2000:2017
-    doy   <- seq(1, 366, 16)
-    date    <- sprintf("%4d%03d", rep(years, each = 23), doy)[-(1:3)] %>% parse_date_time("%Y%j") %>% date()
-    df$date <- date # 20180705, Simon has fixed image missing
+    # 20180705, Simon has fixed image missing
     df
 }
 
@@ -205,8 +343,7 @@ readwhitMAT <- function(indir, prefix){
 #' @param height
 #'
 #' @param
-FigsToPages <- function(ps, lgd, ylab.right, file, width = 10, height){
-    nrow  <- 6
+FigsToPages <- function(ps, lgd, ylab.right, file, width = 10, height, nrow = 6){
     npage <- ceiling(length(ps)/nrow)
     if (missing(height)) height = nrow*1.6
 
@@ -215,7 +352,7 @@ FigsToPages <- function(ps, lgd, ylab.right, file, width = 10, height){
     ylab.right.color <- ps[[1]]$theme$axis.title.y.right$colour
 
     params <- list(ncol = 1, padding = unit(1, "line"),
-        left  = textGrob(ylab.left , rot = 90, 
+        left  = textGrob(ylab.left , rot = 90,
                          gp=gpar(fontsize=14, col=ylab.left.color)) )
 
     # parameters for arrangeGrob
@@ -266,6 +403,59 @@ FigsToPages <- function(ps, lgd, ylab.right, file, width = 10, height){
     }
     dev.off()
     file.show(file)
+}
+
+
+############################### VALIDATION FUNCTIONS ###########################
+select_validI <- function(Id, perc = 0.2) {
+    n <- length(Id)
+    set.seed(100)
+    I <- sample(1:n, n*perc)
+    unique(Id[I])
+}
+
+# only select good points (with the percentage of noise_perc)
+select_valid <- function(df, noise_perc = 0.3, group = F){
+    df     <- unique(df) # sometimes data is duplicated at begin and end.
+    if (class(df$SummaryQA[1]) != "factor") {
+        df[, `:=`( SummaryQA = factor(SummaryQA, qc_levels))]
+    }
+    if (class(df$t[1]) != "Date") df[, `:=`( t = ymd(t))]
+
+    ## 1.1 get range for every site and divide grp
+    alpha = 0.05
+    d_range <- df[SummaryQA == "good", .(ymin = quantile(y, alpha/2, na.rm = T),
+                                         ymax = quantile(y, 1-alpha/2, na.rm = T)), .(site)] %>%
+        plyr::mutate(A = ymax - ymin,
+                     brk_min = ymin + 0.2*A,
+                     brk_max = ymin + 0.6*A) %>% .[, c(1, 4:6)]
+    if (!group) d_range <- d_range[, .(site, A)]
+
+    df <- merge(df, d_range, all.x = T) # rm points has no good points
+    df[, `:=`(Id = 1:.N, y0 = y, w0 = w, I_valid = 0)]
+
+    if (group){
+        df[, grp:=1]
+        df[y >= brk_max, grp := 2]
+        df[y <= brk_min, grp := 0]
+    }
+
+    # 1. select cross-validation points ---------------------------------------
+    if (noise_perc > 0){
+        ## 1.2 select validation points
+        # & grp == 1
+        I <- df[SummaryQA == "good", select_validI(Id, noise_perc), .(site)]$V1
+
+        set.seed(I[1])
+        desc_perc <- runif(length(I), .05, .5)
+
+        ## 1.3 adjust y and w
+        # randomly reduced by 5%–50% with of their amplitude; w set to wmin
+
+        # df_val <- df[I, ]
+        df[I, `:=`(w=0, y=y-A*desc_perc, I_valid = 1)]
+    }
+    return(df)
 }
 
 # nptperyear = 46

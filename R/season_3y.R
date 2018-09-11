@@ -1,25 +1,17 @@
 #' Growing season dividing in the 3-year length moving window
 #'
-#' @param INPUT A list object with the elements of 't', 'y', 'w', 'Tn' (option)
-#' and 'ylu', returned by \code{check_input}.
-#' @param nptperyear Integer, points per year.
-#' @param south Boolean. In south hemisphere, growing year is 1 July to the
-#' following year 31 June; In north hemisphere, growing year is 1 Jan to 31 Dec.
-#' @param FUN Coarse curve fitting function, can be one of `sgfitw`, `whitsmw2`
-#' and `wHANTS`.
-#' @param wmin Double, minimum weigth value (i.e. weight for snow, ice and cloud).
-#' @param IsPlot Boolean
-#' @param plotdat A list or data.table, with 't', 'y' and 'w'. Only if 
-#' IsPlot=true, plotdata will be used to plot. Known that y and w in \code{INPUT} 
-#' have been changed, we suggest using the original data.table.
-#' @param print Whether to print progress information
+#' @inheritParams season
+#' @param lambda If lambda is not null, \code{initial_lambda} will be not used.
+#' @param titlestr string for title
 #' @param partial If true, only plot partial figures whose NSE < 0.3
 #'
 #' @return List object, list(whit, dt, stat)
 #' @export
 season_3y <- function(INPUT, nptperyear = 23, south = FALSE,
     FUN = whitsmw2, wFUN = wTSM, wmin = 0.2,
-    IsPlot = T, plotdat = INPUT, print = TRUE,
+    lambda = NULL, nf  = 3, frame = floor(nptperyear/5)*2 + 1, 
+    MaxPeaksPerYear = 2.5, MaxTroughsPerYear = 3.5, 
+    IsPlot = T, plotdat = INPUT, print = TRUE, titlestr = "",
     partial = TRUE, ...){
 
     nlen      <- length(INPUT$t)
@@ -35,11 +27,13 @@ season_3y <- function(INPUT, nptperyear = 23, south = FALSE,
     # i = 1;
     params <- list(nptperyear = nptperyear, south = south,
             FUN = FUN, wFUN = wFUN, iters = 2,
+            nf  = nf, frame = frame,
             rytrough_max = 0.8, ypeak_min = ypeak_min,
             threshold_min = 0.0, threshold_max = 0.3,
-            MaxPeaksPerYear = 2.5, MaxTroughsPerYear = 3.5,
+            MaxPeaksPerYear = MaxPeaksPerYear, MaxTroughsPerYear = MaxTroughsPerYear,
             IsPlot = debug, plotdat = plotdat)#, ...
 
+    has_lambda = !is.null(lambda)
     brks  <- list()
     for (i in 1:nyear){
         if (print) runningId(i, prefix = '\t[season_3y] ')
@@ -55,7 +49,7 @@ season_3y <- function(INPUT, nptperyear = 23, south = FALSE,
         input  <- lapply(INPUT[1:3], `[`, I)
         input$ylu <- ylu
 
-        lambda <- init_lambda(input$y)#*2
+        if (!has_lambda) lambda <- init_lambda(input$y)#*2
 
         params_i = c(list(INPUT = input, lambda = lambda), params)
         brk    <- do.call(season, params_i)
@@ -64,7 +58,7 @@ season_3y <- function(INPUT, nptperyear = 23, south = FALSE,
         if (is.null(brk$dt) || nrow(brk$dt) == 0){
             params_i$threshold_max = 0.2
             brk <- do.call(season, params_i)
-            brk$dt %<>% subset(year == years[i])
+            brk$dt %<>% subset(year == years[i]) # bug found, need to fix for South Hemisphere
         }
         brks[[i]] <- list(whit = brk$whit[(nptperyear+1):(2*nptperyear), ],
                           dt   = brk$dt)
@@ -90,7 +84,7 @@ season_3y <- function(INPUT, nptperyear = 23, south = FALSE,
     stat      <- GOF(INPUT$y[I], dplyr::last(brks$whit), INPUT$w[I], include.cv = TRUE)
     stat_str  <- stat[c("R2", "NSE", "cv")] %>% {paste(names(.), round(., 3), sep = "=", collapse = ", ")}
     # str_title <- sprintf("[%s] IGBP = %s, %s, lat = %.2f", sitename, IGBP_name, stat_str, lat)
-    str_title <- stat_str
+    str_title <- paste(titlestr, stat_str)
 
     # lat       <- d$lat[1]
     # Id        <- d$Id[1]
@@ -107,7 +101,7 @@ season_3y <- function(INPUT, nptperyear = 23, south = FALSE,
     con <- ifelse(partial, IsPlot && (NSE < 0.3), IsPlot)
     if (con){
     # if(IsPlot && (NSE < 0 && cv < 0.2)){
-        pdat     <- as.list(d[, .(t, y, w)]) %>% c(INPUT[5])
+        pdat     <- as.list(plotdat)[c("t", "y", "w")] %>% c(INPUT[5])
         plotdata(pdat, nptperyear)
 
         whit <- brks$whit %>% {.[, contain(., "^t|ziter"), with = F]}

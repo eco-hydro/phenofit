@@ -1,5 +1,5 @@
 # main functions
-# source("test/Figs/stat_density_contourf.R")
+# source("test/05_insync/stat_density_contourf.R")
 source("test/Figs/stat_prop.R")
 fontsize = 14
 
@@ -53,13 +53,6 @@ p_density_naked <- function(d, title = "(a)", ...){
     }
 
     ggMarginal(p_main, type = "density")
-}
-
-g_legend<-function(a.gplot){
-    tmp <- ggplot_gtable(ggplot_build(a.gplot))
-    leg <- which(sapply(tmp$grobs, function(x) x$name) == "guide-box")
-    legend <- tmp$grobs[[leg]]
-    return(legend)
 }
 
 # https://stackoverflow.com/questions/13649473/add-a-common-legend-for-combined-ggplots

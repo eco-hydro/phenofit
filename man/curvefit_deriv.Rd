@@ -38,12 +38,8 @@ return the gradient function of double logistics
 Analytical derivative can also have some weird result. `numDeriv`'s result
 was accurate enough.
 
-Higher derivatives
-
 For par aspect DERIVS, it had better to use deriv return function.
 For t aspect DERIVS, it had better to use D, then eval D expression
-
-grad_par
 }
 \details{
 Enclosure env of `ans` was this funcion's execution env. But environment of

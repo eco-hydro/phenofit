@@ -109,8 +109,9 @@ add_HeadTail <- function(d, nptperyear = 23){
     if (md_beg == 0229) md_end = 0301
      
     # if tiny missing, than this year is include to extract phenology
-    nyear_add_head <- ifelse (nmissing_head < nptperyear/2, 2, 1)  
-    nyear_add_tail <- ifelse (nmissing_tail < nptperyear/2, 2, 1)
+    half = floor(nptperyear/2)
+    nyear_add_head <- ifelse (nmissing_head < half, 2, 1)  
+    nyear_add_tail <- ifelse (nmissing_tail < half, 2, 1)
 
     # head
     d_head <- d[t >= ymd( (year_beg+1)*1e4 + 0101) & 

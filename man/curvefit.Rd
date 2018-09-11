@@ -4,8 +4,8 @@
 \alias{curvefit}
 \title{curve fit vegetation index (VI) time-series}
 \usage{
-curvefit(y, t = index(y), tout = t, meth = "BFGS", methods = c("spline",
-  "beck", "elmore", "klos", "AG", "zhang"), ...)
+curvefit(y, t = index(y), tout = t, meth = "BFGS",
+  methods = c("spline", "beck", "elmore", "klos", "AG", "zhang"), ...)
 }
 \arguments{
 \item{y}{Vegetation time-series index, numeric vector}

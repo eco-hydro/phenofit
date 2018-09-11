@@ -7,7 +7,8 @@
 \alias{PhenoKl}
 \title{Phenology extraction functions}
 \usage{
-PhenoTrs(fit, approach = c("White", "Trs"), trs = 0.5, IsPlot = TRUE, ...)
+PhenoTrs(fit, approach = c("White", "Trs"), trs = 0.5, IsPlot = TRUE,
+  ...)
 
 PhenoDeriv(fit, IsPlot = TRUE, smspline = TRUE, show.lgd = T, ...)
 

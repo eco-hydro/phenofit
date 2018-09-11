@@ -23,7 +23,7 @@ sgfitw <- function(y, w, nptperyear, ylu, wFUN = wTSM, iters = 2,
     for (i in 1:iters){
         ws[[i]] <- w
         z <- sgfitw_rcpp(yiter, w, S)[, 1]
-        w <- wFUN(y, z, w, i, nptperyear, ...)
+        wnew <- wFUN(y, z, w, i, nptperyear, ...)
 
         z <- check_fit(z, ylu)
         yiter[yiter < z] <- z[yiter < z] # upper envelope
@@ -31,8 +31,8 @@ sgfitw <- function(y, w, nptperyear, ylu, wFUN = wTSM, iters = 2,
         fits[[i]] <- z
     }
 
-    fits %<>% set_names(paste0('iter', 1:iters))
-    ws   %<>% set_names(paste0('w', 1:iters))
+    fits %<>% set_names(paste0('ziter', 1:iters))
+    ws   %<>% set_names(paste0('witer', 1:iters))
     
     list(ws = ws, zs = fits)
 }

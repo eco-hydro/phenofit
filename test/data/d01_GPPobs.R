@@ -41,6 +41,7 @@ rm(list = ls())
 # 2. zhang yao, 2017, scientific data, VPMGPP, 8day ----------------------------
 indir <- paste0(dir_flush, "ET&GPP/fluxnet212/GPP_vpm")
 file_vpm <- paste0(dirname(indir), "/flux212_GPP_vpm(zhang2017).csv")
+
 if (!file.exists(file_vpm)){
     files <- dir(indir, full.names = T) %>% set_names(gsub(".csv","", basename(.)))
     d_vpm <- ldply(files, fread, .id = "site")[, c(1, 3, 4)] %>%
