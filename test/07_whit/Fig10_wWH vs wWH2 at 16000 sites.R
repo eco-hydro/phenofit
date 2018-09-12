@@ -2,7 +2,7 @@
 library(grid)
 library(gridExtra)
 
-itersI <- "iter2"
+itersI <- "iter1"
 
 ## when compared with wWH2, iter1 was used. Because weights updating and new
 # generation time-series procedure can offset the difference.
@@ -19,7 +19,7 @@ label_value <- function (labels, multi_line = TRUE, sep = "*'~'*")
 }
 
 
-d <- df[meth %in% methods2, .(site, meth, type, iters, RMSE, R2 = R2, Bias, Rg = Rg_0)] %>%
+d <- df[meth %in% methods2, .(site, meth, type, iters, RMSE, R2 = R2, Bias, Rg = Rg_norm_by_pred)] %>%
     melt(id.vars = c("site", "meth", "type", "iters"), variable.name = "index") #, "perc"
 d <- merge(st[, .(site, IGBPname)], d)
 
