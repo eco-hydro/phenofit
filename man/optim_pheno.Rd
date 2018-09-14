@@ -35,7 +35,7 @@ in the range of \code{ylu}.}
 \item{wFUN}{weights updating function, can be one of 'wTSM', 'wChen' and 
 'wBisquare'.}
 
-\item{nptperyear}{number of images per year}
+\item{nptperyear}{Integer, number of images per year}
 
 \item{debug}{boolean}
 

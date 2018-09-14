@@ -4,23 +4,21 @@
 \alias{season}
 \title{season}
 \usage{
-season(INPUT, nptperyear = 46, south = FALSE, FUN = whitsmw2,
-  wFUN = wTSM, iters = 2, wmin = 0.1, lambda, nf = 3,
-  frame = floor(nptperyear/5) * 2 + 1, minpeakdistance = nptperyear/6,
-  threshold_max = 0.2, threshold_min = 0.05, ypeak_min = 0.1,
-  rytrough_max = 0.6, MaxPeaksPerYear = 2, MaxTroughsPerYear = 3,
-  IsPlot = FALSE, plotdat = INPUT, print = FALSE, ...)
+season(INPUT, south = FALSE, FUN = wWHIT, wFUN = wTSM, iters = 2,
+  wmin = 0.1, lambda, nf = 3, frame = floor(INPUT$nptperyear/5) * 2 +
+  1, minpeakdistance, threshold_max = 0.2, threshold_min = 0.05,
+  ypeak_min = 0.1, rytrough_max = 0.6, MaxPeaksPerYear = 2,
+  MaxTroughsPerYear = 3, IsPlot = FALSE, plotdat = INPUT,
+  print = FALSE, ...)
 }
 \arguments{
 \item{INPUT}{A list object with the elements of 't', 'y', 'w', 'Tn' (option)
 and 'ylu', returned by \code{check_input}.}
 
-\item{nptperyear}{Integer, points per year.}
-
 \item{south}{Boolean. In south hemisphere, growing year is 1 July to the
 following year 31 June; In north hemisphere, growing year is 1 Jan to 31 Dec.}
 
-\item{FUN}{Coarse curve fitting function, can be one of `sgfitw`, `whitsmw2`
+\item{FUN}{Coarse curve fitting function, can be one of `wSG`, `wWHIT`
 and `wHANTS`.}
 
 \item{wFUN}{weights updating function, can be one of 'wTSM', 'wChen' and
@@ -30,7 +28,7 @@ and `wHANTS`.}
 
 \item{wmin}{Double, minimum weigth (i.e. weight of snow, ice and cloud).}
 
-\item{lambda}{the parameter of \code{whitsmw2}}
+\item{lambda}{the parameter of \code{wWHIT}}
 
 \item{nf}{the parameter of \code{wHANTS}, number of frequencies to be
 considered above the zero frequency}

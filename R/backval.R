@@ -25,10 +25,11 @@ backval <- function(y, t, w, Tn, minT = 5, nptperyear, ...){
     getBack <- function(y, index){
         yi <- y[index]
         n  <- length(yi)
+
         i_end <- ifelse(n <= 5, n, 5)
 
         # if i_end = 0, yi[1:0] = NA
-        return( median(yi[1:i_end]) )
+        return( median(sort(yi)[1:i_end]) ) #fixed 20180913
     }
 
     n <- length(y)

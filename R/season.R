@@ -10,17 +10,16 @@
 #'
 #' @param INPUT A list object with the elements of 't', 'y', 'w', 'Tn' (option)
 #' and 'ylu', returned by \code{check_input}.
-#' @param nptperyear Integer, points per year.
 #' @param south Boolean. In south hemisphere, growing year is 1 July to the
 #' following year 31 June; In north hemisphere, growing year is 1 Jan to 31 Dec.
 #'
-#' @param FUN Coarse curve fitting function, can be one of `sgfitw`, `whitsmw2`
+#' @param FUN Coarse curve fitting function, can be one of `wSG`, `wWHIT`
 #' and `wHANTS`.
 #' @param wFUN weights updating function, can be one of 'wTSM', 'wChen' and
 #' 'wBisquare'.
 #' @param iters How many times curve fitting is implemented.
 #' @param wmin Double, minimum weigth (i.e. weight of snow, ice and cloud).
-#' @param lambda the parameter of \code{whitsmw2}
+#' @param lambda the parameter of \code{wWHIT}
 #' @param nf the parameter of \code{wHANTS}, number of frequencies to be
 #' considered above the zero frequency
 #' @param frame the parameter of \code{sgfitw}, moving window size. Suggested by
@@ -67,10 +66,10 @@
 #  1  25.0  48.0  76.0
 # if more than one continuous maximum(minimum) values, only kept the bigger
 # (smaller) one
-season <- function(INPUT, nptperyear = 46, south = FALSE,
-                   FUN = whitsmw2, wFUN = wTSM, iters = 2, wmin = 0.1,
-                   lambda, nf  = 3, frame = floor(nptperyear/5) * 2 + 1,
-                   minpeakdistance = nptperyear/6,
+season <- function(INPUT, south = FALSE,
+                   FUN = wWHIT, wFUN = wTSM, iters = 2, wmin = 0.1,
+                   lambda, nf  = 3, frame = floor(INPUT$nptperyear/5)*2 + 1, 
+                   minpeakdistance,
                    threshold_max = 0.2, threshold_min = 0.05,
                    ypeak_min   = 0.1, rytrough_max = 0.6,
                    MaxPeaksPerYear = 2, MaxTroughsPerYear = 3,
@@ -79,13 +78,19 @@ season <- function(INPUT, nptperyear = 46, south = FALSE,
 {
     t   <- INPUT$t
     y   <- INPUT$y
+    nptperyear <- INPUT$nptperyear
+
+    if (missing(frame)) frame <- floor(nptperyear/5) * 2 + 1
+    if (missing(minpeakdistance)) minpeakdistance <- nptperyear/6
 
     if (all(is.na(y))) return(NULL)
     n     <- length(y)
     npt   <- sum(INPUT$w > wmin)
     nyear <- ceiling(npt/nptperyear)
-    ylu0  <- INPUT$ylu
 
+    ylu0  <- INPUT$ylu
+    ylu   <- ylu0
+    A0    <- diff(ylu0)
     # frame <- floor(nptperyear/7) * 2 + 1 #13, reference by TSM SG filter
     if (missing(lambda)) lambda <- max(nyear*frame, 15)
 
@@ -94,7 +99,7 @@ season <- function(INPUT, nptperyear = 46, south = FALSE,
     while (iloop <= 3){
         # sgfitw(INPUT$y, INPUT$w, nptperyear, INPUT$ylu, wFUN, iters, frame, d=2)
         # whitsmw(y, w, ylu, wFUN, iters = 1, lambda = 100, ..., d = 2, missval)
-        param <- c(INPUT, nptperyear = nptperyear,
+        param <- c(INPUT,
             wFUN = wFUN, wmin = wmin, iters = iters,
             lambda = lambda,  # param for whittaker
             nf     = nf,      # param for wHANTS,
@@ -107,13 +112,22 @@ season <- function(INPUT, nptperyear = 46, south = FALSE,
         alpha <- 0.01
 
         # default is three year data input, median will be much better
-        ylu_min <- aggregate(ypred, list(year = year(t)), min)$x %>% median()
-        ylu_max <- aggregate(ypred, list(year = year(t)), max)$x %>% median()
-        ylu <- c(pmax(ylu_min, INPUT$ylu[1]), #quantile(ypred, alpha/2)
-                 pmin(ylu_max, INPUT$ylu[2]))
+        # This module was primarily designed for `season_3y`. It also works for
+        # group large than 3-year. 2-year median will be underestimated.
+        if (nyear >= 2.5){ # considering NA values, nyear of 3-year will be smaller.
+
+            ylu_min <- aggregate(ypred, list(year = year(t)), min)$x %>% median()
+            ylu_max <- aggregate(ypred, list(year = year(t)), max)$x %>% median()
+
+            # If multiple years are completely missing, ylu_min possiable equals ylu_max
+            if (ylu_max - ylu_min > A0*0.2){
+                ylu <- c(pmax(ylu_min, INPUT$ylu[1]), #quantile(ypred, alpha/2)
+                         pmin(ylu_max, INPUT$ylu[2]))
+            }
+        }
+        INPUT$ylu <- ylu
         A         <- diff(ylu)
 
-        INPUT$ylu <- ylu
         # ylu   <- quantile(ypred, c(alpha/2, 1 - alpha), na.rm = T)
         ## Plateau peak will lead to failed to find local extreme values.
         #  To avoid fluctuating in peak of growing season or flat peak growing
@@ -138,9 +152,9 @@ season <- function(INPUT, nptperyear = 46, south = FALSE,
         # local maximum values,
         peaks <- findpeaks(ypred, zero = "+",
                            threshold_max = threshold_max*A,
-                           threshold_min = threshold_min*A,
+                           threshold_min = threshold_min*A, # A
                            minpeakdistance = minpeakdistance,
-                           minpeakheight = max(0.2*A + ylu[1], ypeak_min), nups = 1)
+                           minpeakheight = 0.1*A + ylu[1], nups = 1) #, ypeak_min
         pos_max <- peaks$X
         npeak_PerYear <- length(peaks$gregexpr)/nyear#max peaks
 
@@ -179,22 +193,28 @@ season <- function(INPUT, nptperyear = 46, south = FALSE,
     pos <- rbind(pos_min, pos_max)
     pos <- pos[order(pos), ] # c("val", "pos", "left", "right", "type")
 
+    # rm peak value if peak value smaller than the nearest trough values
+    I   <- !with(pos, (c(diff(val) > 0, FALSE) & c(diff(type) == -2, FALSE)) |
+            (c(FALSE, diff(val) < 0) & c(FALSE, diff(type) == 2)))
+    pos <- pos[I, ]
+
     # 1.2 remove both points (date or value of min and max too close)
     # I_del <- union(I_date, I_date+1)
     # I_del <- union(I_date + 1, I_val + 1)
     for (i in 1:2){
         if (i == 1){
             # remove dates too close first, then rm continue max or min value
-            I_del  <- which(diff(pos$pos) < (nptperyear/12*1)) + 1 # for date
+            I_del  <- which(diff(pos$pos) < minpeakdistance/2) + 1 # for date
         } else if(i == 2){
             # remove values too close second, then rm continue max or min value again.
-            I_del  <- which(abs(diff(pos$val)) < 0.1*A) + 1 #for value
+            I_del  <- which(abs(diff(pos$val)) < 0.05*A) + 1 #for value
         }
         if (length(I_del) > 0) pos <- pos[-I_del, ]
         # 1.3 remove replicated
         pos$flag <- cumsum(c(1, diff(pos$type) != 0))
         pos      <- ddply(pos, .(flag), rm_duplicate, y = ypred, threshold = threshold_min*A)[, 2:6]
     }
+
     pos$t    <- t[pos$pos]
     # print(nrow(pos))
     if (nrow(pos) < 2){ # at least two points, begin and end
@@ -243,11 +263,17 @@ season <- function(INPUT, nptperyear = 46, south = FALSE,
 
     dt[, `:=`(season = 1:.N, flag   = sprintf("%d_%d", year, 1:.N)), .(year)]
 
+    # update 20180913
+    # solve the problem of growing season too long, (e.g. US-Cop).
+    I <- which(dt$y_peak >= ypeak_min)
+    dt <- dt[I, ]
+    di <- di[I, ]
+
     ## 7. plot
     if (IsPlot){
         # 7.1 PLOT CURVE FITTING TIME-SERIES
         # need to plot outside, because y, w have been changed.
-        plotdata(plotdat, nptperyear)
+        plotdata(plotdat)
         colors <- c("red", "blue", "green")
         for (i in 1:(length(zs))){
             lines(INPUT$t, zs[[i]], col = colors[i], lwd = 2)
@@ -257,8 +283,8 @@ season <- function(INPUT, nptperyear = 46, south = FALSE,
         # 7.2 plot break points
         I_max <- di$peak
         I_min <- union(di$beg, di$end)
-        points(t[I_max], ypred[I_max], pch=20, cex = 1.5, col="red")
-        points(t[I_min], ypred[I_min], pch=20, cex = 1.5, col="blue")
+        points(t[I_max], ypred[I_max], pch=20, cex = 1.8, col="red")
+        points(t[I_min], ypred[I_min], pch=20, cex = 1.8, col="blue")
     }
     return(list(whit = as.data.table(c(list(t = t, y = y), yfits$ws, yfits$zs)),
                 pos = pos, dt = dt, di = di))

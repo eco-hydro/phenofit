@@ -31,6 +31,7 @@ qc_shapes <- c(19, 15, 4, 17) %>% set_names(qc_levels)
 
 ## fluxnet2015 and phenocam dataset were used to test phenofit
 dir_data <- "data_test/"
+dir_flux <- "F:/Github/data/flux/"
 
 file_st_cam  <- paste0(dir_data, "st_phenocam133.csv")
 file_st_flux <- paste0(dir_data, "st_phenoflux166.csv")

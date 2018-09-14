@@ -3,17 +3,18 @@
 #' @inheritParams season
 #' @param lambda If lambda is not null, \code{initial_lambda} will be not used.
 #' @param titlestr string for title
-#' @param partial If true, only plot partial figures whose NSE < 0.3
-#'
+#' @param isOnlyPlotbad If true, only plot partial figures whose NSE < 0.3
+#' @param ... Other parameters passed to `season`
+#' 
 #' @return List object, list(whit, dt, stat)
 #' @export
-season_3y <- function(INPUT, nptperyear = 23, south = FALSE,
-    FUN = whitsmw2, wFUN = wTSM, wmin = 0.2,
-    lambda = NULL, nf  = 3, frame = floor(nptperyear/5)*2 + 1, 
-    MaxPeaksPerYear = 2.5, MaxTroughsPerYear = 3.5, 
+season_3y <- function(INPUT, south = FALSE,
+    FUN = wWHIT, wFUN = wTSM, iters = 2, wmin = 0.1,
+    lambda = NULL, nf  = 3, frame = floor(INPUT$nptperyear/5)*2 + 1, 
     IsPlot = T, plotdat = INPUT, print = TRUE, titlestr = "",
-    partial = TRUE, ...){
-
+    IsOnlyPlotbad = TRUE, ...)
+{
+    nptperyear <- INPUT$nptperyear
     nlen      <- length(INPUT$t)
     date_year <- year(INPUT$t)
     years     <- seq(year(first(INPUT$t)) + 1, year(last(INPUT$t)) - 1)
@@ -26,12 +27,9 @@ season_3y <- function(INPUT, nptperyear = 23, south = FALSE,
     # debug <- TRUE
     # i = 1;
     params <- list(nptperyear = nptperyear, south = south,
-            FUN = FUN, wFUN = wFUN, iters = 2,
+            FUN = FUN, wFUN = wFUN, iters = iters, wmin = wmin,
             nf  = nf, frame = frame,
-            rytrough_max = 0.8, ypeak_min = ypeak_min,
-            threshold_min = 0.0, threshold_max = 0.3,
-            MaxPeaksPerYear = MaxPeaksPerYear, MaxTroughsPerYear = MaxTroughsPerYear,
-            IsPlot = debug, plotdat = plotdat)#, ...
+            IsPlot = debug, plotdat = plotdat, ...)#
 
     has_lambda = !is.null(lambda)
     brks  <- list()
@@ -102,7 +100,7 @@ season_3y <- function(INPUT, nptperyear = 23, south = FALSE,
     if (con){
     # if(IsPlot && (NSE < 0 && cv < 0.2)){
         pdat     <- as.list(plotdat)[c("t", "y", "w")] %>% c(INPUT[5])
-        plotdata(pdat, nptperyear)
+        plotdata(pdat)
 
         whit <- brks$whit %>% {.[, contain(., "^t|ziter"), with = F]}
         pos  <- brks$dt

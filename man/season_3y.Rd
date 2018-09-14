@@ -4,26 +4,26 @@
 \alias{season_3y}
 \title{Growing season dividing in the 3-year length moving window}
 \usage{
-season_3y(INPUT, nptperyear = 23, south = FALSE, FUN = whitsmw2,
-  wFUN = wTSM, wmin = 0.2, lambda = NULL, nf = 3,
-  frame = floor(nptperyear/5) * 2 + 1, MaxPeaksPerYear = 2.5,
-  MaxTroughsPerYear = 3.5, IsPlot = T, plotdat = INPUT,
-  print = TRUE, titlestr = "", partial = TRUE, ...)
+season_3y(INPUT, south = FALSE, FUN = wWHIT, wFUN = wTSM,
+  iters = 2, wmin = 0.1, lambda = NULL, nf = 3,
+  frame = floor(INPUT$nptperyear/5) * 2 + 1, IsPlot = T,
+  plotdat = INPUT, print = TRUE, titlestr = "",
+  IsOnlyPlotbad = TRUE, ...)
 }
 \arguments{
 \item{INPUT}{A list object with the elements of 't', 'y', 'w', 'Tn' (option)
 and 'ylu', returned by \code{check_input}.}
 
-\item{nptperyear}{Integer, points per year.}
-
 \item{south}{Boolean. In south hemisphere, growing year is 1 July to the
 following year 31 June; In north hemisphere, growing year is 1 Jan to 31 Dec.}
 
-\item{FUN}{Coarse curve fitting function, can be one of `sgfitw`, `whitsmw2`
+\item{FUN}{Coarse curve fitting function, can be one of `wSG`, `wWHIT`
 and `wHANTS`.}
 
 \item{wFUN}{weights updating function, can be one of 'wTSM', 'wChen' and
 'wBisquare'.}
+
+\item{iters}{How many times curve fitting is implemented.}
 
 \item{wmin}{Double, minimum weigth (i.e. weight of snow, ice and cloud).}
 
@@ -35,12 +35,6 @@ considered above the zero frequency}
 \item{frame}{the parameter of \code{sgfitw}, moving window size. Suggested by
 TIMESAT, default frame = floor(nptperyear/7)*2 + 1.}
 
-\item{MaxPeaksPerYear}{This parameter is used to adjust lambda in iterations.
-If PeaksPerYear > MaxPeaksPerYear, then lambda = lambda*2.}
-
-\item{MaxTroughsPerYear}{This parameter is used to adjust lambda in iterations.
-If TroughsPerYear > MaxTroughsPerYear, then lambda = lambda*2.}
-
 \item{IsPlot}{Boolean}
 
 \item{plotdat}{A list or data.table, with 't', 'y' and 'w'. Only if
@@ -51,9 +45,9 @@ have been changed, we suggest using the original data.table.}
 
 \item{titlestr}{string for title}
 
-\item{partial}{If true, only plot partial figures whose NSE < 0.3}
+\item{...}{Other parameters passed to `season`}
 
-\item{...}{Other parameters passed to findpeaks}
+\item{isOnlyPlotbad}{If true, only plot partial figures whose NSE < 0.3}
 }
 \value{
 List object, list(whit, dt, stat)

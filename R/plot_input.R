@@ -3,10 +3,11 @@
 #' @inheritParams season
 #' @param ... other parameter will be ignored.
 #' @export
-plotdata <- function(INPUT, nptperyear, wmin = 0.1, ...){
+plotdata <- function(INPUT, wmin = 0.1, ...){
     t <- INPUT$t
     y <- INPUT$y
     w <- INPUT$w
+    # nptperyear <- INPUT$nptperyear
     
     npt <- length(y)
     # show grid lines
@@ -20,12 +21,12 @@ plotdata <- function(INPUT, nptperyear, wmin = 0.1, ...){
     colors <- c("grey60", "#00BFC4", "#F8766D", "#C77CFF", "blue", "red", "black")
     pch    <- c(19, 15, 4)
     
-    plot(t, y, type = "l", ...)
+    plot(t, y, type = "l", ann = FALSE, ...)
     Ids <- unique(wf)
     for (i in 1:3){
         I = wf == i
         add <- ifelse(i == 1, F, T)
-        points(t[I], y[I], pch = pch[i], col = colors[i], cex = 0.8)
+        points(t[I], y[I], pch = pch[i], col = colors[i], cex = 0.6)
     }
     # ylab = expression(paste('GPP ( gC ', m^-2, d^-1, ')'))
     years    <- year(t)

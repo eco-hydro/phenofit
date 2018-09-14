@@ -10,7 +10,7 @@ sgolayS <- function(frame, d){
 #' @param d polynomial of degree
 #' 
 #' @export
-sgfitw <- function(y, w, nptperyear, ylu, wFUN = wTSM, iters = 2,
+wSG <- function(y, w, nptperyear, ylu, wFUN = wTSM, iters = 2,
                    frame = floor(nptperyear/7)*2 + 1, d=2, ...){
     if (all(is.na(y))) return(y)
 

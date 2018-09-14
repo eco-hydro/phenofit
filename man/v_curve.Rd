@@ -4,14 +4,11 @@
 \alias{v_curve}
 \title{v_curve}
 \usage{
-v_curve(INPUT, nptperyear, lambdas, d = 2, IsPlot = F, wFUN = wTSM,
-  iters = 2)
+v_curve(INPUT, nptperyear, lambdas = seq(0, 3, 0.1), d = 2,
+  IsPlot = F, wFUN = wTSM, iters = 2)
 }
 \arguments{
-\item{nptperyear}{number of images per year}
-
-\item{lambdas}{whittaker parameter (2-15 is suitable for 16-day VI). Multiple
-lambda values also are accept, then a list object return.}
+\item{nptperyear}{Integer, number of images per year}
 
 \item{d}{difference order}
 

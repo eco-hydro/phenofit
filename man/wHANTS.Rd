@@ -22,7 +22,7 @@ in the range of \code{ylu}.}
 \item{periodlen}{length of the base period, measured in virtual samples
 (days, dekads, months, etc.). nptperyear in timesat.}
 
-\item{nptperyear}{number of images per year}
+\item{nptperyear}{Integer, number of images per year}
 
 \item{wFUN}{weights updating function, can be one of 'wTSM', 'wChen' and 
 'wBisquare'.}

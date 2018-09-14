@@ -2,14 +2,16 @@
 #'
 #' Weighted HANTS smoother
 #' 
-#' @template INPUT
+#' @inheritParams check_input
 #' @param nf number of frequencies to be considered above the zero frequency
 #' @param ylu [low, high] of time-series y (curve fitting values are constrained
 #' in the range of \code{ylu}.
-#' @param nptperyear number of images per year
 #' @param periodlen length of the base period, measured in virtual samples
 #'           (days, dekads, months, etc.). nptperyear in timesat.
-#' @template WEIGHT
+#' @param wFUN weights updating function, can be one of 'wTSM', 'wChen' and 
+#' 'wBisquare'.
+#' @param iters How many times curve fitting is implemented.
+#' @param wmin Double, minimum weigth (i.e. weight of snow, ice and cloud).
 #' @param ... Additional parameters are passed to \code{wFUN}.
 #' 
 #' @author

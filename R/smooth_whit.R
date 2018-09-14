@@ -44,7 +44,7 @@ whit2 <- function(y, lambda, w = rep(1, ny))
 #' Weigthed Whittaker Smoother
 #'
 #' @inheritParams wHANTS
-#' @param lambdas whittaker parameter (2-15 is suitable for 16-day VI). Multiple
+#' @param lambda whittaker parameter (2-15 is suitable for 16-day VI). Multiple
 #' lambda values also are accept, then a list object return.
 #' @param second If true, in every iteration, Whittaker will be implemented
 #' twice to make sure curve fitting is smooth. If curve has been smoothed
@@ -57,28 +57,28 @@ whit2 <- function(y, lambda, w = rep(1, ny))
 #' [2]. Frasso, G., Eilers, P.H.C., 2015. L- and V-curves for optimal smoothing. Stat.
 #'      Modelling 15, 91–111. https://doi.org/10.1177/1471082X14549288
 #' @export
-whitsmw2 <- function(y, w, ylu, nptperyear, wFUN = wTSM, iters=1, lambdas=1000,
+wWHIT <- function(y, w, ylu, nptperyear, wFUN = wTSM, iters=1, lambda=15,
     second = FALSE, ...) #, df = NULL
 {
     if (all(is.na(y))) return(y)
     n <- sum(w)
 
-    OUT <- list()
+    OUT   <- list()
     yiter <- y
-    for (j in seq_along(lambdas)){
-        lambda <- lambdas[j]
+    for (j in seq_along(lambda)){
+        lambda_j <- lambda[j]
 
         fits <- list()
         ws   <- list()
         for (i in 1:iters){
             ws[[i]] <- w
-            z <- whit2(yiter, lambda, w)
+            z <- whit2(yiter, lambda_j, w)
             w <- wFUN(y, z, w, i, nptperyear, ...)
 
             # If curve has been smoothed enough, it will not care about the
             # second smooth. If no, the second one is just prepared for this
             # situation.
-            if (second) z <- whit2(z, lambda, w) #genius move
+            if (second) z <- whit2(z, lambda_j, w) #genius move
 
             z <- check_fit(z, ylu)
             yiter[yiter < z] <- z[yiter < z] # upper envelope
@@ -91,7 +91,7 @@ whitsmw2 <- function(y, w, ylu, nptperyear, wFUN = wTSM, iters=1, lambdas=1000,
 
         OUT[[j]] <- list(ws = ws, zs = fits)
     }
-    if (length(lambdas) == 1) OUT <- OUT[[1]]
+    if (length(lambda) == 1) OUT <- OUT[[1]]
     return(OUT)
 }
 

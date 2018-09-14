@@ -39,26 +39,27 @@ v_opt = function(y, w = 0 * y + 1, d = 2, lambdas = c(0, 4), tol = 0.01) {
 #' V-curve is used to optimize Whittaker parameter lambda.
 #' Update 20180605 add weights updating to whittaker lambda selecting
 #'
-#' @inheritParams whitsmw2
+#' @inheritParams wWHIT
 #' @param d difference order
 #' @param IsPlot Boolean. Whether to plot figure?
 #'
 #' @export
-v_curve = function(INPUT, nptperyear, lambdas,  d = 2, IsPlot = F,
+v_curve = function(INPUT, nptperyear, lambdas = seq(0, 3, 0.1),  
+    d = 2, IsPlot = F,
     wFUN = wTSM, iters=2) {
     # Compute the V-cure
     y <- INPUT$y
     w <- INPUT$w
 
     param <- c(INPUT, nptperyear = nptperyear, wFUN = wFUN, iters=iters,
-        second = FALSE, lambdas=NA)
+        second = FALSE, lambda=NA)
 
     fits = pens = NULL
     for (lla in lambdas) {
-        param$lambdas <- 10^lla
-        z    <- do.call(whitsmw2, param)$zs %>% dplyr::last()
+        # param$lambda <- 10^lla
+        # z    <- do.call(wWHIT, param)$zs %>% dplyr::last()
 
-        # z    = whit2(y, 10 ^ lla, w)
+        z    = whit2(y, 10 ^ lla, w)
         fit  = log(sum(w * (y - z) ^ 2))
         pen  = log(sum(diff(z, diff = d) ^2))
         fits = c(fits, fit)
@@ -77,13 +78,16 @@ v_curve = function(INPUT, nptperyear, lambdas,  d = 2, IsPlot = F,
     lambda  = 10 ^ lamids[k]
 
     # param$lambdas <- lambda
-    # z    <- do.call(whitsmw2, param) %>% dplyr::last()
+    # z    <- do.call(wWHIT, param) %>% dplyr::last()
     # z       = whit2(y, lambda, w)
-    param$lambdas <- lambda
-    fit <- do.call(whitsmw2, param)
-    d_sm <- fit %$% c(ws, zs) %>% as.data.table() %>% cbind(t = INPUT$t, .)
+    param$lambda <- lambda
+    fit <- do.call(wWHIT, param)
+    fit <- fit %$% c(ws, zs) %>% as.data.table() %>% cbind(t = INPUT$t, .)
 
     if (IsPlot) {
+        par(mfrow = c(2, 1), mar = c(2.5, 2.5, 1, 0.2),
+                mgp = c(1.3, 0.6, 0), oma = c(0, 0, 0.5, 0))
+        ## 1. v-curve ~ lambda
         ylim = c(0, max(v))
         plot(lamids, v, type = 'l', col = 'blue', ylim = ylim,
            xlab = 'log10(lambda)')
@@ -92,9 +96,19 @@ v_curve = function(INPUT, nptperyear, lambdas,  d = 2, IsPlot = F,
         abline(v = lamids[k], lty = 2, col = 'gray', lwd = 2)
         title(sprintf("v-curve, lambda = %5.2f", lambda))
         grid()
-    }
 
-    return( list(fit = d_sm, lambdas = lamids, v = v, lambda = lambda, vmin = v[k]))
+        ## 2. best curve        
+        season(INPUT, nptperyear, IsPlot = T, 
+            minpeakdistance = nptperyear/12, 
+            ypeak_min = 1, 
+            # MaxPeaksPerYear = 3, MaxTroughsPerYear = 4,
+            # threshold_max = 0.1, threshold_min = 0.05,
+           lambda = lambda)
+        # plotdata(INPUT, nptperyear, wmin = 0.1)
+        # lines(fit$t, fit$ziter1, col = "blue", lwd = 1.2)
+        # lines(fit$t, fit$ziter2, col = "red" , lwd = 1.2)
+    }
+    return( list(fit = fit, lambdas = lamids, v = v, lambda = lambda, vmin = v[k]))
 }
 
 ## The goal of whittaker in this study is used to simulate vegetation seasonality

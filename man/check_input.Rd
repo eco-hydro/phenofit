@@ -4,8 +4,8 @@
 \alias{check_input}
 \title{check_input}
 \usage{
-check_input(t, y, w, Tn = NULL, wmin = 0.2, missval, maxgap = 10,
-  alpha = 0.01)
+check_input(t, y, w, nptperyear, Tn = NULL, wmin = 0.2, missval,
+  maxgap = 10, alpha = 0.01, ...)
 }
 \arguments{
 \item{t}{Numeric vector, \code{Date} variable}
@@ -13,6 +13,8 @@ check_input(t, y, w, Tn = NULL, wmin = 0.2, missval, maxgap = 10,
 \item{y}{Numeric vector, vegetation index time-series}
 
 \item{w}{Numeric vector, weights of \code{y}}
+
+\item{nptperyear}{Integer, number of images per year}
 
 \item{Tn}{Numeric vector, night temperature, default is null. If provided,
 Tn is used to help divide ungrowing period, and then get background value in
@@ -31,6 +33,8 @@ Replacing NA values with a constant missing value (e.g. background value ymin)
 is inappropriate for middle growing season points. Interpolating all values
 by na.approx, it is unsuitable for large number continous missing segments,
 e.g. in the start or end of growing season.}
+
+\item{...}{Others will be ignored.}
 }
 \value{
 A list object returned

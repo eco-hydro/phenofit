@@ -1,0 +1,72 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+```{r}
+source('test/stable/load_pkgs.R')
+source("test/07_whit/main_phenofit_test.R")
+source('test/stable/ggplot/geom_boxplot_no_outlier.R')
+ 
+# source("R/plot_phenofit.R")
+
+# stations212 <- fread("F:/Github/MATLAB/PML/data/flux-212.txt")
+
+infile     <- file_cam
+
+
+file <- "data_test/phenofit.rda"
+```
+
+```{r}
+# 1. load Fine fitting first
+# PhenoCam dataset not used!
+# lst_cam  <- get_phenofit_fitting(file_cam, "data_test/phenofit_fitting_phenocam133.rda")
+lst_flux <- get_phenofit_fitting(file_flux, "data_test/phenofit_fitting_phenoflux166.rda")
+# str(lst_flux)
+```
+
+```{r}
+# 2. load gee_whit, checked 20180911, lambda formula is the latest.
+dir_gdrive <- "D:/Document/GoogleDrive/whit"
+files    <- dir(dir_gdrive, "*.geojson", full.names = T)
+patterns <- str_extract(basename(files), ".*(?=_\\d{4}_)") %>% unique()
+
+df_whit <- llply(patterns, function(pattern) readwhitMAT(dir_gdrive, pattern),
+            .progress = "text") %>% set_names(patterns) %>% melt_list("meth")
+df_whit$meth %<>% as.factor()
+print(df_whit)
+# print(dir_flush)
+```
+
+```{r}
+# 3. load Rough fitting data
+dir_rough = sprintf('%sresult/valid/flux', dir_flush)
+dirs <- dir(dir_rough, full.names = T)[-1]
+
+files <- laply(dirs, dir, full.names = T)
+
+methods2 <- c("wHANTS", "wSG", "wWH", "wWH2")
+df_rough = llply(files, get_Fitting, .progress = "text") %>% 
+    set_names(methods2) %>% melt_list("meth")
+print(df_rough)
+print(files)
+```
+
+```{r}
+# unique(df$site)
+# merge gee_whit into phenofit
+df_flux <- get_phenofit_update_whit(lst_flux, df_whit)
+print(df_flux)
+```
+
+
+```{r}
+df_flux$fits_merge %<>% rbind(df_rough)
+df_flux %<>% get_phenofit_result_merge()
+```
+
