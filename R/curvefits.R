@@ -1,17 +1,13 @@
 #' Fine Curve fitting
 #'
 #' Fine Curve fitting for INPUT time-series. 
-#'
+#' 
+#' @inheritParams season
 #' @param INPUT A list object with the elements of 't', 'y', 'w', 'Tn' (option) 
 #' and 'ylu', returned by \code{check_input}.
 #' @param brks A list object with the elements of 'fit' and 'dt', returned by 
 #' \code{season} or \code{season_3y}, which contains the growing season 
 #' dividing information.
-#' @param nptperyear Integer, points per year.
-#' @param wFUN weights updating function, can be one of 'wTSM', 'wChen' and 
-#' 'wBisquare'.
-#' @param iters How many times curve fitting is implemented.
-#' @param wmin Double, minimum weigth value (i.e. weight for snow, ice and cloud).
 #' @param nextent Extend curve fitting window, until \code{nextent} good or 
 #' marginal element are found in previous and subsequent growing season.
 #' @param maxExtendMonth Search good or marginal good values in previous and 
@@ -33,7 +29,7 @@
 #' 
 #' @return fits Multiple phenofit object.
 #' @export
-curvefits <- function(INPUT, brks, nptperyear = 23,
+curvefits <- function(INPUT, brks,
                       wFUN = wTSM, iters = 2, wmin = 0.2,
                       nextent = 2, maxExtendMonth = 3, minExtendMonth = 1, 
                       minT = 0,
@@ -41,6 +37,7 @@ curvefits <- function(INPUT, brks, nptperyear = 23,
                       qc, minPercValid = 0.2,
                       print = TRUE, ...)
 {
+    nptperyear <- INPUT$nptperyear
     t     <- INPUT$t
     years <- year(t)
     n    <- length(t)

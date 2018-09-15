@@ -14,6 +14,16 @@ param = listk(
     max_MaxPeaksperyear =2.5, max_MinPeaksperyear = 3.5
 )
 
-test_that("`season` yearly growing season divding works", {
+test_that("`season` with wWHIT", {
+    expect_silent(brks <- do.call(season, param))
+})
+
+test_that("`season` with wHANTS", {
+    param$FUN <- wHANTS
+    expect_silent(brks <- do.call(season, param))
+})
+
+test_that("`season` with wSG", {
+    param$FUN <- wSG
     expect_silent(brks <- do.call(season, param))
 })

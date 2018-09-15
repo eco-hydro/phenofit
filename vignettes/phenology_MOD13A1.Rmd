@@ -92,7 +92,8 @@ SummaryQA      | Pixel reliability summary QA | weight
 
 ```{r tidy MOD13A1}
 data('MOD13A1')
-df <- MOD13A1$dt
+df <- MOD13A1$dt 
+
 st <- MOD13A1$st
 
 df[, `:=`(date = ymd(date), year = year(date), doy = as.integer(yday(date)))]
@@ -101,6 +102,8 @@ df[is.na(DayOfYear), DayOfYear := doy] # If DayOfYear is missing
 # In case of last scene of a year, doy of last scene could in the next year
 df[abs(DayOfYear - doy) >= 300, t := as.Date(sprintf("%d-%03d", year+1, DayOfYear), "%Y-%j")] # last scene
 df[abs(DayOfYear - doy) <  300, t := as.Date(sprintf("%d-%03d", year  , DayOfYear), "%Y-%j")]
+
+df <- df[!duplicated(df[, .(site, t)]), ]
 
 # MCD12Q1.006 land cover 1-17, IGBP scheme
 IGBPnames_006 <- c("ENF", "EBF", "DNF", "DBF", "MF" , "CSH", 
@@ -181,9 +184,9 @@ brks2 <- season_3y(INPUT, south = sp$lat[1] < 0,
 
 ## 2.3 Curve fitting
 ```{r curve fitting, fig.height=7, fig.align="center"}
-fit  <- curvefits(INPUT, brks2, lambda =lambda,
+fit  <- curvefits(INPUT, brks2,
                   methods = c("AG", "zhang", "beck", "elmore"), #,"klos",, 'Gu'
-                  nptperyear = nptperyear, debug = F, 
+                  debug = F, 
                   wFUN = wFUN,
                   nextent = 2, maxExtendMonth = 3, minExtendMonth = 1,
                   qc = as.numeric(dnew$SummaryQA), minPercValid = 0.2,

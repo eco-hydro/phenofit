@@ -5,12 +5,12 @@
 #' @param titlestr string for title
 #' @param IsOnlyPlotbad If true, only plot partial figures whose NSE < 0.3
 #' @param ... Other parameters passed to `season`
-#' 
+#'
 #' @return List object, list(whit, dt, stat)
 #' @export
 season_3y <- function(INPUT, south = FALSE,
     FUN = wWHIT, wFUN = wTSM, iters = 2, wmin = 0.1,
-    lambda = NULL, nf  = 3, frame = floor(INPUT$nptperyear/5)*2 + 1, 
+    lambda = NULL, nf  = 3, frame = floor(INPUT$nptperyear/5)*2 + 1,
     ...,
     IsPlot = T, plotdat = INPUT, print = TRUE, titlestr = "",
     IsOnlyPlotbad = TRUE)
@@ -19,7 +19,11 @@ season_3y <- function(INPUT, south = FALSE,
     t <- INPUT$t
     nlen      <- length(t)
     date_year <- year(t) + ((month(t) >= 7)-1)*south
-    years     <- unique(date_year) #%>% .[2:(length(.)-1)]
+
+    # yearly data count info
+    info  <- table(date_year) #%>% as.data.table()
+    years <- info[info > nptperyear*0.2] %>% {as.numeric(names(.))}
+        #.[2:(length(.)-1)] # rm head and tail filled years
     nyear     <- length(years)
 
     ypeak_min <- 0.05
@@ -36,12 +40,12 @@ season_3y <- function(INPUT, south = FALSE,
     has_lambda = !is.null(lambda)
     brks  <- list()
 
-    # If data is not continuous, `season_3y` will be error! 
+    # If data is not continuous, `season_3y` will be error!
     # Fixed at 20180915
     for (i in 2:(nyear-1)){
         if (print) runningId(i, prefix = '\t[season_3y] ')
 
-        year <- years[i]
+        year_i <- years[i]
         I <- which(date_year %in% years[(i-1):(i+1)]) # 3y index
 
         ylu <- get_ylu (INPUT$y, date_year, INPUT$w, width_ylu, I, Imedian = TRUE, wmin)
@@ -56,13 +60,13 @@ season_3y <- function(INPUT, south = FALSE,
         params_i = c(list(INPUT = input, lambda = lambda), params)
         brk    <- do.call(season, params_i)
 
-        brk$dt %<>% subset(year == years[i])
+        brk$dt %<>% subset(year == year_i)
         if (is.null(brk$dt) || nrow(brk$dt) == 0){
             params_i$threshold_max = 0.2
             brk <- do.call(season, params_i)
-            brk$dt %<>% subset(year == years[i]) # bug found, need to fix for South Hemisphere
+            brk$dt %<>% subset(year == year_i) # bug found, need to fix for South Hemisphere
         }
-        brks[[i-1]] <- list(whit = brk$whit[(nptperyear+1):(2*nptperyear), ],
+        brks[[i-1]] <- list(whit = brk$whit[date_year[I] == year_i, ],
                           dt   = brk$dt)
     }
     brks %<>% purrr::transpose()

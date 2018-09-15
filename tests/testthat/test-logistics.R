@@ -1,7 +1,7 @@
 context("logistics")
 
-# source('helper_MOD13A1.R')
-# wFUN = wTSM
+source('helper_MOD13A1.R')
+wFUN = wTSM
 
 # lambda   <- init_lambda(INPUT$y) # lambda for whittaker
 # # param = listk(
@@ -13,18 +13,37 @@ context("logistics")
 # #     rymin_less = 0.6, ypeak_min = ypeak_min,
 # #     max_MaxPeaksperyear =2.5, max_MinPeaksperyear = 3.5
 # # )
-# brks2 <- season_3y(INPUT, nptperyear, south = sp$lat[1] < 0, 
-#     FUN = whitsmw2, wFUN = wFUN,
-#     plotdat = d, IsPlot = IsPlot, print = F, partial = F)
+# 
+brks2 <- season_3y(INPUT, south = sp$lat[1] < 0, 
+    FUN = wWHIT, wFUN = wFUN,
+    plotdat = d, IsPlot = IsPlot, print = F, IsOnlyPlotbad = F)
 
-# fit  <- curvefits(INPUT, brks2, lambda =lambda,
-#                   methods = c("zhang"), #,"klos",, 'Gu'， "AG",, "beck", "elmore"
-#                   nptperyear = nptperyear, debug = F, wFUN = wFUN,
-#                   nextent = 2, maxExtendMonth = 3, minExtendMonth = 1,
-#                   qc = as.numeric(dnew$SummaryQA), minPercValid = 0.2,
-#                   print = print)
-# fit$INPUT   <- INPUT
-# fit$seasons <- brks2
+param <- list(
+    INPUT, brks2,
+    methods = c("AG", "zhang", "beck", "elmore", 'Gu'), #,"klos",
+    debug = F, 
+    wFUN = wFUN,
+    nextent = 2, maxExtendMonth = 3, minExtendMonth = 1,
+    qc = as.numeric(dnew$SummaryQA), minPercValid = 0.2,
+    print = FALSE
+)
+
+test_curvefit <- function(meth){
+    test_that(sprintf("`curvefits` with %s", meth), {
+        expect_silent({
+            suppressWarnings({
+                param$methods <- meth
+                fit  <- do.call(curvefits, param)
+            })
+        })
+    })
+}
+
+test_curvefit("AG")
+test_curvefit("zhang")
+test_curvefit("beck")
+test_curvefit("elmore")
+test_curvefit("Gu")
 
 # ## check the curve fitting parameters
 # params <- getparam(fit)
