@@ -3,7 +3,7 @@
 #' @inheritParams season
 #' @param lambda If lambda is not null, \code{initial_lambda} will be not used.
 #' @param titlestr string for title
-#' @param isOnlyPlotbad If true, only plot partial figures whose NSE < 0.3
+#' @param IsOnlyPlotbad If true, only plot partial figures whose NSE < 0.3
 #' @param ... Other parameters passed to `season`
 #' 
 #' @return List object, list(whit, dt, stat)
@@ -11,41 +11,45 @@
 season_3y <- function(INPUT, south = FALSE,
     FUN = wWHIT, wFUN = wTSM, iters = 2, wmin = 0.1,
     lambda = NULL, nf  = 3, frame = floor(INPUT$nptperyear/5)*2 + 1, 
+    ...,
     IsPlot = T, plotdat = INPUT, print = TRUE, titlestr = "",
-    IsOnlyPlotbad = TRUE, ...)
+    IsOnlyPlotbad = TRUE)
 {
     nptperyear <- INPUT$nptperyear
-    nlen      <- length(INPUT$t)
-    date_year <- year(INPUT$t)
-    years     <- seq(year(first(INPUT$t)) + 1, year(last(INPUT$t)) - 1)
+    t <- INPUT$t
+    nlen      <- length(t)
+    date_year <- year(t) + ((month(t) >= 7)-1)*south
+    years     <- unique(date_year) #%>% .[2:(length(.)-1)]
     nyear     <- length(years)
 
     ypeak_min <- 0.05
-    width_ylu <- nptperyear*1
+    width_ylu <- nptperyear*0 # already 3y group, moving window for ylu unnecessary
 
     debug <- FALSE
     # debug <- TRUE
     # i = 1;
-    params <- list(nptperyear = nptperyear, south = south,
+    params <- list(south = south,
             FUN = FUN, wFUN = wFUN, iters = iters, wmin = wmin,
             nf  = nf, frame = frame,
             IsPlot = debug, plotdat = plotdat, ...)#
 
     has_lambda = !is.null(lambda)
     brks  <- list()
-    for (i in 1:nyear){
+
+    # If data is not continuous, `season_3y` will be error! 
+    # Fixed at 20180915
+    for (i in 2:(nyear-1)){
         if (print) runningId(i, prefix = '\t[season_3y] ')
 
         year <- years[i]
-        I_beg = nptperyear*(i-1)+1
-        I_end = pmin ( nptperyear*(i+2), nlen)
+        I <- which(date_year %in% years[(i-1):(i+1)]) # 3y index
 
-        ylu <- get_ylu (INPUT$y, date_year, INPUT$w, width_ylu, I_beg, I_end, Imedian = TRUE, wmin)
+        ylu <- get_ylu (INPUT$y, date_year, INPUT$w, width_ylu, I, Imedian = TRUE, wmin)
         ylu <- merge_ylu(INPUT$ylu, ylu) # curvefits.R
 
-        I      <- I_beg:I_end
         input  <- lapply(INPUT[1:3], `[`, I)
-        input$ylu <- ylu
+        input$ylu        <- ylu
+        input$nptperyear <- nptperyear
 
         if (!has_lambda) lambda <- init_lambda(input$y)#*2
 
@@ -58,7 +62,7 @@ season_3y <- function(INPUT, south = FALSE,
             brk <- do.call(season, params_i)
             brk$dt %<>% subset(year == years[i]) # bug found, need to fix for South Hemisphere
         }
-        brks[[i]] <- list(whit = brk$whit[(nptperyear+1):(2*nptperyear), ],
+        brks[[i-1]] <- list(whit = brk$whit[(nptperyear+1):(2*nptperyear), ],
                           dt   = brk$dt)
     }
     brks %<>% purrr::transpose()
@@ -96,7 +100,7 @@ season_3y <- function(INPUT, south = FALSE,
     # if (NSE < 0 | (cv < 0.1 & NSE < 0.1)) {}
 
     ## VISUALIZATION
-    con <- ifelse(partial, IsPlot && (NSE < 0.3), IsPlot)
+    con <- ifelse(IsOnlyPlotbad, IsPlot && (NSE < 0.3), IsPlot)
     if (con){
     # if(IsPlot && (NSE < 0 && cv < 0.2)){
         pdat     <- as.list(plotdat)[c("t", "y", "w")] %>% c(INPUT[5])

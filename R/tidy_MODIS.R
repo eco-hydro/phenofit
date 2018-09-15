@@ -1,7 +1,7 @@
 #' getRealDate
 #'
 #' convert MODIS \code{DayOfYear} to the exact compositing date.
-#' @param dt A data.table, at least with columns of \code{date}, and
+#' @param df A data.table, at least with columns of \code{date}, and
 #' \code{DayOfYear}.
 #'
 #' @return
@@ -29,7 +29,8 @@ qc_shapes <- c(19, 15, 4, 17) %>% set_names(qc_levels)
 #' Tidy contents include: \cr
 #' 1. add exact compositing date, see \code{\link{getRealDate}}. \cr
 #' 2. Init weigths according \code{SummaryQA}, see \code{\link{qc_summary}}. \cr
-#'
+#' 
+#' @inheritParams check_input
 #' @param infile A character csv file path or a data.table
 #' @param outfile Output file name. If missing, will not be written to file.
 #'

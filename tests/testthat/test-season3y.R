@@ -14,7 +14,8 @@ source('helper_MOD13A1.R')
 
 test_that("season_3y works", {
     expect_silent(
-        brks2 <- season_3y(INPUT, nptperyear, south = sp$lat[1] < 0, FUN = whitsmw2,
+        brks2 <- season_3y(INPUT, south = sp$lat[1] < 0, 
+            FUN = wWHIT,
             plotdat = d,
             IsPlot = IsPlot, print = F, partial = F)
     )

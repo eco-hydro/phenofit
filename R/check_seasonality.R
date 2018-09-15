@@ -1,6 +1,7 @@
 #' Check vegetation seasonality
+#' @inheritParams season
 #' @export
-check_seasonality <- function(INPUT, IsPlot = F, pdat = INPUT, nf = 3, ...){
+check_seasonality <- function(INPUT, IsPlot = F, plotdat = INPUT, nf = 3, ...){
     # y <- d$EVI
     # t <- as.numeric(d$date - ymd(20000101))
     # w <- d$w
@@ -12,10 +13,10 @@ check_seasonality <- function(INPUT, IsPlot = F, pdat = INPUT, nf = 3, ...){
     fit <- wHANTS(INPUT$y, INPUT$t, INPUT$w, nf = nf, ylu = INPUT$ylu,
                   nptperyear = 23, iters = 3, wFUN = wTSM, wmin = 0.1)
     if (IsPlot){
-        plotdata(pdat, 23)
+        plotdata(plotdat, 23)
         colors <- c("red", "blue", "green")
         for (i in 1:(ncol(fit) - 1)){
-            lines(pdat$t, fit[[i+1]], col = colors[i], lwd = 2)
+            lines(plotdat$t, fit[[i+1]], col = colors[i], lwd = 2)
         }
     }
     stat  <- GOF(INPUT$y, dplyr::last(fit), INPUT$w, include.cv = T)
@@ -79,50 +80,67 @@ rmNonSeasonality <- function(dt, IsPlot = T, file = 'SI.pdf'){
     info # quickly return
 }
 
-#' 
+#'
 #' Add one year data in the head and tail
-#' 
-#' @param d A data.table, should have \code{t} (compositing date) column 
+#'
+#' @param d A data.table, should have \code{t} (compositing date) column
 #' (\code{Date} variable).
-#' 
+#' @inheritParams check_input
+#' @inheritParams season
+#'
 #' @return data.table
+#' @importFrom lubridate ddays
 #' @export
-add_HeadTail <- function(d, nptperyear = 23){
-    # I_beg <- floor(yday(ymd(20000218))/16) # MOD13A1 20000218 is the 4th 16-day
+add_HeadTail <- function(d, nptperyear, south = FALSE){
+    if (missing(nptperyear)){
+        nptperyear <- ceiling(365/as.numeric(difftime(d$t[2], d$t[1], units = "days")))
+    }
+
+    ## can coop with years not continuous now
     ntime    <- nrow(d)
-    step     <- ceiling(365/nptperyear)
 
-    nmissing_head <- floor( yday(d$t[1])/step )
-    nmissing_tail <- nptperyear - floor( yday(last(d$t))/step ) - 1
+    if (ntime <= 1.2*nptperyear){
+        # if only one year data, just triplicate it.
+        d_tail <- d_head <- d
+    } else {
+        step     <- ceiling(365/nptperyear)
 
-    date_beg <- first(d$t)
-    date_end <- last(d$t)
-    
-    year_beg <- year(date_beg)
-    year_end <- year(date_end)
+        deltaT <- ddays(181)*south
+        tt <- d$t - deltaT
+        date_year <- year(tt) #+ ((month(t) >= 7)-1)*South
 
-    md_beg <- date_beg %>% {month(.)*100 + day(.)} # begin date month-day
-    md_end <- date_end %>% {month(.)*100 + day(.)} # end   date month-day
-    
-    # in case of leap year
-    if (md_beg == 0229) md_beg = 0228
-    if (md_beg == 0229) md_end = 0301
-     
-    # if tiny missing, than this year is include to extract phenology
-    half = floor(nptperyear/2)
-    nyear_add_head <- ifelse (nmissing_head < half, 2, 1)  
-    nyear_add_tail <- ifelse (nmissing_tail < half, 2, 1)
+        n_head <- sum(date_year == first(date_year))
+        n_tail <- sum(date_year == last(date_year))
+        nmissing_head <- nptperyear - n_head
+        nmissing_tail <- nptperyear - n_tail
 
-    # head
-    d_head <- d[t >= ymd( (year_beg+1)*1e4 + 0101) & 
-                t <  ymd( (year_beg+nyear_add_head)*1e4 + md_beg)]
+        # if tiny missing, than this year is include to extract phenology
+        # if too much, this year will be remove
+        trs = nptperyear*0.45
+        nyear_add_head <- ifelse (nmissing_head < trs, 1, 0)
+        nyear_add_tail <- ifelse (nmissing_tail < trs, 1, 0)
 
-    d_head$t %<>% `-`(dyears(nyear_add_head)) 
+        na_head <- nptperyear*nyear_add_head + nmissing_head
+        na_tail <- nptperyear*nyear_add_tail + nmissing_tail
 
-    # tail 
-    d_tail <- d[t >  ymd( (year_end-nyear_add_tail)*1e4 + md_end) & 
-                t <= ymd( (year_end-1)*1e4 + 1231)]
-    d_tail$t %<>% `+`(dyears(nyear_add_tail)) 
+        I_head <- n_head %>% {seq(.+1, .+na_head)}
+        I_tail <- (ntime - n_tail) %>% {seq(.-na_tail+1, .)}
+
+        # head
+        d_head <- d[I_head,]
+        d_tail <- d[I_tail,]
+
+    }
+
+    deltaT_head <- first(d$t) - last(d_head$t) - 1
+    deltaT_tail <- first(d_tail$t) - last(d$t) - 1
+
+    d_head$t %<>% `+`(deltaT_head)
+    d_tail$t %<>% `-`(deltaT_tail)
+
+    # make sure date have no overlap
+    # d_head <- d_head[t < date_beg]
+    # d_tail <- d_tail[t > date_end]
 
     res <- rbind(d_head, d, d_tail)
     res # return

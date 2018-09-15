@@ -65,6 +65,7 @@
 #' @param x Binary value
 #' @param start Bit starting position
 #' @param end Bit ending position
+#' @param wmin Double, minimum weigth (i.e. weight of snow, ice and cloud).
 #' @return weigths
 #' 
 #' @rdname qcFUN

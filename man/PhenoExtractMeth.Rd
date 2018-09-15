@@ -19,13 +19,26 @@ PhenoKl(fit, IsPlot = TRUE, show.lgd = T, ...)
 \arguments{
 \item{fit}{Curve fitting result returned by \code{curvefit}.}
 
-\item{...}{Other parameters are ignored.}
+\item{approach}{to be used to calculate phenology metrics. 
+'White' (White et al. 1997) or 'Trs' for simple threshold.}
+
+\item{trs}{threshold to be used for approach "Trs", in (0, 1).}
+
+\item{IsPlot}{whether to plot?}
+
+\item{...}{other parameters to PhenoPlot}
 
 \item{smspline}{If smspline = TRUE or attr(fit$fun, 'gradient') == null,
 it will use smooth.spline to get der1 and der2.}
+
+\item{show.lgd}{whether show figure lelend?}
 }
 \description{
 Phenology extraction functions
 
 PhenoDeriv
+
+PhenoGu
+
+PhenoKl
 }

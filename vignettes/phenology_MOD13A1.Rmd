@@ -149,7 +149,7 @@ plot(d$Tn, type = "l"); abline(a = 5, b = 0, col = "red")
 ## 2.1 Check input data
 ```{r check_input}    
 dnew  <- add_HeadTail(d) # add additional one year in head and tail
-INPUT <- check_input(dnew$t, dnew$y, dnew$w, maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
+INPUT <- check_input(dnew$t, dnew$y, dnew$w, nptperyear, maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
 # y0 is used for plot. Original y value has been interpolated and changed.
 INPUT$y0 <- dnew$y 
 ```
@@ -167,15 +167,15 @@ par(mar = c(3, 2, 2, 1), mgp = c(3, 0.6, 0))
 lambda <- init_lambda(INPUT$y)
 # The detailed information of those parameters can be seen in `season`.
 # brks   <- season(INPUT, nptperyear,
-#                FUN = whitsmw2, wFUN = wFUN, iters = 2,
+#                FUN = wWHIT, wFUN = wFUN, iters = 2,
 #                lambda = lambda,
 #                IsPlot = IsPlot, plotdat = d,
 #                south = d$lat[1] < 0,
 #                rymin_less = 0.6, ymax_min = ymax_min,
 #                max_MaxPeaksperyear =2.5, max_MinPeaksperyear = 3.5) #, ...
 # get growing season breaks in a 3-year moving window
-brks2 <- season_3y(INPUT, nptperyear, south = sp$lat[1] < 0, 
-                   FUN = whitsmw2, wFUN = wFUN,
+brks2 <- season_3y(INPUT, south = sp$lat[1] < 0, 
+                   FUN = wWHIT, wFUN = wFUN,
                    IsPlot = IsPlot, print = print, partial = F)
 ```
 

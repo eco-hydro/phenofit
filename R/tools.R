@@ -42,6 +42,12 @@ retry <- function(expr, maxTimes = 3){
 
 #' melt_list
 #' 
+#' @param list Data set to melt
+#' @param var.name list names convert into var.name
+#' @param na.rm Should NA values be removed from the data set? 
+#' This will convert explicit missings to implicit missings.
+#' @param ... other parameters to melt.
+#' 
 #' @rdname listk
 #' @importFrom reshape2 melt
 #' @export

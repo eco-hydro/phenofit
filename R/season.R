@@ -12,7 +12,6 @@
 #' and 'ylu', returned by \code{check_input}.
 #' @param south Boolean. In south hemisphere, growing year is 1 July to the
 #' following year 31 June; In north hemisphere, growing year is 1 Jan to 31 Dec.
-#'
 #' @param FUN Coarse curve fitting function, can be one of `wSG`, `wWHIT`
 #' and `wHANTS`.
 #' @param wFUN weights updating function, can be one of 'wTSM', 'wChen' and

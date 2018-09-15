@@ -34,6 +34,8 @@ is inappropriate for middle growing season points. Interpolating all values
 by na.approx, it is unsuitable for large number continous missing segments,
 e.g. in the start or end of growing season.}
 
+\item{alpha}{Double value in [0,1], quantile prob of ylu_min.}
+
 \item{...}{Others will be ignored.}
 }
 \value{

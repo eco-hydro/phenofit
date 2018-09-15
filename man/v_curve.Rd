@@ -8,13 +8,16 @@ v_curve(INPUT, nptperyear, lambdas = seq(0, 3, 0.1), d = 2,
   IsPlot = F, wFUN = wTSM, iters = 2)
 }
 \arguments{
+\item{INPUT}{A list object with the elements of 't', 'y', 'w', 'Tn' (option)
+and 'ylu', returned by \code{check_input}.}
+
 \item{nptperyear}{Integer, number of images per year}
 
 \item{d}{difference order}
 
 \item{IsPlot}{Boolean. Whether to plot figure?}
 
-\item{wFUN}{weights updating function, can be one of 'wTSM', 'wChen' and 
+\item{wFUN}{weights updating function, can be one of 'wTSM', 'wChen' and
 'wBisquare'.}
 
 \item{iters}{How many times curve fitting is implemented.}

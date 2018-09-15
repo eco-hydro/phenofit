@@ -113,7 +113,14 @@ ExtractPheno <- function(fits, TRS = c(0.1, 0.2, 0.5, 0.6), IsPlot = FALSE){
 #'
 #'
 #' @inheritParams D1.phenofit
-#'
+#' 
+#' @param approach to be used to calculate phenology metrics. 
+#' 'White' (White et al. 1997) or 'Trs' for simple threshold.
+#' @param trs threshold to be used for approach "Trs", in (0, 1).
+#' @param IsPlot whether to plot?
+#' @param show.lgd whether show figure lelend?
+#' @param ... other parameters to PhenoPlot
+#' 
 #' @rdname PhenoExtractMeth
 #' @export
 PhenoTrs <- function(fit, approach = c("White", "Trs"), trs = 0.5, #, min.mean = 0.1
@@ -207,7 +214,9 @@ PhenoTrs <- function(fit, approach = c("White", "Trs"), trs = 0.5, #, min.mean =
 
 
 #' PhenoDeriv
-#'
+#' 
+#' @inheritParams PhenoTrs
+#' 
 #' @rdname PhenoExtractMeth
 #' @export
 PhenoDeriv <- function(fit, IsPlot = TRUE, smspline = TRUE, show.lgd = T, ...){
@@ -275,6 +284,9 @@ PhenoDeriv <- function(fit, IsPlot = TRUE, smspline = TRUE, show.lgd = T, ...){
 }
 
 
+#' PhenoGu
+#' 
+#' @inheritParams PhenoTrs
 #' @importFrom dplyr last
 #' @rdname PhenoExtractMeth
 #' @export
@@ -377,6 +389,9 @@ PhenoGu <- function(fit, IsPlot = TRUE, smspline = TRUE, ...) {
     return(metrics)
 }
 
+#' PhenoKl
+#' 
+#' @inheritParams PhenoTrs
 #' @rdname PhenoExtractMeth
 #' @export
 PhenoKl <- function(fit, IsPlot = TRUE, show.lgd = T, ...) {

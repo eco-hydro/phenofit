@@ -16,7 +16,9 @@
 #'
 #' All of those function have \code{par} and \code{formula} attributes for the
 #' convenience for analytical D1 and D2
-#'
+#' 
+#' @param par A vector of parameters
+#' @param t A \code{Date} or numeric vector
 #' @references
 #' Peter M. Atkinson, et al., 2012, RSE, 123:400-417
 #'

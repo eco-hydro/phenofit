@@ -6,9 +6,9 @@
 \usage{
 season_3y(INPUT, south = FALSE, FUN = wWHIT, wFUN = wTSM,
   iters = 2, wmin = 0.1, lambda = NULL, nf = 3,
-  frame = floor(INPUT$nptperyear/5) * 2 + 1, IsPlot = T,
+  frame = floor(INPUT$nptperyear/5) * 2 + 1, ..., IsPlot = T,
   plotdat = INPUT, print = TRUE, titlestr = "",
-  IsOnlyPlotbad = TRUE, ...)
+  IsOnlyPlotbad = TRUE)
 }
 \arguments{
 \item{INPUT}{A list object with the elements of 't', 'y', 'w', 'Tn' (option)
@@ -35,6 +35,8 @@ considered above the zero frequency}
 \item{frame}{the parameter of \code{sgfitw}, moving window size. Suggested by
 TIMESAT, default frame = floor(nptperyear/7)*2 + 1.}
 
+\item{...}{Other parameters passed to `season`}
+
 \item{IsPlot}{Boolean}
 
 \item{plotdat}{A list or data.table, with 't', 'y' and 'w'. Only if
@@ -45,9 +47,7 @@ have been changed, we suggest using the original data.table.}
 
 \item{titlestr}{string for title}
 
-\item{...}{Other parameters passed to `season`}
-
-\item{isOnlyPlotbad}{If true, only plot partial figures whose NSE < 0.3}
+\item{IsOnlyPlotbad}{If true, only plot partial figures whose NSE < 0.3}
 }
 \value{
 List object, list(whit, dt, stat)

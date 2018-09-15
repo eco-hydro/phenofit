@@ -10,6 +10,8 @@ I_optim(prior, FUN, y, t, tout, pfun = p_optim, method = "BFGS", ...)
 \item{prior}{A vector of initial values for the parameters for which optimal 
 values are to be found.}
 
+\item{FUN}{curve fitting function of `f_goal`}
+
 \item{y}{Numeric vector, vegetation index time-series}
 
 \item{t}{Numeric vector, \code{Date} variable}

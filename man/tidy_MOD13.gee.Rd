@@ -10,6 +10,8 @@ tidy_MOD13.gee(infile, outfile, wmin = 0.2)
 \item{infile}{A character csv file path or a data.table}
 
 \item{outfile}{Output file name. If missing, will not be written to file.}
+
+\item{wmin}{Double, minimum weigth (i.e. weight of snow, ice and cloud).}
 }
 \value{
 A tidied data.table, with columns of 'site', 'y', 't', 'w', 'date' and

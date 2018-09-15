@@ -77,7 +77,7 @@ curvefits <- function(INPUT, brks, nptperyear = 23,
     # lines(INPUT$y        , col = "red")
     MaxExtendWidth = ceiling(nptperyear/12*maxExtendMonth)
     MinExtendWidth = ceiling(nptperyear/12*minExtendMonth)
-    width_ylu    = nptperyear*2
+    width_ylu    = nptperyear*1 
 
     y    <- INPUT$y
     fits <- list()
@@ -97,7 +97,7 @@ curvefits <- function(INPUT, brks, nptperyear = 23,
         # yi_good <- yi[w0[I_extend] > wmin]
 
         ### update ylu in a three year moving window
-        ylu <- get_ylu (y, years, w0, width_ylu, I_beg, I_end, Imedian = TRUE, wmin)
+        ylu <- get_ylu (y, years, w0, width_ylu, I_beg:I_end, Imedian = TRUE, wmin)
         ylu <- merge_ylu(INPUT$ylu, ylu)
 
         # yi[yi < ylu[1]] <- ylu[1] # update y value
@@ -143,7 +143,7 @@ curvefits <- function(INPUT, brks, nptperyear = 23,
 }
 
 # extend curve fitting period
-get_extentI <- function(w0, MaxExtendWidth, MinExtendWidth, I_beg, I_end, nextent = 1, wmin = 0.1){
+get_extentI <- function(w0, MaxExtendWidth, MinExtendWidth, I_beg, I_end, nextent = 1, wmin = 0.2){
     n <- length(w0)
 
     I_beg2  <- I_end2 <- NA
@@ -176,8 +176,11 @@ merge_ylu <- function(ylu_org, ylu_new){
 }
 
 # get ylu in a three year moving window,
-get_ylu <- function(y, years, w0, width, I_beg, I_end, Imedian = TRUE, wmin = 0.1){
+get_ylu <- function(y, years, w0, width, I, Imedian = TRUE, wmin = 0.2){
     n <- length(w0)
+    I_beg  <- I[1]
+    I_end  <- last(I)
+
     I_win  <- pmax(1, I_beg - width) : pmin(n, I_end + width)
     w0_win <- w0[I_win]
     I_win  <- I_win[which(w0_win > wmin)]

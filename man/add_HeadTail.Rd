@@ -4,11 +4,16 @@
 \alias{add_HeadTail}
 \title{Add one year data in the head and tail}
 \usage{
-add_HeadTail(d, nptperyear = 23)
+add_HeadTail(d, nptperyear, south = FALSE)
 }
 \arguments{
-\item{d}{A data.table, should have \code{t} (compositing date) column 
+\item{d}{A data.table, should have \code{t} (compositing date) column
 (\code{Date} variable).}
+
+\item{nptperyear}{Integer, number of images per year}
+
+\item{south}{Boolean. In south hemisphere, growing year is 1 July to the
+following year 31 June; In north hemisphere, growing year is 1 Jan to 31 Dec.}
 }
 \value{
 data.table

@@ -5,8 +5,8 @@ source('helper_MOD13A1.R')
 lambda   <- init_lambda(INPUT$y) # lambda for whittaker
 
 param = listk(
-    INPUT, nptperyear,
-    FUN = whitsmw2, wFUN = wBisquare, iters = 2,
+    INPUT,
+    FUN = wWHIT, wFUN = wBisquare, iters = 2,
     lambda,
     IsPlot = IsPlot, plotdat = d,
     south = sp$lat[1] < 0,

@@ -21,7 +21,7 @@ values are to be found.}
 
 \item{tout}{corresponding \code{t} of curve fitting result}
 
-\item{method}{String, optimization method, passed to \code{optimFun}.}
+\item{method}{String, optimization method, passed to `optimFun`.}
 
 \item{w}{Numeric vector, weights of \code{y}}
 

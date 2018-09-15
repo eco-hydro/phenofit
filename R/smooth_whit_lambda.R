@@ -39,6 +39,7 @@ v_opt = function(y, w = 0 * y + 1, d = 2, lambdas = c(0, 4), tol = 0.01) {
 #' V-curve is used to optimize Whittaker parameter lambda.
 #' Update 20180605 add weights updating to whittaker lambda selecting
 #'
+#' @inheritParams season
 #' @inheritParams wWHIT
 #' @param d difference order
 #' @param IsPlot Boolean. Whether to plot figure?

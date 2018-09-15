@@ -20,7 +20,7 @@
 #' 'FitAG', 'FitDL.Beck', 'FitDL.Elmore', 'FitDL.Gu' and 'FitDL.Klos'.
 #' @param tout corresponding \code{t} of curve fitting result
 #' @param optimFun optimization function, can be \code{I_optim} or \code{I_optimx}.
-#' @param method String, optimization method, passed to \code{optimFun}.
+#' @param method String, optimization method, passed to `optimFun`.
 #' @param w0 original weighted, is just used for visualization.
 #' @param debug boolean
 #' @param ... other parameters passed to \code{optimFUN}
@@ -125,6 +125,7 @@ optim_pheno <- function(prior, FUN_name, y, t, tout, optimFUN = I_optim, method,
 #' Interface of self defined optimization functions.
 #'
 #' @inheritParams optim_pheno
+#' @param FUN curve fitting function of `f_goal`
 #' @param pfun with prefixion of 'p_', pfun was self modified and unified
 #'  optimization function for double logistics and many other functions.
 #' @param method was only used for `p_optim` function. Other pfun, e.g. p_nlm, p_nlminb
@@ -149,11 +150,12 @@ methods <- c('BFGS','CG','Nelder-Mead','L-BFGS-B','nlm','nlminb',
 #' present.
 #'
 #' @inheritParams optim_pheno
+#' @param FUN curve fitting function of `f_goal`
 #' @param method Method passed to optimx function, which can be one of:
 #'  'BFGS','CG','Nelder-Mead','L-BFGS-B','nlm','nlminb', spg','ucminf',
 #'  'Rcgmin','Rvmmin','newuoa','bobyqa','nmkb','hjkb'
 #' @param debug If debug is true, all.methods is also true for optimx
-#'
+#' 
 #' @return result same as what optimx function returned
 #' @import optimx
 #' @export

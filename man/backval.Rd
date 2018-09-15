@@ -17,6 +17,8 @@ backval(y, t, w, Tn, minT = 5, nptperyear, ...)
 Tn is used to help divide ungrowing period, and then get background value in
 ungrowing season (see details in \code{\link[phenofit]{backval}}).}
 
+\item{minT}{min temperature for growing season.}
+
 \item{nptperyear}{Integer, number of images per year}
 
 \item{...}{Others will be ignored.}
