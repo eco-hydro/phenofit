@@ -123,8 +123,8 @@ add_HeadTail <- function(d, nptperyear, south = FALSE){
         na_head <- nptperyear*nyear_add_head + nmissing_head
         na_tail <- nptperyear*nyear_add_tail + nmissing_tail
 
-        I_head <- n_head %>% {seq(.+1, .+na_head)}
-        I_tail <- (ntime - n_tail) %>% {seq(.-na_tail+1, .)}
+        I_head <- n_head %>% {seq(.+1, min(.+na_head, ntime))}
+        I_tail <- (ntime - n_tail) %>% {seq(max(1, .-na_tail+1), .)}
 
         # head
         d_head <- d[I_head,]

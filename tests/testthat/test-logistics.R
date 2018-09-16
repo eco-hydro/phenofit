@@ -15,7 +15,7 @@ wFUN = wTSM
 # # )
 # 
 brks2 <- season_3y(INPUT, south = sp$lat[1] < 0, 
-    FUN = wWHIT, wFUN = wFUN,
+    rFUN = wWHIT, wFUN = wFUN,
     plotdat = d, IsPlot = IsPlot, print = F, IsOnlyPlotbad = F)
 
 param <- list(

@@ -12,9 +12,9 @@ wSELF(y, yfit, w, ...)
 
 wTSM(y, yfit, w, iter = 2, nptperyear, wfact = 0.5, ...)
 
-wBisquare(y, yfit, w, ...)
+wBisquare(y, yfit, w, ..., wmin = 0.2)
 
-wChen(y, yfit, w, ...)
+wChen(y, yfit, w, ..., wmin = 0.2)
 
 wBeck(y, yfit, w, ...)
 }
@@ -33,6 +33,8 @@ wBeck(y, yfit, w, ...)
 
 \item{wfact}{weight adaptation factor (0-1), equal to the reciprocal of
 'Adaptation strength' in TIMESAT.}
+
+\item{wmin}{Double, minimum weigth (i.e. weight of snow, ice and cloud).}
 }
 \value{
 wnew Numeric Vector, adjusted weights.

@@ -6,7 +6,7 @@ lambda   <- init_lambda(INPUT$y) # lambda for whittaker
 
 param = listk(
     INPUT,
-    FUN = wWHIT, wFUN = wBisquare, iters = 2,
+    rFUN = wWHIT, wFUN = wBisquare, iters = 2,
     lambda,
     IsPlot = IsPlot, plotdat = d,
     south = sp$lat[1] < 0,
@@ -19,11 +19,11 @@ test_that("`season` with wWHIT", {
 })
 
 test_that("`season` with wHANTS", {
-    param$FUN <- wHANTS
+    param$rFUN <- wHANTS
     expect_silent(brks <- do.call(season, param))
 })
 
 test_that("`season` with wSG", {
-    param$FUN <- wSG
+    param$rFUN <- wSG
     expect_silent(brks <- do.call(season, param))
 })

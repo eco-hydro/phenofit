@@ -16,7 +16,7 @@ print  = F
 nptperyear = 23
 ypeak_min  = 0.05
 
-dnew     <- add_HeadTail(d) # add one year in head and tail
+dnew     <- add_HeadTail(d, nptperyear = 23) # add one year in head and tail
 INPUT    <- check_input(dnew$t, dnew$y, dnew$w, nptperyear, 
     maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
 INPUT$y0 <- dnew$y # for visualization

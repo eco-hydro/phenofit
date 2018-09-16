@@ -14,20 +14,21 @@ source('helper_MOD13A1.R')
 
 param = listk(
     INPUT, south = sp$lat[1] < 0, 
-    FUN = wWHIT, wFUN = wTSM, iters = 2,
+    rFUN = wWHIT, wFUN = wTSM, iters = 2,
     IsPlot = IsPlot, plotdat = d, print = FALSE, IsOnlyPlotbad = F
 )
+# brks <- do.call(season_3y, param)
 
 test_that("`season_3y` with wWHIT", {
     expect_silent(brks <- do.call(season_3y, param))
 })
 
 test_that("`season_3y` with wHANTS", {
-    param$FUN <- wHANTS
+    param$rFUN <- wHANTS
     expect_silent(brks <- do.call(season_3y, param))
 })
 
 test_that("`season_3y` with wSG", {
-    param$FUN <- wSG
+    param$rFUN <- wSG
     expect_silent(brks <- do.call(season_3y, param))
 })

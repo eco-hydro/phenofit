@@ -1,9 +1,9 @@
 #' season
 #'
-#' First smooth VI timeseries by weighted whittaker, then use findpeak function
-#' to get the local maximum and local minimum values. Two local minimum defined
-#' a growing season. If two local minimum(maximum) are too closed, then only the
-#' smaller(biger) is left.
+#' First smooth VI timeseries by rought curve fitting function (rFUN), then use 
+#' findpeak function to get the local maximum and local minimum values. 
+#' Two local minimum defined a growing season. If two local minimum(maximum) 
+#' are too closed, then only the smaller(biger) is left.
 #'
 #' Then according to season pos, based to local maximum position divide yearly
 #' growing season. lambda need to set carefully.
@@ -12,13 +12,14 @@
 #' and 'ylu', returned by \code{check_input}.
 #' @param south Boolean. In south hemisphere, growing year is 1 July to the
 #' following year 31 June; In north hemisphere, growing year is 1 Jan to 31 Dec.
-#' @param FUN Coarse curve fitting function, can be one of `wSG`, `wWHIT`
+#' @param rFUN Coarse curve fitting function, can be one of `wSG`, `wWHIT`
 #' and `wHANTS`.
 #' @param wFUN weights updating function, can be one of 'wTSM', 'wChen' and
 #' 'wBisquare'.
 #' @param iters How many times curve fitting is implemented.
 #' @param wmin Double, minimum weigth (i.e. weight of snow, ice and cloud).
-#' @param lambda the parameter of \code{wWHIT}
+#' @param lambda the smoothing parameter of \code{wWHIT}. For 'season_3y', if 
+#' lambda is null, \code{initial_lambda} will be used.
 #' @param nf the parameter of \code{wHANTS}, number of frequencies to be
 #' considered above the zero frequency
 #' @param frame the parameter of \code{sgfitw}, moving window size. Suggested by
@@ -66,7 +67,7 @@
 # if more than one continuous maximum(minimum) values, only kept the bigger
 # (smaller) one
 season <- function(INPUT, south = FALSE,
-                   FUN = wWHIT, wFUN = wTSM, iters = 2, wmin = 0.1,
+                   rFUN = wWHIT, wFUN = wTSM, iters = 2, wmin = 0.1,
                    lambda, nf  = 3, frame = floor(INPUT$nptperyear/5)*2 + 1, 
                    minpeakdistance,
                    threshold_max = 0.2, threshold_min = 0.05,
@@ -105,7 +106,7 @@ season <- function(INPUT, south = FALSE,
             frame  = frame    # param for wSG
         )
 
-        yfits <- do.call(FUN, param)
+        yfits <- do.call(rFUN, param)
         zs    <- yfits$zs
         ypred <- last(zs) #as.numeric(runmed(ypred, frame))
         alpha <- 0.01
@@ -268,25 +269,13 @@ season <- function(INPUT, south = FALSE,
     dt <- dt[I, ]
     di <- di[I, ]
 
+    brks <- list(whit = as.data.table(c(list(t = t, y = y), yfits$ws, yfits$zs)),
+                pos = pos, dt = dt, di = di)
     ## 7. plot
     if (IsPlot){
-        # 7.1 PLOT CURVE FITTING TIME-SERIES
-        # need to plot outside, because y, w have been changed.
-        plotdata(plotdat)
-        colors <- c("red", "blue", "green")
-        for (i in 1:(length(zs))){
-            lines(INPUT$t, zs[[i]], col = colors[i], lwd = 2)
-        }
-        if (is.null(INPUT$ylu)) abline(h=INPUT$ylu, col="red", lty=2) # show ylims
-
-        # 7.2 plot break points
-        I_max <- di$peak
-        I_min <- union(di$beg, di$end)
-        points(t[I_max], ypred[I_max], pch=20, cex = 1.8, col="red")
-        points(t[I_min], ypred[I_min], pch=20, cex = 1.8, col="blue")
+        plot_season(INPUT, brks, plotdat, INPUT$ylu)
     }
-    return(list(whit = as.data.table(c(list(t = t, y = y), yfits$ws, yfits$zs)),
-                pos = pos, dt = dt, di = di))
+    return(brks)
 }
 
 # rm duplicated max or min values

@@ -56,8 +56,8 @@ wTSM <- function(y, yfit, w, iter = 2, nptperyear, wfact = 0.5, ...){
 
 #' @rdname wFUN
 #' @export
-wBisquare <- function(y, yfit, w, ...){
-    wmin = 0.2
+wBisquare <- function(y, yfit, w, ..., wmin = 0.2){
+    
     if (missing(w)) w  <- rep(1, length(y))
     wnew <- w
 
@@ -89,7 +89,7 @@ wBisquare <- function(y, yfit, w, ...){
 
 #' @rdname wFUN
 #' @export
-wChen <- function(y, yfit, w, ...){
+wChen <- function(y, yfit, w, ..., wmin = 0.2){
     if (missing(w)) w  <- rep(1, length(y))
     wnew <- w
 
