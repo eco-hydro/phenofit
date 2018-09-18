@@ -1,8 +1,8 @@
 #' season
 #'
-#' First smooth VI timeseries by rought curve fitting function (rFUN), then use 
-#' findpeak function to get the local maximum and local minimum values. 
-#' Two local minimum defined a growing season. If two local minimum(maximum) 
+#' First smooth VI timeseries by rought curve fitting function (rFUN), then use
+#' findpeak function to get the local maximum and local minimum values.
+#' Two local minimum defined a growing season. If two local minimum(maximum)
 #' are too closed, then only the smaller(biger) is left.
 #'
 #' Then according to season pos, based to local maximum position divide yearly
@@ -18,7 +18,7 @@
 #' 'wBisquare'.
 #' @param iters How many times curve fitting is implemented.
 #' @param wmin Double, minimum weigth (i.e. weight of snow, ice and cloud).
-#' @param lambda the smoothing parameter of \code{wWHIT}. For 'season_3y', if 
+#' @param lambda the smoothing parameter of \code{wWHIT}. For 'season_3y', if
 #' lambda is null, \code{initial_lambda} will be used.
 #' @param nf the parameter of \code{wHANTS}, number of frequencies to be
 #' considered above the zero frequency
@@ -68,7 +68,7 @@
 # (smaller) one
 season <- function(INPUT, south = FALSE,
                    rFUN = wWHIT, wFUN = wTSM, iters = 2, wmin = 0.1,
-                   lambda, nf  = 3, frame = floor(INPUT$nptperyear/5)*2 + 1, 
+                   lambda, nf  = 3, frame = floor(INPUT$nptperyear/5)*2 + 1,
                    minpeakdistance,
                    threshold_max = 0.2, threshold_min = 0.05,
                    ypeak_min   = 0.1, rytrough_max = 0.6,
@@ -86,7 +86,8 @@ season <- function(INPUT, south = FALSE,
     if (all(is.na(y))) return(NULL)
     n     <- length(y)
     npt   <- sum(INPUT$w > wmin)
-    nyear <- ceiling(npt/nptperyear)
+    nyear <- round(npt/nptperyear) # Needn't to ceil, matter most for parameter
+                                   # adjustment
 
     ylu0  <- INPUT$ylu
     ylu   <- ylu0
@@ -170,7 +171,7 @@ season <- function(INPUT, south = FALSE,
             lambda <- lambda*2
             nf     <- max(1, nf - 1)
             frame  <- min(frame + delta_frame, nptperyear*2)
-        }else if (npeak_PerYear < 1  | ntrough_PerYear < 1){
+        }else if (npeak_PerYear < 0.8  | ntrough_PerYear < 0.8){
             lambda <- lambda/2
             nf     <- min(5, nf + 1)
             frame  <- max(frame - delta_frame, delta_frame)

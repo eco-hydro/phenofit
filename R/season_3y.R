@@ -3,6 +3,8 @@
 #' Before using `season_3y`, INPUT should be added a year in the head and tail
 #' first by \code{add_HeadTail}.
 #' @inheritParams season
+#' @param ny_extend Integer,including previous and subsequent `ny_extend` year
+#' to divding growing season.
 #' @param titlestr string for title
 #' @param IsOnlyPlotbad If true, only plot partial figures whose NSE < 0.3
 #' @param ... For 'season_3y', Other parameters passed to `season`;
@@ -14,6 +16,7 @@
 season_3y <- function(INPUT, south = FALSE,
     rFUN = wWHIT, wFUN = wTSM, iters = 2, wmin = 0.1,
     lambda = NULL, nf  = 3, frame = floor(INPUT$nptperyear/5)*2 + 1,
+    maxExtendMonth = 2,
     ...,
     IsPlot = T, plotdat = INPUT, print = TRUE, titlestr = "",
     IsOnlyPlotbad = TRUE)
@@ -47,16 +50,21 @@ season_3y <- function(INPUT, south = FALSE,
     has_lambda = !is.null(lambda)
     brks  <- list()
 
+    nextent  <- ceiling(maxExtendMonth/12*nptperyear)
     # If data is not continuous, `season_3y` will be error!
     # Fixed at 20180915
     for (i in 2:(nyear-1)){
         if (print) runningId(i-1, prefix = '\t[season_3y] ')
 
         year_i <- years[i]
-        I <- which(date_year %in% years[(i-1):(i+1)]) # 3y index
-
-        ylu <- get_ylu (INPUT$y, date_year, INPUT$w, width_ylu, I, Imedian = TRUE, wmin)
+        # I <- which(date_year %in% years[(i-ny_extend):(i+ny_extend)]) # 3y index
+        I <- which(date_year %in% years[i]) # 3y index
+        ylu <- get_ylu (INPUT$y, date_year, INPUT$w, width = nextent, I, Imedian = TRUE, wmin)
         ylu <- merge_ylu(INPUT$ylu, ylu) # curvefits.R
+
+        I <- seq( max(1, first(I) - nextent), min(last(I) + nextent, nlen) )
+        # print(I)
+        # browser()
 
         input  <- lapply(INPUT[1:3], `[`, I)
         input$ylu        <- ylu
@@ -81,6 +89,7 @@ season_3y <- function(INPUT, south = FALSE,
         brks[[i-1]] <- list(whit = brk$whit[date_year[I] == year_i, ],
                           dt   = brk$dt)
     }
+    brks <- rm_empty(brks)
     brks %<>% purrr::transpose()
     brks$whit %<>% do.call(rbind, .)
     dt <- do.call(rbind, brks$dt)
@@ -95,11 +104,10 @@ season_3y <- function(INPUT, south = FALSE,
     # after fix_dt, growing season length will become shorter
     dt %<>% subset(len < 650 & len > 45) # mask too long and short gs
     brks$dt <- dt
-    
+
     ## VISUALIZATION
-    if (IsPlot){
-        plot_season(INPUT, brks, plotdat, ylu = INPUT$ylu, IsOnlyPlotbad)
-    }
+    if (IsPlot) plot_season(INPUT, brks, plotdat, ylu = INPUT$ylu, IsOnlyPlotbad)
+        
     return(brks)
 }
 
@@ -109,7 +117,7 @@ stat_season <- function(INPUT, brks){
     d_org <- as.data.table(INPUT[c("t", "y", "w")])
     d_fit <- brks$whit %>% .[,.SD,.SDcols=c(1, ncol(.))] %>% set_colnames(c("t", "ypred"))
     d <- merge(d_org, d_fit, by = "t")
-    
+
     stat <- with(d, GOF(y, ypred, w, include.cv = T))# %>% as.list()
     stat['nseason'] <- nrow(brks$dt)
 
@@ -124,9 +132,9 @@ stat_season <- function(INPUT, brks){
 #' @rdname season
 plot_season <- function(INPUT, brks, plotdat, ylu, IsOnlyPlotbad = FALSE){
     stat <- stat_season(INPUT, brks)
-    stat_txt  <- stat[c("R2", "NSE", "cv")] %>% 
+    stat_txt  <- stat[c("R2", "NSE", "cv")] %>%
         {paste(names(.), round(., 3), sep = "=", collapse = ", ")}
-    
+
     # if (NSE < 0 | (cv < 0.1 & NSE < 0.1)) {}
     # if(IsPlot && (NSE < 0 && cv < 0.2)){
     if (IsOnlyPlotbad && stat['NSE'] < 0.3) return()
@@ -137,8 +145,8 @@ plot_season <- function(INPUT, brks, plotdat, ylu, IsOnlyPlotbad = FALSE){
     ypred <- last(zs)
 
     # if (missing(xlim))
-    xlim <- c(first(brks$dt$beg), last(brks$dt$end))        
-    
+    xlim <- c(first(brks$dt$beg), last(brks$dt$end))
+
     # 7.1 PLOT CURVE FITTING TIME-SERIES
     # need to plot outside, because y, w have been changed.
     plotdata(plotdat)
@@ -151,7 +159,7 @@ plot_season <- function(INPUT, brks, plotdat, ylu, IsOnlyPlotbad = FALSE){
         lines(t, zs[[i]], col = colors[i], lwd = 2)
     }
 
-    # 7.2 plot break points    
+    # 7.2 plot break points
     points(dt$peak, dt$y_peak, pch=20, cex = 1.8, col="red")
     points(dt$beg , dt$y_beg , pch=20, cex = 1.8, col="blue")
     points(dt$end , dt$y_end , pch=20, cex = 1.8, col="blue")

@@ -70,7 +70,10 @@ check_input <- function(t, y, w, nptperyear, Tn = NULL,
     }
     y_good <- y[w >= w_critical & !is.na(y)]
     ylu    <- c(pmax( quantile(y_good, alpha/2), 0),
-               max ( y_good, na.rm = T))
+               quantile(y_good, 1 - alpha/2)) 
+    # When check_fit, ylu_max is not used. ylu_max is only used for dividing 
+    # growing seasons.
+    
     # adjust weights according to ylu
     # if (trim){
     #     I_trim    <- y < ylu[1] #| y > ylu[2]
@@ -83,6 +86,7 @@ check_input <- function(t, y, w, nptperyear, Tn = NULL,
     # generally, w == 0 mainly occur in winter. So it's seasonable to be assigned as minval
     ## 20180717 error fixed: y[w <= wmin]  <- missval # na is much appropriate, na.approx will replace it.
     # values out of range are setted to wmin weight.
+    
     w[y < ylu[1] | y > ylu[2]] <- wmin
     # based on out test marginal extreme value also often occur in winter
     y[y < ylu[1]]                  <- missval

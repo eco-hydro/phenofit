@@ -173,11 +173,17 @@ merge_ylu <- function(ylu_org, ylu_new){
 }
 
 # get ylu in a three year moving window,
+# Known issues:
+# -------------
+# If not complete year, new ylu will be questionable, especially for ylu_max.
+# For the continuous of different years, ylu_min is enough.
 get_ylu <- function(y, years, w0, width, I, Imedian = TRUE, wmin = 0.2){
     n <- length(w0)
     I_beg  <- I[1]
     I_end  <- last(I)
 
+    # if less than 0.6*12 ≈ 8
+    
     I_win  <- pmax(1, I_beg - width) : pmin(n, I_end + width)
     w0_win <- w0[I_win]
     I_win  <- I_win[which(w0_win > wmin)]
@@ -186,13 +192,22 @@ get_ylu <- function(y, years, w0, width, I, Imedian = TRUE, wmin = 0.2){
         ylu_max <- ylu_min <- NA
     } else{
         y_win  <- y[I_win]
+
+        ylu_min <- min(y_win)
+        ylu_max <- max(y_win)
+
         if (Imedian){
             year_win  <- years[I_win]
-            ylu_min <- aggregate(y_win, list(year = year_win), min)$x %>% median()
-            ylu_max <- aggregate(y_win, list(year = year_win), max)$x %>% median()
-        } else {
-            ylu_min <- min(y_win)
-            ylu_max <- max(y_win)
+            # Assume peak in the middle of growing season, a few steps will be 
+            # ylu_min; while a long way to ylu_max; 20180918
+            # length(I) reflects nptperyear
+            if (width > length(I)*2/12){
+                ylu_min <- aggregate(y_win, list(year = year_win), min)$x %>% median()
+            }
+
+            if (width > length(I)*7/12){
+                ylu_max <- aggregate(y_win, list(year = year_win), max)$x %>% median()
+            }
         }
     }
     c(ylu_min, ylu_max) # return

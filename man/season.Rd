@@ -16,8 +16,8 @@ season(INPUT, south = FALSE, rFUN = wWHIT, wFUN = wTSM, iters = 2,
 
 season_3y(INPUT, south = FALSE, rFUN = wWHIT, wFUN = wTSM,
   iters = 2, wmin = 0.1, lambda = NULL, nf = 3,
-  frame = floor(INPUT$nptperyear/5) * 2 + 1, ..., IsPlot = T,
-  plotdat = INPUT, print = TRUE, titlestr = "",
+  frame = floor(INPUT$nptperyear/5) * 2 + 1, maxExtendMonth = 2, ...,
+  IsPlot = T, plotdat = INPUT, print = TRUE, titlestr = "",
   IsOnlyPlotbad = TRUE)
 
 stat_season(INPUT, brks)
@@ -41,7 +41,7 @@ and `wHANTS`.}
 
 \item{wmin}{Double, minimum weigth (i.e. weight of snow, ice and cloud).}
 
-\item{lambda}{the smoothing parameter of \code{wWHIT}. For 'season_3y', if 
+\item{lambda}{the smoothing parameter of \code{wWHIT}. For 'season_3y', if
 lambda is null, \code{initial_lambda} will be used.}
 
 \item{nf}{the parameter of \code{wHANTS}, number of frequencies to be
@@ -85,6 +85,9 @@ have been changed, we suggest using the original data.table.}
 
 \item{IsOnlyPlotbad}{If true, only plot partial figures whose NSE < 0.3}
 
+\item{ny_extend}{Integer,including previous and subsequent `ny_extend` year
+to divding growing season.}
+
 \item{...}{For 'season_3y', Other parameters passed to `season`;
 For `season`, other parameters passed to findpeaks.}
 }
@@ -96,9 +99,9 @@ $whit
 List object, list(whit, dt, stat)
 }
 \description{
-First smooth VI timeseries by rought curve fitting function (rFUN), then use 
-findpeak function to get the local maximum and local minimum values. 
-Two local minimum defined a growing season. If two local minimum(maximum) 
+First smooth VI timeseries by rought curve fitting function (rFUN), then use
+findpeak function to get the local maximum and local minimum values.
+Two local minimum defined a growing season. If two local minimum(maximum)
 are too closed, then only the smaller(biger) is left.
 
 Before using `season_3y`, INPUT should be added a year in the head and tail
