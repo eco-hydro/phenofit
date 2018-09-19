@@ -1,7 +1,6 @@
-load("Y:/R/phenofit/data/phenofit_MultipleINPUT_flux136.rda")
+load("data/shiny_flux115.rda")
+sites <- sort(sites)
 
-df <- d_obs
-st <- stations
 
 getSiteData  <- function(df, sitename){
     df[site == sitename, .(t = date, y = GPP_DT, w = 1)] #%T>% plotdata(365)
@@ -20,7 +19,8 @@ get_input <- function(df, st, sitename){
 
     INPUT$south <- south
     INPUT$titlestr <- titlestr
-    list(INPUT = INPUT, plotdat = d)
+    # list(INPUT = INPUT, plotdat = d)
+    INPUT
 }
 
 check_season <- function(INPUT,
@@ -67,8 +67,8 @@ fig.height <- 265
 par(setting)
 
 param_step <- 0.1
-sites_grp  <- list(sites_sg, sites_mg) %>%
-    set_names(c("single season", "multiple season"))
+# sites_grp  <- list(sites_sg, sites_mg) %>%
+#     set_names(c("single season", "multiple season"))
 
 # threshold_max = 0.1,
 # threshold_min = 0,

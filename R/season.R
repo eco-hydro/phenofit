@@ -4,7 +4,7 @@
 #' findpeak function to get the local maximum and local minimum values.
 #' Two local minimum defined a growing season. If two local minimum(maximum)
 #' are too closed, then only the smaller(biger) is left.
-#'
+#' 
 #' Then according to season pos, based to local maximum position divide yearly
 #' growing season. lambda need to set carefully.
 #'
@@ -24,9 +24,10 @@
 #' considered above the zero frequency
 #' @param frame the parameter of \code{sgfitw}, moving window size. Suggested by
 #' TIMESAT, default frame = floor(nptperyear/7)*2 + 1.
-#' @param minpeakdistance The minimum distance (in indices) peaks have to have
-#' to be counted. If the distance of two maximum extreme value less than
-#' `minpeakdistance`, only the real maximum value will be left.
+#' @param minpeakdistance In the unit of points. The minimum distance 
+#' (in indices) peaks have to have to be counted. If the distance of two 
+#' maximum extreme value less than `minpeakdistance`, only the real maximum 
+#' value will be left.
 #' @param threshold_min Threshold is defined as the difference of peak value with
 #' trough value. There are two threshold (left and right). The minimum threshold
 #' should be greater than threshold_min.
@@ -166,7 +167,7 @@ season <- function(INPUT, south = FALSE,
 
         ## This module will automatically update lambda, nf and wHANTS
         #  Not only wWHd, it has been extended to wHANT and wSG. 20180910
-        delta_frame <- floor(nptperyear/12) # adjust frame in the step of `month`
+        delta_frame <- ceiling(nptperyear/12) # adjust frame in the step of `month`
         if (npeak_PerYear > MaxPeaksPerYear | ntrough_PerYear > MaxTroughsPerYear){
             lambda <- lambda*2
             nf     <- max(1, nf - 1)
@@ -181,18 +182,28 @@ season <- function(INPUT, south = FALSE,
         iloop <- iloop + 1
     }
 
+    ## Prepare raw OUTPUT for error condition
+    #  rough curve fitting time-series
+    rfit = as.data.table(c(list(t = t, y = y), yfits$ws, yfits$zs))
+    
+    # 1.1 the local minimum value should small than rytrough_max*A 
+    if (!is.null(pos_min)) {
+        pos_min <- pos_min[(val - ylu[1]) <= rytrough_max*A, ]
+        pos_min[, type := -1]
+    }
+    if (!is.null(pos_max)) pos_max[, type :=  1]
+
+    pos <- rbind(pos_min, pos_max) # dtaa.table returned
+    if (!is.null(pos)) pos <- pos[order(pos), ] #c("val", "pos", "left", "right", "type")
+
+    dt  <- di <- NULL
+    res <- list(whit = rfit, pos = pos, dt = dt, di = di)
+    
     if (is.null(pos_max) || is.null(pos_min)){
         warning("Can't find a complete growing season before trim!")
-        return(NULL)
+        return(res)
     }
     # plot(ypred, type = "b"); grid()
-
-    # 1.1 the local minimum value should small than rytrough_max * A
-    pos_min <- pos_min[(val - ylu[1]) <= rytrough_max *A, ]
-    pos_min[, type := -1]
-    pos_max[, type :=  1]
-    pos <- rbind(pos_min, pos_max)
-    pos <- pos[order(pos), ] # c("val", "pos", "left", "right", "type")
 
     # rm peak value if peak value smaller than the nearest trough values
     I   <- !with(pos, (c(diff(val) > 0, FALSE) & c(diff(type) == -2, FALSE)) |
@@ -217,11 +228,14 @@ season <- function(INPUT, south = FALSE,
     }
 
     pos$t    <- t[pos$pos]
+    res$pos <- pos
+
     # print(nrow(pos))
     if (nrow(pos) < 2){ # at least two points, begin and end
-        warning("Can't find a complete growing season before!")
-        return(NULL)
+        warning("Can't find a complete growing season before!")    
+        return(res)
     }
+
     ############################################################################
     ## 5. check head and tail break point, and reform breaks
     locals <- pos[, c("pos", "type")]
@@ -241,8 +255,9 @@ season <- function(INPUT, south = FALSE,
     s  <- locals$pos; ns <- length(s)
     if (ns < 3) {
         warning("Can't find a complete growing season!")
-        return(NULL)
+        return(res)
     }
+
     locals %<>% mutate(val = ypred[pos], t = t[pos])
 
     pos_max <- subset(locals, type == 1)
@@ -261,7 +276,6 @@ season <- function(INPUT, south = FALSE,
                   year   = year(peak) )]
     # get the growing season year, not only the calendar year
     if (south) dt[, year := year + as.integer(peak >= ymd(sprintf('%d0701', year))) - 1L]
-
     dt[, `:=`(season = 1:.N, flag   = sprintf("%d_%d", year, 1:.N)), .(year)]
 
     # update 20180913
@@ -270,13 +284,12 @@ season <- function(INPUT, south = FALSE,
     dt <- dt[I, ]
     di <- di[I, ]
 
-    brks <- list(whit = as.data.table(c(list(t = t, y = y), yfits$ws, yfits$zs)),
-                pos = pos, dt = dt, di = di)
+    res$di <- di
+    res$dt <- dt
     ## 7. plot
-    if (IsPlot){
-        plot_season(INPUT, brks, plotdat, INPUT$ylu)
-    }
-    return(brks)
+    if (IsPlot) plot_season(INPUT, res, plotdat, INPUT$ylu)
+    
+    return(res)
 }
 
 # rm duplicated max or min values

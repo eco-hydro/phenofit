@@ -16,7 +16,7 @@ season(INPUT, south = FALSE, rFUN = wWHIT, wFUN = wTSM, iters = 2,
 
 season_3y(INPUT, south = FALSE, rFUN = wWHIT, wFUN = wTSM,
   iters = 2, wmin = 0.1, lambda = NULL, nf = 3,
-  frame = floor(INPUT$nptperyear/5) * 2 + 1, maxExtendMonth = 2, ...,
+  frame = floor(INPUT$nptperyear/5) * 2 + 1, maxExtendMonth = 3, ...,
   IsPlot = T, plotdat = INPUT, print = TRUE, titlestr = "",
   IsOnlyPlotbad = TRUE)
 
@@ -50,9 +50,10 @@ considered above the zero frequency}
 \item{frame}{the parameter of \code{sgfitw}, moving window size. Suggested by
 TIMESAT, default frame = floor(nptperyear/7)*2 + 1.}
 
-\item{minpeakdistance}{The minimum distance (in indices) peaks have to have
-to be counted. If the distance of two maximum extreme value less than
-`minpeakdistance`, only the real maximum value will be left.}
+\item{minpeakdistance}{In the unit of points. The minimum distance 
+(in indices) peaks have to have to be counted. If the distance of two 
+maximum extreme value less than `minpeakdistance`, only the real maximum 
+value will be left.}
 
 \item{threshold_max}{Similar as `threshold_min`, The maximum threshold should
 be greater than `threshold_max`.}

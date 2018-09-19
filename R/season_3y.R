@@ -16,7 +16,7 @@
 season_3y <- function(INPUT, south = FALSE,
     rFUN = wWHIT, wFUN = wTSM, iters = 2, wmin = 0.1,
     lambda = NULL, nf  = 3, frame = floor(INPUT$nptperyear/5)*2 + 1,
-    maxExtendMonth = 2,
+    maxExtendMonth = 3,
     ...,
     IsPlot = T, plotdat = INPUT, print = TRUE, titlestr = "",
     IsOnlyPlotbad = TRUE)
@@ -27,7 +27,7 @@ season_3y <- function(INPUT, south = FALSE,
     date_year <- year(t) + ((month(t) >= 7)-1)*south
 
     # yearly data count info
-    info  <- table(date_year) #%>% as.data.table()
+    info  <- table(date_year) # rm years with so limited obs
     years <- info[info > nptperyear*0.2] %>% {as.numeric(names(.))}
         #.[2:(length(.)-1)] # rm head and tail filled years
     nyear     <- length(years)
@@ -58,13 +58,28 @@ season_3y <- function(INPUT, south = FALSE,
 
         year_i <- years[i]
         # I <- which(date_year %in% years[(i-ny_extend):(i+ny_extend)]) # 3y index
-        I <- which(date_year %in% years[i]) # 3y index
+        I   <- which(date_year %in% years[i]) # 3y index
         ylu <- get_ylu (INPUT$y, date_year, INPUT$w, width = nextent, I, Imedian = TRUE, wmin)
         ylu <- merge_ylu(INPUT$ylu, ylu) # curvefits.R
-
+        
+        # extend curve fitting period, for continuity.
         I <- seq( max(1, first(I) - nextent), min(last(I) + nextent, nlen) )
-        # print(I)
-        # browser()
+
+        # # triplicate HANTS test, 2018-09-19
+        # # Not perfect at all for regions with multiple growing season. 
+        # # No one method can cope with all the situation.
+        # {
+        #     nextent <- length(I)
+        #     I_beg <- max(1, first(I) - nextent)
+        #     I_end <- min(last(I) + nextent, nlen)
+
+        #     yi <- INPUT$y[I]
+        #     yhead <- I_beg:(first(I) - 1) %>% { . - .[1] + 1} %>% yi[.]
+        #     ytail <- (last(I)+1):I_end %>% { . - .[1] + 1} %>% yi[.]
+        #     yi <- c(yhead, yi, ytail)
+        #     I <- I_beg:I_end
+        #     input$y          <- yi
+        # }
 
         input  <- lapply(INPUT[1:3], `[`, I)
         input$ylu        <- ylu
@@ -82,17 +97,17 @@ season_3y <- function(INPUT, south = FALSE,
         if (is.null(brk$dt) || nrow(brk$dt) == 0){
             params_i$threshold_max = 0.2
             brk <- do.call(season, params_i)
-            if (is.null(brk)) next()
-
-            brk$dt %<>% subset(year == year_i) # bug found, need to fix for South Hemisphere
+            # we need `rfit` time-series, so can't skip NULL brks.
+            if (!is.null(brk$dt)){
+                brk$dt %<>% subset(year == year_i)
+            }
         }
         brks[[i-1]] <- list(whit = brk$whit[date_year[I] == year_i, ],
                           dt   = brk$dt)
     }
-    brks <- rm_empty(brks)
-    brks %<>% purrr::transpose()
+    brks <- rm_empty(brks) %>% purrr::transpose()
     brks$whit %<>% do.call(rbind, .)
-    dt <- do.call(rbind, brks$dt)
+    dt   <- do.call(rbind, brks$dt)
 
     if (is.null(dt)){
         warning( 'No growing season found!')
@@ -107,7 +122,7 @@ season_3y <- function(INPUT, south = FALSE,
 
     ## VISUALIZATION
     if (IsPlot) plot_season(INPUT, brks, plotdat, ylu = INPUT$ylu, IsOnlyPlotbad)
-        
+
     return(brks)
 }
 

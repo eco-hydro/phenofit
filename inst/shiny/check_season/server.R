@@ -11,9 +11,11 @@ server <- function(input, output, session) {
         get_input(df, st, input$site)
     })
     brks  <- reactive({
-        varnames <- c("FUN_season", "FUN_fit", "iters", "lambda", "nf", "frame",
-            "maxExtendMonth",
-            "wFUN", "threshold_max", "threshold_min", "threshold_max") %>%
+        varnames <- c("FUN_season", "FUN_fit", 
+            "iters", "lambda", "nf", "frame",
+            "wFUN", 
+            "maxExtendMonth", "rytrough_max",
+            "threshold_max", "threshold_min", "threshold_max") %>%
             intersect(names(input)) %>% set_names(., .)
         param <- lapply(varnames, function(var) input[[var]])
         param <- c(list(INPUT()), param)

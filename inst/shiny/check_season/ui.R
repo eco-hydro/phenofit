@@ -25,7 +25,7 @@ ui <- fluidPage(
             # ),
             conditionalPanel(
                 condition = "input.FUN_fit == 'wWHIT'",
-                numericInput("lambda", "lambda:", 1000, 2, 1e4)
+                numericInput("lambda", "lambda:", 1e4, 2, 1e4)
             ),
             conditionalPanel(
                 condition = "input.FUN_fit == 'wSG'",
@@ -43,7 +43,7 @@ ui <- fluidPage(
             ),
             selectInput("wFUN","Choose a weights updating function (wFUN):",
                         choices = c("wTSM", "wBisquare", "wChen"), selected = "wBisquare"),
-            selectInput("site","Choose a site:", choices = sites_grp, selected = "BE-Bra"), #CH-Fru
+            selectInput("site","Choose a site:", choices = sites, selected = "FR-LBr"), #CH-Fru
             sliderInput("threshold_max", "threshold_max:",
                 min = 0, max = 1, value = 0.2, param_step ),
             sliderInput( "threshold_min", "threshold_min:",
@@ -65,7 +65,7 @@ ui <- fluidPage(
                 tabPanel("Table",
                     h3("Growing season dividing information:"),
                     br(),
-                    dataTableOutput("t_gs", width = "100%") # table of growing season)
+                    DT::dataTableOutput("t_gs") # table of growing season), , width = "100%"
                 )
             )
         )

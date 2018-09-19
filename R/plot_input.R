@@ -21,15 +21,23 @@ plotdata <- function(INPUT, wmin = 0.1, ...){
     colors <- c("grey60", "#00BFC4", "#F8766D", "#C77CFF", "blue", "red", "black")
     pch    <- c(19, 15, 4)
     
-    plot(t, y, type = "l", ann = FALSE, ...)
+    years    <- year(t)
+
+    if (length(unique(years)) < 3){
+        plot(t, y, type = "l", xaxt="n", ann = FALSE, ...)
+        axis.Date(1, at=seq(min(t), max(t), by="month"), format="%Y-%m")
+    } else {
+        plot(t, y, type = "l", ann = FALSE, ...)
+    }
+    
     Ids <- unique(wf)
     for (i in 1:3){
         I = wf == i
         add <- ifelse(i == 1, F, T)
         points(t[I], y[I], pch = pch[i], col = colors[i], cex = 0.6)
     }
+
     # ylab = expression(paste('GPP ( gC ', m^-2, d^-1, ')'))
-    years    <- year(t)
     date_beg <- ymd( min(years) *1e4 + 0101 )
     date_end <- ymd( max(years) *1e4 + 0101 )
     
