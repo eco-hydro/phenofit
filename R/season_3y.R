@@ -145,6 +145,7 @@ stat_season <- function(INPUT, brks){
 
 #' plot_season
 #' @rdname season
+#' @export
 plot_season <- function(INPUT, brks, plotdat, ylu, IsOnlyPlotbad = FALSE){
     stat <- stat_season(INPUT, brks)
     stat_txt  <- stat[c("R2", "NSE", "cv")] %>%

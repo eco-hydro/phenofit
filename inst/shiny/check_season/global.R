@@ -1,3 +1,9 @@
+library(phenofit)
+library(shiny)
+library(DT)
+library(data.table)
+library(magrittr)
+
 load("data/shiny_flux115.rda")
 sites <- sort(sites)
 

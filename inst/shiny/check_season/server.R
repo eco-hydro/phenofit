@@ -1,5 +1,3 @@
-library(shiny)
-library(DT)
 # runApp("test/phenology_async/check_season/")
 # load("GPPobs_check_season.rda")
 
