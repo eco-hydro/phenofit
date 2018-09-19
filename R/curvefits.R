@@ -1,17 +1,13 @@
 #' Fine Curve fitting
 #'
 #' Fine Curve fitting for INPUT time-series. 
-#'
+#' 
+#' @inheritParams season
 #' @param INPUT A list object with the elements of 't', 'y', 'w', 'Tn' (option) 
 #' and 'ylu', returned by \code{check_input}.
 #' @param brks A list object with the elements of 'fit' and 'dt', returned by 
 #' \code{season} or \code{season_3y}, which contains the growing season 
 #' dividing information.
-#' @param nptperyear Integer, points per year.
-#' @param wFUN weights updating function, can be one of 'wTSM', 'wChen' and 
-#' 'wBisquare'.
-#' @param iters How many times curve fitting is implemented.
-#' @param wmin Double, minimum weigth value (i.e. weight for snow, ice and cloud).
 #' @param nextent Extend curve fitting window, until \code{nextent} good or 
 #' marginal element are found in previous and subsequent growing season.
 #' @param maxExtendMonth Search good or marginal good values in previous and 
@@ -33,7 +29,7 @@
 #' 
 #' @return fits Multiple phenofit object.
 #' @export
-curvefits <- function(INPUT, brks, nptperyear = 23,
+curvefits <- function(INPUT, brks,
                       wFUN = wTSM, iters = 2, wmin = 0.2,
                       nextent = 2, maxExtendMonth = 3, minExtendMonth = 1, 
                       minT = 0,
@@ -41,6 +37,7 @@ curvefits <- function(INPUT, brks, nptperyear = 23,
                       qc, minPercValid = 0.2,
                       print = TRUE, ...)
 {
+    nptperyear <- INPUT$nptperyear
     t     <- INPUT$t
     years <- year(t)
     n    <- length(t)
@@ -77,7 +74,7 @@ curvefits <- function(INPUT, brks, nptperyear = 23,
     # lines(INPUT$y        , col = "red")
     MaxExtendWidth = ceiling(nptperyear/12*maxExtendMonth)
     MinExtendWidth = ceiling(nptperyear/12*minExtendMonth)
-    width_ylu    = nptperyear*2
+    width_ylu    = nptperyear*1 
 
     y    <- INPUT$y
     fits <- list()
@@ -97,7 +94,7 @@ curvefits <- function(INPUT, brks, nptperyear = 23,
         # yi_good <- yi[w0[I_extend] > wmin]
 
         ### update ylu in a three year moving window
-        ylu <- get_ylu (y, years, w0, width_ylu, I_beg, I_end, Imedian = TRUE, wmin)
+        ylu <- get_ylu (y, years, w0, width_ylu, I_beg:I_end, Imedian = TRUE, wmin)
         ylu <- merge_ylu(INPUT$ylu, ylu)
 
         # yi[yi < ylu[1]] <- ylu[1] # update y value
@@ -143,7 +140,7 @@ curvefits <- function(INPUT, brks, nptperyear = 23,
 }
 
 # extend curve fitting period
-get_extentI <- function(w0, MaxExtendWidth, MinExtendWidth, I_beg, I_end, nextent = 1, wmin = 0.1){
+get_extentI <- function(w0, MaxExtendWidth, MinExtendWidth, I_beg, I_end, nextent = 1, wmin = 0.2){
     n <- length(w0)
 
     I_beg2  <- I_end2 <- NA
@@ -176,8 +173,17 @@ merge_ylu <- function(ylu_org, ylu_new){
 }
 
 # get ylu in a three year moving window,
-get_ylu <- function(y, years, w0, width, I_beg, I_end, Imedian = TRUE, wmin = 0.1){
+# Known issues:
+# -------------
+# If not complete year, new ylu will be questionable, especially for ylu_max.
+# For the continuous of different years, ylu_min is enough.
+get_ylu <- function(y, years, w0, width, I, Imedian = TRUE, wmin = 0.2){
     n <- length(w0)
+    I_beg  <- I[1]
+    I_end  <- last(I)
+
+    # if less than 0.6*12 ≈ 8
+    
     I_win  <- pmax(1, I_beg - width) : pmin(n, I_end + width)
     w0_win <- w0[I_win]
     I_win  <- I_win[which(w0_win > wmin)]
@@ -186,13 +192,22 @@ get_ylu <- function(y, years, w0, width, I_beg, I_end, Imedian = TRUE, wmin = 0.
         ylu_max <- ylu_min <- NA
     } else{
         y_win  <- y[I_win]
+
+        ylu_min <- min(y_win)
+        ylu_max <- max(y_win)
+
         if (Imedian){
             year_win  <- years[I_win]
-            ylu_min <- aggregate(y_win, list(year = year_win), min)$x %>% median()
-            ylu_max <- aggregate(y_win, list(year = year_win), max)$x %>% median()
-        } else {
-            ylu_min <- min(y_win)
-            ylu_max <- max(y_win)
+            # Assume peak in the middle of growing season, a few steps will be 
+            # ylu_min; while a long way to ylu_max; 20180918
+            # length(I) reflects nptperyear
+            if (width > length(I)*2/12){
+                ylu_min <- aggregate(y_win, list(year = year_win), min)$x %>% median()
+            }
+
+            if (width > length(I)*7/12){
+                ylu_max <- aggregate(y_win, list(year = year_win), max)$x %>% median()
+            }
         }
     }
     c(ylu_min, ylu_max) # return

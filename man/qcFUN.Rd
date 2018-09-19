@@ -23,6 +23,8 @@ qc_NDVIv4(QA)
 \item{end}{Bit ending position}
 
 \item{QA}{quality control variable}
+
+\item{wmin}{Double, minimum weigth (i.e. weight of snow, ice and cloud).}
 }
 \value{
 weigths

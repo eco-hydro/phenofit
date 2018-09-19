@@ -13,3 +13,4 @@
 ^Official$
 ^man-roxygen$
 ^\.travis\.yml$
+^README-.*\.png$

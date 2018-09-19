@@ -25,7 +25,8 @@ theme.nopadding <-
 
 poly <- readOGR("F:/ArcGIS/continent.shp")
 
-d <- merge(df[meth == "wWH" & iters == "iter1", .(site, R2, Bias, RMSE, Roughtness = Rg_0)],
+d <- merge(df[meth == "wWH" & iters == "iter1", .(site, R2, Bias, RMSE,
+                                                  Rg, Rg_norm_by_obs, Rg_norm_by_pred)],
            st[, .(site, lon, lat)]) %>% .[, 2:ncol(.)]
 
 sp <- df2sp(d)
@@ -34,7 +35,7 @@ sp <- df2sp(d)
 title = eval(substitute(expression(bold("("*lab*") "* text)),
                                   list(lab = letters[1], text = quote(R^2))))
 titles <- list(title, "(b) Bias", "(c) RMSE", "(d) Roughtness")
-
+titles <- colnames(d) %>% setdiff(c("lat", "lon"))
 
 
 plot_sppoint <- function(sp, i, brks, sp.layout, cols){
@@ -81,8 +82,11 @@ plot_sppoint <- function(sp, i, brks, sp.layout, cols){
         seq(0, 0.1, 0.02),
         # seq(0.01, 0.03, 0.005)
         # seq(0.02, 0.1, 0.02)
-        seq(0.01, 0.04, 0.01)
+        seq(0.01, 0.03, 0.005),
+        seq(0.02, 0.06, 0.01),
+        seq(0.04, 0.1, 0.01)
     )
+
 
     sp_poly <- list("sp.polygons", poly, col = "grey60", fill = "grey85")
     sp_text <- list("sp.text", -170, 80, title,
@@ -91,9 +95,11 @@ plot_sppoint <- function(sp, i, brks, sp.layout, cols){
     sp.layout <- c(sp_poly, sp_text)
 
     ps <- list()
-    for (i in 1:4){
+    for (i in 1:length(titles)){
         # print(i)
+        # ib <- ifelse(i > 4, 4, i)
         brks <- lst_brks[[i]]
+
         ncolor <- length(brks) + 1
         sp_text <- list("sp.text", c(-170, 80), titles[[i]],
                         fontfamily = "Times", cex = 1.3,
@@ -115,7 +121,7 @@ plot_sppoint <- function(sp, i, brks, sp.layout, cols){
     file <- "Fig9_wWH_spatial_performance_v3.jpg"
     # tiff(file, 15, 6, units = "in", res = 300, compression = "lzw")
     CairoPNG(file, 15, 6, units = "in", dpi = 300)
-    p <- arrangeGrob(grobs = ps, nrow = 2, ncol = 2, padding = unit(0, "line"))
+    p <- arrangeGrob(grobs = ps, nrow = 3, ncol = 2, padding = unit(0, "line"))
     grid.newpage()
     grid.draw(p)
     dev.off()

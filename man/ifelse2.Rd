@@ -2,10 +2,19 @@
 % Please edit documentation in R/backval.R
 \name{ifelse2}
 \alias{ifelse2}
-\title{ternary operator just like java `test ? yes : no`}
+\title{ifelse2
+ternary operator just like java `test ? yes : no`}
 \usage{
 ifelse2(test, yes, no)
 }
+\arguments{
+\item{test}{an object which can be coerced to logical mode.}
+
+\item{yes}{return values for true elements of test.}
+
+\item{no}{return values for false elements of test.}
+}
 \description{
+ifelse2
 ternary operator just like java `test ? yes : no`
 }

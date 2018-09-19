@@ -4,13 +4,11 @@
 \alias{plotdata}
 \title{Plot INPUT returned by check_input}
 \usage{
-plotdata(INPUT, nptperyear, wmin = 0.1, ...)
+plotdata(INPUT, wmin = 0.1, ...)
 }
 \arguments{
 \item{INPUT}{A list object with the elements of 't', 'y', 'w', 'Tn' (option)
 and 'ylu', returned by \code{check_input}.}
-
-\item{nptperyear}{Integer, points per year.}
 
 \item{wmin}{Double, minimum weigth (i.e. weight of snow, ice and cloud).}
 

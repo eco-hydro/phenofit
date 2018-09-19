@@ -15,6 +15,16 @@ list.cbind(x)
 
 list.rbind(x)
 }
+\arguments{
+\item{list}{Data set to melt}
+
+\item{var.name}{list names convert into var.name}
+
+\item{na.rm}{Should NA values be removed from the data set? 
+This will convert explicit missings to implicit missings.}
+
+\item{...}{other parameters to melt.}
+}
 \description{
 melt_list
 

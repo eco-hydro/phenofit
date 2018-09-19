@@ -1,82 +1,12 @@
 source('test/stable/load_pkgs.R')
 source("test/07_whit/main_phenofit_test.R")
+source("test/07_whit/main_Whittaker_Figures.R")
 source("test/07_whit/dat_flux&cam_phenofit.R")
 source('test/stable/ggplot/geom_boxplot_no_outlier.R')
 
 load("data_test/whit_lambda/MOD13A1_st_1e3_20180731.rda")
 methods <- c('AG', 'BECK', 'ELMORE', 'ZHANG', 'whit_R', 'wHANTS', 'wSG', 'wWH', "wWH2")
 methods2 <- c('AG', 'ZHANG', 'wHANTS', 'wSG', 'wWH', "wWH2")
-
-quantile_envelope <- function(x, alpha){
-    names <- "ymean"
-    # if (alpha != 0.5) {
-        alpha <-  c(alpha, 1-alpha)
-        names <- c("ymin", "ymax")
-    # }
-    res <- quantile(x, alpha, na.rm = T)
-    set_names(res, names)
-}
-
-fix_name <- function(x) {
-    names(x) %<>% str_extract(".*(?=_)")
-    # names(x)
-    x
-}
-
-tidy_info <- function(file){
-    x <- readRDS(file)
-    a <- llply(x, fix_name) %>% purrr::transpose() %>%
-        llply(function(l) {
-            info <- map(l, "info") %>% do.call(rbind, .)
-            rough <- map(l, "rough") %>% do.call(rbind, .)
-            list(info = info, rough = rough)
-        })
-    names <- names(a)
-
-    for (i in 1:length(a)){
-        name <- names[i]
-        d_info  <- a[[i]]$info
-        d_rough <- a[[i]]$rough
-
-        if (name != "phenofit"){
-            d_info$meth <- name
-            d_rough$meth <- name
-        }
-        d_info  %<>% reorder_name(c("site", "meth"))
-        d_rough %<>% reorder_name(c("site", "meth"))
-
-        a[[i]] <- merge(d_info, d_rough) %>%
-            reorder_name(c("site", "meth", "type", "iters"))#list(info = d_info, rough = d_rough)
-    }
-    a %<>% do.call(rbind, .) #transpose() %>% map(~
-    # a <- fix_name(a)
-    # d <- .[NSE > 0, ] %>%
-    #     melt(id.vars = c("site", "meth", "type"), variable.name = "index") %>%
-    #     .[index %in% c("R2", "NSE", "RMSE")]
-
-    # d$meth %<>% factor(methods)
-    # a$Rg %<>% unlist()
-    return(a)
-}
-
-boxplot2 <- function(p, width = 0.95, size = 0.7){
-    # width  <- 0.95
-    width2 <- width - 0.15
-    dodge <- position_dodge(width = width)
-
-    p +
-        stat_summary(fun.data = box_qtl,
-                     position = dodge, size = size,
-                     geom = "errorbar", width = width2) +
-        geom_boxplot2(coef = 0,
-                      width = width2,
-                      lwd = size - 0.2,
-                      notch = F, outlier.shape = NA, position=dodge) +
-        grid_x +
-        geom_text(data = d_lab, aes(x = "ENF",
-                                    y = Inf, color = NULL, label = label),
-                  vjust = 1.5, hjust = 1.1, fontface = "bold", size =5, show.legend = F)
-}
 
 st$site %<>% as.character()
 st$IGBPname %<>% factor(IGBPnames_006)
@@ -86,19 +16,21 @@ indice_label <- c("bold((a)*' '*R^2)", "bold((b)*' '*Bias)",
                   "bold((c)*' '*RMSE)", "bold((d)*' '*Roughness)")
 
 ###############################################################################
-indir <- "V:/result/val_info/info_0_v2_iters/"
+indir <- "V:/result/val_info/info_0_v2/"
 files <- dir(indir, full.names = T, recursive = T)
 
 df <- llply(files, tidy_info, .progress = "text") %>%
     # set_names(c("p10%", "p30%", "p50%")) %>%
     # melt_list("perc")
     do.call(rbind, .)
+
+
 # df$meth %<>% factor(methods2)
 
 # df <- melt_list(lst, "meth")
 # df$Rg %<>% unlist()
 
-d <- df[, .(site, meth, type, iters, RMSE, R2 = R2, Bias, Roughness = Rg_0)] %>%
+d <- df[, .(site, meth, type, iters, RMSE, R2 = R2, Bias, Rg, Rg_norm_by_obs, Rg_norm_by_pred)] %>%
     melt(id.vars = c("site", "meth", "type", "iters"), variable.name = "index") #, "perc"
 d <- merge(st[, .(site, IGBPname)], d)
 d$index %<>% factor(indice, indice_label)# <- indice# factor(indices)

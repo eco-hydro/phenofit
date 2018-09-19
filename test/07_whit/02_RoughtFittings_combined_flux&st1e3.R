@@ -25,7 +25,13 @@ rough_fitting <- function(sitename, df, st, .FUN = whitsmw2, lambda = NULL){
 
     tryCatch({
         # fill missing values
-        d <- merge(d, data.table(t = date), by = "t", all = T)
+        # date : image date
+        # t    : compositing date
+        if (is_flux) {
+            d <- merge(d, data.table(date), by = "date", all = T)        
+        } else {
+            d <- merge(d, data.table(t = date), by = "t", all = T)
+        }
         ############################################################################
         dnew  <- add_HeadTail(d)
         # 1. Check input data and initial parameters for phenofit
@@ -72,10 +78,11 @@ init_lambda <- function(y){
 }
 
 ################################################################################
-is_flux  <- T
+is_flux  <- F
 dir_flux <- ifelse(is_flux, "flux/", "")
 
 if (is_flux){
+    # about 2 minutes
     source("test/07_whit/dat_flux&cam_phenofit.R") # load data at flux sites
     df <- df_org # Get data
 }else{
@@ -99,7 +106,7 @@ years <- 2000:2018
 doy   <- seq(1, 366, 16)
 date  <- sprintf("%4d%03d", rep(years, each = 23), doy) %>% parse_date_time("%Y%j") %>% date()
 if (years[1] == 2000) date <- date[-(1:3)]
-date  <- date[1:(length(date)-11)] # for 2018
+date  <- date[1:(length(date)-12)] # for 2018
 
 # 1.3 global parameters
 nptperyear = 23
@@ -120,10 +127,9 @@ k = 4 # k = 4 is corresponding to `grp01_Extend`
 source("R/season_3y.R")
 source("R/curvefits.R")
 
-for (k in 4){ # 1:nrow(coefs)
+# for (k in 4){ # 1:nrow(coefs)
     # noise_perc <- noise_percs[k]
     # df <- select_valid(df, noise_perc = noise_perc)[, 1:10]
-    runningId(k, prefix = "k | " )
     pattern <- rownames(coefs)[k]
     param   <- as.list(coefs[k, ])
     ############################################################################
@@ -131,6 +137,8 @@ for (k in 4){ # 1:nrow(coefs)
     for (i in 1:4){ # only wWH2 this time
         method <- methods[i] #"sgfitw", "whitsmw2" and "wHANTS".
         FUN    <- get(method, envir = as.environment("package:phenofit"))
+
+        runningId(k, prefix = method)
 
         if (IsPlot){
             file <- sprintf("%s_%s_%2d%%.pdf", prefix, methods2[i], noise_perc*100)
@@ -158,7 +166,7 @@ for (k in 4){ # 1:nrow(coefs)
         #                    nf = nf, frame = frame,
         #                    IsPlot = IsPlot, print = print, partial = F)
     }
-}
+# }
 
 # sitename <- "GF-Guy"
 # a <- rough_fitting(sitename, df, st, get(method))

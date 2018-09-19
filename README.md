@@ -87,7 +87,8 @@ MOD13A2 and MOD13Q1). We have written a qc function for `SummaryQA`,
 
 ``` r
 data('MOD13A1')
-df <- MOD13A1$dt
+df <- MOD13A1$dt 
+
 st <- MOD13A1$st
 
 df[, `:=`(date = ymd(date), year = year(date), doy = as.integer(yday(date)))]
@@ -96,6 +97,8 @@ df[is.na(DayOfYear), DayOfYear := doy] # If DayOfYear is missing
 # In case of last scene of a year, doy of last scene could in the next year
 df[abs(DayOfYear - doy) >= 300, t := as.Date(sprintf("%d-%03d", year+1, DayOfYear), "%Y-%j")] # last scene
 df[abs(DayOfYear - doy) <  300, t := as.Date(sprintf("%d-%03d", year  , DayOfYear), "%Y-%j")]
+
+df <- df[!duplicated(df[, .(site, t)]), ]
 
 # MCD12Q1.006 land cover 1-17, IGBP scheme
 IGBPnames_006 <- c("ENF", "EBF", "DNF", "DBF", "MF" , "CSH", 
@@ -146,8 +149,9 @@ plot(d$Tn, type = "l"); abline(a = 5, b = 0, col = "red")
 ## 2.1 Check input data
 
 ``` r
-dnew  <- add_HeadTail(d) # add additional one year in head and tail
-INPUT <- check_input(dnew$t, dnew$y, dnew$w, maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
+dnew  <- add_HeadTail(d, nptperyear = 23) # add additional one year in head and tail
+INPUT <- check_input(dnew$t, dnew$y, dnew$w, 
+                     nptperyear, maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
 # y0 is used for plot. Original y value has been interpolated and changed.
 INPUT$y0 <- dnew$y 
 ```
@@ -170,16 +174,17 @@ par(mar = c(3, 2, 2, 1), mgp = c(3, 0.6, 0))
 lambda <- init_lambda(INPUT$y)
 # The detailed information of those parameters can be seen in `season`.
 # brks   <- season(INPUT, nptperyear,
-#                FUN = whitsmw2, wFUN = wFUN, iters = 2,
+#                FUN = wWHIT, wFUN = wFUN, iters = 2,
 #                lambda = lambda,
 #                IsPlot = IsPlot, plotdat = d,
 #                south = d$lat[1] < 0,
 #                rymin_less = 0.6, ymax_min = ymax_min,
 #                max_MaxPeaksperyear =2.5, max_MinPeaksperyear = 3.5) #, ...
 # get growing season breaks in a 3-year moving window
-brks2 <- season_3y(INPUT, nptperyear, south = sp$lat[1] < 0, 
-                   FUN = whitsmw2, wFUN = wFUN,
-                   IsPlot = IsPlot, print = print, partial = F)
+brks2 <- season_3y(INPUT, south = sp$lat[1] < 0, 
+                   FUN = wWHIT, wFUN = wFUN,
+                   maxExtendMonth = 6,
+                   IsPlot = IsPlot, print = print, IsOnlyPlotbad = F)
 #   [season_3y]  running 1 ...
 #   [season_3y]  running 2 ...
 #   [season_3y]  running 3 ...
@@ -205,9 +210,9 @@ brks2 <- season_3y(INPUT, nptperyear, south = sp$lat[1] < 0,
 ## 2.3 Curve fitting
 
 ``` r
-fit  <- curvefits(INPUT, brks2, lambda =lambda,
+fit  <- curvefits(INPUT, brks2,
                   methods = c("AG", "zhang", "beck", "elmore"), #,"klos",, 'Gu'
-                  nptperyear = nptperyear, debug = F, 
+                  debug = F, 
                   wFUN = wFUN,
                   nextent = 2, maxExtendMonth = 3, minExtendMonth = 1,
                   qc = as.numeric(dnew$SummaryQA), minPercValid = 0.2,
@@ -246,24 +251,24 @@ print(params$AG)
 # # A tibble: 18 x 8
 #    flag      t0    mn    mx    rsp    a3    rau    a5
 #    <fct>  <dbl> <dbl> <dbl>  <dbl> <dbl>  <dbl> <dbl>
-#  1 2000_1  558. 0.176 0.408 0.0367  3.68 0.0150  6   
-#  2 2001_1  925. 0.176 0.401 0.0202  5.05 0.0178  6   
-#  3 2002_1 1291. 0.176 0.541 0.0368  2    0.0157  2   
-#  4 2003_1 1636. 0.178 0.448 0.0270  2    0.0123  2.77
-#  5 2004_1 2021. 0.182 0.464 0.0361  2    0.0202  5.69
-#  6 2005_1 2413. 0.183 0.462 0.0131  6    0.0337  2   
-#  7 2006_1 2739. 0.184 0.438 0.0213  2    0.0134  3.52
-#  8 2007_1 3111. 0.186 0.483 0.0216  2    0.0149  2.72
-#  9 2008_1 3484. 0.188 0.505 0.0224  2.08 0.0173  6   
-# 10 2009_1 3885. 0.196 0.479 0.0140  6    0.0365  2   
-# 11 2010_1 4197. 0.193 0.488 0.0266  2    0.0132  2   
-# 12 2011_1 4566. 0.198 0.466 0.0340  2    0.0138  6   
-# 13 2012_1 4926. 0.200 0.510 0.0388  4.24 0.0124  6   
-# 14 2013_1 5287. 0.205 0.482 0.0402  6    0.0110  3.68
-# 15 2014_1 5713. 0.208 0.494 0.0122  6    0.0455  6   
-# 16 2015_1 6025. 0.219 0.512 0.0346  2.63 0.0160  6   
-# 17 2016_1 6383. 0.214 0.485 0.0428  2    0.0130  4.99
-# 18 2017_1 6753. 0.211 0.441 0.0284  6    0.0120  5.02
+#  1 2000_1  555. 0.168 0.419 0.0481  2.38 0.0137  5.50
+#  2 2001_1  918. 0.172 0.413 0.0252  3.30 0.0151  6   
+#  3 2002_1 1314. 0.188 0.487 0.0207  3.27 0.0229  2   
+#  4 2003_1 1639. 0.168 0.449 0.0260  2    0.0129  3.58
+#  5 2004_1 2022. 0.180 0.449 0.0393  2    0.0181  4.74
+#  6 2005_1 2415. 0.180 0.463 0.0132  6    0.0328  2   
+#  7 2006_1 2743. 0.175 0.436 0.0198  2.08 0.0135  3.78
+#  8 2007_1 3113. 0.165 0.480 0.0209  2    0.0142  2.97
+#  9 2008_1 3485. 0.176 0.506 0.0230  2.31 0.0162  6   
+# 10 2009_1 3887. 0.174 0.485 0.0135  5.25 0.0319  2   
+# 11 2010_1 4203. 0.181 0.493 0.0234  2    0.0147  2   
+# 12 2011_1 4568. 0.184 0.465 0.0310  2    0.0127  4.80
+# 13 2012_1 4939. 0.170 0.498 0.0243  4.33 0.0137  5.62
+# 14 2013_1 5321. 0.171 0.494 0.0156  6    0.0165  2.18
+# 15 2014_1 5666. 0.201 0.495 0.0338  2    0.0133  6   
+# 16 2015_1 6063. 0.205 0.494 0.0150  6    0.0330  2.09
+# 17 2016_1 6385. 0.195 0.485 0.0410  2    0.0126  4.76
+# 18 2017_1 6766. 0.175 0.445 0.0210  6    0.0126  3.70
 
 ## Get GOF information
 stat  <- ldply(fit$fits, function(fits_meth){
@@ -272,31 +277,33 @@ stat  <- ldply(fit$fits, function(fits_meth){
 fit$stat <- stat
 print(head(stat))
 #   meth   flag       RMSE       NSE         R       pvalue  n
-# 1   AG 2000_1 0.10229316 0.4913260 0.8964904 7.151335e-09 23
-# 2   AG 2001_1 0.08966131 0.5730986 0.9040977 3.320912e-09 23
-# 3   AG 2002_1 0.08394268 0.7169239 0.9143854 1.056728e-09 23
-# 4   AG 2003_1 0.06395071 0.7639834 0.9488097 5.565019e-12 23
-# 5   AG 2004_1 0.06179483 0.7424845 0.9292973 4.198802e-10 22
-# 6   AG 2005_1 0.08001220 0.7216373 0.9301156 3.750332e-10 22
+# 1   AG 2000_1 0.10124597 0.5052988 0.8974630 6.505080e-09 23
+# 2   AG 2001_1 0.08829644 0.5859967 0.9028306 3.789877e-09 23
+# 3   AG 2002_1 0.09013596 0.6638662 0.9076925 9.273907e-10 24
+# 4   AG 2003_1 0.06150348 0.7829420 0.9407797 2.479945e-11 23
+# 5   AG 2004_1 0.06214900 0.7377289 0.9317228 1.061358e-10 23
+# 6   AG 2005_1 0.08152915 0.7245519 0.9267602 1.612517e-09 21
 
 print(fit$fits$AG$`2002_1`$ws)
 # $iter1
 #  [1] 0.2000000 0.2000000 0.2000000 0.2000000 0.2000000 0.2000000 0.2000000
-#  [8] 0.2000000 0.9434168 0.6945310 0.4900482 0.9295393 1.0000000 1.0000000
-# [15] 0.5000000 1.0000000 1.0000000 1.0000000 0.3578768 0.6543742 0.9554592
+#  [8] 0.2000000 0.2000000 0.5000000 1.0000000 0.9996674 1.0000000 0.2000000
+# [15] 0.5000000 0.9565282 1.0000000 1.0000000 0.1000000 0.2000000 0.2000000
 # [22] 0.2000000 0.2000000 0.2000000 0.2000000 0.2000000 0.2000000 0.2000000
+# [29] 0.2000000 0.2000000 0.2000000 1.0000000 0.8012788
 # 
 # $iter2
-#  [1] 0.9452294 0.9452294 0.9452294 0.9452294 0.9452294 0.9452294 0.9452277
-#  [8] 0.9973005 0.9434168 0.9012773 0.9794146 0.9295393 0.2459014 1.0000000
-# [15] 0.8185856 0.9768257 1.0000000 0.9966571 0.2000000 0.6543742 0.9554592
-# [22] 0.9648546 0.9318852 0.9424703 0.9443088 0.9450985 0.9452044 0.9452287
+#  [1] 0.2000000 0.2000000 0.2000000 0.2000000 0.2000000 0.2000000 0.2000000
+#  [8] 0.2000000 0.2000000 0.5000000 1.0000000 0.9996674 0.9910028 0.2000000
+# [15] 0.5000000 0.9484008 1.0000000 0.9896577 0.2000000 0.2000000 0.2000000
+# [22] 0.2000000 0.2000000 0.2000000 0.2000000 0.2000000 0.2000000 0.2000000
+# [29] 0.2000000 0.2000000 0.2000000 1.0000000 0.8012788
 ## visualization
 # svg("Figure1_phenofit_curve_fitting.svg", 11, 7)
 # Cairo::CairoPDF(file_pdf, 11, 6) #
 # dev.off()
 g <- plot_phenofit(fit, d, titlestr)
-# Warning: Removed 712 rows containing missing values (geom_point).
+# Warning: Removed 700 rows containing missing values (geom_point).
 grid::grid.newpage(); grid::grid.draw(g)# plot to check the curve fitting
 ```
 
@@ -342,12 +349,12 @@ head(pheno$doy$AG)
 # # A tibble: 6 x 21
 #   flag  origin     TRS1.sos TRS1.eos TRS2.sos TRS2.eos TRS5.sos TRS5.eos
 #   <fct> <date>        <dbl>    <dbl>    <dbl>    <dbl>    <dbl>    <dbl>
-# 1 2000… 2000-01-01      166      278      169      272      176      263
-# 2 2001… 2001-01-01      142      266      146      262      155      254
-# 3 2002… 2002-01-01      159      301      167      283      179      255
-# 4 2003… 2003-01-01      125      294      135      279      152      254
-# 5 2004… 2004-01-01      159      259      166      255      179      248
-# 6 2005… 2005-01-01      140      274      145      265      156      253
+# 1 2000~ 2000-01-01      165      277      169      273      177      261
+# 2 2001~ 2001-01-01      140      267      145      263      156      253
+# 3 2002~ 2002-01-01      159      290      166      278      178      258
+# 4 2003~ 2003-01-01      125      279      134      270      151      252
+# 5 2004~ 2004-01-01      160      266      167      260      178      251
+# 6 2005~ 2005-01-01      140      274      146      266      156      252
 # # ... with 13 more variables: TRS6.sos <dbl>, TRS6.eos <dbl>,
 # #   DER.sos <dbl>, DER.pop <dbl>, DER.eos <dbl>, GU.UD <dbl>, GU.SD <dbl>,
 # #   GU.DD <dbl>, GU.RD <dbl>, ZHANG.Greenup <dbl>, ZHANG.Maturity <dbl>,

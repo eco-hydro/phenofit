@@ -24,6 +24,11 @@ doubleLog.gu(par, t)
 
 doubleLog.klos(par, t)
 }
+\arguments{
+\item{par}{A vector of parameters}
+
+\item{t}{A \code{Date} or numeric vector}
+}
 \description{
 Define double logistics, piecewise logistics and many other functions to
 curve fit VI time-series

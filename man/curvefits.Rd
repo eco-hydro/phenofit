@@ -4,9 +4,9 @@
 \alias{curvefits}
 \title{Fine Curve fitting}
 \usage{
-curvefits(INPUT, brks, nptperyear = 23, wFUN = wTSM, iters = 2,
-  wmin = 0.2, nextent = 2, maxExtendMonth = 3, minExtendMonth = 1,
-  minT = 0, methods = c("AG", "zhang", "beck", "elmore", "Gu"), qc,
+curvefits(INPUT, brks, wFUN = wTSM, iters = 2, wmin = 0.2,
+  nextent = 2, maxExtendMonth = 3, minExtendMonth = 1, minT = 0,
+  methods = c("AG", "zhang", "beck", "elmore", "Gu"), qc,
   minPercValid = 0.2, print = TRUE, ...)
 }
 \arguments{
@@ -17,14 +17,12 @@ and 'ylu', returned by \code{check_input}.}
 \code{season} or \code{season_3y}, which contains the growing season 
 dividing information.}
 
-\item{nptperyear}{Integer, points per year.}
-
-\item{wFUN}{weights updating function, can be one of 'wTSM', 'wChen' and 
+\item{wFUN}{weights updating function, can be one of 'wTSM', 'wChen' and
 'wBisquare'.}
 
 \item{iters}{How many times curve fitting is implemented.}
 
-\item{wmin}{Double, minimum weigth value (i.e. weight for snow, ice and cloud).}
+\item{wmin}{Double, minimum weigth (i.e. weight of snow, ice and cloud).}
 
 \item{nextent}{Extend curve fitting window, until \code{nextent} good or 
 marginal element are found in previous and subsequent growing season.}

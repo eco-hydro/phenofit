@@ -58,3 +58,5 @@ data_test/*/
 temp/
 *.jpg
 *.tif
+
+notebook

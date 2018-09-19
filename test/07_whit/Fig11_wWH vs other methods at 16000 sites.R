@@ -2,14 +2,6 @@
 library(grid)
 library(gridExtra)
 
-## when compared with other methods, iter2 was used.
-
-itersI <- "iter2"
-## Update 20180904
-# 1. Roughness error,
-# Rg is the Roughness of normalized Y_pred
-# Rg_0 is ... of Y_pred
-
 label_value <- function (labels, multi_line = TRUE, sep = "*'~'*")
 {
     out <- do.call("Map", c(list(paste, sep = sep), labels))
@@ -21,7 +13,17 @@ label_value <- function (labels, multi_line = TRUE, sep = "*'~'*")
     })
 }
 
-d <- df[meth %in% methods2, .(site, meth, type, iters, RMSE, R2 = R2, Bias, Rg = Rg_0)] %>%
+## when compared with other methods, iter2 was used.
+
+itersI <- "iter2"
+## Update 20180904
+# 1. Roughness error,
+# Rg is the Roughness of normalized Y_pred
+# Rg_0 is ... of Y_pred
+
+subfix <- "Rg_norm_by_pred"
+# Rg_norm_by_obs, Rg_norm_by_pred, Rg
+d <- df[meth %in% methods2, .(site, meth, type, iters, RMSE, R2 = R2, Bias, Rg = Rg_norm_by_pred)] %>%
     melt(id.vars = c("site", "meth", "type", "iters"), variable.name = "index") #, "perc"
 d <- merge(st[, .(site, IGBPname)], d)
 
@@ -48,7 +50,7 @@ colors <- c(colors[2], "grey60", colors[1])
 ps <- list()
 for (i in seq_along(indice)){
     indexi = indice_label[i]
-    pdat <- d2[index == indexi & meth != "wWH2"]
+    pdat <- d2[index == indexi] #  & meth != "wWH2"
 
     d_dominant <- ddply_dt(pdat, .(table(kind)), .(meth, index, label))
     d_dominant[, text := sprintf("%2d vs %2d", Bigger, Smaller)]
@@ -106,7 +108,7 @@ g <- arrangeGrob(grobs = ps, nrow = 1, widths = c(1, 1, 1, 1.1),
                  bottom = xtitle,
                  left = textGrob("Other methods", gp=gpar(fontsize=14, fontface = "bold"), rot = 90))
 g <- arrangeGrob(g, bottom = lgd)
-file <- sprintf("Fig11_compare_with_other_methods_%s.pdf", itersI)
+file <- sprintf("Fig11_compare_with_other_methods_%s_%s.pdf", itersI, subfix)
 file_tiff <- gsub(".pdf", ".tif", file)
 width = 11; height = 8
 write_fig(g, file_tiff, width, height, T, res = 300)

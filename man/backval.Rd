@@ -16,6 +16,12 @@ backval(y, t, w, Tn, minT = 5, nptperyear, ...)
 \item{Tn}{Numeric vector, night temperature, default is null. If provided,
 Tn is used to help divide ungrowing period, and then get background value in
 ungrowing season (see details in \code{\link[phenofit]{backval}}).}
+
+\item{minT}{min temperature for growing season.}
+
+\item{nptperyear}{Integer, number of images per year}
+
+\item{...}{Others will be ignored.}
 }
 \value{
 back If back value is NA, it is impossible to extract phenology here.

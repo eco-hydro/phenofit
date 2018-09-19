@@ -1,5 +1,5 @@
 #' whittaker smoother
-whitsmw2_d <- function(y, w, ylu, nptperyear, wFUN = wTSM, iters=1, lambdas=1000, df = NULL, ...,
+wWHIT_d <- function(y, w, ylu, nptperyear, wFUN = wTSM, iters=1, lambdas=1000, df = NULL, ...,
     validation = FALSE){
     if (all(is.na(y))) return(y)
     n <- sum(w)

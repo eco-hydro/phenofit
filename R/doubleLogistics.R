@@ -16,7 +16,9 @@
 #'
 #' All of those function have \code{par} and \code{formula} attributes for the
 #' convenience for analytical D1 and D2
-#'
+#' 
+#' @param par A vector of parameters
+#' @param t A \code{Date} or numeric vector
 #' @references
 #' Peter M. Atkinson, et al., 2012, RSE, 123:400-417
 #'
@@ -208,7 +210,7 @@ attr(doubleLog.klos, 'formula') <- expression((a1*t + b1) + (a2*t^2 + b2*t + c) 
 #' @inheritParams Logistic
 #'
 #' @param fun A curve fitting function, see \code{\link{Logistic}}.
-#' @param ... other parameters passed to \code{fun}.
+#' @param ... other parameters will be ignored.
 #'
 #' @return RMSE root mean square error of curve fitting values.
 #' @export

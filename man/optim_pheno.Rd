@@ -21,7 +21,7 @@ values are to be found.}
 
 \item{tout}{corresponding \code{t} of curve fitting result}
 
-\item{method}{String, optimization method, passed to \code{optimFun}.}
+\item{method}{String, optimization method, passed to `optimFun`.}
 
 \item{w}{Numeric vector, weights of \code{y}}
 
@@ -35,7 +35,7 @@ in the range of \code{ylu}.}
 \item{wFUN}{weights updating function, can be one of 'wTSM', 'wChen' and 
 'wBisquare'.}
 
-\item{nptperyear}{number of images per year}
+\item{nptperyear}{Integer, number of images per year}
 
 \item{debug}{boolean}
 

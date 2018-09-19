@@ -8,6 +8,8 @@ f_goal(par, y, t, fun = c(doubleLog.elmore, doubleLog.beck,
   doubleLog.klos, doubleLog.gu, doubleLog.zhang, doubleAG), w, ylu, ...)
 }
 \arguments{
+\item{par}{A vector of parameters}
+
 \item{y}{Numeric vector, vegetation index time-series}
 
 \item{t}{Numeric vector, \code{Date} variable}
@@ -19,7 +21,7 @@ f_goal(par, y, t, fun = c(doubleLog.elmore, doubleLog.beck,
 \item{ylu}{[low, high] of time-series y (curve fitting values are constrained
 in the range of \code{ylu}.}
 
-\item{...}{other parameters passed to \code{fun}.}
+\item{...}{other parameters will be ignored.}
 }
 \value{
 RMSE root mean square error of curve fitting values.

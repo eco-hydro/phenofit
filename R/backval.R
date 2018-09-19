@@ -8,6 +8,8 @@
 #' the same during a consecutive two yearperiod. Details can be seen in Zhang et al., (2015).
 #' 
 #' @inheritParams check_input
+#' @param minT min temperature for growing season.
+#' 
 #' @return back If back value is NA, it is impossible to extract phenology here.
 #' 
 #' @references
@@ -25,10 +27,11 @@ backval <- function(y, t, w, Tn, minT = 5, nptperyear, ...){
     getBack <- function(y, index){
         yi <- y[index]
         n  <- length(yi)
+
         i_end <- ifelse(n <= 5, n, 5)
 
         # if i_end = 0, yi[1:0] = NA
-        return( median(yi[1:i_end]) )
+        return( median(sort(yi)[1:i_end]) ) #fixed 20180913
     }
 
     n <- length(y)
@@ -73,8 +76,12 @@ backval <- function(y, t, w, Tn, minT = 5, nptperyear, ...){
     # w[y < back] <- 1
 }
 
+#' ifelse2
 #' ternary operator just like java `test ? yes : no`
 #' 
+#' @param test an object which can be coerced to logical mode.
+#' @param yes return values for true elements of test.
+#' @param no return values for false elements of test.
 #' @export
 ifelse2 <- function(test, yes, no){
     if (test){

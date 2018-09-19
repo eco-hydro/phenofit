@@ -12,10 +12,26 @@ source('helper_MOD13A1.R')
 #     max_MaxPeaksperyear =2.5, max_MinPeaksperyear = 3.5
 # )
 
-test_that("season_3y works", {
-    expect_silent(
-        brks2 <- season_3y(INPUT, nptperyear, south = sp$lat[1] < 0, FUN = whitsmw2,
-            plotdat = d,
-            IsPlot = IsPlot, print = F, partial = F)
-    )
+param = listk(
+    INPUT, south = sp$lat[1] < 0, 
+    rFUN = wWHIT, wFUN = wTSM, iters = 3,
+    threshold_min = 0,
+    IsPlot = IsPlot, plotdat = d, print = FALSE, IsOnlyPlotbad = F
+)
+
+param$rFUN <- wSG
+# brks <- do.call(season_3y, param)
+
+test_that("`season_3y` with wWHIT", {
+    expect_silent(brks <- do.call(season_3y, param))
+})
+
+test_that("`season_3y` with wHANTS", {
+    param$rFUN <- wHANTS
+    expect_silent(brks <- do.call(season_3y, param))
+})
+
+test_that("`season_3y` with wSG", {
+    param$rFUN <- wSG
+    expect_silent(brks <- do.call(season_3y, param))
 })
