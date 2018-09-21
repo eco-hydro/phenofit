@@ -6,9 +6,9 @@ $(document).on("keydown", function(e) {
 
     var code = e.keyCode;
     var pos;
-    if (code == 37 || code == 38) {
+    if (code == 37) { // || code == 38
         pos = -1;
-    } else if (code == 39 || code == 40) {
+    } else if (code == 39) { // || code == 40
         pos = 1;
     }
 

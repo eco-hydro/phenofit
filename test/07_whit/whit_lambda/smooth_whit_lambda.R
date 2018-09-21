@@ -54,11 +54,11 @@ v_curve = function(INPUT, nptperyear, lambdas,  d = 2, IsPlot = F,
     if (length(unique(y)) == 0) return(NULL)
 
     param <- c(INPUT, nptperyear = nptperyear, wFUN = wFUN, iters=iters,
-        second = FALSE, lambdas=NA)
+        second = FALSE, lambda=NA)
 
     fits = pens = NULL
     for (lla in lambdas) {
-        # param$lambdas <- 10^lla
+        # param$lambda <- 10^lla
         # z    <- do.call(whitsmw2, param)$zs %>% dplyr::last()
 
         z    = whit2(y, 10 ^ lla, w)

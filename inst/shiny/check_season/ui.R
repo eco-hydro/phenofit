@@ -43,7 +43,7 @@ ui <- fluidPage(
             ),
             selectInput("wFUN","Choose a weights updating function (wFUN):",
                         choices = c("wTSM", "wBisquare", "wChen"), selected = "wBisquare"),
-            selectInput("site","Choose a site:", choices = sites, selected = "FR-LBr"), #CH-Fru
+            selectInput("site","Choose a site:", choices = sites, selected = "US-Me2"), #CH-Fru, FR-LBr
             sliderInput("threshold_max", "threshold_max:",
                 min = 0, max = 1, value = 0.2, param_step ),
             sliderInput( "threshold_min", "threshold_min:",
@@ -57,10 +57,14 @@ ui <- fluidPage(
             # textOutput('txt_title'),
             tabsetPanel(type = "tabs",
                 tabPanel("Plot",
-                    plotOutput("obsPlot", height = fig.height),
-                    plotOutput("gppPlot", height = fig.height),
-                    plotOutput("eviPlot", height = fig.height),
-                    plotOutput("ndviPlot", height = fig.height)
+                    plotOutput("plot_GPPobs", height = fig.height),
+                    plotOutput("plot_GPP_mod", height = fig.height),
+                    plotOutput("plot_GPP_vpm", height = fig.height),
+                    plotOutput("plot_MOD13A1_EVI" , height = fig.height),
+                    plotOutput("plot_MOD13A1_NDVI", height = fig.height),
+                    plotOutput("plot_MOD13Q1_EVI" , height = fig.height),
+                    plotOutput("plot_MOD13Q1_NDVI", height = fig.height),
+                    plotOutput("plot_MCD15A3H_LAI", height = fig.height)
                 ),
                 tabPanel("Table",
                     h3("Growing season dividing information:"),
