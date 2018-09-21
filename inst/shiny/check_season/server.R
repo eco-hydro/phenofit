@@ -1,7 +1,6 @@
 # runApp("test/phenology_async/check_season/")
 # load("data/shiny_flux115.rda")
-load('data/phenoflux_115.rda')
-load('data/ET&GPP&VI_flux115.rda')
+
 # sites <- sort(sites)
 
 # Define server logic required to draw a histogram
@@ -13,9 +12,9 @@ server <- function(input, output, session) {
         get_input(df, st, input$site)
     })
     brks  <- reactive({
-        varnames <- c("FUN_season", "FUN_fit", 
+        varnames <- c("FUN_season", "FUN_fit",
             "iters", "lambda", "nf", "frame",
-            "wFUN", 
+            "wFUN",
             "maxExtendMonth", "rytrough_max",
             "threshold_max", "threshold_min", "threshold_max") %>%
             intersect(names(input)) %>% set_names(., .)
@@ -80,7 +79,7 @@ server <- function(input, output, session) {
         sitename <- input$site
         d <- lst_sm$GPP_vpm[site == sitename, .(site, t = date, y = GPP_vpm)]
         d <- d[t >= date_range()[1] & t <= date_range()[2]]
-        
+
         plot_data(d, "GPP_vpm (Yao 2017)")
         abline(h = 1, col = "red")
     })
