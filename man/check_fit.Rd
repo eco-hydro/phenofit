@@ -13,6 +13,6 @@ check_fit(yfit, ylu)
 }
 \description{
 Curve fitting values are constrained in the range of \code{ylu}.
-Only constrain trough value for a stable background value. But not for peak 
+Only constrain trough value for a stable background value. But not for peak
 value.
 }

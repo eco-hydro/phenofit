@@ -200,7 +200,7 @@ get_phenofit <- function(sitename, df, st, prefix_fig = 'phenofit_v3', IsPlot = 
     tryCatch({
         dnew  <- add_HeadTail(d)
         # 1. Check input data and initial parameters for phenofit
-        INPUT <- check_input(dnew$t, dnew$y, dnew$w, maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
+        INPUT <- check_input(dnew$t, dnew$y, dnew$w, nptperyear, maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
         INPUT$y0 <- dnew$y
         IsPlot2   <- FALSE # for brks
         # 2. The detailed information of those parameters can be seen in `season`.

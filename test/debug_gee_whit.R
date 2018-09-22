@@ -3,9 +3,9 @@ library(stars)
 library(pracma)
 library(Ipaper)
 
-file_y      <- "D:/Document/GoogleDrive/phenofit/whit_lambda/img_ymat.tif"
-file_w      <- "D:/Document/GoogleDrive/phenofit/whit_lambda/img_w_2.tif"
-file_lambda <- "D:/Document/GoogleDrive/phenofit/whit_lambda/lambda.tif"
+file_y      <- "D:/Document/Google Drive (kongdd@live.cn)/phenofit/img_ymat.tif"
+file_w      <- "D:/Document/Google Drive (kongdd@live.cn)/phenofit/img_w.tif"
+file_lambda <- "D:/Document/Google Drive (kongdd@live.cn)/phenofit/lambda.tif"
 
 
 # info <- GDALinfo(file)
@@ -28,9 +28,29 @@ whit <- function (y, lambda = 1600, w, d = 2)
 }
 
 dims <- dim(ymat)
+prefix <- "whit"
+
+dims <- dim(ymat)
 nx <- dims[1] # col
 ny <- dims[2] # row
-prefix <- "whit"
+nt <- dims[3] # time
+
+get_summary <- function(mat){
+    dims <- dim(mat)
+    nx <- dims[1] # col
+    ny <- dims[2] # row
+
+    if (length(dims) > 2){
+        nt <- dims[3] # time
+    } else{
+        nt <- 1
+    }
+
+    x <- mat %>% array(dim = c(nx*ny, nt))
+    res <- rowSums2(is.na(x))
+    table(res)
+}
+
 
 for (i in 1:nx){
     runningId(i, 10)

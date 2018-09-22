@@ -6,8 +6,8 @@
 \usage{
 curvefits(INPUT, brks, wFUN = wTSM, iters = 2, wmin = 0.2,
   nextent = 2, maxExtendMonth = 3, minExtendMonth = 1, minT = 0,
-  methods = c("AG", "zhang", "beck", "elmore", "Gu"), qc,
-  minPercValid = 0.2, print = TRUE, ...)
+  methods = c("AG", "zhang", "beck", "elmore", "Gu"), qc = INPUT$w * 0
+  + 1, minPercValid = 0.2, print = TRUE, ...)
 }
 \arguments{
 \item{INPUT}{A list object with the elements of 't', 'y', 'w', 'Tn' (option) 
@@ -42,7 +42,8 @@ Tn < minT is treated as ungrowing season.}
 \item{methods}{Character, find curve fitting names, can be one of 
 c("AG", "zhang", "beck", "elmore", "Gu").}
 
-\item{qc}{Factor, only suit for MOD13A1.}
+\item{qc}{Factor (optional), only suit for MOD13A1. SummaryQA code for PhenoExtracr. 
+Other dataset, just leave qc as the default.}
 
 \item{minPercValid}{If valid percentage is less than \code{minPercValid}, the
 fits are set to NA.}

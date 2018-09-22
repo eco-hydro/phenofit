@@ -21,7 +21,8 @@
 #' Tn < minT is treated as ungrowing season.
 #' @param methods Character, find curve fitting names, can be one of 
 #' c("AG", "zhang", "beck", "elmore", "Gu").
-#' @param qc Factor, only suit for MOD13A1. 
+#' @param qc Factor (optional), only suit for MOD13A1. SummaryQA code for PhenoExtracr. 
+#' Other dataset, just leave qc as the default.
 #' @param minPercValid If valid percentage is less than \code{minPercValid}, the
 #' fits are set to NA.
 #' @param print Whether to print progress information?
@@ -34,7 +35,7 @@ curvefits <- function(INPUT, brks,
                       nextent = 2, maxExtendMonth = 3, minExtendMonth = 1, 
                       minT = 0,
                       methods = c('AG', 'zhang', 'beck', 'elmore', 'Gu'),
-                      qc, minPercValid = 0.2,
+                      qc = INPUT$w*0+1, minPercValid = 0.2,
                       print = TRUE, ...)
 {
     nptperyear <- INPUT$nptperyear
