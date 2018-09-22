@@ -61,12 +61,12 @@ season_3y <- function(INPUT, south = FALSE,
         I   <- which(date_year %in% years[i]) # 3y index
         ylu <- get_ylu (INPUT$y, date_year, INPUT$w, width = nextent, I, Imedian = TRUE, wmin)
         ylu <- merge_ylu(INPUT$ylu, ylu) # curvefits.R
-        
+
         # extend curve fitting period, for continuity.
         I <- seq( max(1, first(I) - nextent), min(last(I) + nextent, nlen) )
 
         # # triplicate HANTS test, 2018-09-19
-        # # Not perfect at all for regions with multiple growing season. 
+        # # Not perfect at all for regions with multiple growing season.
         # # No one method can cope with all the situation.
         # {
         #     nextent <- length(I)
@@ -95,7 +95,8 @@ season_3y <- function(INPUT, south = FALSE,
         }
 
         if (is.null(brk$dt) || nrow(brk$dt) == 0){
-            params_i$threshold_max = 0.2
+            # if have no brks, try to decrease threshold_max
+            params_i$threshold_max <- max(params_i$threshold_max-0.1, 0.05)
             brk <- do.call(season, params_i)
             # we need `rfit` time-series, so can't skip NULL brks.
             if (!is.null(brk$dt)){
