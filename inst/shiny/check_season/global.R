@@ -6,7 +6,7 @@ library(data.table)
 library(magrittr)
 
 load('data/phenoflux_115.rda')
-load('data/ET&GPP&VI_flux115.rda')
+load('data/phenoflux_115_ET&GPP&VI.rda')
 # load('inst/shiny/check_season/data/phenoflux_115.rda')
 # load('inst/shiny/check_season/data/ET&GPP&VI_flux115.rda')
 
