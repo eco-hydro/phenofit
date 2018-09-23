@@ -91,7 +91,7 @@ check_input <- function(t, y, w, nptperyear, Tn = NULL,
     w[y < ylu[1] | y > ylu[2]] <- wmin
     # #based on out test marginal extreme value also often occur in winter
     # #This step is really dangerous! (checked at US-Me2)
-    # y[y < ylu[1]]                  <- missval
+    y[y < ylu[1]]                  <- missval
     y[y > ylu[2] & w < w_critical] <- missval
 
     ## 2. rm spike values
