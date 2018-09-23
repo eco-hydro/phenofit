@@ -1,4 +1,5 @@
 library(data.table)
+library(plyr)
 
 data("MOD13A1")
 

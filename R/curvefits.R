@@ -75,7 +75,7 @@ curvefits <- function(INPUT, brks,
     # lines(INPUT$y        , col = "red")
     MaxExtendWidth = ceiling(nptperyear/12*maxExtendMonth)
     MinExtendWidth = ceiling(nptperyear/12*minExtendMonth)
-    width_ylu    = nptperyear*1 
+    width_ylu    = nptperyear*2 
 
     y    <- INPUT$y
     fits <- list()
