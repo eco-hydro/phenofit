@@ -213,7 +213,6 @@ Init_param <- function(y, t, w){
         stop("NA in the time series are not allowed: fill them with e.g. na.approx()")
     if (missing(w)) w <- rep(1, length(y))
 
-
     w_min  <- 0.5 # weights greater than w_min are treated as good values.
     # fixed 2018-07-25, If have no enough good points, then set w_min=0
     if (sum(w >= w_min)/length(y) < .4) w_min <- 0

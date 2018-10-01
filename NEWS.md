@@ -11,3 +11,8 @@
 strategy.
 * `doubleLog.zhang` is still not as stable as others.
 * `wTSM_cpp` iter parameter is ignored now.
+
+# phenofit 0.1.5 (2018-09-19)
+
+* shiny app `check_season` online now.
+* `season` can export rough curve fitting result, even no peaks or trough found.

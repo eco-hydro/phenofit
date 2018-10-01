@@ -76,7 +76,9 @@ wBisquare <- function(y, yfit, w, ..., wmin = 0.2){
     wnew[I_pos]  <- (1 - (re_abs[I_pos]/sc)^2)^2 * w[I_pos]
     # have a problem, in this way, original weights will be ignored.
 
-    I_zero       <- which(re >= sc) # update 20180723
+    # I_zero       <- which(re >= sc) # update 20180723
+    I_zero       <- which(abs(re) >= sc) # update 20180924, positive bias outlier
+    
     wnew[I_zero] <- wmin
     wnew[wnew < wmin] <- wmin
 

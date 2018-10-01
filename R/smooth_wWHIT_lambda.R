@@ -121,7 +121,7 @@ optim_lambda <- function(sitename, df, deltaT, extent = T,
     nperiod <- ceiling(length(2000:2017)/deltaT)
 
     d     <- df[site == sitename]
-    dnew  <- add_HeadTail(d) #
+    dnew  <- add_HeadTail(d, nptperyear = nptperyear) #
     INPUT <- check_input(dnew$t, dnew$y, dnew$w, maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
     years <- year(ymd(dnew$t))
 
