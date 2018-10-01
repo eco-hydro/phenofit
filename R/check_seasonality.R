@@ -87,11 +87,13 @@ rmNonSeasonality <- function(dt, IsPlot = T, file = 'SI.pdf'){
 #' (\code{Date} variable).
 #' @inheritParams check_input
 #' @inheritParams season
-#'
+#' @param trs If tiny missing (nmissing < trs), than this year is include to 
+#' extract phenology.
+#' 
 #' @return data.table
 #' @importFrom lubridate ddays
 #' @export
-add_HeadTail <- function(d, nptperyear, south = FALSE){
+add_HeadTail <- function(d, south = FALSE, nptperyear, trs = nptperyear*0.45){
     if (missing(nptperyear)){
         nptperyear <- ceiling(365/as.numeric(difftime(d$t[2], d$t[1], units = "days")))
     }
@@ -116,7 +118,6 @@ add_HeadTail <- function(d, nptperyear, south = FALSE){
 
         # if tiny missing, than this year is include to extract phenology
         # if too much, this year will be remove
-        trs = nptperyear*0.45
         nyear_add_head <- ifelse (nmissing_head < trs, 1, 0)
         nyear_add_tail <- ifelse (nmissing_tail < trs, 1, 0)
 
