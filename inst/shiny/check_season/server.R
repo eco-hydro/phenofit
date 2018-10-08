@@ -43,7 +43,7 @@ server <- function(input, output, session) {
 
     output$t_gs <- DT::renderDataTable({
         site <- input$site
-        datatable(brks()$dt, options = list(
+        DT::datatable(brks()$dt, options = list(
             autoWidth = TRUE,
             # columnDefs = list(list(width = '10px', targets = c(4:10)))
             pageLength = 20
