@@ -67,9 +67,14 @@ getFittings <- function(fit){
 #' @importFrom dplyr left_join
 #' @export
 plot_phenofit <- function(fit, d, title = NULL, show.legend = T){
-    qc_levels <- c("good", "margin", "snow/ice", "cloud")
-    qc_colors <- c("grey60", "#00BFC4", "#F8766D", "#C77CFF") %>% set_names(qc_levels)
-    qc_shapes <- c(19, 15, 4, 17) %>% set_names(qc_levels)
+    # qc_levels <- c("good", "margin", "snow/ice", "cloud")
+    # qc_colors <- c("grey60", "#00BFC4", "#F8766D", "#C77CFF") %>% set_names(qc_levels)
+    # qc_shapes <- c(19, 15, 4, 6) %>% set_names(qc_levels)
+
+    # update to support MOD09A1, also suit for previous MOD13A1
+    qc_levels <- c("good", "margin", "snow", "cloud", "aerosol", "shadow")
+    qc_colors <- c("grey60", "#00BFC4", "#F8766D", "#C77CFF", "#C77CFF", "#B79F00") %>% set_names(qc_levels)
+    qc_shapes <- c(19, 15, 4, 25, 25, 17) %>% set_names(qc_levels)
 
     pdat1 <- getFittings(fit)
     # t_fit <- index(fits_years[[1]]) + t[1] - 1
@@ -89,7 +94,7 @@ plot_phenofit <- function(fit, d, title = NULL, show.legend = T){
     # seasons$pos$type %<>% factor(labels = c("min", "max"))
 
     p <- ggplot(pdat1, aes(t, value, color = iters)) +
-        geom_line (data = seasons$whit, aes(t, ziter2), color = "black", size = 0.8) +
+        geom_line (data = seasons$whit, aes(t, ziter2), color = "black", size = 0.8) + # show in front
         geom_vline(data = seasons$dt, aes(xintercept = as.numeric(beg)), size = 0.4, linetype=2, color = "blue") +
         geom_vline(data = seasons$dt, aes(xintercept = as.numeric(end)), size = 0.4, linetype=2, color = "red") +
         # geom_point(data = seasons$dt, aes(peak, y_peak), color= "red") +
@@ -98,20 +103,22 @@ plot_phenofit <- function(fit, d, title = NULL, show.legend = T){
         facet_grid(meth~.) +
         scale_x_date(breaks = fit$seasons$dt$beg, date_labels = "%Y/%m") + ggtitle(title)
 
-    if ('SummaryQA' %in% colnames(d)){
+    if ('QC_flag' %in% colnames(d)){
         # p <- p + geom_point(data = x, aes(date, y, shape = SummaryQA, color = SummaryQA), size = 1, alpha = 0.7) +
         #     scale_shape_manual(values = c(21,22, 24:25)) +
         #     scale_fill_manual(values = c("grey40", "#7CAE00", "#F8766D", "#C77CFF")) +
         #     guides(shape = guide_legend(override.aes = list(size = 2)))
-        p  <- p + geom_point(data = d, aes(t, y, shape=SummaryQA, color = SummaryQA), size = 2, alpha = 0.7) +
+        p  <- p + geom_point(data = d, aes(t, y, shape=QC_flag, color = QC_flag, fill = QC_flag), size = 2, alpha = 0.7) +
+            # geom_line (data = seasons$whit, aes(t, ziter2), color = "black", size = 0.8) + # show in front
             geom_line(aes(color = iters), size = 0.8, alpha = 0.7) +
             scale_color_manual(values = c(qc_colors,
                                           "iter1" = "blue", "iter2" = "red"), drop = F) +
+            scale_fill_manual(values = qc_colors, drop = F) + 
             scale_shape_manual(values = qc_shapes, drop = F) +
             ylab('Vegetation Index')
-
     }else{
         p <- p + geom_point(aes(t, y), size = 2, alpha = 0.5, color = "grey60") +
+            # geom_line (data = seasons$whit, aes(t, ziter2), color = "black", size = 0.8) + # show in front
             geom_line(aes(color = iters), size = 1)
     }
 
@@ -134,14 +141,24 @@ plot_phenofit <- function(fit, d, title = NULL, show.legend = T){
 # make_legend
 make_legend <- function(linename = c("iter1", "iter2", "whit"), 
         linecolor = c("blue", "red", "black")){
-    labels <- c(" good", " margin", " snow/ice", " cloud", linename)
-    colors <- c("grey60", "#00BFC4", "#F8766D", "#C77CFF", linecolor)
-    nline  <- length(linename)
-    pch <- c(19, 15, 4, 17, rep(NA, nline))
-    lty <- c(0, 0, 1, 0, rep(1, nline))
-    lwd <- c(1, 1, 1, 1, rep(3, nline))
+    qc_levels <- c("good", "margin", "snow", "cloud", "aerosol", "shadow")
+    qc_colors <- c("grey60", "#00BFC4", "#F8766D", "#C77CFF", "#B79F00", "#C77CFF") %>% set_names(qc_levels)
+    qc_shapes <- c(19, 15, 4, 25, 25, 17) %>% set_names(qc_levels)
+    npoints   <- length(qc_levels)
 
-    I <- 1:(nline + 4)
+    labels <- c(qc_levels,linename)
+    colors <- c(qc_colors, linecolor)
+
+    # labels <- c(" good", " margin", " snow/ice", " cloud", linename)
+    # colors <- c("grey60", "#00BFC4", "#F8766D", "#C77CFF", linecolor)
+    nline <- length(linename)
+    pch <- c(qc_shapes, rep(NA, nline))
+    
+    lty <- rep(0, npoints);  lty[3] <- 1
+    lty <- c(lty, rep(1, nline))
+    lwd <- c(rep(1, npoints), rep(3, nline))
+
+    I   <- 1:length(colors)
     lgd <- grid::legendGrob(labels[I], pch = pch[I], nrow = 1,
                        # do.lines = T,
                        gp=grid::gpar(lty = lty[I], lwd = lwd[I],

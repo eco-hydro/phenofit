@@ -8,7 +8,8 @@
 #' A data.table with a new column \code{t}, which is the exact compositing date.
 #' @export
 getRealDate <- function(df){
-    df[, `:=`(date = ymd(date), year = year(date), doy = as.integer(yday(date)))]
+    df[, `:=`(date = ymd(date))]
+    df[, `:=`(year = year(date), doy = as.integer(yday(date)))]
     df[is.na(DayOfYear), DayOfYear := doy] # If DayOfYear is missing
 
     # In case of last scene of a year, doy of last scene could in the next year
