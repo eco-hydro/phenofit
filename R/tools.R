@@ -176,9 +176,10 @@ merge_pdf <- function(outfile = "RPlot.pdf", indir = 'Figure', pattern = "*.pdf"
     # "Y:/R/phenofit/Figs/"
     files <- dir(indir, pattern, full.names = T)
     cmd <- sprintf("pdfmerge -o %s %s", outfile, paste(files, collapse = " "))
-    shell(cmd, wait = FALSE)
+
+    shell(cmd, wait = del)
     # shell(sprintf('pdfmerge -o %s %s', outfile, pattern) )
-    if (del) file.rename(files)
+    if (del) file.remove(files)
 }
 
 
