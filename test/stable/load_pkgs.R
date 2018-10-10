@@ -70,6 +70,25 @@ nth_max <- function(x, n = 2){
     sort(x,partial=i)[i]
 }
 
+fix_null <- function(x, default = NA){
+    I <- sapply(x, is.null)
+    x[I] <- default
+    x
+}
+
+clamp_min <- function(x, value = 0){
+    x[x < value] <- value
+    x
+}
+
+#' clamp
+#' clamp values in the range of `lims`
+clamp <- function(x, lims = c(0, 1)){
+    x[x < lims[1]] <- lims[1]
+    x[x > lims[2]] <- lims[2]
+    x
+}
+
 # save pdf just like `ggsave`
 write_fig <- function(p, file = "Rplot.pdf", width = 10, height = 5, show = T, res = 300){
     if (missing(p)) p <- last_plot()

@@ -119,6 +119,7 @@ getBits <- function(x, start, end = start){
 #' @rdname qcFUN
 #' @export
 qc_summary <- function(QA, wmin = 0.2){
+    ## 1. initial weights
     w <- rep(NA, length(QA)) # default weight is zero
     
     w[QA == 0] <- 1             # clear, good
@@ -126,7 +127,10 @@ qc_summary <- function(QA, wmin = 0.2){
     
     w[QA >= 2 & QA <=3] <- wmin # Snow/ice, or cloudy
 
-    return(w)
+    ## 2. initial QC_flag
+    QC_flag <- factor(QA, 0:3, c("good", "marginal", "snow", "cloud"))
+
+    list(w = w, QC_flag = QC_flag) # quickly return
 }
 
 #' @rdname qcFUN
@@ -146,9 +150,8 @@ qc_StateQA <- function(QA, wmin = 0.2){
     w[I_good] <- 1
     w[I_bad]  <- wmin
 
-    ## 2. initial flags
-
-    flag = rep("marginal", length(QA))
+    ## 2. initial QC_flag
+    QC_flag = rep("marginal", length(QA))
 
     I_aerosol <- qc_aerosol == 3
     I_shadow  <- qc_shadow == 1
@@ -156,16 +159,16 @@ qc_StateQA <- function(QA, wmin = 0.2){
     I_snow    <- qc_snow == 1
     I_good    <- qc_cloud %in% c(0, 3) & qc_aerosol %in% c(0, 1, 2) & !qc_snow
 
-    flag[I_aerosol] <- "aerosol"
-    flag[I_shadow]  <- "shadow"
-    flag[I_cloud]   <- "cloud"
-    flag[I_snow]    <- "snow"
-    flag[I_good]    <- "good"
+    QC_flag[I_aerosol] <- "aerosol"
+    QC_flag[I_shadow]  <- "shadow"
+    QC_flag[I_cloud]   <- "cloud"
+    QC_flag[I_snow]    <- "snow"
+    QC_flag[I_good]    <- "good"
 
-    levels <- c("snow", "cloud", "shadow", "aerosol", "marginal", "good")
-    flag <- factor(flag, levels)
+    levels  <- c("snow", "cloud", "shadow", "aerosol", "marginal", "good")
+    QC_flag <- factor(QC_flag, levels)
 
-    return(list(w = w, QC_flag = flag))
+    list(w = w, QC_flag = QC_flag) # quickly return
 }
 
 #' @export

@@ -2,7 +2,10 @@
 #'
 #' Find peaks (maxima) in a time series. This function is modified from
 #' \code{pracma::findpeaks}.
-#'
+#' 
+#' @param IsDiff If want to find extreme values, `IsDiff` should be true; If 
+#' just want to find the continue negative or positive values, just set 
+#' `IsDiff` as false.
 #' @param nups minimum number of increasing steps before a peak is reached
 #' @param ndowns minimum number of decreasing steps after the peak
 #' @param zero can be `+', `-', or `0'; how to interprete succeeding steps
@@ -44,7 +47,7 @@
 findpeaks <- function (x, IsDiff = TRUE, nups = 1, ndowns = nups, zero = "0", peakpat = NULL,
                        minpeakheight = -Inf, minpeakdistance = 1,
                        threshold_min = 0, threshold_max = 0,
-                       npeaks = 0, sortstr = FALSE)
+                       npeaks = 0, sortstr = FALSE, IsPlot = F)
 {
     stopifnot(is.vector(x, mode = "numeric") ||
                   is.vector(x, mode = "logical") || length(is.na(x)) == 0)
@@ -55,9 +58,8 @@ findpeaks <- function (x, IsDiff = TRUE, nups = 1, ndowns = nups, zero = "0", pe
         stop("Argument 'zero' can only be '0', '+', or '-'.")
 
     # extend the use of findpeaks:
-    # If want to find extreme values, `IsDiff` should be true;
-    # If just want to find the continue negative or positive values, just set
-    # `IsDiff` as false.
+    # 
+    # 
     if (IsDiff){
         xc <- sign(diff(x))
     }else{
@@ -116,5 +118,9 @@ findpeaks <- function (x, IsDiff = TRUE, nups = 1, ndowns = nups, zero = "0", pe
     }
 
     X <- setNames(data.table(X), c("val", "pos", "left", "right"))
+    if (IsPlot){
+        plot(x, type = "b"); grid()
+        points(val~pos, X, col = "blue")
+    }
     return(list(gregexpr = rc, X = X))
 }

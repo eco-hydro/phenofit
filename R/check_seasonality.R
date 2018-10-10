@@ -83,8 +83,8 @@ rmNonSeasonality <- function(dt, IsPlot = T, file = 'SI.pdf'){
 #'
 #' Add one year data in the head and tail
 #'
-#' @param d A data.table, should have \code{t} (compositing date) column
-#' (\code{Date} variable).
+#' @param d A data.table, should have \code{t} (compositing date) or \code{date}
+#' (image date) column which are (\code{Date} variable).
 #' @inheritParams check_input
 #' @inheritParams season
 #' @param trs If tiny missing (nmissing < trs), than this year is include to 
@@ -93,11 +93,13 @@ rmNonSeasonality <- function(dt, IsPlot = T, file = 'SI.pdf'){
 #' @return data.table
 #' @importFrom lubridate ddays
 #' @export
-add_HeadTail <- function(d, south = FALSE, nptperyear, trs = nptperyear*0.45){
+add_HeadTail <- function(d, south = FALSE, nptperyear, trs = 0.45){
     if (missing(nptperyear)){
-        nptperyear <- ceiling(365/as.numeric(difftime(d$t[2], d$t[1], units = "days")))
+        nptperyear <- ceiling(365/as.numeric(difftime(d$date[2], d$date[1], units = "days")))
     }
 
+    ntrs     <- nptperyear*trs
+    bandname <- intersect(c("t", "date"), colnames(d))[1]
     ## can coop with years not continuous now
     ntime    <- nrow(d)
 
@@ -105,10 +107,10 @@ add_HeadTail <- function(d, south = FALSE, nptperyear, trs = nptperyear*0.45){
         # if only one year data, just triplicate it.
         d_tail <- d_head <- d
     } else {
-        step     <- ceiling(365/nptperyear)
+        step   <- ceiling(365/nptperyear)
 
         deltaT <- ddays(181)*south
-        tt <- d$t - deltaT
+        tt <- d[[bandname]] - deltaT
         date_year <- year(tt) #+ ((month(t) >= 7)-1)*South
 
         n_head <- sum(date_year == first(date_year))
@@ -118,8 +120,8 @@ add_HeadTail <- function(d, south = FALSE, nptperyear, trs = nptperyear*0.45){
 
         # if tiny missing, than this year is include to extract phenology
         # if too much, this year will be remove
-        nyear_add_head <- ifelse (nmissing_head < trs, 1, 0)
-        nyear_add_tail <- ifelse (nmissing_tail < trs, 1, 0)
+        nyear_add_head <- ifelse (nmissing_head < ntrs, 1, 0)
+        nyear_add_tail <- ifelse (nmissing_tail < ntrs, 1, 0)
 
         na_head <- nptperyear*nyear_add_head + nmissing_head
         na_tail <- nptperyear*nyear_add_tail + nmissing_tail
@@ -133,11 +135,11 @@ add_HeadTail <- function(d, south = FALSE, nptperyear, trs = nptperyear*0.45){
 
     }
 
-    deltaT_head <- first(d$t) - last(d_head$t) - 1
-    deltaT_tail <- first(d_tail$t) - last(d$t) - 1
+    deltaT_head <- first(d[[bandname]]) - last(d_head[[bandname]]) - 1
+    deltaT_tail <- first(d_tail[[bandname]]) - last(d[[bandname]]) - 1
 
-    d_head$t %<>% `+`(deltaT_head)
-    d_tail$t %<>% `-`(deltaT_tail)
+    d_head[[bandname]] %<>% `+`(deltaT_head)
+    d_tail[[bandname]] %<>% `-`(deltaT_tail)
 
     # make sure date have no overlap
     # d_head <- d_head[t < date_beg]
