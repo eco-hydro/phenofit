@@ -120,11 +120,13 @@ ExtractPheno <- function(fits, TRS = c(0.1, 0.2, 0.5, 0.6), IsPlot = FALSE){
 #' @param IsPlot whether to plot?
 #' @param show.lgd whether show figure lelend?
 #' @param ... other parameters to PhenoPlot
+#' @param IsSmoothed Boolean. If false, positive derivative in spring and negative 
+#' derivative will be not applied. 
 #' 
 #' @rdname PhenoExtractMeth
 #' @export
 PhenoTrs <- function(fit, approach = c("White", "Trs"), trs = 0.5, #, min.mean = 0.1
-    IsPlot = TRUE, ...) {
+    IsPlot = TRUE, IsSmoothed = T, ...) {
     metrics <- c(sos = NA, eos = NA)
 
     t      <- fit$tout
