@@ -7,9 +7,13 @@
 findpeaks(x, IsDiff = TRUE, nups = 1, ndowns = nups, zero = "0",
   peakpat = NULL, minpeakheight = -Inf, minpeakdistance = 1,
   threshold_min = 0, threshold_max = 0, npeaks = 0,
-  sortstr = FALSE)
+  sortstr = FALSE, IsPlot = F)
 }
 \arguments{
+\item{IsDiff}{If want to find extreme values, `IsDiff` should be true; If 
+just want to find the continue negative or positive values, just set 
+`IsDiff` as false.}
+
 \item{nups}{minimum number of increasing steps before a peak is reached}
 
 \item{ndowns}{minimum number of decreasing steps after the peak}
