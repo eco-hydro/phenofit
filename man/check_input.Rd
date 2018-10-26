@@ -4,8 +4,8 @@
 \alias{check_input}
 \title{check_input}
 \usage{
-check_input(t, y, w, nptperyear, Tn = NULL, wmin = 0.2, missval,
-  maxgap, alpha = 0.01, ...)
+check_input(t, y, w, nptperyear, south = FALSE, Tn = NULL,
+  wmin = 0.2, missval, maxgap, alpha = 0.01, ...)
 }
 \arguments{
 \item{t}{Numeric vector, \code{Date} variable}

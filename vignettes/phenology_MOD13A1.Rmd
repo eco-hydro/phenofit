@@ -56,12 +56,15 @@ data. [Here](https://code.earthengine.google.com/ee3ec39cf3061374dab435c358d008a
 
 Load packages.
 ```{r load pkg, message=FALSE}
-library(phenofit)
-library(data.table)
-library(magrittr)
-library(lubridate)
-library(purrr)
-library(plyr)
+suppressMessages({
+    library(data.table)
+    library(magrittr)
+    library(lubridate)
+    library(purrr)
+    library(plyr)
+    
+    library(phenofit)
+})
 ```
 Set global parameters for `phenofit`
 ```{r phenofit_parameters}
@@ -110,16 +113,11 @@ IGBPnames_006 <- c("ENF", "EBF", "DNF", "DBF", "MF" , "CSH",
               "OSH", "WSA", "SAV", "GRA", "WET", "CRO", 
               "URB", "CNV", "SNOW", "BSV", "water", "UNC")
 # Initial weights
-df[, w := qc_summary(SummaryQA)]
+df[, c("w", "QC_flag") := qc_summary(SummaryQA)]
 # Remap SummaryQA factor level, plot_phenofit use this variable. For other 
 # remote sensing data without `SummaryQA`, need to modify `plot_phenofit`
-if ('SummaryQA' %in% colnames(df)){
-    values <- c("0", "1", "2", "3")
-    levels <- c("good", "margin", "snow&ice", "cloud")
-    df$SummaryQA %<>% factor() %>% mapvalues(values, levels)
-}
 
-df <- df[, .(site, y = EVI/1e4, t, w, date, SummaryQA)]
+df <- df[, .(site, y = EVI/1e4, t, date, w, QC_flag)]
 ```
 
 Add one year in head and tail, for growing season dividing. For example, the 
@@ -133,6 +131,7 @@ sitename     <- sites[3]
 d            <- df[site == sitename] # get the first site data
 sp           <- st[site == sitename]
 
+south      <- sp$lat < 0
 print      <- TRUE
 IsPlot     <- TRUE # for brks
 
@@ -151,9 +150,9 @@ plot(d$Tn, type = "l"); abline(a = 5, b = 0, col = "red")
 
 ## 2.1 Check input data
 ```{r check_input}    
-dnew  <- add_HeadTail(d, nptperyear = 23) # add additional one year in head and tail
+dnew  <- add_HeadTail(d, south, nptperyear = 23) # add additional one year in head and tail
 INPUT <- check_input(dnew$t, dnew$y, dnew$w, 
-                     nptperyear, maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
+                     nptperyear, south, maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
 # y0 is used for plot. Original y value has been interpolated and changed.
 INPUT$y0 <- dnew$y 
 ```
@@ -180,7 +179,7 @@ lambda <- init_lambda(INPUT$y)
 # get growing season breaks in a 3-year moving window
 brks2 <- season_3y(INPUT, south = sp$lat[1] < 0, 
                    FUN = wWHIT, wFUN = wFUN,
-                   maxExtendMonth = 6,
+                   maxExtendMonth = 6, threshold_min = 0.1,
                    IsPlot = IsPlot, print = print, IsOnlyPlotbad = F)
 ```
 
@@ -191,7 +190,7 @@ fit  <- curvefits(INPUT, brks2,
                   debug = F, 
                   wFUN = wFUN,
                   nextent = 2, maxExtendMonth = 3, minExtendMonth = 1,
-                  qc = as.numeric(dnew$SummaryQA), minPercValid = 0.2,
+                  qc = as.numeric(dnew$QC_flag), minPercValid = 0.2,
                   print = print)
 fit$INPUT   <- INPUT
 fit$seasons <- brks2

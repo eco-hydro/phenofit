@@ -44,6 +44,8 @@
 #' IsPlot=true, plotdata will be used to plot. Known that y and w in \code{INPUT}
 #' have been changed, we suggest using the original data.table.
 #' @param print Whether to print progress information
+#' @param adj.param Adjust rough curve fitting function parameters automatically, 
+#' if too many or to less peak and trough values.
 #' @param ... Other parameters passed to findpeaks
 #'
 #' @export
@@ -67,19 +69,21 @@
 #  1  25.0  48.0  76.0
 # if more than one continuous maximum(minimum) values, only kept the bigger
 # (smaller) one
-season <- function(INPUT, south = FALSE,
+season <- function(INPUT,
                    rFUN = wWHIT, wFUN = wTSM, iters = 2, wmin = 0.1,
                    lambda, nf  = 3, frame = floor(INPUT$nptperyear/5)*2 + 1,
                    minpeakdistance,
                    threshold_max = 0.2, threshold_min = 0.05,
                    ypeak_min   = 0.1, rytrough_max = 0.6,
                    MaxPeaksPerYear = 2, MaxTroughsPerYear = 3,
-                   IsPlot  = FALSE, plotdat = INPUT, print = FALSE,
+                   IsPlot  = FALSE, plotdat = INPUT, print = FALSE, 
+                   adj.param = TRUE,
                    ...)
 {
     t   <- INPUT$t
     y   <- INPUT$y
     nptperyear <- INPUT$nptperyear
+    south      <- INPUT$south
 
     if (missing(frame)) frame <- floor(nptperyear/5) * 2 + 1
     if (missing(minpeakdistance)) minpeakdistance <- nptperyear/6
@@ -167,19 +171,24 @@ season <- function(INPUT, south = FALSE,
 
         ## This module will automatically update lambda, nf and wHANTS
         #  Not only wWHd, it has been extended to wHANT and wSG. 20180910
-        delta_frame <- ceiling(nptperyear/12) # adjust frame in the step of `month`
-        if (npeak_PerYear > MaxPeaksPerYear | ntrough_PerYear > MaxTroughsPerYear){
-            lambda <- lambda*2
-            nf     <- max(1, nf - 1)
-            frame  <- min(frame + delta_frame, nptperyear*2)
-        }else if (npeak_PerYear < 0.8  | ntrough_PerYear < 0.8){
-            lambda <- lambda/2
-            nf     <- min(5, nf + 1)
-            frame  <- max(frame - delta_frame, delta_frame)
-        }else{
+        
+        if (adj.param){
+            delta_frame <- ceiling(nptperyear/12) # adjust frame in the step of `month`
+            if (npeak_PerYear > MaxPeaksPerYear | ntrough_PerYear > MaxTroughsPerYear){
+                lambda <- lambda*2
+                nf     <- max(1, nf - 1)
+                frame  <- min(frame + delta_frame, nptperyear*2)
+            }else if (npeak_PerYear < 0.8  | ntrough_PerYear < 0.8){
+                lambda <- lambda/2
+                nf     <- min(5, nf + 1)
+                frame  <- max(frame - delta_frame, delta_frame)
+            }else{
+                break
+            }
+            iloop <- iloop + 1
+        } else {
             break
         }
-        iloop <- iloop + 1
     }
 
     ## Prepare raw OUTPUT for error condition

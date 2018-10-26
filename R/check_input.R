@@ -47,7 +47,7 @@
 #' @seealso \code{\link[phenofit]{backval}}
 #'
 #' @export
-check_input <- function(t, y, w, nptperyear, Tn = NULL,
+check_input <- function(t, y, w, nptperyear, south = FALSE, Tn = NULL,
     wmin = 0.2, missval, maxgap, alpha = 0.01, ...)
 {
     if (missing(nptperyear)){
@@ -113,7 +113,7 @@ check_input <- function(t, y, w, nptperyear, Tn = NULL,
     if (!is_empty(Tn)){
         Tn <- na.approx(Tn, maxgap = maxgap, na.rm = FALSE)
     }
-    list(t = t, y = y, w = w, Tn = Tn, ylu = ylu, nptperyear = nptperyear)#quickly return
+    list(t = t, y = y, w = w, Tn = Tn, ylu = ylu, nptperyear = nptperyear, south = south)#quickly return
 }
 
 #' check_fit

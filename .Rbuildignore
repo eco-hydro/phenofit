@@ -14,3 +14,5 @@
 ^man-roxygen$
 ^\.travis\.yml$
 ^README-.*\.png$
+^appveyor\.yml$
+^cran-comments\.md$

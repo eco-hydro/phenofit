@@ -8,7 +8,7 @@
 \title{Phenology extraction functions}
 \usage{
 PhenoTrs(fit, approach = c("White", "Trs"), trs = 0.5, IsPlot = TRUE,
-  ...)
+  IsSmoothed = T, ...)
 
 PhenoDeriv(fit, IsPlot = TRUE, smspline = TRUE, show.lgd = T, ...)
 
@@ -25,6 +25,9 @@ PhenoKl(fit, IsPlot = TRUE, show.lgd = T, ...)
 \item{trs}{threshold to be used for approach "Trs", in (0, 1).}
 
 \item{IsPlot}{whether to plot?}
+
+\item{IsSmoothed}{Boolean. If false, positive derivative in spring and negative 
+derivative will be not applied.}
 
 \item{...}{other parameters to PhenoPlot}
 

@@ -13,7 +13,7 @@
 #' @rdname season
 #' @return List object, list(whit, dt, stat)
 #' @export
-season_3y <- function(INPUT, south = FALSE,
+season_3y <- function(INPUT,
     rFUN = wWHIT, wFUN = wTSM, iters = 2, wmin = 0.1,
     lambda = NULL, nf  = 3, frame = floor(INPUT$nptperyear/5)*2 + 1,
     maxExtendMonth = 12,
@@ -22,7 +22,9 @@ season_3y <- function(INPUT, south = FALSE,
     IsOnlyPlotbad = TRUE)
 {
     nptperyear <- INPUT$nptperyear
-    t <- INPUT$t
+    south      <- INPUT$south
+    t          <- INPUT$t
+
     nlen      <- length(t)
     date_year <- year(t) + ((month(t) >= 7)-1)*south
 
@@ -42,7 +44,7 @@ season_3y <- function(INPUT, south = FALSE,
     debug <- FALSE
     # debug <- TRUE
     # i = 1;
-    params <- list(south = south,
+    params <- list(
             rFUN = rFUN, wFUN = wFUN, iters = iters, wmin = wmin,
             nf  = nf, frame = frame,
             IsPlot = debug, plotdat = plotdat, ...)#
@@ -83,9 +85,8 @@ season_3y <- function(INPUT, south = FALSE,
         #     input$y          <- yi
         # }
 
-        input  <- lapply(INPUT[1:3], `[`, I)
-        input$ylu        <- ylu
-        input$nptperyear <- nptperyear
+        input <- lapply(INPUT[1:3], `[`, I)
+        input <- c(input, list(ylu = ylu, nptperyear=nptperyear, south=south))
 
         if (!has_lambda) lambda <- init_lambda(input$y)#*2
 
