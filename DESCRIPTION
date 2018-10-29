@@ -1,7 +1,7 @@
 Package: phenofit
 Type: Package
 Title: phenofit
-Version: 0.1.6
+Version: 0.1.7
 Authors@R: 
     person("Dongdong", "Kong", role = c("aut", "cre"), email = "kongdd.sysu@gmail.com")
 Description: A remote sensing vegetation index phenology extraction package.

@@ -45,12 +45,15 @@ v_opt = function(y, w = 0 * y + 1, d = 2, lambdas = c(0, 4), tol = 0.01) {
 #' @param IsPlot Boolean. Whether to plot figure?
 #'
 #' @export
-v_curve = function(INPUT, nptperyear, lambdas = seq(0, 3, 0.1),  
-    d = 2, IsPlot = F,
+v_curve = function(INPUT, lambdas, d = 2, IsPlot = F,
     wFUN = wTSM, iters=2) {
     # Compute the V-cure
     y <- INPUT$y
     w <- INPUT$w
+    # w <- w*0 + 1
+    nptperyear <- INPUT$nptperyear
+
+    if (length(unique(y)) == 0) return(NULL)
 
     param <- c(INPUT, nptperyear = nptperyear, wFUN = wFUN, iters=iters,
         second = FALSE, lambda=NA)
@@ -79,16 +82,31 @@ v_curve = function(INPUT, nptperyear, lambdas = seq(0, 3, 0.1),
     lambda  = 10 ^ lamids[k]
 
     # param$lambdas <- lambda
-    # z    <- do.call(wWHIT, param) %>% dplyr::last()
-    # z       = whit2(y, lambda, w)
-    param$lambda <- lambda
-    fit <- do.call(wWHIT, param)
-    fit <- fit %$% c(ws, zs) %>% as.data.table() %>% cbind(t = INPUT$t, .)
+    # fit <- do.call(wWHIT, param)
+    # d_sm <- fit %$% c(ws, zs) %>% as.data.table() %>% cbind(t = INPUT$t, .)
+
+    z    <- whit2(y, lambda, w)
+    d_sm <- data.table(t = INPUT$t, z)
+
+    # result of v_curve
+    vc <- list(lambda = lambda, vmin = v[k], 
+        fit = d_sm, optim = data.table(lambda_log10 = lamids, v = v)) 
+    
+
+    cal_COEF <- function(y){
+        y <- y[!is.na(y)]
+        list(mean = mean(y),
+            sd = sd(y),
+            kurtosis = kurtosis(y, type = 2),
+            skewness = skewness(y, type = 2))
+    }
+
+    vc$coef_all <- cal_COEF(INPUT$y)  #%>% as.list()
 
     if (IsPlot) {
         par(mfrow = c(2, 1), mar = c(2.5, 2.5, 1, 0.2),
-                mgp = c(1.3, 0.6, 0), oma = c(0, 0, 0.5, 0))
-        ## 1. v-curve ~ lambda
+            mgp = c(1.3, 0.6, 0), oma = c(0, 0, 0.5, 0))
+
         ylim = c(0, max(v))
         plot(lamids, v, type = 'l', col = 'blue', ylim = ylim,
            xlab = 'log10(lambda)')
@@ -98,106 +116,13 @@ v_curve = function(INPUT, nptperyear, lambdas = seq(0, 3, 0.1),
         title(sprintf("v-curve, lambda = %5.2f", lambda))
         grid()
 
-        ## 2. best curve        
-        season(INPUT, nptperyear, IsPlot = T, 
-            minpeakdistance = nptperyear/12, 
-            ypeak_min = 1, 
-            # MaxPeaksPerYear = 3, MaxTroughsPerYear = 4,
-            # threshold_max = 0.1, threshold_min = 0.05,
-           lambda = lambda)
-        # plotdata(INPUT, nptperyear, wmin = 0.1)
-        # lines(fit$t, fit$ziter1, col = "blue", lwd = 1.2)
-        # lines(fit$t, fit$ziter2, col = "red" , lwd = 1.2)
+        plotdata(INPUT, wmin = 0.2)
+        colors <- c("blue", "red")
+
+        lines(vc$fit$t, last(vc$fit), col = "blue", lwd = 1.2)
+        # lines(vc$fit$t, vc$fit$ziter2, col = "red" , lwd = 1.2)
     }
-    return( list(fit = fit, lambdas = lamids, v = v, lambda = lambda, vmin = v[k]))
-}
-
-## The goal of whittaker in this study is used to simulate vegetation seasonality
-# Whittaker balanced the fidelity and smooth.
-optim_lambda <- function(sitename, df, deltaT, extent = T,
-    IsPlot = F, IsSave = F, file = "test_whit_lambda.pdf",
-    wFUN = wBisquare, iters = 2){
-    # sitename <- sites[i]#; grp = 1
-    nperiod <- ceiling(length(2000:2017)/deltaT)
-
-    d     <- df[site == sitename]
-    dnew  <- add_HeadTail(d, nptperyear = nptperyear) #
-    INPUT <- check_input(dnew$t, dnew$y, dnew$w, maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
-    years <- year(ymd(dnew$t))
-
-    cat(sprintf('site: %s ...\n', sitename))
-
-    res <- numeric(nperiod)*NA_real_
-    res <- list()
-
-    for (i in 1:nperiod){
-        year      <- (i - 1)*deltaT + 2000
-        year_beg  <- year
-        year_end  <- min(year + deltaT - 1, 2017)
-
-        year_beg_ext <- ifelse(extent, year_beg-1, year_beg)
-        year_end_ext <- ifelse(extent, year_end+1, year_end)
-
-        I     <- which(years >= year_beg & years <= year_end)
-        I_ext <- which(years >= year_beg_ext & years <= year_end_ext)
-
-        # coefficient to construct Whittaker lambda formula
-        coef <- dnew[I_ext, .(mean = mean(y),
-                            sd = sd(y),
-                            kurtosis = kurtosis(y, type = 2),
-                            skewness = skewness(y, type = 2))] %>% as.list()
-
-        INPUT_i <- lapply(INPUT[1:3], `[`, I_ext) %>% c(INPUT[5])
-
-        res[[i]] <- tryCatch({
-            if (IsPlot) par(mfrow = c(2, 1), mar = c(2.5, 2.5, 1, 0.2),
-                mgp = c(1.3, 0.6, 0), oma = c(0, 0, 0.5, 0))
-
-            vc <- v_curve(INPUT_i, nptperyear, lambdas = seq(-1, 3, by = 0.01), d = 2,
-                          wFUN = wFUN, iters = iters,
-                IsPlot = IsPlot)
-
-            ind <- match(I, I_ext)
-            vc$fit <- vc$fit[ind, ]
-            vc$coef <- coef
-
-            if (IsPlot){
-                plotdata(INPUT_i, nptperyear, wmin = 0.1)
-                lines(vc$fit$t, vc$fit$ziter1, col = "blue", lwd = 1.2)
-                lines(vc$fit$t, vc$fit$ziter2, col = "red" , lwd = 1.2)
-            }
-            vc
-            # listk(lambda = vc$lambda) #, vc
-        }, error = function(e){
-            message(sprintf("[e] %s, %d: %s", as.character(sitename), i, e$message))
-            #return(NA)
-        })
-    }
-    ## visualization
-    lambda <- map_dbl(res, "lambda")
-    df_sm  <- res %>% map_df("fit") %>% data.table()
-    coefs  <- res %>% map_df("coef")
-
-    # browser()
-    info <- merge(df_sm, d, by = "t") %$% GOF(y, ziter2) %>% as.list()
-
-    # browser()
-    if (IsSave){
-        titlestr <- info[c(1:3, 5, 7)] %>%
-            {sprintf("%s = %.2f", names(.), .) %>% paste(collapse = ", ") }
-        cairo_pdf(file, 10, 4)
-        par(mar = c(2.5, 2.5, 1, 0.2),
-            mgp = c(1.3, 0.6, 0), oma = c(0, 0, 0.5, 0))
-        plotdata(d, nptperyear)
-        lines(ziter1~t, df_sm, col = "blue", lwd = 1.2)
-        lines(ziter2~t, df_sm, col = "red", lwd = 1.2)
-        title(titlestr)
-        dev.off()
-        file.show(file)
-    }
-
-    # res$info <- info
-    listk(data = df_sm, coef = coefs, gof = info, lambda)
+    vc
 }
 
 #' Initial lambda value of whittaker taker

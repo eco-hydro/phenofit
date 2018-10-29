@@ -15,9 +15,10 @@ season(INPUT, rFUN = wWHIT, wFUN = wTSM, iters = 2, wmin = 0.1,
   print = FALSE, adj.param = TRUE, ...)
 
 season_3y(INPUT, rFUN = wWHIT, wFUN = wTSM, iters = 2, wmin = 0.1,
-  lambda = NULL, nf = 3, frame = floor(INPUT$nptperyear/5) * 2 + 1,
-  maxExtendMonth = 12, ..., IsPlot = T, plotdat = INPUT,
-  print = TRUE, titlestr = "", IsOnlyPlotbad = TRUE)
+  Ioptim_lambda = FALSE, lambda = NULL, nf = 3,
+  frame = floor(INPUT$nptperyear/5) * 2 + 1, maxExtendMonth = 12, ...,
+  IsPlot = T, IsPlot.vc = FALSE, plotdat = INPUT, print = TRUE,
+  titlestr = "", IsOnlyPlotbad = TRUE)
 
 stat_season(INPUT, brks)
 
@@ -80,6 +81,8 @@ have been changed, we suggest using the original data.table.}
 if too many or to less peak and trough values.}
 
 \item{...}{Other parameters passed to findpeaks}
+
+\item{IsPlot.vc}{Whether to plot V-curve optimized time-series.}
 
 \item{titlestr}{string for title}
 

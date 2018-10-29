@@ -150,12 +150,15 @@ GOF <- function(Y_obs, Y_sim, w, include.cv = FALSE){
     Y_obs <- Y_obs[I]
     w     <- w[I]
 
-    if (include.cv) CV <- cv_coef(Y_obs, w)
+    if (include.cv) {
+        CV_obs <- cv_coef(Y_obs, w)
+        CV_sim <- cv_coef(Y_sim, w)   
+    }
     if (is_empty(Y_obs)){
         out <- c(RMSE = NA, NSE = NA, R2 = NA, MAE = NA, AI = NA,
             Bias = NA, Bias_perc = NA, 
             R = NA, pvalue = NA, n_sim = NA)
-        if (include.cv) out <- c(out, CV)
+        if (include.cv) out <- c(out, obs = CV_obs, sim = CV_sim)
         return(out) #R = R,
     }
 
@@ -209,6 +212,6 @@ GOF <- function(Y_obs, Y_sim, w, include.cv = FALSE){
     out <- c(RMSE = RMSE, NSE = NSE, R2 = R2, MAE = MAE, AI = AI,  
              Bias = Bias, Bias_perc = Bias_perc, 
              R = R, pvalue = pvalue, n_sim = n_sim)
-    if (include.cv) out <- c(out, CV)
+    if (include.cv) out <- c(out, obs = CV_obs, sim = CV_sim)
     return(out)
 }
