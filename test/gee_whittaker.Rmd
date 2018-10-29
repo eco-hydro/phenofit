@@ -1,0 +1,51 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+```{r}
+k = 4
+param   <- as.list(coefs[k, ]); print(str(param))
+par(mfrow = c(2, 1), mar = c(1.5, 2, 2, 1), mgp = c(3, 0.6, 0))
+a <- rough_fitting(sitename, df, st, .FUN = wWHIT, lambda = 2, T)
+title("wWH2")
+b1 <- rough_fitting(sitename, df, st, .FUN = wWHIT, lambda = NULL, T)
+title("wWHd")
+
+b2 <- rough_fitting(sitename, df, st, .FUN = wWHIT, lambda = NULL, T, Ioptim_lambda = T)
+
+
+info <- list(wWH2 = a$GOF,
+             wWHd_v0 = b1$GOF,
+             wWHd_latest = b2$GOF) %>%
+    melt_list("meth") %>%
+    # .[iter == "iter1"] %>%
+    .[order(type, iter), -16]
+print(info)
+```
+
+```{r}
+k = 4
+param   <- as.list(coefs[k, ]); print(str(param))
+par(mfrow = c(2, 1), mar = c(1.5, 2, 2, 1), mgp = c(3, 0.6, 0))
+a <- rough_fitting(sitename, df, st, .FUN = wWHIT, lambda = 2, T)
+title("wWH2")
+b1 <- rough_fitting(sitename, df, st, .FUN = wWHIT, lambda = NULL, T)
+title("wWHd")
+
+b2 <- rough_fitting(sitename, df, st, .FUN = wWHIT, lambda = NULL, T, Ioptim_lambda = T)
+
+
+info <- list(wWH2 = a$GOF,
+             wWHd_v0 = b1$GOF,
+             wWHd_latest = b2$GOF) %>%
+    melt_list("meth") %>%
+    # .[iter == "iter1"] %>%
+    .[order(type, iter), -16]
+print(info)
+```
+
