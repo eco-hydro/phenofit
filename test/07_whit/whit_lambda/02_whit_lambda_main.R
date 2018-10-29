@@ -50,12 +50,16 @@ sites      <- unique(df$site) %>% set_names(., .)
 sitename <- sites[2]
 
 ################################################################################
-# fill missing values
-years <- 2000:2018
-doy   <- seq(1, 366, 16)
-date  <- sprintf("%4d%03d", rep(years, each = 23), doy) %>% parse_date_time("%Y%j") %>% date()
-if (years[1] == 2000) date <- date[-(1:3)]
-date  <- date[1:(length(date)-11)] # for 2018
+
+#' fill_missdate
+#' fill missing date
+fill_missdate <- function(){
+    years <- 2000:2018
+    doy   <- seq(1, 366, 16)
+    date  <- sprintf("%4d%03d", rep(years, each = 23), doy) %>% parse_date_time("%Y%j") %>% date()
+    if (years[1] == 2000) date <- date[-(1:3)]
+    date  <- date[1:(length(date)-12)] # for 2018
+}
 
 # fill missing template
 temp = data.table(t = date, site = rep(sites, rep(length(date), length(sites))))
@@ -81,7 +85,7 @@ pars <- expand.grid(deltaT = deltaTs, is_extend = is_extends)
 # i <- 1:nrow(pars) %>% set_names(pars$deltaT, )
 
 # set extent = false, it will not enclude previous and subsequent year' data.
-optim_lambda_FUN <- function(sitename, wFUN = wSELF, deltaT, extend){
+optim_lambda_FUN <- function(sitename, wFUN = wSELF, deltaT = 1, extend){
     optim_lambda(sitename, df = df_org, deltaT, extend,
                  IsPlot = F, IsSave = F, file = "whit_formual_wBisquare.pdf",
                  wFUN = wFUN)

@@ -1,25 +1,21 @@
 source('test/stable/load_pkgs.R')
 source("test/07_whit/main_phenofit_test.R")
-# library(ggrepel)
 
-################################################################################
+version     = "v3"
 noise_percs = c(0.1, 0.3, 0.5, 0) %>% set_names(paste0("p", .*100, "%"))
-# lst %<>% set_names(paste0("p",noise_percs*100, "%"))
-# df_org <- melt_list(lst, "perc")
 
 ################################################################################
-dir_root  <- dir_flush
+dir_root    <- dir_flush
+dirs_raw    <- "result/valid2" %>%  paste0(dir_root, .) %>%
+    dir(., full.names = T) %>% set_names(basename(.)) # 1th is flux
 
-dirs_raw  <- "result/valid" %>%  paste0(dir_root, .) %>%
-    {dir(., full.names = T)[-1]} %>% set_names(basename(.)) # 1th is indir
-dirs_fit  <- "result/fitting" %>%  paste0(dir_root, .) %>%
-    {list.dirs(.)[-1]} %>% set_names(basename(.)) # 1th is indir
-
-file_info = "val_fittings.rda" #%>% paste0(dir_root, .)
+dir_fitting <- "result/fitting_" %>%  paste0(dir_root, ., version)
+# file_info = "val_fittings.rda" #%>% paste0(dir_root, .)
 
 load("data_test/whit_lambda/MOD13A1_st_1e3_20180731.rda")
 df$site %<>% as.character()
 
+# 1. Get fitting about: 2min
 # To save memory, evaluate GOF for every method
 info <- list()
 for (i in 4){
@@ -31,9 +27,8 @@ for (i in 4){
     df_org <- select_valid(df, noise_perc = noise_perc)[, 1:10]
     setkeyv(df_org, c("site", "t"))
 
-    # df_org  <- df
     if (i == 4) pattern <- "_0"
-
+    # df_org  <- df
     # df <- fread(infile) # , strip.white = T
 
     ## 1. save df_fit
@@ -41,13 +36,31 @@ for (i in 4){
     if (issave_fitting){
         dirs = dirs_raw %>% .[grep(pattern, basename(.))] #%>% melt_list('meth')
         files <- llply(dirs, dir, pattern = "*.RDS", full.names = T) %>% unlist()
+
         # reoder files to balance speed
         files %<>% .[order(str_extract(basename(.), "\\d{1,}"))]
 
-        outdir <- sprintf("%sresult/fitting/fitting%s", dir_root, pattern)
+        outdir <- sprintf("%s/fitting%s", dir_fitting, pattern)
         temp   <- par_sbatch(files, get_Fitting,
             Save=T, outdir = outdir)
     }
+}
+
+# Get curve fitting and GOF should be separate
+dirs_fit <- list.dirs(dir_fitting)[-1] %>% set_names(basename(.)) # 1th is indir
+
+for (i in 4){
+    runningId(i)
+    ############################################################################
+    noise_perc <- noise_percs[i]
+    pattern    <- sprintf("_%2d%%", noise_perc*100)
+
+    df_org <- select_valid(df, noise_perc = noise_perc)[, 1:10]
+    setkeyv(df_org, c("site", "t"))
+
+    if (i == 4) pattern <- "_0"
+    # df_org  <- df
+    # df <- fread(infile) # , strip.white = T
 
     ## 2. get GOF
     iscal_gof = T
@@ -56,23 +69,25 @@ for (i in 4){
         files <- llply(dirs, dir, pattern = "*.RDS", full.names = T) %>% unlist()
 
         d <- get_GOF_fromFitting(files[1], df_org)
-        outdir <- sprintf("%sresult/val_info/info%s_v2", dir_root, pattern)
+        outdir <- sprintf("%sresult/val_info/info%s_%s", dir_root, pattern, version)
         temp   <- par_sbatch(files, get_GOF_fromFitting, df_org = df_org,
             Save=T, outdir=outdir)
-    }
-
-    # res <- list()
-    # for (j in 1:length(files)){
-    #     runningId(j, prefix = "j = ")
-    #     res[[j]] <- get_GOF_rds(file = files[j], df_org = df_org)
-    # }
-    # res <- mclapply(files, get_GOF_rds, df_org = df_org, mc.cores = 16)
-    # res <- llply(files, get_GOF_rds, .progress = "text")
-    # list(cal = get_GOF2(d, 0), val = get_GOF2(d, 1))
-    # lst[[k]] <- list(cal = cal, val = val)
-    # saveRDS(res, file = sprintf("val_info_%s.RDS", pattern))
-    # info[[i]] <- res
+    }   
 }
+
+
+# res <- list()
+# for (j in 1:length(files)){
+#     runningId(j, prefix = "j = ")
+#     res[[j]] <- get_GOF_rds(file = files[j], df_org = df_org)
+# }
+# res <- mclapply(files, get_GOF_rds, df_org = df_org, mc.cores = 16)
+# res <- llply(files, get_GOF_rds, .progress = "text")
+# list(cal = get_GOF2(d, 0), val = get_GOF2(d, 1))
+# lst[[k]] <- list(cal = cal, val = val)
+# saveRDS(res, file = sprintf("val_info_%s.RDS", pattern))
+# info[[i]] <- res
+
 
 # info %<>% set_names(names(noise_percs))
 # save(info, file = file_info)

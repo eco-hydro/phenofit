@@ -34,71 +34,7 @@ v_opt = function(y, w = 0 * y + 1, d = 2, lambdas = c(0, 4), tol = 0.01) {
     return(op$minimum)
 }
 
-#' v_curve
-#'
-#' V-curve is used to optimize Whittaker parameter lambda.
-#' Update 20180605 add weights updating to whittaker lambda selecting
-#'
-#' @inheritParams whitsmw2
-#' @param INPUT only require `w` and `y`
-#' @param d difference order
-#' @param IsPlot Boolean. Whether to plot figure?
-#'
-#' @export
-v_curve = function(INPUT, nptperyear, lambdas,  d = 2, IsPlot = F,
-    wFUN = wTSM, iters=2) {
-    # Compute the V-cure
-    y <- INPUT$y
-    w <- INPUT$w
 
-    if (length(unique(y)) == 0) return(NULL)
-
-    param <- c(INPUT, nptperyear = nptperyear, wFUN = wFUN, iters=iters,
-        second = FALSE, lambda=NA)
-
-    fits = pens = NULL
-    for (lla in lambdas) {
-        # param$lambda <- 10^lla
-        # z    <- do.call(whitsmw2, param)$zs %>% dplyr::last()
-
-        z    = whit2(y, 10 ^ lla, w)
-        fit  = log(sum(w * (y - z) ^ 2))
-        pen  = log(sum(diff(z, diff = d) ^2))
-        fits = c(fits, fit)
-        pens = c(pens, pen)
-    }
-
-    # Construct V-curve
-    dfits   = diff(fits)
-    dpens   = diff(pens)
-    llastep = lambdas[2] - lambdas[1]
-    v       = sqrt(dfits ^ 2 + dpens ^ 2) / (log(10) * llastep)
-
-    nla     = length(lambdas)
-    lamids  = (lambdas[-1] + lambdas[-nla]) / 2
-    k       = which.min(v)
-    lambda  = 10 ^ lamids[k]
-
-    # param$lambdas <- lambda
-    # fit <- do.call(whitsmw2, param)
-    # d_sm <- fit %$% c(ws, zs) %>% as.data.table() %>% cbind(t = INPUT$t, .)
-
-    z    <- whit2(y, lambda, w)
-    d_sm <- data.table(z, t = INPUT$t)
-
-    if (IsPlot) {
-        ylim = c(0, max(v))
-        plot(lamids, v, type = 'l', col = 'blue', ylim = ylim,
-           xlab = 'log10(lambda)')
-        points(lamids, v, pch = 16, cex = 0.5, col = 'blue' )
-        abline(h = 0, lty = 2, col = 'gray')
-        abline(v = lamids[k], lty = 2, col = 'gray', lwd = 2)
-        title(sprintf("v-curve, lambda = %5.2f", lambda))
-        grid()
-    }
-
-    return( list(fit = d_sm, lambdas = lamids, v = v, lambda = lambda, vmin = v[k]))
-}
 
 # According to v-curve theory, get the optimal lambda value.
 #
@@ -154,13 +90,6 @@ optim_lambda <- function(sitename, df, deltaT, extend = T,
                             sd = sd(y),
                             kurtosis = kurtosis(y, type = 2),
                             skewness = skewness(y, type = 2)) #%>% as.list()
-
-            if (IsPlot){
-                plotdata(INPUT_i, nptperyear, wmin = 0.1)
-                colors <- c("blue", "red")
-                lines(vc$fit$t, last(vc$fit), col = "blue", lwd = 1.2)
-                # lines(vc$fit$t, vc$fit$ziter2, col = "red" , lwd = 1.2)
-            }
             vc
             # listk(lambda = vc$lambda) #, vc
         }, error = function(e){

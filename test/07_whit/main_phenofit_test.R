@@ -43,6 +43,11 @@ agree_index <- function(Y_obs, Y_sim){
     d # agreement index
 }
 
+box_qtl <- function(x){
+    x <- stats::na.omit(x)
+    quantile(x, c(0.1, 0.9)) %>% set_names(c("ymin", "ymax"))
+}
+
 # boxplot for over all correlation and agreement index
 boxplot <- function(p, width = 0.95){
     # width  <- 0.95
