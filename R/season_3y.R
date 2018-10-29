@@ -9,16 +9,19 @@
 #' @param IsOnlyPlotbad If true, only plot partial figures whose NSE < 0.3
 #' @param ... For 'season_3y', Other parameters passed to `season`;
 #' For `season`, other parameters passed to findpeaks.
-#'
+#' @param IsPlot.vc Whether to plot V-curve optimized time-series.
+#' 
 #' @rdname season
 #' @return List object, list(whit, dt, stat)
 #' @export
 season_3y <- function(INPUT,
     rFUN = wWHIT, wFUN = wTSM, iters = 2, wmin = 0.1,
+    Ioptim_lambda = FALSE,
     lambda = NULL, nf  = 3, frame = floor(INPUT$nptperyear/5)*2 + 1,
     maxExtendMonth = 12,
     ...,
-    IsPlot = T, plotdat = INPUT, print = TRUE, titlestr = "",
+    IsPlot = T, IsPlot.vc = FALSE, 
+    plotdat = INPUT, print = TRUE, titlestr = "",
     IsOnlyPlotbad = TRUE)
 {
     nptperyear <- INPUT$nptperyear
@@ -51,6 +54,7 @@ season_3y <- function(INPUT,
 
     has_lambda = !is.null(lambda)
     brks  <- list()
+    vcs   <- vector("list", nyear-2) %>% set_names(years[2:(nyear-1)])
 
     nextent  <- ceiling(maxExtendMonth/12*nptperyear)
     width_ylu    = nptperyear*2 # This is quite important, to make time-series continuous.
@@ -88,13 +92,29 @@ season_3y <- function(INPUT,
         input <- lapply(INPUT[1:3], `[`, I)
         input <- c(input, list(ylu = ylu, nptperyear=nptperyear, south=south))
 
-        if (!has_lambda) lambda <- init_lambda(input$y)#*2
+        if (!has_lambda) {
+            if (Ioptim_lambda){
+                y <- input$y %>% rm_empty() # should be NA values now
 
+                # update 20181029, add v_curve lambda optimiazaiton in season_3y
+                vc <- v_curve(input, lambdas = seq(-1, 2, by = 0.005), d = 2,
+                                  wFUN = wFUN, iters = iters,
+                        IsPlot = IsPlot.vc)
+               
+                lambda <- vc$lambda
+                vcs[[i-1]] <- vc
+            } else {
+                lambda <- init_lambda(input$y) #*2
+            }
+        }
+
+# browser()
         params_i = c(list(INPUT = input, lambda = lambda), params)
         brk    <- do.call(season, params_i)
 
         if (!is.null(brk$dt)){
             brk$dt %<>% subset(year == year_i)
+            brk$dt$lambda <- lambda
         }
 
         if (is.null(brk$dt) || nrow(brk$dt) == 0){
@@ -104,8 +124,10 @@ season_3y <- function(INPUT,
             # we need `rfit` time-series, so can't skip NULL brks.
             if (!is.null(brk$dt)){
                 brk$dt %<>% subset(year == year_i)
+                brk$dt$lambda <- lambda
             }
         }
+
         brks[[i-1]] <- list(whit = brk$whit[date_year[I] == year_i, ],
                           dt   = brk$dt)
     }
@@ -127,6 +149,7 @@ season_3y <- function(INPUT,
     ## VISUALIZATION
     if (IsPlot) plot_season(INPUT, brks, plotdat, ylu = INPUT$ylu, IsOnlyPlotbad)
 
+    if (Ioptim_lambda) brks$optim <- vcs
     return(brks)
 }
 
@@ -152,7 +175,7 @@ stat_season <- function(INPUT, brks){
 #' @export
 plot_season <- function(INPUT, brks, plotdat, ylu, IsOnlyPlotbad = FALSE){
     stat <- stat_season(INPUT, brks)
-    stat_txt  <- stat[c("R2", "NSE", "cv")] %>%
+    stat_txt  <- stat[c("R2", "NSE", "sim.cv", "obs.cv")] %>%
         {paste(names(.), round(., 3), sep = "=", collapse = ", ")}
 
     # if (NSE < 0 | (cv < 0.1 & NSE < 0.1)) {}

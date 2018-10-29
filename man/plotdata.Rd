@@ -4,7 +4,7 @@
 \alias{plotdata}
 \title{Plot INPUT returned by check_input}
 \usage{
-plotdata(INPUT, wmin = 0.1, ...)
+plotdata(INPUT, wmin = 0.2, ...)
 }
 \arguments{
 \item{INPUT}{A list object with the elements of 't', 'y', 'w', 'Tn' (option)

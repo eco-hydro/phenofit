@@ -80,11 +80,14 @@ wWHIT <- function(y, w, ylu, nptperyear, wFUN = wTSM, iters=1, lambda=15,
             # situation.
             if (second) z <- whit2(z, lambda_j, w) #genius move
 
-            z <- check_fit(z, ylu)
-            yiter[yiter < z] <- z[yiter < z] # upper envelope
+            ## Based on our test, check_fit and upper envelope will decrease 
+            # `wWWHIT`'s performance (20181029). 
+            
+            # z <- check_fit(z, ylu)
+            # yiter[yiter < z] <- z[yiter < z] # upper envelope
             fits[[i]] <- z
             # wnew <- wFUN(y, z, w, i, nptperyear, ...)
-            # yiter <- z# update y with smooth values
+            # yiter <- z# update y with smooth values 
         }
         fits %<>% set_names(paste0('ziter', 1:iters))
         ws   %<>% set_names(paste0('witer', 1:iters))
