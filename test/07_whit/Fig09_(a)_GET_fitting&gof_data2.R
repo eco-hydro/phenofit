@@ -16,7 +16,8 @@ get_RoughFitting_GOF <- function(file){
     d_fit <- get_Fitting(file)
     d <- merge(df, d_fit)
 
-    by <- .(site, iters) %>% names()
+    by <- .(site, iters, meth) %>% names()
+    by <- intersect(by, colnames(d))
     # by <- ""
 
     all  <- d[      , as.list(GOF_extra2(y, value)), by]

@@ -28,8 +28,8 @@ for (i in 4){
     setkeyv(df_org, c("site", "t"))
 
     if (i == 4) pattern <- "_0"
-    # df_org  <- df
-    # df <- fread(infile) # , strip.white = T
+    # df_org <- df
+    # df     <- fread(infile) # , strip.white = T
 
     ## 1. save df_fit
     issave_fitting = F

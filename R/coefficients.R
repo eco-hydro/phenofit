@@ -3,7 +3,7 @@
 #' Inherit from package `e1071`
 #' @param x a numeric vector containing the values whose skewness is to be
 #' computed.
-#' @param na.rm a logical value indicating whether NA values should be stripped
+#' @param na.rm a logical value indicating whether NA_real_ values should be stripped
 #' before the computation proceeds.
 #' @param type an integer between 1 and 3 selecting one of the algorithms for
 #' computing \code{\link[e1071]{skewness}}.
@@ -73,7 +73,7 @@ cv_coef <- function(x, w){
     if (length(x) == 0){
         return( c(mean = NA_real_, sd = NA_real_, cv = NA_real_) )
     }
-    # rm NA
+    # rm NA_real_
     I <- is.finite(x)
     x <- x[I]
     w <- w[I]
@@ -139,7 +139,7 @@ R2_sign <- function(n, NumberOfPredictor = 2, alpha = 0.05){
 GOF <- function(Y_obs, Y_sim, w, include.cv = FALSE){
     if (missing(w)) w <- rep(1, length(Y_obs))
 
-    # remove NA and Inf values in Y_sim, Y_obs and w
+    # remove NA_real_ and Inf values in Y_sim, Y_obs and w
     valid <- function(x) !is.na(x) & is.finite(x) 
     
     I <- which(valid(Y_sim) & valid(Y_obs) & valid(w))
@@ -155,9 +155,9 @@ GOF <- function(Y_obs, Y_sim, w, include.cv = FALSE){
         CV_sim <- cv_coef(Y_sim, w)   
     }
     if (is_empty(Y_obs)){
-        out <- c(RMSE = NA, NSE = NA, R2 = NA, MAE = NA, AI = NA,
-            Bias = NA, Bias_perc = NA, 
-            R = NA, pvalue = NA, n_sim = NA)
+        out <- c(RMSE = NA_real_, NSE = NA_real_, R2 = NA_real_, MAE = NA_real_, AI = NA_real_,
+            Bias = NA_real_, Bias_perc = NA_real_, 
+            R = NA_real_, pvalue = NA_real_, n_sim = NA_real_)
         if (include.cv) out <- c(out, obs = CV_obs, sim = CV_sim)
         return(out) #R = R,
     }
@@ -185,8 +185,8 @@ GOF <- function(Y_obs, Y_sim, w, include.cv = FALSE){
     # Observations number are not same, so comparing correlation coefficient
     # was meaningless.
     # In the current, I have no idea how to add weights `R`.
-    R      <- NA
-    pvalue <- NA
+    R      <- NA_real_
+    pvalue <- NA_real_
     tryCatch({
         cor.obj <- cor.test(Y_obs, Y_sim, use = "complete.obs")
         R       <- cor.obj$estimate[[1]]
@@ -200,7 +200,7 @@ GOF <- function(Y_obs, Y_sim, w, include.cv = FALSE){
     R2 = R^2
 
     # AI: Agreement Index (only good values(w==1) calculate AI)
-    AI <- NA
+    AI <- NA_real_
     I2 <- which(w == 1)
     if (length(I2) >= 2) {
         Y_obs = Y_obs[I2]
