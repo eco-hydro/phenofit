@@ -66,14 +66,8 @@ IGBPnames_005 <- c("water", "ENF", "EBF", "DNF", "DBF", "MF" , "CSH",
 #' nth_max(x)
 nth_max <- function(x, n = 2){
     len <- length(x)
-
-    if (sum(!is.na(x)) <= n){
-        min(x, na.rm = T)
-    } else {
-        sort(x, decreasing = T)[n]
-    }
-    # i   <- len-n+1
-    # sort(x, partial=i, na.last=T)[i]
+    i   <- len-n+1
+    sort(x,partial=i)[i]
 }
 
 fix_null <- function(x, default = NA){
