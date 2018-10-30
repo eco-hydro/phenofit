@@ -7,23 +7,17 @@ library(magrittr)
 
 load('data/phenoflux_115.rda')
 load('data/ET&GPP&VI_flux115.rda')
-# load('inst/shiny/check_season/data/phenoflux_115.rda')
-# load('inst/shiny/check_season/data/ET&GPP&VI_flux115.rda')
-
-# sites <- sort(sites)
 
 getSiteData  <- function(df, sitename){
     df[site == sitename, .(t = date, y = GPP_DT, w = 1)] #%T>% plotdata(365)
 }
 
-getINPUT_GPPobs <- function(df, st, sitename){
+get_input <- function(df, st, sitename){
     sp       <- st[site == sitename]
     south    <- sp$lat < 0
     titlestr <- with(sp, sprintf("[%3d] %s, %s, lat = %.2f", ID, site, IGBP, lat))
 
-    d   <- df[site == sitename, .(t = date, GPP_DT, GPP_NT, w = 1)] #%T>% plotdata(365)
-    d$y <- rowMeans(d[, .(GPP_DT, GPP_NT)], na.rm = T)
-    d[y < 0, y := 0] # for GPP_NT
+    d  <- df[site == sitename, .(t = date, y = GPP_DT, w = 1)] #%T>% plotdata(365)
     # d_obs[site == sitename, .(t = date, y = GPP_DT, w = 1)] %>% plotdata(365)
     d_new <- add_HeadTail(d, south = south)
     INPUT <- do.call(check_input, d_new)

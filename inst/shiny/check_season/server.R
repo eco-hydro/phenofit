@@ -9,7 +9,7 @@ server <- function(input, output, session) {
     d          <- reactive({ getSiteData(df, input$site) })
     date_range <- reactive({ range(d()$t) })
     INPUT <- reactive({
-        getINPUT_GPPobs(df, st, input$site)
+        get_input(df, st, input$site)
     })
     brks  <- reactive({
         varnames <- c("FUN_season", "FUN_fit",
