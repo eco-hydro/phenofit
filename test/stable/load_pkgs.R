@@ -18,7 +18,7 @@ suppressMessages({
     library(jsonlite)
     library(openxlsx)
     # library(pbmcapply)
-    # library(MASS)
+    library(MASS)
     library(broom)
 })
 
@@ -57,18 +57,6 @@ IGBPnames_006 <- c("ENF", "EBF", "DNF", "DBF", "MF" , "CSH",
 IGBPnames_005 <- c("water", "ENF", "EBF", "DNF", "DBF", "MF" , "CSH",
                    "OSH", "WSA", "SAV", "GRA", "WET", "CRO",
                    "URB", "CNV", "SNO", "BSV", "UNC")
-
-#' nth_max
-#'
-#' The nth maximum value
-#' @examples
-#' x <- c(12.45,34,4,0,-234,45.6,4)
-#' nth_max(x)
-nth_max <- function(x, n = 2){
-    len <- length(x)
-    i   <- len-n+1
-    sort(x,partial=i)[i]
-}
 
 # save pdf just like `ggsave`
 write_fig <- function(p, file = "Rplot.pdf", width = 10, height = 5, show = T, res = 300){
@@ -318,7 +306,7 @@ get_phenofit <- function(sitename, df, st, prefix_fig = 'phenofit_v0.1.6', IsPlo
         #                rymin_less = 0.6, ymax_min = ymax_min,
         #                max_MaxPeaksperyear =2.5, max_MinPeaksperyear = 3.5) #, ...
         ## get growing season breaks in a 3-year moving window
-        brks2 <- season_3y(INPUT, south = south,
+        brks2 <- season_3y(INPUT, south = sp$lat[1] < 0,
             wFUN = wFUN_season, rFUN = wWHIT, iters = 2,
             lambda = lambda,
             minpeakdistance = nptperyear/6,
@@ -334,7 +322,7 @@ get_phenofit <- function(sitename, df, st, prefix_fig = 'phenofit_v0.1.6', IsPlo
                           debug = F,
                           wFUN = wFUN_fit,
                           nextent = nextent, maxExtendMonth = maxExtendMonth, minExtendMonth = minExtendMonth,
-                          qc = as.numeric(dnew$QC_flag),
+                          qc = as.numeric(dnew$SummaryQA),
                           minPercValid = 0.2,
                           print = FALSE)
 

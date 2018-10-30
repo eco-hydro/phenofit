@@ -3,18 +3,15 @@
 \name{getBits}
 \alias{getBits}
 \alias{qc_summary}
-\alias{qc_StateQA}
 \alias{qc_5l}
 \alias{qc_NDVIv4}
 \title{Initial weights according to qc}
 \usage{
 getBits(x, start, end = start)
 
-qc_summary(QA, wmin = 0.2)
+qc_summary(QA, wmin = 0.1)
 
-qc_StateQA(QA, wmin = 0.2)
-
-qc_5l(QA, wmin = 0.2)
+qc_5l(QA, wmin = 0.1)
 
 qc_NDVIv4(QA)
 }
@@ -30,9 +27,7 @@ qc_NDVIv4(QA)
 \item{wmin}{Double, minimum weigth (i.e. weight of snow, ice and cloud).}
 }
 \value{
-A list object with
-\item{weigths}{Double vector, initial weights}
-\item{QC_flag}{Factor vector, with the level of \code{c("snow", "cloud", "shadow", "aerosol", "marginal", "good")}}
+weigths
 }
 \description{
 \describe{
@@ -43,6 +38,5 @@ suit for MOD13A1, MOD13A2 and MOD13Q1 (SummaryQA band).}
 confidence score, suit for MCD15A3H(LAI, FparLai_QC), MOD17A2H(GPP, Psn_QC) 
 and MOD16A2(ET, ET_QC).}
   \item{qc_NDVIv4}{For NDVIv4}
-  \item{qc_StateQA}{Initial weights based on `StateQA`, suit for MOD09A1, MYD09A1. }
 }
 }

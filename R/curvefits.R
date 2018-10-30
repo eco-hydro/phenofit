@@ -119,7 +119,7 @@ curvefits <- function(INPUT, brks,
         tout <- doys[I] %>% {.[beginI]:last(.)} # make sure return the same length result.
 
         fit  <- curvefit(yi, ti, tout, nptperyear = nptperyear,
-                         w = wi, ylu = ylu, iters = iters,
+                         w = wi, w0 = qc[I_extend], ylu = ylu, iters = iters,
                          methods = methods, meth = 'BFGS', wFUN = wFUN, ...)
         # add original input data here, global calculation can comment this line
         data <- data.table(y = y0[I], t = doys[I], w = qc[I]) #INPUT$w[I]
