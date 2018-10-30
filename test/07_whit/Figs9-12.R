@@ -3,6 +3,7 @@ source('test/stable/load_pkgs.R')
 source("test/07_whit/main_phenofit_test.R")
 source("test/07_whit/main_Whittaker_Figures.R")
 source("test/07_whit/dat_flux&cam_phenofit.R")
+source('test/stable/ggplot/geom_boxplot_no_outlier.R')
 
 load("data_test/whit_lambda/MOD13A1_st_1e3_20180731.rda")
 methods <- c('AG', 'BECK', 'ELMORE', 'ZHANG', 'whit_R', 'wHANTS', 'wSG', 'wWH', "wWH2")

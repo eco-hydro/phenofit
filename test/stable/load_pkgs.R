@@ -30,8 +30,6 @@ suppressMessages({
 
 fontsize  <- 14
 
-subl <- function() system('subl .')
-
 qc_values <- c("0", "1", "2", "3")
 qc_levels <- c("good", "margin", "snow/ice", "cloud")
 qc_colors <- c("grey60", "#00BFC4", "#F8766D", "#C77CFF") %>% set_names(qc_levels)
