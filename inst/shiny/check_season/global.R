@@ -1,9 +1,12 @@
-# source('inst/shiny/check_season/global.R')
 library(phenofit)
 library(shiny)
 library(DT)
 library(data.table)
 library(magrittr)
+
+load("data/shiny_flux115.rda")
+sites <- sort(sites)
+
 
 getSiteData  <- function(df, sitename){
     df[site == sitename, .(t = date, y = GPP_DT, w = 1)] #%T>% plotdata(365)
@@ -66,7 +69,7 @@ plot_data <- function(d, title){
 ## global parameters for check_season
 nptperyear <- 365
 setting    <- list(mar = c(2, 3, 1, 1), mgp = c(1.2, 0.6, 0))
-fig.height <- 225
+fig.height <- 265
 par(setting)
 
 param_step <- 0.1

@@ -18,7 +18,7 @@ qc_NDVIv4(QA)
 \arguments{
 \item{x}{Binary value}
 
-\item{start}{Bit starting position, count from zero}
+\item{start}{Bit starting position}
 
 \item{end}{Bit ending position}
 
@@ -33,10 +33,9 @@ weigths
 \describe{
   \item{getBits}{Extract bitcoded QA information from bin value}
   \item{qc_summary}{Initial weigths based on Quality reliability of VI pixel, 
-suit for MOD13A1, MOD13A2 and MOD13Q1 (SummaryQA band).}
+suit for MOD13A1, MOD13A2 and MOD13Q1.}
   \item{qc_5l}{Initial weights based on Quality control of five-level 
-confidence score, suit for MCD15A3H(LAI, FparLai_QC), MOD17A2H(GPP, Psn_QC) 
-and MOD16A2(ET, ET_QC).}
+confidence score, suit for MCD15A3H(LAI) and MOD17A2H(GPP)}
   \item{qc_NDVIv4}{For NDVIv4}
 }
 }
