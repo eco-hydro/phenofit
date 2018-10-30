@@ -5,9 +5,6 @@ library(DT)
 library(data.table)
 library(magrittr)
 
-load('data/phenoflux_115.rda')
-load('data/ET&GPP&VI_flux115.rda')
-
 getSiteData  <- function(df, sitename){
     df[site == sitename, .(t = date, y = GPP_DT, w = 1)] #%T>% plotdata(365)
 }
