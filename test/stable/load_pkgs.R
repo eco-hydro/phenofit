@@ -180,7 +180,8 @@ ddply_dt <- function(d, j, by){
 #' Rg   : normalized
 #' Rg_0 : no normalized
 GOF_extra <- function(Y_obs, Y_pred){
-   
+    # the autocorrelation of residuals
+    acf = acf(Y_pred - Y_obs, lag.max = 10, plot = F, na.action = na.pass)$acf[,,1][-1]
     # roughness
     Roughness <- function(Y_pred){
         temp = diff(Y_pred)^2 %>% .[!is.na(.)]
@@ -208,7 +209,6 @@ GOF_extra <- function(Y_obs, Y_pred){
         Rg_norm_by_pred <- NA_real_
         Rg_norm_by_obs  <- NA_real_
         cv              <- NA_real_
-        ACF <- NULL
     } else {
         # for different methods, using the same `min` and `max` value
         Y_norm_by_pred  <- znorm(Y_pred, Y_pred)
@@ -218,16 +218,13 @@ GOF_extra <- function(Y_obs, Y_pred){
         Rg_norm_by_pred <- Roughness(Y_norm_by_pred)
         Rg_norm_by_obs  <- Roughness(Y_norm_by_obs)
         cv <- cv_coef(Y_pred)[['cv']]
-
-        # the autocorrelation of residuals
-        ACF = acf(Y_pred - Y_obs, lag.max = 10, plot = F, na.action = na.pass)$acf[,,1][-1]
     }
 
     c(Rg = Rg,
         Rg_norm_by_obs  = Rg_norm_by_obs,
         Rg_norm_by_pred = Rg_norm_by_pred, 
         cv = cv, 
-        acf = list(list(ACF))) #GOF(Y_obs, Y_pred),
+        acf = list(list(acf))) #GOF(Y_obs, Y_pred),
 }
 
 GOF_extra2 <- function(Y_obs, Y_pred){

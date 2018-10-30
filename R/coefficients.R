@@ -3,7 +3,7 @@
 #' Inherit from package `e1071`
 #' @param x a numeric vector containing the values whose skewness is to be
 #' computed.
-#' @param na.rm a logical value indicating whether NA values should be stripped
+#' @param na.rm a logical value indicating whether NA_real_ values should be stripped
 #' before the computation proceeds.
 #' @param type an integer between 1 and 3 selecting one of the algorithms for
 #' computing \code{\link[e1071]{skewness}}.
