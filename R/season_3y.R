@@ -16,7 +16,7 @@
 season_3y <- function(INPUT, south = FALSE,
     rFUN = wWHIT, wFUN = wTSM, iters = 2, wmin = 0.1,
     lambda = NULL, nf  = 3, frame = floor(INPUT$nptperyear/5)*2 + 1,
-    maxExtendMonth = 12,
+    maxExtendMonth = 3,
     ...,
     IsPlot = T, plotdat = INPUT, print = TRUE, titlestr = "",
     IsOnlyPlotbad = TRUE)
@@ -51,7 +51,6 @@ season_3y <- function(INPUT, south = FALSE,
     brks  <- list()
 
     nextent  <- ceiling(maxExtendMonth/12*nptperyear)
-    width_ylu    = nptperyear*2 # This is quite important, to make time-series continuous.
     # If data is not continuous, `season_3y` will be error!
     # Fixed at 20180915
     for (i in 2:(nyear-1)){
@@ -60,8 +59,7 @@ season_3y <- function(INPUT, south = FALSE,
         year_i <- years[i]
         # I <- which(date_year %in% years[(i-ny_extend):(i+ny_extend)]) # 3y index
         I   <- which(date_year %in% years[i]) # 3y index
-        # `nextent` is not enough
-        ylu <- get_ylu (INPUT$y, date_year, INPUT$w, width = width_ylu, I, Imedian = TRUE, wmin)
+        ylu <- get_ylu (INPUT$y, date_year, INPUT$w, width = nextent, I, Imedian = TRUE, wmin)
         ylu <- merge_ylu(INPUT$ylu, ylu) # curvefits.R
 
         # extend curve fitting period, for continuity.

@@ -1,9 +1,8 @@
 context("Phenology Extraction")
 
 source('helper_MOD13A1.R')
-wFUN =  wTSM # wBisquare #
+wFUN = wTSM
 
-# The `maxExtendMonth` in season_3y and curvefits is different
 # lambda   <- init_lambda(INPUT$y) # lambda for whittaker
 brks2 <- season_3y(INPUT, south = sp$lat[1] < 0, 
     rFUN = wWHIT, wFUN = wFUN,
@@ -14,7 +13,7 @@ param <- list(
     methods = c("AG", "zhang", "beck", "elmore", 'Gu'), #,"klos",
     debug = F, 
     wFUN = wFUN,
-    nextent = 2, maxExtendMonth = 2, minExtendMonth = 1,
+    nextent = 2, maxExtendMonth = 3, minExtendMonth = 1,
     qc = as.numeric(dnew$SummaryQA), minPercValid = 0.2,
     print = FALSE
 )
