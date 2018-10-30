@@ -194,9 +194,7 @@ siteorder <- function(sites){ factor(sites) %>% as.numeric() }
 #' @examples
 #' get_phenofit(df, st, brks_lst, sites, wFUN = 'wTSM')
 get_phenofit_GPPobs <- function(sitename,
-    df, st, brks_lst, sites, wFUN = 'wTSM', 
-    prefix_fig = 'phenofit_0.1.6', IsPlot = T)
-{
+    df, st, brks_lst, sites, wFUN = 'wTSM'){
     # sitename <- sites[i]
     i <- grep(sitename, sites)
     brks2 <- brks_lst[[i]]
@@ -206,10 +204,7 @@ get_phenofit_GPPobs <- function(sitename,
     d$y <- rowMeans(d[, .(GPP_DT, GPP_NT)], na.rm = T)
     d[y < 0, y := 0] # for GPP_NT
 
-    sp       <- st[site == sitename, ]
-    titlestr <- with(sp, sprintf('[%03d,%s] %s, lat = %5.2f, lon = %6.2f',
-                                     ID, site, IGBPname, lat, lon))
-    file_pdf <- sprintf('Figure/%s_[%03d]_%s.pdf', prefix_fig, sp$ID[1], sp$site[1])
+    sp      <- st[site == sitename, ]
 
     # parameters for season_3y
     INPUT <- getINPUT_GPPobs(df, st, sitename)
@@ -244,21 +239,13 @@ get_phenofit_GPPobs <- function(sitename,
     pheno  <- map(p, tidyFitPheno, origin = INPUT$t[1]) %>% purrr::transpose()
     fit$pheno  <- pheno
 
-    if (IsPlot){
-        # svg("Figure1_phenofit_curve_fitting.svg", 11, 7)
-        Cairo::CairoPDF(file_pdf, 11, 6) #
-        # grid::grid.newpage()
-        plot_phenofit(fit, d, titlestr) %>% grid::grid.draw()# plot to check the curve fitting
-        dev.off()
-    }
-
     # print(fit$fits$AG$`2002_1`$ws)
     ## visualization
     # svg("Figure1_phenofit_curve_fitting.svg", 11, 7)
     # Cairo::CairoPDF(file_pdf, 11, 6) #
     # dev.off()
-    # g <- plot_phenofit(fit, d, INPUT$titlestr)
-    # grid::grid.newpage(); grid::grid.draw(g)# plot to check the curve fitting
+    g <- plot_phenofit(fit, d, INPUT$titlestr)
+    grid::grid.newpage(); grid::grid.draw(g)# plot to check the curve fitting
     return(fit)
 }
 
@@ -329,10 +316,10 @@ get_phenofit <- function(sitename, df, st, prefix_fig = 'phenofit_v0.1.6', IsPlo
         # file.show(file)
 
         # pheno: list(p_date, p_doy)
-        p     <- lapply(fit$fits, ExtractPheno)
-        pheno <- map(p, tidyFitPheno, origin = INPUT$t[1]) %>% purrr::transpose()
+        p <- lapply(fit$fits, ExtractPheno)
+        pheno  <- map(p, tidyFitPheno, origin = INPUT$t[1]) %>% purrr::transpose()
 
-        fit$pheno <- pheno
+        fit$pheno  <- pheno
         return(fit)
     }, error = function(e){
         message(sprintf('[e]: %s, %s', titlestr, e$message))

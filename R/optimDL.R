@@ -99,7 +99,7 @@ optim_pheno <- function(prior, FUN_name, y, t, tout, optimFUN = I_optim, method,
                 # fixed 04 March, 2018; 
                 w <- tryCatch(
                     # to adapt wTS, set iter = i-1; #20180910
-                    wFUN(y, FUN(par, t), w, i, nptperyear, ...), 
+                    wFUN(y, FUN(par, t), w, i+1, nptperyear, ...), 
                     #nptperyear, wfact = 0.5)
                     error = function(e) {
                         message(sprintf('[%s]: %s', FUN_name, e$message))

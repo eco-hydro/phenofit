@@ -48,12 +48,11 @@
 #'
 #' @export
 check_input <- function(t, y, w, nptperyear, Tn = NULL,
-    wmin = 0.2, missval, maxgap, alpha = 0.01, ...)
+    wmin = 0.2, missval, maxgap = 10, alpha = 0.01, ...)
 {
     if (missing(nptperyear)){
         nptperyear <- ceiling(365/as.numeric(difftime(t[2], t[1], units = "days")))
     }
-    if (missing(maxgap)) maxgap = ceiling(nptperyear/12*1.5)
 
     n   <- length(y)
     if (missing(w) || is.null(w)) w <- rep(1, n)
