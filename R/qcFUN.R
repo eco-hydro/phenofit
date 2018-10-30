@@ -134,7 +134,6 @@ qc_summary <- function(QA, wmin = 0.2){
 }
 
 #' @rdname qcFUN
-#' @export
 qc_StateQA <- function(QA, wmin = 0.2){
     qc_cloud   = getBits(QA, 0, 1)
     qc_shadow  = getBits(QA, 2, 2)

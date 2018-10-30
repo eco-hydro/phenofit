@@ -4,28 +4,22 @@ suppressMessages({
     library(plyr)
     library(data.table)
     library(tidyverse)
-    library(broom)
 
     library(magrittr)
     library(lubridate)
     library(purrr)
     library(zoo)
 
+    library(Ipaper)
+    library(phenofit)
+    # library(plotly)
     library(devtools)
+    library(Cairo)
     library(jsonlite)
     library(openxlsx)
     # library(pbmcapply)
     # library(MASS)
-
-    ## visualization pkgs
-    library(grid)
-    library(gridExtra)
-    library(Cairo)
-    # library(plotly)
-
-    ## self pkgs
-    library(Ipaper)
-    library(phenofit)
+    library(broom)
 })
 
 fontsize  <- 14
@@ -63,20 +57,6 @@ IGBPnames_006 <- c("ENF", "EBF", "DNF", "DBF", "MF" , "CSH",
 IGBPnames_005 <- c("water", "ENF", "EBF", "DNF", "DBF", "MF" , "CSH",
                    "OSH", "WSA", "SAV", "GRA", "WET", "CRO",
                    "URB", "CNV", "SNO", "BSV", "UNC")
-
-
-metric_spring <- c('TRS1.sos', 'TRS2.sos', 'TRS5.sos', 'TRS6.sos', 'DER.sos',
-                   'GU.UD', 'GU.SD', 'ZHANG.Greenup', 'ZHANG.Maturity')
-metric_autumn <- c('DER.eos', 'TRS6.eos', 'TRS5.eos', 'TRS2.eos', 'TRS1.eos',
-                   'GU.DD', 'GU.RD', 'ZHANG.Senescence', 'ZHANG.Dormancy')
-metrics <- c(metric_spring, "DER.pop", metric_autumn)
-#' phase: 'spring', 'pop', 'autumn'
-metric_phase <- function(metric){
-    phase <- rep("pop", length(metric))
-    phase[metric %in% metric_spring] <- "spring"
-    phase[metric %in% metric_autumn] <- "autumn"
-    phase %>% factor(c("spring", "pop", "autumn"))
-}
 
 #' nth_max
 #'
@@ -130,8 +110,6 @@ write_fig <- function(p, file = "Rplot.pdf", width = 10, height = 5, show = T, r
     param <- list(file, width = width, height = height)
     if (file_ext == "pdf"){
         devicefun <- cairo_pdf # Cairo::CairoPDF #
-    } else if (file_ext == "svg"){
-        devicefun <- svg
     } else {
         if (file_ext %in% c("tif", "tiff")){
             devicefun <- tiff
@@ -220,18 +198,9 @@ GOF_extra <- function(Y_obs, Y_pred){
 
     c(Rg = Rg,
         Rg_norm_by_obs  = Rg_norm_by_obs,
-        Rg_norm_by_pred = Rg_norm_by_pred, 
-        cv = cv, 
-        acf = list(list(acf))) #GOF(Y_obs, Y_pred),
+        Rg_norm_by_pred = Rg_norm_by_pred, cv = cv, acf = list(acf)) #GOF(Y_obs, Y_pred),
 }
 
-GOF_extra2 <- function(Y_obs, Y_pred){
-    gof_1 <- GOF(Y_obs, Y_pred)
-    gof_2 <- GOF_extra(Y_obs, Y_pred)
-
-    res <- c(gof_1, gof_2)
-    res
-}
 
 # function to separate data to steps of x, obtain 95 quantile value for smooth
 upper_envelope <- function(x, y, step = 0.2, alpha = 0.95){
@@ -347,10 +316,8 @@ get_phenofit <- function(sitename, df, st, prefix_fig = 'phenofit_v0.1.6', IsPlo
     d     <- df[site == sitename, ] # get the first site data
     sp    <- st[site == sitename, ] # station point
     south <- sp$lat < 0
-    if (length(south) == 0) south <- F
 
-    lat <- lon <- NA; IGBPname <- ""
-    titlestr <- with(sp, sprintf('[%03d,%s] %s, lat = %.2f, lon = %.2f',
+    titlestr <- with(sp, sprintf('[%03d,%s] %s, lat = %5.2f, lon = %6.2f',
                                      ID, site, IGBPname, lat, lon))
     file_pdf <- sprintf('Figure/%s_[%03d]_%s.pdf', prefix_fig, sp$ID[1], sp$site[1])
 
