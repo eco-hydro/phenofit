@@ -30,21 +30,21 @@ tmp
 *.21
 *.tts
 *.ndx
-
-# Compile files
+*.csv
+*.xlsx
+# figures
+*.emf
+*.pdf
+*.avi
+*.mp4
 *.o
 *.dll
 *.zip
 *.gz
-
-# Figures
-*.jpg
-*.tif
-*.emf
-*.avi
-*.mp4
-
-
+src-i386/
+src-x64/
+# test/
+inst/doc
 *.json
 result
 log
@@ -53,20 +53,10 @@ result.rda
 test/Figs/phenofit_OUTPUT.rda
 ^Figure$
 ^Offical$
-
-# Remove folds
 data_test/
 data_test/*/
-Figure/
-src-i386/
-src-x64/
-inst/doc
 temp/
-# test/
+*.jpg
+*.tif
 
-# Office document
 notebook
-*.csv
-*.xlsx
-*.docx
-*.pdf

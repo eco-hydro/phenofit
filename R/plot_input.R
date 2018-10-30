@@ -3,7 +3,7 @@
 #' @inheritParams season
 #' @param ... other parameter will be ignored.
 #' @export
-plotdata <- function(INPUT, wmin = 0.2, ...){
+plotdata <- function(INPUT, wmin = 0.1, ...){
     t <- INPUT$t
     y <- INPUT$y
     w <- INPUT$w
