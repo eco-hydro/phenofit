@@ -1,7 +1,7 @@
 # source('inst/shiny/check_season/global.R')
 library(phenofit)
 library(shiny)
-# library(DT)
+library(DT)
 library(data.table)
 library(magrittr)
 
