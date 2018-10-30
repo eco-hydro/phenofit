@@ -88,7 +88,7 @@ check_input <- function(t, y, w, nptperyear, Tn = NULL,
     ## 20180717 error fixed: y[w <= wmin]  <- missval # na is much appropriate, na.approx will replace it.
     # values out of range are setted to wmin weight.
 
-    w[y < ylu[1] | y > max(y_good)] <- wmin # | y > ylu[2], 
+    w[y < ylu[1] | y > ylu[2]] <- wmin
     # #based on out test marginal extreme value also often occur in winter
     # #This step is really dangerous! (checked at US-Me2)
     y[y < ylu[1]]                  <- missval

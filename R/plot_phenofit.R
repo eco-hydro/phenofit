@@ -92,8 +92,8 @@ plot_phenofit <- function(fit, d, title = NULL, show.legend = T){
         geom_line (data = seasons$whit, aes(t, ziter2), color = "black", size = 0.8) +
         geom_vline(data = seasons$dt, aes(xintercept = as.numeric(beg)), size = 0.4, linetype=2, color = "blue") +
         geom_vline(data = seasons$dt, aes(xintercept = as.numeric(end)), size = 0.4, linetype=2, color = "red") +
-        # geom_point(data = seasons$dt, aes(peak, y_peak), color= "red") +
-        # geom_point(data = seasons$dt, aes(beg , y_beg ), color= "blue") +
+        geom_point(data = seasons$dt, aes(peak, y_peak), color= "red") +
+        geom_point(data = seasons$dt, aes(beg , y_beg ), color= "blue") +
         # geom_line(size = 0.4) +
         facet_grid(meth~.) +
         scale_x_date(breaks = fit$seasons$dt$beg, date_labels = "%Y/%m") + ggtitle(title)

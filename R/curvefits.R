@@ -1,38 +1,38 @@
 #' Fine Curve fitting
 #'
-#' Fine Curve fitting for INPUT time-series.
-#'
+#' Fine Curve fitting for INPUT time-series. 
+#' 
 #' @inheritParams season
-#' @param INPUT A list object with the elements of 't', 'y', 'w', 'Tn' (option)
+#' @param INPUT A list object with the elements of 't', 'y', 'w', 'Tn' (option) 
 #' and 'ylu', returned by \code{check_input}.
-#' @param brks A list object with the elements of 'fit' and 'dt', returned by
-#' \code{season} or \code{season_3y}, which contains the growing season
+#' @param brks A list object with the elements of 'fit' and 'dt', returned by 
+#' \code{season} or \code{season_3y}, which contains the growing season 
 #' dividing information.
-#' @param nextent Extend curve fitting window, until \code{nextent} good or
+#' @param nextent Extend curve fitting window, until \code{nextent} good or 
 #' marginal element are found in previous and subsequent growing season.
-#' @param maxExtendMonth Search good or marginal good values in previous and
+#' @param maxExtendMonth Search good or marginal good values in previous and 
 #' subsequent `maxExtendMonth` period.
-#' @param minExtendMonth Extending perid defined by \code{nextent} and
-#' \code{maxExtendMonth} should be no shorter than \code{minExtendMonth}.
-#' When all points of the input time-series are good value, then the extending
+#' @param minExtendMonth Extending perid defined by \code{nextent} and 
+#' \code{maxExtendMonth} should be no shorter than \code{minExtendMonth}. 
+#' When all points of the input time-series are good value, then the extending 
 #' period will be too short. In that situation, we can't make sure the connection
-#' between different growing seasons is smoothing.
-#' @param minT Double, use night temperature Tn to define backgroud value.
+#' between different growing seasons is smoothing. 
+#' @param minT Double, use night temperature Tn to define backgroud value. 
 #' Tn < minT is treated as ungrowing season.
-#' @param methods Character, find curve fitting names, can be one of
+#' @param methods Character, find curve fitting names, can be one of 
 #' c("AG", "zhang", "beck", "elmore", "Gu").
-#' @param qc Factor (optional), only suit for MOD13A1. SummaryQA code for PhenoExtracr.
+#' @param qc Factor (optional), only suit for MOD13A1. SummaryQA code for PhenoExtracr. 
 #' Other dataset, just leave qc as the default.
 #' @param minPercValid If valid percentage is less than \code{minPercValid}, the
 #' fits are set to NA.
 #' @param print Whether to print progress information?
 #' @param ... Other parameters will be ignore.
-#'
+#' 
 #' @return fits Multiple phenofit object.
 #' @export
 curvefits <- function(INPUT, brks,
                       wFUN = wTSM, iters = 2, wmin = 0.2,
-                      nextent = 2, maxExtendMonth = 3, minExtendMonth = 1,
+                      nextent = 2, maxExtendMonth = 3, minExtendMonth = 1, 
                       minT = 0,
                       methods = c('AG', 'zhang', 'beck', 'elmore', 'Gu'),
                       qc = INPUT$w*0+1, minPercValid = 0.2,
@@ -65,12 +65,9 @@ curvefits <- function(INPUT, brks,
     di <- brks$di
     if (is.null(di)){
         getDateId <- function(dates) match(dates, t) #%>% rm_empty()
-        getDateId_before <- function(dates) sapply(dates, function(date) last(which(t <= date)))
-        getDateId_after  <- function(dates) sapply(dates, function(date) first(which(t >= date)))
-
-        di <- data.table( beg  = getDateId_before(brks$dt$beg),
-                          peak = getDateId_before(brks$dt$peak),
-                          end  = getDateId_after(brks$dt$end)) %>% na.omit()
+        di <- data.table( beg  = getDateId(brks$dt$beg),
+                          peak = getDateId(brks$dt$peak),
+                          end  = getDateId(brks$dt$end)) %>% na.omit()
     }
 
     # plot(y, type = "b"); grid()
@@ -78,7 +75,7 @@ curvefits <- function(INPUT, brks,
     # lines(INPUT$y        , col = "red")
     MaxExtendWidth = ceiling(nptperyear/12*maxExtendMonth)
     MinExtendWidth = ceiling(nptperyear/12*minExtendMonth)
-    width_ylu    = nptperyear*2
+    width_ylu    = nptperyear*2 
 
     y    <- INPUT$y
     fits <- list()
@@ -187,7 +184,7 @@ get_ylu <- function(y, years, w0, width, I, Imedian = TRUE, wmin = 0.2){
     I_end  <- last(I)
 
     # if less than 0.6*12 ≈ 8
-
+    
     I_win  <- pmax(1, I_beg - width) : pmin(n, I_end + width)
     w0_win <- w0[I_win]
     I_win  <- I_win[which(w0_win > wmin)]
@@ -202,7 +199,7 @@ get_ylu <- function(y, years, w0, width, I, Imedian = TRUE, wmin = 0.2){
 
         if (Imedian){
             year_win  <- years[I_win]
-            # Assume peak in the middle of growing season, a few steps will be
+            # Assume peak in the middle of growing season, a few steps will be 
             # ylu_min; while a long way to ylu_max; 20180918
             # length(I) reflects nptperyear
             if (width > length(I)*2/12){

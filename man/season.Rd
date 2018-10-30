@@ -16,7 +16,7 @@ season(INPUT, south = FALSE, rFUN = wWHIT, wFUN = wTSM, iters = 2,
 
 season_3y(INPUT, south = FALSE, rFUN = wWHIT, wFUN = wTSM,
   iters = 2, wmin = 0.1, lambda = NULL, nf = 3,
-  frame = floor(INPUT$nptperyear/5) * 2 + 1, maxExtendMonth = 12, ...,
+  frame = floor(INPUT$nptperyear/5) * 2 + 1, maxExtendMonth = 3, ...,
   IsPlot = T, plotdat = INPUT, print = TRUE, titlestr = "",
   IsOnlyPlotbad = TRUE)
 

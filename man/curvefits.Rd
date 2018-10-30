@@ -10,11 +10,11 @@ curvefits(INPUT, brks, wFUN = wTSM, iters = 2, wmin = 0.2,
   + 1, minPercValid = 0.2, print = TRUE, ...)
 }
 \arguments{
-\item{INPUT}{A list object with the elements of 't', 'y', 'w', 'Tn' (option)
+\item{INPUT}{A list object with the elements of 't', 'y', 'w', 'Tn' (option) 
 and 'ylu', returned by \code{check_input}.}
 
-\item{brks}{A list object with the elements of 'fit' and 'dt', returned by
-\code{season} or \code{season_3y}, which contains the growing season
+\item{brks}{A list object with the elements of 'fit' and 'dt', returned by 
+\code{season} or \code{season_3y}, which contains the growing season 
 dividing information.}
 
 \item{wFUN}{weights updating function, can be one of 'wTSM', 'wChen' and
@@ -24,25 +24,25 @@ dividing information.}
 
 \item{wmin}{Double, minimum weigth (i.e. weight of snow, ice and cloud).}
 
-\item{nextent}{Extend curve fitting window, until \code{nextent} good or
+\item{nextent}{Extend curve fitting window, until \code{nextent} good or 
 marginal element are found in previous and subsequent growing season.}
 
-\item{maxExtendMonth}{Search good or marginal good values in previous and
+\item{maxExtendMonth}{Search good or marginal good values in previous and 
 subsequent `maxExtendMonth` period.}
 
-\item{minExtendMonth}{Extending perid defined by \code{nextent} and
-\code{maxExtendMonth} should be no shorter than \code{minExtendMonth}.
-When all points of the input time-series are good value, then the extending
+\item{minExtendMonth}{Extending perid defined by \code{nextent} and 
+\code{maxExtendMonth} should be no shorter than \code{minExtendMonth}. 
+When all points of the input time-series are good value, then the extending 
 period will be too short. In that situation, we can't make sure the connection
 between different growing seasons is smoothing.}
 
-\item{minT}{Double, use night temperature Tn to define backgroud value.
+\item{minT}{Double, use night temperature Tn to define backgroud value. 
 Tn < minT is treated as ungrowing season.}
 
-\item{methods}{Character, find curve fitting names, can be one of
+\item{methods}{Character, find curve fitting names, can be one of 
 c("AG", "zhang", "beck", "elmore", "Gu").}
 
-\item{qc}{Factor (optional), only suit for MOD13A1. SummaryQA code for PhenoExtracr.
+\item{qc}{Factor (optional), only suit for MOD13A1. SummaryQA code for PhenoExtracr. 
 Other dataset, just leave qc as the default.}
 
 \item{minPercValid}{If valid percentage is less than \code{minPercValid}, the
