@@ -78,18 +78,6 @@ D2 <- function(fit, ...) UseMethod('D2', fit)
 #' @export
 curvature <- function(fit, ...) UseMethod('curvature', fit)
 
-#' print
-#' @param x Curve fitting object returned by \code{curvefit}.
-#' @param ... ignored.
-#' 
-#' @export
-print.phenofit <- function(x, ...){
-    FUN <- get(x$fun, mode = 'function')
-    cat(sprintf(" formula:\t%s\n", attr(FUN, "formula") ))
-    cat("pars:\n")
-    print(x$par)
-}
-
 
 #' @param numDeriv If true, \code{numDeriv} package \code{grad} and \code{hess} 
 #' will be used; if false, \code{D1} and \code{D2} will be used.
@@ -168,12 +156,26 @@ curvature.phenofit <- function(fit, numDeriv = FALSE, smspline = FALSE, ...){
     return(list(k = k, der1 = derivs$der1, der2 = derivs$der2))
 }
 
+#' Display phenofit object
+#' 
+#' @param x Curve fitting object returned by \code{curvefit}.
+#' @param ... ignored.
+print.phenofit <- function(x, ...){
+    FUN <- get(x$fun, mode = 'function')
+    cat(sprintf(" formula:\t%s\n", attr(FUN, "formula") ))
+    cat("pars:\n")
+    print(x$par)
+}
+
+
 #' plot function for phenofit class
 #'
 #' plot curve fitting VI, gradient (first order difference D1), hessian (D2),
 #' curvature (k) and the change rate of curvature(der.k)
 #'
-#' @inheritParams print.phenofit
+#' @param x Curve fitting object returned by \code{curvefit}.
+#' @param ... ignored.
+#' 
 #' @export
 plot.phenofit <- function(x, ...){
     name <- deparse(substitute(x))

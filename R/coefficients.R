@@ -6,7 +6,7 @@
 #' @param na.rm a logical value indicating whether NA values should be stripped
 #' before the computation proceeds.
 #' @param type an integer between 1 and 3 selecting one of the algorithms for
-#' computing \code{\link[e1071]{skewness}}.
+#' computing skewness.
 #'
 #' @export
 kurtosis <- function (x, na.rm = FALSE, type = 3) {

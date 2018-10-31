@@ -12,7 +12,7 @@ RoxygenNote: 6.1.0
 LinkingTo: Rcpp, RcppArmadillo
 Depends:
     R (>= 3.1)
-Imports: Rcpp, RcppArmadillo, 
+Imports: Rcpp, 
     tibble, dplyr, purrr, stringr, tidyr, ggplot2, lubridate, 
     data.table, 
     spam, 
@@ -25,3 +25,5 @@ Suggests: knitr,
     rmarkdown,
     testthat
 VignetteBuilder: knitr
+URL: https://github.com/kongdd/phenofit
+BugReports: https://github.com/kongdd/phenofit/issues

@@ -2,9 +2,9 @@
 % Please edit documentation in R/phenofit.R
 \name{print.phenofit}
 \alias{print.phenofit}
-\title{print}
+\title{Display phenofit object}
 \usage{
-\method{print}{phenofit}(x, ...)
+print.phenofit(x, ...)
 }
 \arguments{
 \item{x}{Curve fitting object returned by \code{curvefit}.}
@@ -12,5 +12,5 @@
 \item{...}{ignored.}
 }
 \description{
-print
+Display phenofit object
 }

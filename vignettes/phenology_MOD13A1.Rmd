@@ -165,7 +165,7 @@ The growing season dividing method rely on heavily in Whittaker smoother.
 
 Procedures of initial weight, growing season dividing and curve fitting are separated. Phenology extraction and curve fitting are combined together.
 
-```{r divide growing season}
+```{r divide-growing-season}
 par(mar = c(3, 2, 2, 1), mgp = c(3, 0.6, 0))
 lambda <- init_lambda(INPUT$y)
 # The detailed information of those parameters can be seen in `season`.
@@ -184,7 +184,7 @@ brks2 <- season_3y(INPUT, south = sp$lat[1] < 0,
 ```
 
 ## 2.3 Curve fitting
-```{r curve fitting, fig.height=7, fig.align="center"}
+```{r curve-fitting, fig.height=7, fig.align="center"}
 fit  <- curvefits(INPUT, brks2,
                   methods = c("AG", "zhang", "beck", "elmore"), #,"klos",, 'Gu'
                   debug = F, 
@@ -217,7 +217,7 @@ grid::grid.newpage(); grid::grid.draw(g)# plot to check the curve fitting
 ```
 
 ## 2.4 Extract phenology.
-```{r Extract phenology, fig.height=5, fig.width=8, fig.align="center"}
+```{r Extract-phenology, fig.height=5, fig.width=8, fig.align="center"}
 # pheno: list(p_date, p_doy)
 p <- lapply(fit$fits, ExtractPheno)
 pheno  <- map(p, tidyFitPheno, origin = INPUT$t[1]) %>% purrr::transpose()
