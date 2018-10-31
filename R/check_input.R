@@ -11,6 +11,8 @@
 #' @param y Numeric vector, vegetation index time-series
 #' @param w Numeric vector, weights of \code{y}
 #' @param nptperyear Integer, number of images per year
+#' @param south Boolean. In south hemisphere, growing year is 1 July to the
+#' following year 31 June; In north hemisphere, growing year is 1 Jan to 31 Dec.
 #' @param Tn Numeric vector, night temperature, default is null. If provided,
 #' Tn is used to help divide ungrowing period, and then get background value in
 #' ungrowing season (see details in \code{\link[phenofit]{backval}}).

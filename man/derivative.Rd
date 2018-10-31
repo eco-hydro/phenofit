@@ -20,7 +20,7 @@ hess.phenofit(fit, tout)
   ...)
 }
 \arguments{
-\item{fit}{Curve fitting result returned by \code{curvefit}.}
+\item{fit}{Curve fitting object returned by \code{curvefit}.}
 
 \item{tout}{A vector of time steps at which the function can be predicted}
 

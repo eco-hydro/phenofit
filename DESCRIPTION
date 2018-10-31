@@ -5,7 +5,7 @@ Version: 0.1.7
 Authors@R: 
     person("Dongdong", "Kong", role = c("aut", "cre"), email = "kongdd.sysu@gmail.com")
 Description: A remote sensing vegetation index phenology extraction package.
-License: MIT | file LICENSE
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.1.0
@@ -15,6 +15,7 @@ Depends:
 Imports: Rcpp, RcppArmadillo, 
     tibble, dplyr, purrr, stringr, tidyr, ggplot2, lubridate, 
     data.table, 
+    spam, 
     grid, gridExtra, 
     magrittr, plyr, reshape2, zoo, 
     optimx, ucminf,

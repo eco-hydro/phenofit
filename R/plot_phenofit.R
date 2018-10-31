@@ -93,36 +93,36 @@ plot_phenofit <- function(fit, d, title = NULL, show.legend = T){
     seasons <- fit$seasons
     # seasons$pos$type %<>% factor(labels = c("min", "max"))
 
-    p <- ggplot(pdat1, aes(t, value, color = iters)) +
-        geom_line (data = seasons$whit, aes(t, ziter2), color = "black", size = 0.8) + # show in front
+    p <- ggplot(pdat1, aes_string("t", "value", color = "iters")) +
+        geom_line (data = seasons$whit, aes_string("t", "ziter2"), color = "black", size = 0.8) + # show in front
         geom_vline(data = seasons$dt, aes(xintercept = as.numeric(beg)), size = 0.4, linetype=2, color = "blue") +
         geom_vline(data = seasons$dt, aes(xintercept = as.numeric(end)), size = 0.4, linetype=2, color = "red") +
-        # geom_point(data = seasons$dt, aes(peak, y_peak), color= "red") +
-        # geom_point(data = seasons$dt, aes(beg , y_beg ), color= "blue") +
+        # geom_point(data = seasons$dt, aes_string(peak, y_peak), color= "red") +
+        # geom_point(data = seasons$dt, aes_string(beg , y_beg ), color= "blue") +
         # geom_line(size = 0.4) +
         facet_grid(meth~.) +
         scale_x_date(breaks = fit$seasons$dt$beg, date_labels = "%Y/%m") + ggtitle(title)
 
     if ('QC_flag' %in% colnames(d)){
-        # p <- p + geom_point(data = x, aes(date, y, shape = SummaryQA, color = SummaryQA), size = 1, alpha = 0.7) +
+        # p <- p + geom_point(data = x, aes_string(date, y, shape = SummaryQA, color = SummaryQA), size = 1, alpha = 0.7) +
         #     scale_shape_manual(values = c(21,22, 24:25)) +
         #     scale_fill_manual(values = c("grey40", "#7CAE00", "#F8766D", "#C77CFF")) +
-        #     guides(shape = guide_legend(override.aes = list(size = 2)))
-        p  <- p + geom_point(data = d, aes(t, y, shape=QC_flag, color = QC_flag, fill = QC_flag), size = 2, alpha = 0.7) +
-            # geom_line (data = seasons$whit, aes(t, ziter2), color = "black", size = 0.8) + # show in front
-            geom_line(aes(color = iters), size = 0.8, alpha = 0.7) +
+        #     guides(shape = guide_legend(override.aes_string = list(size = 2)))
+        p  <- p + geom_point(data = d, aes_string("t", "y", shape="QC_flag", color = "QC_flag", fill = "QC_flag"), size = 2, alpha = 0.7) +
+            # geom_line (data = seasons$whit, aes_string(t, ziter2), color = "black", size = 0.8) + # show in front
+            geom_line(aes_string(color = "iters"), size = 0.8, alpha = 0.7) +
             scale_color_manual(values = c(qc_colors,
                                           "iter1" = "blue", "iter2" = "red"), drop = F) +
             scale_fill_manual(values = qc_colors, drop = F) + 
             scale_shape_manual(values = qc_shapes, drop = F) +
             ylab('Vegetation Index')
     }else{
-        p <- p + geom_point(aes(t, y), size = 2, alpha = 0.5, color = "grey60") +
-            # geom_line (data = seasons$whit, aes(t, ziter2), color = "black", size = 0.8) + # show in front
-            geom_line(aes(color = iters), size = 1)
+        p <- p + geom_point(aes_string("t", "y"), size = 2, alpha = 0.5, color = "grey60") +
+            # geom_line (data = seasons$whit, aes_string(t, ziter2), color = "black", size = 0.8) + # show in front
+            geom_line(aes_string(color = "iters"), size = 1)
     }
 
-    # geom_vline(data = pdat2, aes(xintercept=date, linetype = pmeth, color = pmeth), size = 0.4, alpha = 1) +
+    # geom_vline(data = pdat2, aes_string(xintercept=date, linetype = pmeth, color = pmeth), size = 0.4, alpha = 1) +
     # scale_linetype_manual(values=c(2, 3, 1, 1, 1, 4))
     # p + facet_grid(meth~pmeth)
     #return

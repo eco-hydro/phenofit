@@ -7,7 +7,9 @@
 \method{plot}{phenofit}(x, ...)
 }
 \arguments{
-\item{...}{Other parameters are ignored.}
+\item{x}{Curve fitting object returned by \code{curvefit}.}
+
+\item{...}{ignored.}
 }
 \description{
 plot curve fitting VI, gradient (first order difference D1), hessian (D2),

@@ -15,7 +15,7 @@ season(INPUT, rFUN = wWHIT, wFUN = wTSM, iters = 2, wmin = 0.1,
   print = FALSE, adj.param = TRUE, ...)
 
 season_3y(INPUT, rFUN = wWHIT, wFUN = wTSM, iters = 2, wmin = 0.1,
-  Ioptim_lambda = FALSE, lambda = NULL, nf = 3,
+  IsOptim_lambda = FALSE, lambda = NULL, nf = 3,
   frame = floor(INPUT$nptperyear/5) * 2 + 1, maxExtendMonth = 12, ...,
   IsPlot = T, IsPlot.vc = FALSE, plotdat = INPUT, print = TRUE,
   titlestr = "", IsOnlyPlotbad = TRUE)
@@ -80,7 +80,15 @@ have been changed, we suggest using the original data.table.}
 \item{adj.param}{Adjust rough curve fitting function parameters automatically, 
 if too many or to less peak and trough values.}
 
-\item{...}{Other parameters passed to findpeaks}
+\item{...}{For 'season_3y', Other parameters passed to `season`;
+For `season`, other parameters passed to findpeaks.}
+
+\item{IsOptim_lambda}{Whether to optimize Whittaker's parameter lambda by 
+V-curve theory?}
+
+\item{maxExtendMonth}{Previous and subsequent `maxExtendMonth` data were added
+for every year curve fitting.
+subsequent `maxExtendMonth` period.}
 
 \item{IsPlot.vc}{Whether to plot V-curve optimized time-series.}
 
@@ -88,14 +96,9 @@ if too many or to less peak and trough values.}
 
 \item{IsOnlyPlotbad}{If true, only plot partial figures whose NSE < 0.3}
 
-\item{south}{Boolean. In south hemisphere, growing year is 1 July to the
-following year 31 June; In north hemisphere, growing year is 1 Jan to 31 Dec.}
+\item{brks}{A list object returned by \code{season_3y}.}
 
-\item{ny_extend}{Integer,including previous and subsequent `ny_extend` year
-to divding growing season.}
-
-\item{...}{For 'season_3y', Other parameters passed to `season`;
-For `season`, other parameters passed to findpeaks.}
+\item{ylu}{limits of y value, [ymin, ymax]}
 }
 \value{
 A list object with the elements of 'fit' and 'dt'.

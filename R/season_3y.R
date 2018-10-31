@@ -3,12 +3,13 @@
 #' Before using `season_3y`, INPUT should be added a year in the head and tail
 #' first by \code{add_HeadTail}.
 #' @inheritParams season
-#' @param ny_extend Integer,including previous and subsequent `ny_extend` year
-#' to divding growing season.
+#' @param IsOptim_lambda Whether to optimize Whittaker's parameter lambda by 
+#' V-curve theory?
+#' @param maxExtendMonth Previous and subsequent `maxExtendMonth` data were added
+#' for every year curve fitting.
+#' subsequent `maxExtendMonth` period.
 #' @param titlestr string for title
 #' @param IsOnlyPlotbad If true, only plot partial figures whose NSE < 0.3
-#' @param ... For 'season_3y', Other parameters passed to `season`;
-#' For `season`, other parameters passed to findpeaks.
 #' @param IsPlot.vc Whether to plot V-curve optimized time-series.
 #' 
 #' @rdname season
@@ -16,7 +17,7 @@
 #' @export
 season_3y <- function(INPUT,
     rFUN = wWHIT, wFUN = wTSM, iters = 2, wmin = 0.1,
-    Ioptim_lambda = FALSE,
+    IsOptim_lambda = FALSE,
     lambda = NULL, nf  = 3, frame = floor(INPUT$nptperyear/5)*2 + 1,
     maxExtendMonth = 12,
     ...,
@@ -93,7 +94,7 @@ season_3y <- function(INPUT,
         input <- c(input, list(ylu = ylu, nptperyear=nptperyear, south=south))
 
         if (!has_lambda) {
-            if (Ioptim_lambda){
+            if (IsOptim_lambda){
                 y <- input$y %>% rm_empty() # should be NA values now
 
                 # update 20181029, add v_curve lambda optimiazaiton in season_3y
@@ -140,16 +141,16 @@ season_3y <- function(INPUT,
         return(NULL)
     }
 
-    dt %<>% subset(len < 650 & len > 45) # mask too long and short gs
-    phenofit:::fix_dt(dt) # c++ address operation, fix growing season overlap
+    dt <- dt[dt$len > 45 & dt$len < 650, ] # mask too long and short gs
+    fix_dt(dt) # c++ address operation, fix growing season overlap
     # after fix_dt, growing season length will become shorter
-    dt %<>% subset(len < 650 & len > 45) # mask too long and short gs
+    dt <- dt[dt$len > 45 & dt$len < 650, ] # mask too long and short gs
     brks$dt <- dt
 
     ## VISUALIZATION
     if (IsPlot) plot_season(INPUT, brks, plotdat, ylu = INPUT$ylu, IsOnlyPlotbad)
 
-    if (Ioptim_lambda) brks$optim <- vcs
+    if (IsOptim_lambda) brks$optim <- vcs
     return(brks)
 }
 
@@ -171,6 +172,9 @@ stat_season <- function(INPUT, brks){
 }
 
 #' plot_season
+#' 
+#' @param brks A list object returned by \code{season_3y}.
+#' @inheritParams check_fit
 #' @rdname season
 #' @export
 plot_season <- function(INPUT, brks, plotdat, ylu, IsOnlyPlotbad = FALSE){

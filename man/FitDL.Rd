@@ -12,7 +12,7 @@
 FitDL.Zhang(y, t = index(y), tout = t, optimFUN = I_optimx,
   method = "nlm", w, ...)
 
-FitAG(y, t = index(y), tout = t, FUN, optimFUN = I_optimx,
+FitAG(y, t = index(y), tout = t, optimFUN = I_optimx,
   method = "nlminb", w, ...)
 
 FitDL.Beck(y, t = index(y), tout = t, optimFUN = I_optimx,

@@ -24,10 +24,11 @@ grad_par(FUN)
 \arguments{
 \item{FUN}{Curve fitting function.}
 
-\item{expr}{expression}
+\item{expr}{expression to be derivated.}
 
-\item{par}{Named vector, or named list. It can't be matrix.
-Colnamed matrix cooperating with plyr::alply will be fine.}
+\item{name}{Character, which variable to calculate derivative.}
+
+\item{order}{Integer, derivative order.}
 }
 \value{
 expression was returned.

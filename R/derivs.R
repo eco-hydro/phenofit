@@ -94,7 +94,9 @@ hess_fpar = . %>% {
 #
 #' Higher derivatives
 #'
-#' @param expr expression
+#' @param expr expression to be derivated.
+#' @param name Character, which variable to calculate derivative.
+#' @param order Integer, derivative order. 
 #' @return expression was returned.
 #' @rdname curvefit_deriv
 DD <- function(expr, name, order = 1) {
@@ -103,7 +105,7 @@ DD <- function(expr, name, order = 1) {
    else DD(D(expr, name), name, order - 1)
 }
 
-#'
+
 #' DERIVS from the aspect of par
 #'
 #' For par aspect DERIVS, it had better to use deriv return function.
@@ -165,12 +167,12 @@ hessf_t <- function(FUN) {
 #         eval(expr, as.list(par))
 #     }
 # }
+# @param par Named vector, or named list. It can't be matrix.
+#  Colnamed matrix cooperating with plyr::alply will be fine.
 
 ## 02 ---------- DERIVS from the aspect of par --------------
 #' grad_par
 #'
-#' @param par Named vector, or named list. It can't be matrix.
-#'  Colnamed matrix cooperating with plyr::alply will be fine.
 #' @return return the gradient function of double logistics
 #' @rdname curvefit_deriv
 grad_par <- function(FUN) {

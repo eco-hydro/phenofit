@@ -2,12 +2,13 @@ language: R
 cache: packages
 latex: false
 
+
 matrix:
   include:
     - r: release
     - r: devel
-    - os: osx
-      fortran: false
+    # - os: osx
+    #   fortran: false
 
 warnings_are_errors: false
 

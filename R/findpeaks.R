@@ -3,6 +3,7 @@
 #' Find peaks (maxima) in a time series. This function is modified from
 #' \code{pracma::findpeaks}.
 #' 
+#' @param x Numeric vector.
 #' @param IsDiff If want to find extreme values, `IsDiff` should be true; If 
 #' just want to find the continue negative or positive values, just set 
 #' `IsDiff` as false.
@@ -28,7 +29,8 @@
 #' just the first npeaks are returned in the order of index.
 #' @param sortstr Boolean, Should the peaks be returned sorted in decreasing oreder of 
 #' their maximum value?
-#'
+#' @param IsPlot Boolean.
+#' 
 #' @examples
 #' x <- seq(0, 1, len = 1024)
 #' pos <- c(0.1, 0.13, 0.15, 0.23, 0.25, 0.40, 0.44, 0.65, 0.76, 0.78, 0.81)

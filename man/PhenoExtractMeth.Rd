@@ -17,7 +17,7 @@ PhenoGu(fit, IsPlot = TRUE, smspline = TRUE, ...)
 PhenoKl(fit, IsPlot = TRUE, show.lgd = T, ...)
 }
 \arguments{
-\item{fit}{Curve fitting result returned by \code{curvefit}.}
+\item{fit}{Curve fitting object returned by \code{curvefit}.}
 
 \item{approach}{to be used to calculate phenology metrics. 
 'White' (White et al. 1997) or 'Trs' for simple threshold.}

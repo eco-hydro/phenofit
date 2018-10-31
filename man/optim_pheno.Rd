@@ -20,6 +20,8 @@ values are to be found.}
 
 \item{tout}{corresponding \code{t} of curve fitting result}
 
+\item{optimFUN}{optimization function, can be \code{I_optim} or \code{I_optimx}.}
+
 \item{method}{String, optimization method, passed to `optimFun`.}
 
 \item{w}{Numeric vector, weights of \code{y}}
@@ -37,8 +39,6 @@ in the range of \code{ylu}.}
 \item{debug}{boolean}
 
 \item{...}{other parameters passed to \code{optimFUN}}
-
-\item{optimFun}{optimization function, can be \code{I_optim} or \code{I_optimx}.}
 }
 \value{
 list(pred, par, fun)

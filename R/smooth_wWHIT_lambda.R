@@ -1,5 +1,6 @@
 # Functions for working with the V-curve
 
+#' @importFrom spam diag.spam
 v_point = function(y, w = 0 * y + 1, lambda = 100, d = 2) {
     # Compute the value of the normalized V-curve for one value of lambda
     # Prepare for smoothing
@@ -41,7 +42,8 @@ v_opt = function(y, w = 0 * y + 1, d = 2, lambdas = c(0, 4), tol = 0.01) {
 #'
 #' @inheritParams season
 #' @inheritParams wWHIT
-#' @param d difference order
+#' @param lambdas lambda vectors of Whittaker.
+#' @param d Difference order.
 #' @param IsPlot Boolean. Whether to plot figure?
 #'
 #' @export

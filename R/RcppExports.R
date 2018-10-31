@@ -2,18 +2,18 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 fix_dt <- function(d) {
-    invisible(.Call('_phenofit_fix_dt', PACKAGE = 'phenofit', d))
+    invisible(.Call(`_phenofit_fix_dt`, d))
 }
 
 sgolayB <- function(S, w) {
-    .Call('_phenofit_sgolayB', PACKAGE = 'phenofit', S, w)
+    .Call(`_phenofit_sgolayB`, S, w)
 }
 
 sgfitw_rcpp <- function(y, w, S) {
-    .Call('_phenofit_sgfitw_rcpp', PACKAGE = 'phenofit', y, w, S)
+    .Call(`_phenofit_sgfitw_rcpp`, y, w, S)
 }
 
 wTSM_cpp <- function(y, yfit, w, iter, nptperyear, wfact) {
-    .Call('_phenofit_wTSM_cpp', PACKAGE = 'phenofit', y, yfit, w, iter, nptperyear, wfact)
+    .Call(`_phenofit_wTSM_cpp`, y, yfit, w, iter, nptperyear, wfact)
 }
 

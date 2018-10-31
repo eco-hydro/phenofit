@@ -40,7 +40,7 @@ statistic.phenofit <- function(fit){
 
 #' Gradient (grad) and Hessian (hess) based on \code{numDeriv} package
 #' 
-#' @param fit Curve fitting result returned by \code{curvefit}.
+#' @param fit Curve fitting object returned by \code{curvefit}.
 #' @param tout A vector of time steps at which the function can be predicted
 #' 
 #' @rdname derivative
@@ -57,15 +57,31 @@ hess.phenofit <- function(fit, tout){
     grad(function(t) grad(FUN, t, par= fit$par), tout)
 }
 
+#' DD
+#' 
+#' D1 first order derivative, D2 second order derivative.
+#' 
+#' @inheritParams grad.phenofit
+#' @param ... ignored.
+#' @rdname D
 #' @export
 D1 <- function(fit, ...) UseMethod('D1', fit)
 
+#' D2
+#' @inheritParams D1
+#' @rdname D
 #' @export
 D2 <- function(fit, ...) UseMethod('D2', fit)
 
+#' curvature
+#' @inheritParams D1
 #' @export
 curvature <- function(fit, ...) UseMethod('curvature', fit)
 
+#' print
+#' @param x Curve fitting object returned by \code{curvefit}.
+#' @param ... ignored.
+#' 
 #' @export
 print.phenofit <- function(x, ...){
     FUN <- get(x$fun, mode = 'function')
@@ -74,12 +90,13 @@ print.phenofit <- function(x, ...){
     print(x$par)
 }
 
-#' @rdname derivative
+
 #' @param numDeriv If true, \code{numDeriv} package \code{grad} and \code{hess} 
 #' will be used; if false, \code{D1} and \code{D2} will be used.
 #' @param smspline If smspline = TRUE or attr(fit$fun, 'gradient') == null,
 #'                 it will use smooth.spline to get der1 and der2.
 #' @param ... Other parameters are ignored.
+#' @rdname derivative
 #' 
 #' @export
 D1.phenofit <- function(fit, numDeriv = FALSE, smspline = FALSE, ...){
@@ -156,7 +173,7 @@ curvature.phenofit <- function(fit, numDeriv = FALSE, smspline = FALSE, ...){
 #' plot curve fitting VI, gradient (first order difference D1), hessian (D2),
 #' curvature (k) and the change rate of curvature(der.k)
 #'
-#' @inheritParams grad.phenofit
+#' @inheritParams print.phenofit
 #' @export
 plot.phenofit <- function(x, ...){
     name <- deparse(substitute(x))

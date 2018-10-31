@@ -10,8 +10,6 @@
 #'
 #' @param INPUT A list object with the elements of 't', 'y', 'w', 'Tn' (option)
 #' and 'ylu', returned by \code{check_input}.
-#' @param south Boolean. In south hemisphere, growing year is 1 July to the
-#' following year 31 June; In north hemisphere, growing year is 1 Jan to 31 Dec.
 #' @param rFUN Coarse curve fitting function, can be one of `wSG`, `wWHIT`
 #' and `wHANTS`.
 #' @param wFUN weights updating function, can be one of 'wTSM', 'wChen' and
@@ -46,8 +44,9 @@
 #' @param print Whether to print progress information
 #' @param adj.param Adjust rough curve fitting function parameters automatically, 
 #' if too many or to less peak and trough values.
-#' @param ... Other parameters passed to findpeaks
-#'
+#' @param ... For 'season_3y', Other parameters passed to `season`;
+#' For `season`, other parameters passed to findpeaks.
+#' 
 #' @export
 #' @return A list object with the elements of 'fit' and 'dt'.
 #' list(dt, di)

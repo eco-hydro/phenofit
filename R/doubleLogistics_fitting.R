@@ -1,22 +1,22 @@
-#' using cubic spline function to avoid the difficult in setting parameter
-#' lambda in smooth.spline
-#'
-#' cubic spline is inappropriate for daily inputs. Its smooth is not enough.
-#' On the contrary, smooth.spline with a low freedom can smooth well.
-#'
-#' @export
-splinefit <- function(y, t = index(y), tout = t, plot = FALSE, df.factor = 0.06, ...){
-    # xpred.out <- spline(t, y, xout = tout)$y %>% zoo(., tout)
-    n <- length(y)
-    # if n < 40, means y was satellite VI
-    # if n > 40, means daily data
-    df.factor <- ifelse (n <= 46, 1/3, df.factor)
-    freedom   <- pmax(df.factor * n, 15)
-    fit       <- smooth.spline(t, y, df = freedom)
-    xpred.out <- predict(fit, tout)$y %>% zoo(., tout)
-    structure(list(data = list(y = y, t = t),
-        pred = xpred.out, par = NULL, fun = NULL), class = "phenofit")
-}
+# #' using cubic spline function to avoid the difficult in setting parameter
+# #' lambda in smooth.spline
+# #'
+# #' cubic spline is inappropriate for daily inputs. Its smooth is not enough.
+# #' On the contrary, smooth.spline with a low freedom can smooth well.
+# #'
+# #' @export
+# splinefit <- function(y, t = index(y), tout = t, plot = FALSE, df.factor = 0.06, ...){
+#     # xpred.out <- spline(t, y, xout = tout)$y %>% zoo(., tout)
+#     n <- length(y)
+#     # if n < 40, means y was satellite VI
+#     # if n > 40, means daily data
+#     df.factor <- ifelse (n <= 46, 1/3, df.factor)
+#     freedom   <- pmax(df.factor * n, 15)
+#     fit       <- smooth.spline(t, y, df = freedom)
+#     xpred.out <- predict(fit, tout)$y %>% zoo(., tout)
+#     structure(list(data = list(y = y, t = t),
+#         pred = xpred.out, par = NULL, fun = NULL), class = "phenofit")
+# }
 
 #' Fitting double logistics, asymmetric gaussian functions
 #'
@@ -39,7 +39,7 @@ splinefit <- function(y, t = index(y), tout = t, plot = FALSE, df.factor = 0.06,
 #' @export
 FitDL.Zhang <- function(y, t = index(y), tout = t, optimFUN = I_optimx,
                         method = 'nlm', w, ...){
-    e <- Init_param(y, t, w)
+    e <- init_param(y, t, w)
 
     FUN    <- "doubleLog.zhang"
     prior  <- with(e, rbind(
@@ -60,9 +60,9 @@ FitDL.Zhang <- function(y, t = index(y), tout = t, optimFUN = I_optimx,
 
 #' @rdname FitDL
 #' @export
-FitAG <- function(y, t = index(y), tout = t, FUN, optimFUN = I_optimx,
+FitAG <- function(y, t = index(y), tout = t, optimFUN = I_optimx,
     method = 'nlminb', w, ...){
-    e <- Init_param(y, t, w)
+    e <- init_param(y, t, w)
     # print(ls.str(envir = e))
 
     FUN <- "doubleAG"
@@ -72,8 +72,8 @@ FitAG <- function(y, t = index(y), tout = t, FUN, optimFUN = I_optimx,
         # c(doy.mx, mn, mx, 0.5*half, 1.5, 0.5*half, 1.5),
         c(doy.mx, mn, mx, 1/(0.8*half), 3, 1/(0.8*half), 3)))
     # referenced by TIMESAT
-    lower  <- e$lims %$% c(t0[1], mn[1], mx[1], 1/(1.4*e$half), 2, 1/(1.4*e$half), 2)
-    upper  <- e$lims %$% c(t0[2], mn[2], mx[2], 1/(0.1*e$half), 6, 1/(0.1*e$half), 6)
+    lower  <- with(e$lims, c(t0[1], mn[1], mx[1], 1/(1.4*e$half), 2, 1/(1.4*e$half), 2))
+    upper  <- with(e$lims, c(t0[2], mn[2], mx[2], 1/(0.1*e$half), 6, 1/(0.1*e$half), 6))
 
     optim_pheno(prior, FUN, y, t, tout, optimFUN, method, w, lower = lower, upper = upper, ...)#quick return
 }
@@ -82,7 +82,7 @@ FitAG <- function(y, t = index(y), tout = t, FUN, optimFUN = I_optimx,
 #' @export
 FitDL.Beck <- function(y, t = index(y), tout = t, optimFUN = I_optimx,
     method = 'nlminb', w, ...) {
-    e <- Init_param(y, t, w)
+    e <- init_param(y, t, w)
 
     FUN   <- "doubleLog.beck"
     prior <- with(e, rbind(
@@ -108,7 +108,7 @@ FitDL.Beck <- function(y, t = index(y), tout = t, optimFUN = I_optimx,
 #' @export
 FitDL.Elmore <- function(y, t = index(y), tout = t, optimFUN = I_optimx,
     method = 'nlminb', w, ...) {
-    e <- Init_param(y, t, w)
+    e <- init_param(y, t, w)
 
     # doy_q  <- quantile(t, c(0.1, 0.25, 0.5, 0.75, 0.9), na.rm = TRUE)
     FUN   <- "doubleLog.elmore"
@@ -148,7 +148,7 @@ FitDL.Elmore <- function(y, t = index(y), tout = t, optimFUN = I_optimx,
 #' @export
 FitDL.Gu <- function(y, t = index(y), tout = t, optimFUN = I_optimx,
     method = "nlminb", w, ...) {
-    e <- Init_param(y, t, w)
+    e <- init_param(y, t, w)
 
     a  <- e$ampl
     b1 <- 0.1
@@ -176,7 +176,7 @@ FitDL.Gu <- function(y, t = index(y), tout = t, optimFUN = I_optimx,
 #' @export
 FitDL.Klos <- function(y, t = index(y), tout = t, optimFUN = I_optimx,
     method = 'BFGS', w, ...) {
-    e <- Init_param(y, t, w)
+    e <- init_param(y, t, w)
 
     a1 <- 0
     a2 <- 0  #ok
@@ -211,8 +211,12 @@ FitDL.Klos <- function(y, t = index(y), tout = t, optimFUN = I_optimx,
     optim_pheno(prior, FUN, y, t, tout, optimFUN, method, w, ...)#quickly return
 }
 
+#' init_param
+#' Initialize double logistic function parameters
+#' 
+#' @inheritParams FitDL.Zhang
 #' @export
-Init_param <- function(y, t, w){
+init_param <- function(y, t, w){
     if (any(is.na(y)))
         stop("NA in the time series are not allowed: fill them with e.g. na.approx()")
     if (missing(w)) w <- rep(1, length(y))

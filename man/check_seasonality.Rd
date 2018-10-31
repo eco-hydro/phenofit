@@ -19,7 +19,8 @@ have been changed, we suggest using the original data.table.}
 \item{nf}{the parameter of \code{wHANTS}, number of frequencies to be
 considered above the zero frequency}
 
-\item{...}{Other parameters passed to findpeaks}
+\item{...}{For 'season_3y', Other parameters passed to `season`;
+For `season`, other parameters passed to findpeaks.}
 }
 \description{
 Check vegetation seasonality

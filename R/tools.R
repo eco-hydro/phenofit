@@ -48,7 +48,6 @@ retry <- function(expr, maxTimes = 3){
 #' This will convert explicit missings to implicit missings.
 #' @param ... other parameters to melt.
 #' 
-#' @rdname listk
 #' @importFrom reshape2 melt
 #' @export
 melt_list <- function(list, var.name, na.rm = TRUE, ...){
@@ -75,6 +74,7 @@ melt_list <- function(list, var.name, na.rm = TRUE, ...){
 # }
 
 #' listk
+#' @param ... objects, possibly named.
 #' @export
 listk <- function(...){
   # get variable names from input expressions
@@ -89,6 +89,7 @@ listk <- function(...){
   return(x)
 }
 
+#' @param x A list object, with data.frame of element
 #' @rdname listk
 #' @export
 list.cbind <- function(x) do.call(cbind.data.frame, x) %>% set_colnames(names(x))

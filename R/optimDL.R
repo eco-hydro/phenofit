@@ -19,7 +19,7 @@
 #' @param FUN_name Curve fitting function name, can be one of 'FitDL.Zhang', 
 #' 'FitAG', 'FitDL.Beck', 'FitDL.Elmore', 'FitDL.Gu' and 'FitDL.Klos'.
 #' @param tout corresponding \code{t} of curve fitting result
-#' @param optimFun optimization function, can be \code{I_optim} or \code{I_optimx}.
+#' @param optimFUN optimization function, can be \code{I_optim} or \code{I_optimx}.
 #' @param method String, optimization method, passed to `optimFun`.
 #' @param debug boolean
 #' @param ... other parameters passed to \code{optimFUN}
@@ -133,10 +133,14 @@ optim_pheno <- function(prior, FUN_name, y, t, tout, optimFUN = I_optim, method,
 I_optim <- function(prior, FUN, y, t, tout, pfun = p_optim, method = "BFGS",...){
     opt.lst <- alply(prior, 1, pfun, method = method,
         objective = f_goal, fun = FUN, y = y, t = t, ...)
-    opt.df <- ldply(opt.lst, with, .id = NULL,
-        expr = c(par, value = value,
-            fevals = fevals, gevals = gevals, niter  = nitns,
-            convcode = convcode)) #.id didn't work here
+
+    opt.df <- ldply(opt.lst, function(opt){
+        with(opt, 
+            c(par, value = value,
+                fevals = fevals, gevals = gevals, niter  = nitns,
+                convcode = convcode)
+        )
+    }, .id = NULL ) #.id didn't work here
     return(opt.df)
 }
 methods <- c('BFGS','CG','Nelder-Mead','L-BFGS-B','nlm','nlminb',

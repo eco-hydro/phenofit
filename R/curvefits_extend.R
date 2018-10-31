@@ -28,7 +28,7 @@ curvefit <- function(y, t = index(y), tout = t, meth = 'BFGS',
 
     params <- list(y, t, tout, optimFUN = I_optim, method = meth, ...)
 
-    if ('spline' %in% methods) fit.spline <- splinefit(y, t, tout)
+    # if ('spline' %in% methods) fit.spline <- splinefit(y, t, tout)
 
     if ('beck'   %in% methods) fit.beck   <- do.call(FitDL.Beck,  c(params, pfun = p_nlminb))  #nlminb
     if ('elmore' %in% methods) fit.elmore <- do.call(FitDL.Elmore,c(params, pfun = p_nlminb))  #nlminb
@@ -72,7 +72,7 @@ curvefit_optimx <- function(x, t = index(x), tout = t,
     params <- list(x, t, tout, optimFUN = optimFUN, pfun = pfun, method = meth, ...)
     # fit.beck   <- FitDL.Beck   #even Nelder-Mead was faster and convergent, but nlminb was better
     # ok: BFGS; failed: 'L-BFGS-B'
-    if ('spline' %in% methods) fit.spline <- splinefit(x, t, tout)
+    # if ('spline' %in% methods) fit.spline <- splinefit(x, t, tout)
     if ('beck'   %in% methods) fit.beck   <- do.call(FitDL.Beck, params)        #nlminb
     if ('elmore' %in% methods) fit.elmore <- do.call(FitDL.Elmore, params)      #nlminb
 
