@@ -1,13 +1,36 @@
+library(scales)
+
+# FUNCTIONS ---------------------------------------------------------------
+
+which_max <- function(x){
+    if (all(is.na(x))){
+        NA
+    } else {
+        which.max(x)
+    }
+}
+
+which_min <- function(x){
+    if (all(is.na(x))){
+        NA
+    } else {
+        which.min(x)
+    }
+}
+
+# load df_info from Fig10_.R
+df = df_info[type == "all", ]
+
+levels  <- seq(0, 1, 0.01)
+xmid0   <- c((levels[-1] + levels[-length(levels)])/2, 1)
 
 ###############################################################################
 ## 03. Fig10. The influence of good values percentage
-levels <- seq(0, 1, 0.01)
-xmid0   <- c((levels[-1] + levels[-length(levels)])/2, 1)
 
 df[, grp_perc := findInterval(perc_good, levels, rightmost.closed = T)]
 df[, xmid := xmid0[grp_perc]]
 
-d <- df[, .(site, meth, type, iters, RMSE, R2, Bias, Rg = Rg, grp_perc, xmid)] %>% #, "NSE"
+d <- df[, .(site, meth, type, iters, RMSE, R2, Bias, Rg = Rg_norm_by_obs, grp_perc, xmid)] %>% #, "NSE"
     melt(id.vars = c("site", "meth", "type", "iters", "grp_perc", "xmid"), variable.name = "index")
 
 # ggplot(d[index == "R2"], aes(xmid,value)) + geom_point() + geom_density2d() +
@@ -27,7 +50,6 @@ d_enve <- d_envelope %>% melt_list("alpha")
 d_enve[, xmid := xmid0[grp_perc]]
 
 # hue_pal()(4) %>% show_col()
-library(scales)
 cols <- scales::hue_pal()(4)
 colors <- c(alpha(cols[1], 0.5), cols[2:3], "white")
 
@@ -43,8 +65,8 @@ pdat$index %<>% factor(indice, labels)
 #                                        label = sprintf("(%s)", letters[1:length(labels)])),
 #                     aes(label = label),
 #                     x = -Inf, y = Inf, vjust = 1, hjust = 0)
-d_vline <- data.table(index = factor(labels[1:3], labels),
-                      x = c(.3, .25, .25))
+d_vline <- data.table(index = factor(labels[1:4], labels),
+                      x = c(.25, .25, .25, .25))
 v_line <- geom_vline(data = d_vline ,
                      aes(xintercept = x), color = "black", linetype = 2, size = 1)
 v_line_lab <- geom_text(data = d_vline, hjust = -0.1, vjust = -0.4,
@@ -76,31 +98,13 @@ p <- ggplot(pdat, aes(xmid, ymin)) +
     ylab(NULL)
 
 
-file <- "Fig13_good_values_percentage_impact.pdf"
-file_tiff <- gsub(".pdf", ".tif", file)
+file <- "Figure11 good vlaues pertenage impact.pdf"
 width = 9.5; height = 6
-write_fig(p, file_tiff, width, height, T, res = 300)
+write_fig(p, gsub(".pdf", ".svg", file), width, height, F, res = 300)
+write_fig(p, gsub(".pdf", ".tif", file), width, height, T, res = 300)
 # write_fig(p, file, width, height, T)
-#
-
 
 # second try --------------------------------------------------------------
-
-which_max <- function(x){
-    if (all(is.na(x))){
-        NA
-    } else {
-        which.max(x)
-    }
-}
-
-which_min <- function(x){
-    if (all(is.na(x))){
-        NA
-    } else {
-        which.min(x)
-    }
-}
 
 methods <- c("AG", "ZHANG", "wHANTS", "wSG", "wWH") %>% factor(., .)
 
@@ -141,7 +145,7 @@ p <- ggplot(pdat,
     # coord_flip() +
     facet_wrap(~index, labeller = label_parsed)
 
-file <- "Figs3_good_values_percentage_vs_dominant_times.pdf"
-file_tiff <- gsub(".pdf", ".tif", file)
-width = 10; height = 7
-write_fig(p, file_tiff, width, height, T, res = 300)
+file <- "Figure12 dominant times across good_values_percentage.pdf"
+width = 9; height = 6
+write_fig(p, gsub(".pdf", ".svg", file), width, height, F, res = 300)
+write_fig(p, gsub(".pdf", ".tif", file), width, height, T, res = 300)

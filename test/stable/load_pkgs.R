@@ -117,6 +117,17 @@ clamp <- function(x, lims = c(0, 1)){
     x
 }
 
+#' quantile_envelope
+quantile_envelope <- function(x, alpha){
+    names <- "ymean"
+    # if (alpha != 0.5) {
+        alpha <- c(alpha, 1-alpha)
+        names <- c("ymin", "ymax")
+    # }
+    res <- quantile(x, alpha, na.rm = T)
+    set_names(res, names)
+}
+
 # save pdf just like `ggsave`
 write_fig <- function(p, file = "Rplot.pdf", width = 10, height = 5, show = T, res = 300){
     if (missing(p)) p <- last_plot()
