@@ -40,10 +40,10 @@ tmp
 # Figures
 *.jpg
 *.tif
+*.svg
 *.emf
 *.avi
 *.mp4
-
 
 *.json
 result

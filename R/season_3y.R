@@ -179,7 +179,7 @@ stat_season <- function(INPUT, brks){
 #' @export
 plot_season <- function(INPUT, brks, plotdat, ylu, IsOnlyPlotbad = FALSE){
     stat <- stat_season(INPUT, brks)
-    stat_txt  <- stat[c("R2", "NSE", "sim.cv", "obs.cv")] %>%
+    stat_txt  <- stat[c("R2", "NSE", "sim.cv", "obs.cv")] %>% unlist() %>% 
         {paste(names(.), round(., 3), sep = "=", collapse = ", ")}
 
     # if (NSE < 0 | (cv < 0.1 & NSE < 0.1)) {}

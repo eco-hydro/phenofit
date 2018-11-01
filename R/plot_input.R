@@ -20,8 +20,8 @@ plotdata <- function(INPUT, wmin = 0.2, ...){
     # divide into three categories
     wf <- 4 - findInterval(w, c(-Inf, wmin, 0.5, 1), left.open = T)
 
-    colors <- c("grey60", "#00BFC4", "#F8766D", "#C77CFF", "blue", "red", "black")
-    pch    <- c(19, 15, 4)
+    colors <- c("grey60", "#00BFC4", "#C77CFF", "#F8766D", "blue", "red", "black")
+    pch    <- c(19, 15, 17) # 4
 
     years    <- year(t)
 
@@ -36,7 +36,7 @@ plotdata <- function(INPUT, wmin = 0.2, ...){
     for (i in 1:3){
         I = wf == i
         add <- ifelse(i == 1, F, T)
-        points(t[I], y[I], pch = pch[i], col = colors[i], cex = 0.6)
+        points(t[I], y[I], pch = pch[i], col = colors[i], cex = 0.65)
     }
 #
     # ylab = expression(paste('GPP ( gC ', m^-2, d^-1, ')'))
