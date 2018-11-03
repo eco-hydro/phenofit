@@ -142,6 +142,7 @@ season_3y <- function(INPUT,
     }
 
     dt <- dt[dt$len > 45 & dt$len < 650, ] # mask too long and short gs
+    # phenofit:::fix_dt(dt) # c++ address operation, fix growing season overlap
     fix_dt(dt) # c++ address operation, fix growing season overlap
     # after fix_dt, growing season length will become shorter
     dt <- dt[dt$len > 45 & dt$len < 650, ] # mask too long and short gs
