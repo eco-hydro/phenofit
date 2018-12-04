@@ -1,7 +1,7 @@
 source('test/stable/load_pkgs.R')
 
-load("data_test/whit_lambda/MOD13A1_st_1e3_20180731.rda")
-st$site %<>% as.character()
+# load("data_test/whit_lambda/MOD13A1_st_1e3_20180731.rda")
+# st$site %<>% as.character()
 
 ## 1. GLOBAL parameters #######################################################
 # To compare with different sites, Roughtness is normalized by `Yobs`.
@@ -57,6 +57,8 @@ df_info2$index %<>% factor(indice, indice_label)
 df_info2 <- df_info2[!is.na(index) & type == typename &
                          meth %in% methods & iters == str_iter,]
 df_info2$meth %<>% factor(methods)
+
+
 ## 1. set critical values for different index
 DEFAULT.VALUE <- .02
 index <- .(R2, Bias, RMSE, Rg, Rg_norm_by_obs, Rg_norm_by_pred) %>% names() %>%
@@ -105,14 +107,17 @@ d_dominant[, `:=`(
 d_dom  <- d_dominant[meth == "wWH2"]
 pdat_i <- d_diff[meth == "wWH2"]
 
+kinds <- c("Bigger", "Similar", "Smaller")
+kinds_fix <- c("wWHd is larger", "Similar", "wWHd is smaller")
+pdat_i$kind %<>% mapvalues(kinds, kinds_fix)
+
 p <- ggplot(pdat_i, aes(wWH, value, color = kind)) +
+    scale_color_manual(values = set_names(colors, kinds_fix), breaks = kinds_fix) +
     geom_point(data = pdat_i[kind != "Similar"], alpha = 0.4) +
     geom_point(data = pdat_i[kind == "Similar"], alpha = 0.1) +
     # facet_wrap(~label, scales = "free") +
     facet_wrap(.~index, scales = "free", labeller = label_parsed) + #, ncol = 4, labeller = label_value
     geom_abline(slope = 1, color ="red", size = 0.5) +
-    scale_color_manual(values = colors) +
-
     geom_text(data = d_dom, aes(label = text_big, color = NULL), parse = T,
               color = colors[1], fontface = "bold", x = -Inf, y = Inf, hjust = -0.1, vjust = 1.5, show.legend = F, size = text_size) +
     geom_text(data = d_dom, aes(label = text_vs, color = NULL), parse = T,
@@ -120,7 +125,8 @@ p <- ggplot(pdat_i, aes(wWH, value, color = kind)) +
     geom_text(data = d_dom, aes(label = text_small, color = NULL), parse = T,
               color = colors[3], fontface = "bold", x = -Inf, y = Inf, hjust = -0.1, vjust = 1.5, show.legend = F, size = text_size) +
     # ylab("wWH2") +
-    labs(x = "wWHd", y = "wWH2") +
+    labs(x = expression("Weighted Whittaker with dynamic " * lambda * " (wWHd)"),
+         y = expression("Weighted Whittaker with " * lambda * " = 2 (wWH2)")) +
     theme_gray(base_size = 12) +
     theme(legend.title = element_blank(),
           legend.position = "bottom",
@@ -149,6 +155,8 @@ for (i in seq_along(indice_label)){
     index_i = indice_label[i]
 
     pdat_i   <- d_diff[index == index_i & meth != "wWH2"]
+    pdat_i$kind %<>% mapvalues(kinds, kinds_fix)
+
     d_dom      <- d_dominant[index == index_i & meth != "wWH2"]
     d_dom_lab2 <- d_dom[meth %in% levels(meth)[1:2], ]
 
@@ -162,14 +170,16 @@ for (i in seq_along(indice_label)){
         # facet_wrap(~label, scales = "free") +
         facet_grid(meth~index, scales = "fixed", labeller = label_parsed) + #, ncol = 4, labeller = label_value
         geom_abline(slope = 1, color ="red", size = 0.5) +
-        scale_color_manual(values = colors) +
+        scale_color_manual(values = set_names(colors, kinds_fix), breaks = kinds_fix) +
         geom_text(data = d_dom, aes(label = text_big, color = NULL), parse = T,
                   color = colors[1], fontface = "bold", x = -Inf, y = Inf, hjust = -0.1, vjust = 1.5, show.legend = F, size = text_size) +
         geom_text(data = d_dom, aes(label = text_vs, color = NULL), parse = T,
                   color = "black", fontface = "bold", x = -Inf, y = Inf, hjust = -0.1, vjust = 1.5, show.legend = F, size = text_size) +
         geom_text(data = d_dom, aes(label = text_small, color = NULL), parse = T,
                   color = colors[3], fontface = "bold", x = -Inf, y = Inf, hjust = -0.1, vjust = 1.5, show.legend = F, size = text_size) +
-        ylab("Other methods") +
+        # ylab("Other methods") +
+        # labs(x = expression("Weighted Whittaker with dynamic " * lambda * " (wWHd)"),
+        #      y = expression("Other methods"))
         theme_gray(base_size = 14) +
         theme(legend.title = element_blank(),
               legend.position = "top",
@@ -211,7 +221,8 @@ ps[[i]] <- p
 
 # bottom <- arrangeGrob(,
 #                       lgd)
-xtitle <- textGrob("wWHd", gp=gpar(fontsize=14, fontface = "bold"))
+xtitle <- textGrob(expression("Weighted Whittaker with dynamic " * lambda * " (wWHd)"),
+                   gp=gpar(fontsize=14, fontface = "bold"))
 g <- arrangeGrob(grobs = ps, nrow = 1, widths = c(1, 1, 1, 1.07),
                  bottom = xtitle,
                  left = textGrob("Other methods", gp=gpar(fontsize=14, fontface = "bold"), rot = 90))
@@ -223,7 +234,17 @@ write_fig(g, gsub(".pdf", ".tif", file), width, height, T, res = 300)
 # write_fig(g, gsub(".pdf", ".svg", file), width, height, T, res = 300)
 # write_fig(g, file, width, height, T)
 
+nrow <- 1e5
+ncol <- 100
+x <- matrix(rnorm(nrow * ncol), nrow = nrow, ncol = ncol)
+v <- data.table(x)
 
+rbenchmark::benchmark(
+    q <- colQuantiles(x, probs = probs),
+    q_0  <- apply(x, 2, FUN = quantile, probs = probs) %>% t(),
+    q_dt <- apply(v, 2, quantile,probs =c(.1,.9,.5),na.rm=TRUE) %>% t(),
+    replications = 10
+)
 
 # lattice version ---------------------------------------------------------
 
@@ -250,3 +271,4 @@ strip.math <- function(which.given, which.panel, var.name,
 #         },
 #         strip = strip.math,
 #         scales=list(relation="free"), as.table = T)
+

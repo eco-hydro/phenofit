@@ -106,14 +106,14 @@ write_fig(p, gsub(".pdf", ".tif", file), width, height, T, res = 300)
 
 # second try --------------------------------------------------------------
 
-methods <- c("AG", "ZHANG", "wHANTS", "wSG", "wWH") %>% factor(., .)
+methods <- c("AG", "ZHANG", "wHANTS", "wSG", "wWHd") %>% factor(., .)
 
 d_perc <- d %>% dcast(site+iters+grp_perc+xmid+index+type~meth, value.var = "value") %>%
     .[iters == "iter2", ]
 
-I    <- d_perc[index != "R2", .(AG, ZHANG, wHANTS, wSG, wWH)] %>%
+I    <- d_perc[index != "R2", .(AG, ZHANG, wHANTS, wSG, wWHd = wWH)] %>%
     as.matrix %>% aaply(1, which_min) %>% as.numeric()
-I_r2 <- d_perc[index == "R2", .(AG, ZHANG, wHANTS, wSG, wWH)] %>%
+I_r2 <- d_perc[index == "R2", .(AG, ZHANG, wHANTS, wSG, wWHd = wWH)] %>%
     as.matrix %>% aaply(1, which_max) %>% as.numeric()
 
 x    <- cbind(d_perc[index != "R2", 1:5], dominant = methods[I])
