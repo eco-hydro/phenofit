@@ -12,6 +12,8 @@
 #' 
 #' @return back If back value is NA, it is impossible to extract phenology here.
 #' 
+#' @note This function only works in every growing season.
+#' 
 #' @references
 #' [1]. Zhang, X., 2015. Reconstruction of a complete global time series of daily 
 #'      vegetation index trajectory from long-term AVHRR data. Remote Sens. Environ. 

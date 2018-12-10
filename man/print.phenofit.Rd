@@ -4,7 +4,7 @@
 \alias{print.phenofit}
 \title{Display phenofit object}
 \usage{
-print.phenofit(x, ...)
+\method{print}{phenofit}(x, ...)
 }
 \arguments{
 \item{x}{Curve fitting object returned by \code{curvefit}.}

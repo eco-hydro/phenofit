@@ -35,6 +35,12 @@ calculate. See details in Zhang et al., (2015).
 \description{
 Good of fitting
 }
+\examples{
+Y_obs = rnorm(100)
+Y_sim = x + rnorm(100)/4
+GOF(Y_obs, Y_sim)
+
+}
 \references{
 Zhang Xiaoyang (2015), http://dx.doi.org/10.1016/j.rse.2014.10.012
 }

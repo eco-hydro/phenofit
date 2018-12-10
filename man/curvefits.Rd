@@ -58,3 +58,6 @@ fits Multiple phenofit object.
 \description{
 Fine Curve fitting for INPUT time-series.
 }
+\examples{
+
+}

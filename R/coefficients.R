@@ -7,7 +7,12 @@
 #' before the computation proceeds.
 #' @param type an integer between 1 and 3 selecting one of the algorithms for
 #' computing skewness.
-#'
+#' 
+#' @examples
+#' x = rnorm(100)
+#' coef_kurtosis <- kurtosis(x)
+#' coef_skewness <- skewness(x)
+#' 
 #' @export
 kurtosis <- function (x, na.rm = FALSE, type = 3) {
     if (any(ina <- is.na(x))) {
@@ -68,6 +73,11 @@ skewness <- function (x, na.rm = FALSE, type = 3) {
 #' @param x Numeric vector
 #' @param w weights of different point
 #' @export
+#' 
+#' @return Named numeric vector, (mean, sd, cv).
+#' @examples
+#' x = rnorm(100)
+#' coefs <- cv_coef(x)
 cv_coef <- function(x, w){
     if (missing(w)) w <- rep(1, length(x))
     if (length(x) == 0){
@@ -92,6 +102,10 @@ cv_coef <- function(x, w){
 #' @param alpha significant level.
 #' 
 #' @return F statistic and R2 at significant level
+#' 
+#' @examples
+#' R2_critical <- R2_sign(30, NumberOfPredictor = 2, alpha = 0.05)
+#' @export
 R2_sign <- function(n, NumberOfPredictor = 2, alpha = 0.05){
     freedom_r = NumberOfPredictor - 1 # regression
     freedom_e = n - NumberOfPredictor # error 
@@ -134,6 +148,11 @@ R2_sign <- function(n, NumberOfPredictor = 2, alpha = 0.05){
 #' 
 #' @references
 #' Zhang Xiaoyang (2015), http://dx.doi.org/10.1016/j.rse.2014.10.012
+#' 
+#' @examples
+#' Y_obs = rnorm(100)
+#' Y_sim = x + rnorm(100)/4
+#' GOF(Y_obs, Y_sim)
 #' 
 #' @export
 GOF <- function(Y_obs, Y_sim, w, include.cv = FALSE){

@@ -5,11 +5,27 @@
 #' (image date) column which are (\code{Date} variable).
 #' @inheritParams check_input
 #' @inheritParams season
-#' @param trs If tiny missing (nmissing < trs), than this year is include to 
+#' @param trs If tiny missing (nmissing < trs), than this year is include to
 #' extract phenology.
-#' 
+#'
+#' @note \code{date} is image date; \code{t} is compositing date.
+#'
 #' @return data.table
 #' @importFrom lubridate ddays
+#'
+#' @examples
+#' data("MOD13A1")
+#' 
+#' dt <- tidy_MOD13.gee(MOD13A1$dt)
+#' st <- MOD13A1$st
+#' 
+#' sitename <- dt$site[1]
+#' d     <- dt[site == sitename, ] # get the first site data
+#' sp    <- st[site == sitename, ] # station point
+#' 
+#' nptperyear = 23
+#' dnew     <- add_HeadTail(d, nptperyear = 23) # add one year in head and tail
+#' 
 #' @export
 add_HeadTail <- function(d, south = FALSE, nptperyear, trs = 0.45){
     # date : image date
@@ -21,7 +37,7 @@ add_HeadTail <- function(d, south = FALSE, nptperyear, trs = 0.45){
     }
 
     ntrs     <- nptperyear*trs
-    
+
     ## can coop with years not continuous now
     ntime    <- nrow(d)
 

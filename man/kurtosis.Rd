@@ -22,3 +22,9 @@ computing skewness.}
 \description{
 Inherit from package `e1071`
 }
+\examples{
+x = rnorm(100)
+coef_kurtosis <- kurtosis(x)
+coef_skewness <- skewness(x)
+
+}

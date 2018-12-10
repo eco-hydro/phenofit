@@ -1,6 +1,5 @@
-#' Check vegetation seasonality
-#' @inheritParams season
-#' @export
+# Check vegetation seasonality
+# @inheritParams season
 check_seasonality <- function(INPUT, IsPlot = F, plotdat = INPUT, nf = 3, ...){
     # y <- d$EVI
     # t <- as.numeric(d$date - ymd(20000101))
