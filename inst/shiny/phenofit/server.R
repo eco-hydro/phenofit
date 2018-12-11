@@ -11,20 +11,34 @@ server <- function(input, output, session) {
     INPUT <- reactive({
         getINPUT_GPPobs(df, st, input$site)
     })
+    
     brks  <- reactive({
-        varnames <- c("FUN_season", "rFUN",
-            "iters", "lambda", "nf", "frame",
-            "wFUN",
-            "maxExtendMonth", "rytrough_max",
-            "threshold_max", "threshold_min", "threshold_max") %>%
-            intersect(names(input)) %>% set_names(., .)
-        param <- lapply(varnames, function(var) input[[var]])
+        param <- list(
+            FUN_season     = input$FUN_season, 
+            rFUN           = input$rFUN,
+            iters          = input$iters, 
+            lambda         = input$lambda, 
+            nf             = input$nf, 
+            frame          = input$frame,
+            wFUN           = input$wFUN,
+            maxExtendMonth = input$maxExtendMonth, 
+            rytrough_max   = input$rytrough_max,
+            threshold_max  = input$threshold_max, 
+            threshold_min  = input$threshold_min
+        )
+        # param <- lapply(varnames, function(var) input[[var]])
         param <- c(list(INPUT()), param)
+        print(str(param))
+        
         do.call(check_season, param) # brk return
     })
 
     # Figure height of fine curve fitting
-    heightSize <- reactive(length(input$FUN)*250) # number of fine curve fitting
+    heightSize <- reactive({
+        n <- length(input$FUN)
+        height <- 250
+        ifelse(n == 1, height+50, height)*n
+    }) # number of fine curve fitting
     
     params_fineFitting <- reactive({
         list(
@@ -42,6 +56,8 @@ server <- function(input, output, session) {
     # Fine Curve Fitting 
     fineFitting <- reactive({
         # params <- params_fineFitting()
+        # print(str(params))
+
         fit  <- do.call(curvefits, params_fineFitting())
         fit$INPUT   <- INPUT()
         fit$seasons <- brks()
@@ -68,27 +84,29 @@ server <- function(input, output, session) {
             d <- melt_list(lst, "meth") %>% reorder_name(c("site", "meth", "flag", "origin"))
             colnames(d) %<>% gsub("GU.|ZHANG.", "", .)
             d
-        })     
+        })
     })
     ############################################################################
-    # output$txt_title <- renderText({
-    #     INPUT()$titlestr
-    # })
+    # output$txt_title <- renderText({ INPUT()$titlestr })
 
-    ## Figures
+    ## Rough fitting and growing season dividing
     output$plot_gs <- renderPlot({
         sitename <- input$site
-        # threshold_max <- input$threshold_max
-        # threshold_min <- input$threshold_min
-        # rytrough_max  <- input$rytrough_max
-        # iters  <- input$iters
-        # lambda <- input$lambda
-        # FUNname <- input$FUN
         par(setting)
         plot_season(INPUT(), brks(), d(), INPUT()$ylu)
         abline(h = 1, col = "red")
         title(INPUT()$titlestr)
         # rv$brks = do.call(check_season, param)
+    })
+    output$t_gs <- DT::renderDataTable({
+        site <- input$site
+        DT::datatable(brks()$dt, options = list(
+            autoWidth = TRUE,
+            # columnDefs = list(list(width = '10px', targets = c(4:10)))
+            pageLength = 20
+        )) %>%
+            DT::formatRound(c(4:6), 3) %>%
+            DT::formatStyle(columns = c(4:6), 'text-align' = 'center')
     })
 
     # Fine Curve Fitting Output Figure
@@ -96,16 +114,10 @@ server <- function(input, output, session) {
     output$sized_plot_fineFitting <- renderUI({
         plotOutput("plot_fineFitting", height = heightSize())
     })
+    
     output$plot_fineFitting <- renderPlot({
         g <- plot_phenofit(fineFitting(), d(), INPUT()$titlestr)
         grid::grid.draw(g)
-    })
-
-    ## Tables
-    output$t_gs <- DT::renderDataTable({
-        site <- input$site
-        DT_datatable(brks()$dt) %>% DT::formatRound(c(4:6), 3) #%>%
-        # DT::formatStyle(columns = c(4:6), 'text-align' = 'center')
     })
 
     output$t_fineFitting <- DT::renderDataTable({

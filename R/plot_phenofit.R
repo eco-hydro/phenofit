@@ -17,7 +17,7 @@ getFitValueYear <- function(fit_year, first = FALSE){
 # origin.date <- fit$INPUT$t[1]
 # out$t %<>% add(origin.date - 1)
 getFitValueYears <- function(fit_years){
-    # Avoiding overlap, only first year include first point, 
+    # Avoiding overlap, only first year include first point,
     nyear <- length(fit_years)
     first  <- map_df(fit_years[1], getFitValueYear, first = T)
     others <- map_df(fit_years[2:nyear], getFitValueYear)
@@ -25,9 +25,9 @@ getFitValueYears <- function(fit_years){
 }
 
 #' getFittings
-#' 
+#'
 #' Get curve fitting data.frame
-#' 
+#'
 #' @param fit Object returned by \code{curvefits}.
 #' @export
 getFittings <- function(fit){
@@ -63,7 +63,7 @@ getFittings <- function(fit){
 #' @param d original input data
 #' @param title String
 #' @param show.legend Boolean
-#' 
+#'
 #' @importFrom dplyr left_join
 #' @export
 plot_phenofit <- function(fit, d, title = NULL, show.legend = T){
@@ -76,13 +76,14 @@ plot_phenofit <- function(fit, d, title = NULL, show.legend = T){
     qc_colors <- c("grey60", "#00BFC4", "#F8766D", "#C77CFF", "#C77CFF", "#B79F00") %>% set_names(qc_levels)
     qc_shapes <- c(19, 15, 4, 25, 25, 17) %>% set_names(qc_levels)
 
-    pdat1 <- getFittings(fit)
+    nmethods <- length(fit$fits) # how many curve fitting methods?
+    pdat1    <- getFittings(fit)
     # t_fit <- index(fits_years[[1]]) + t[1] - 1
     # 1. curve fitting data
     # pdat1 <- dplyr::full_join(fit$INPUT, new, by = "t") %>%
     #     gather(meth, val, -t, -y) %>% group_by(meth)
     # print(head(pdat1))
-    
+
     # 3. phenology data
     # pdat2 <- fit$pheno$date %>% melt_list("meth") %>% as_tibble() %>%
     #     gather(index, date, -flag, -origin, -meth) %>%
@@ -101,9 +102,9 @@ plot_phenofit <- function(fit, d, title = NULL, show.legend = T){
         # geom_point(data = seasons$dt, aes_string(beg , y_beg ), color= "blue") +
         # geom_line(size = 0.4) +
         facet_grid(meth~.) +
-        scale_x_date(breaks = fit$seasons$dt$beg, date_labels = "%Y/%m") + ggtitle(title) + 
-        theme_gray(base_size = 14) + 
-        theme(axis.title = element_text(size = 14), 
+        scale_x_date(breaks = fit$seasons$dt$beg, date_labels = "%Y/%m") + ggtitle(title) +
+        theme_gray(base_size = 14) +
+        theme(axis.title = element_text(size = 14),
             axis.text = element_text(size = 14))
 
     if ('QC_flag' %in% colnames(d)){
@@ -116,7 +117,7 @@ plot_phenofit <- function(fit, d, title = NULL, show.legend = T){
             geom_line(aes_string(color = "iters"), size = 0.8, alpha = 0.7) +
             scale_color_manual(values = c(qc_colors,
                                           "iter1" = "blue", "iter2" = "red"), drop = F) +
-            scale_fill_manual(values = qc_colors, drop = F) + 
+            scale_fill_manual(values = qc_colors, drop = F) +
             scale_shape_manual(values = qc_shapes, drop = F) +
             ylab('Vegetation Index')
     }else{
@@ -129,20 +130,20 @@ plot_phenofit <- function(fit, d, title = NULL, show.legend = T){
     # scale_linetype_manual(values=c(2, 3, 1, 1, 1, 4))
     # p + facet_grid(meth~pmeth)
     #return
-    
+
     # if (plotly){
     #     plotly::ggplotly(p)
     # }else{
     if (show.legend){
         p <- p + theme(legend.position="none")
-        p <- arrangeGrob(p, lgd, nrow = 2, heights = c(15, 1), padding = unit(1, "line")) #return, 
+        p <- arrangeGrob(p, lgd, nrow = 2, heights = c(min(5*nmethods, 15), 1), padding = unit(1, "line")) #return,
     }
     return(p)
     # }
 }
 
 # make_legend
-make_legend <- function(linename = c("iter1", "iter2", "whit"), 
+make_legend <- function(linename = c("iter1", "iter2", "whit"),
         linecolor = c("blue", "red", "black")){
     qc_levels <- c("good", "margin", "snow", "cloud", "aerosol", "shadow")
     qc_colors <- c("grey60", "#00BFC4", "#F8766D", "#C77CFF", "#B79F00", "#C77CFF") %>% set_names(qc_levels)
@@ -156,7 +157,7 @@ make_legend <- function(linename = c("iter1", "iter2", "whit"),
     # colors <- c("grey60", "#00BFC4", "#F8766D", "#C77CFF", linecolor)
     nline <- length(linename)
     pch <- c(qc_shapes, rep(NA, nline))
-    
+
     lty <- rep(0, npoints);  lty[3] <- 1
     lty <- c(lty, rep(1, nline))
     lwd <- c(rep(1, npoints), rep(3, nline))
@@ -165,7 +166,7 @@ make_legend <- function(linename = c("iter1", "iter2", "whit"),
     lgd <- grid::legendGrob(labels[I], pch = pch[I], nrow = 1,
                        # do.lines = T,
                        gp=grid::gpar(lty = lty[I], lwd = lwd[I],
-                               cex = 1.4, 
+                               cex = 1.4,
                                col = colors[I], fill = colors[I]))
     lgd$children[[5]]$children[[1]]$children %<>% .[2] # fix cross point type
     return(lgd)
@@ -175,10 +176,10 @@ lgd <- make_legend()
 #' tidyFits_pheno
 #'
 #' Tidy for every method with multiple years phenology data
-#' 
+#'
 #' @param pheno Extracted phenology from \code{ExtractPheno}
 #' @param origin time origin, i.e. \code{INPUT$t[1]}
-#' 
+#'
 #' @export
 tidyFitPheno <- function(pheno, origin){
     tidToDate <- function(datenum)  origin - 1 + unlist(datenum)

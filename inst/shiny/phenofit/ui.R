@@ -2,15 +2,10 @@
 width_sidebar <- 3
 # ui <- fluidPage(
 
-# sidebar
-# Application title
-
 ui <- navbarPage(
     "phenofit",
-    selected = "Season dividing",
-    tags$head(tags$style(HTML(
-        "hr {border-top: 1px solid black;}"
-    ))),
+    selected = "Main",
+    # tags$head(tags$style(HTML( "hr {border-top: 1px solid black;}" ))),
     tags$script(src = "selectInput.js"),
 
     tabPanel("Load data", 
@@ -38,13 +33,12 @@ ui <- navbarPage(
         # Input: Select a file ----     
     ),
     tabPanel(
-        "Season dividing",
+        "Main",
         fluidRow(
             column(
                 width_sidebar,
                 h4("1. Growing season dividing"),
-                selectInput(
-                    "site", "Choose a site:",
+                selectInput("site", "Choose a site:",
                     choices = sites, selected = "US-Me2"
                 ),
                 numericInput("iters", "iters:", 2, 1, 3),
@@ -59,25 +53,22 @@ ui <- navbarPage(
                     selected = "wBisquare"
                 ),
                 selectInput(
-                    "rFUN", "Choose a Rough fitting function (FUN):",
+                    "rFUN", "Choose a Rough fitting function (rFUN):",
                     choices = c('wWHIT', 'wSG', 'wHANTS'),
                     selected = "wHANTS"
                 ),
-                conditionalPanel(condition = "input.FUN_fit == 'wWHIT'",
+                conditionalPanel(condition = "input.rFUN == 'wWHIT'",
                                  numericInput("lambda", "lambda:", 1e4, 2, 1e4)),
-                conditionalPanel(
-                    condition = "input.FUN_fit == 'wSG'",
+                conditionalPanel(condition = "input.rFUN == 'wSG'",
                     numericInput(
-                        "frame",
-                        "moving window size (frame):",
+                        "frame", "moving window size (frame):",
                         floor(nptperyear / 5 * 2 + 1),
                         floor(nptperyear / 12),
                         floor(nptperyear / 2),
                         floor(nptperyear / 12)
                     )
                 ),
-                conditionalPanel(
-                    condition = "input.rFUN == 'wHANTS'",
+                conditionalPanel(condition = "input.rFUN == 'wHANTS'",
                     numericInput("nf", "number of frequencies (nf):", 3, 1, 6)
                 ),
                 conditionalPanel(
@@ -101,27 +92,12 @@ ui <- navbarPage(
                     "rytrough_max", "rytrough_max:",
                     min = 0, max = 1, value = 0.8, param_step
                 ),
-                style = "overflow-x: scroll; overflow-y: scroll"
-            ),
-            column(
-                12 - width_sidebar,
-                # textOutput('txt_title'),
-                # tabsetPanel(type = "tabs",
-                # tabPanel("Plot",
-                plotOutput("plot_gs", height = fig.height),
-                h4("Growing season dividing information:"),
+                hr(),
                 br(),
-                DT::dataTableOutput("t_gs") # table of growing season), , width = "100%"
-                # )
-                # )
-            )
-        )),
-    ## curve fitting, select curve fitting methods
-    tabPanel(
-        "Curve fitting & Phenology Extraction",
-        fluidRow(
-            column(width_sidebar, 
-                h3("3. Fine Curve fitting"),
+
+                ################################################################
+                ## curve fitting, select curve fitting methods
+                h3("2. Fine Curve fitting"),
                 checkboxGroupInput("FUN", 
                     "Choose Fine fitting functions (fFUN):",
                     choiceNames  = list("Asymmetric Gaussian (AG)", 
@@ -138,8 +114,11 @@ ui <- navbarPage(
                     choices = c("wTSM", "wBisquare", "wChen"),
                     selected = "wBisquare"
                 ),
+                hr(),
+                br(),
+                
                 ################################################################
-                h3("4. Phenology extraction"),
+                h3("3. Phenology extraction"),
                 checkboxGroupInput("pheno_methods", 
                     "Choose Phenology Extraction methods:",
                     choiceNames  = list(
@@ -149,35 +128,40 @@ ui <- navbarPage(
                         "Gu (Gu)"),
                     choiceValues = list("TRS", "DER", "Zhang", "Gu"),
                     selected = list("TRS", "DER", "Zhang", "Gu")
-                )
+                ),
+                style = "overflow-x: scroll; overflow-y: scroll"
             ),
-            column(12 - width_sidebar,
-                verticalLayout(
-                    uiOutput("sized_plot_fineFitting"),
-                    br(),
-                    h3("3.1 Good of fitting:"),
-                    DT::dataTableOutput("t_fineFitting", width = "40%"),
-                    br(),
-
-                    h3("4.1 Phenological metrics (date & doy):"),
-                    # selectInput(
-                    #     "t_pheno_methods",
-                    #     "chose aphenological methods to inspect:",
-                    #     choices = c("wTSM", "wBisquare", "wChen"),
-                    #     selected = "wBisquare"
-                    # ),
-                    # verbatimTextOutput("console_phenoMetrics")
-                    column(12,
-                        DT::dataTableOutput("t_phenoMetrics_date"),
-                        DT::dataTableOutput("t_phenoMetrics_doy"),
-                        style = "overflow-x: scroll")
-                )
+            column(
+                12 - width_sidebar,
+                # textOutput('txt_title'),
+                # tabsetPanel(type = "tabs",
+                # tabPanel("Plot",
+                h4("1.1 Rough Fitting"),
+                plotOutput("plot_gs", height = fig.height),
+                h4("1.2 Growing season dividing info:"),
+                DT::dataTableOutput("t_gs", width = "100%"), # table of growing season), , width = "100%"
+            
+                h3("2.1 Fine Fitting:"),     
+                uiOutput("sized_plot_fineFitting"),
+                h3("2.2 Good of fitting:"),     
+                DT::dataTableOutput("t_fineFitting", width = "40%"),
+               
+                h3("3 Phenological metrics (date & doy):"),
+                # selectInput(
+                #     "t_pheno_methods",
+                #     "chose aphenological methods to inspect:",
+                #     choices = c("wTSM", "wBisquare", "wChen"),
+                #     selected = "wBisquare"
+                # ),
+                # verbatimTextOutput("console_phenoMetrics")
+                column(12,
+                    DT::dataTableOutput("t_phenoMetrics_date"),
+                    DT::dataTableOutput("t_phenoMetrics_doy"),
+                    style = "overflow-x: scroll")
             )
-        )
-    ),
+        )),   
     navbarMenu("Export",
         tabPanel("generate script"),
         tabPanel("export phenological metrics")),
     tabPanel("help")
 )
-# titlePanel("Curve Fitting")
