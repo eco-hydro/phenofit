@@ -76,6 +76,7 @@ check_input <- function(t, y, w, nptperyear, south = FALSE, Tn = NULL,
     }
     if (missing(maxgap)) maxgap = ceiling(nptperyear/12*1.5)
 
+    y0  <- y
     n   <- length(y)
     if (missing(w) || is.null(w)) w <- rep(1, n)
 
@@ -134,7 +135,8 @@ check_input <- function(t, y, w, nptperyear, south = FALSE, Tn = NULL,
     if (!is_empty(Tn)){
         Tn <- na.approx(Tn, maxgap = maxgap, na.rm = FALSE)
     }
-    list(t = t, y = y, w = w, Tn = Tn, ylu = ylu, nptperyear = nptperyear, south = south)#quickly return
+    list(t = t, y = y, w = w, Tn = Tn, ylu = ylu, 
+        nptperyear = nptperyear, south = south, y0 = y0)#quickly return
 }
 
 #' check_fit

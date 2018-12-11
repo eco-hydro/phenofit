@@ -95,6 +95,7 @@ ExtractPheno <- function(fits, TRS = c(0.1, 0.2, 0.5, 0.6), IsPlot = FALSE){
         zhang <- do.call(PhenoKl, param_common2);      if (i == 1 && IsPlot) mtext("ZHANG")
         pheno_list[[i]] <- c(p_TRS, list(der, gu, zhang)) %>% set_names(methods)
     }
+
     pheno_list %<>% set_names(names)
     return(pheno_list)
 }
@@ -113,16 +114,16 @@ ExtractPheno <- function(fits, TRS = c(0.1, 0.2, 0.5, 0.6), IsPlot = FALSE){
 #'
 #'
 #' @inheritParams D1.phenofit
-#' 
-#' @param approach to be used to calculate phenology metrics. 
+#'
+#' @param approach to be used to calculate phenology metrics.
 #' 'White' (White et al. 1997) or 'Trs' for simple threshold.
 #' @param trs threshold to be used for approach "Trs", in (0, 1).
 #' @param IsPlot whether to plot?
 #' @param show.lgd whether show figure lelend?
 #' @param ... other parameters to PhenoPlot
-#' @param IsSmoothed Boolean. If false, positive derivative in spring and negative 
-#' derivative will be not applied. 
-#' 
+#' @param IsSmoothed Boolean. If false, positive derivative in spring and negative
+#' derivative will be not applied.
+#'
 #' @rdname PhenoExtractMeth
 #' @export
 PhenoTrs <- function(fit, approach = c("White", "Trs"), trs = 0.5, #, min.mean = 0.1
@@ -216,9 +217,9 @@ PhenoTrs <- function(fit, approach = c("White", "Trs"), trs = 0.5, #, min.mean =
 
 
 #' PhenoDeriv
-#' 
+#'
 #' @inheritParams PhenoTrs
-#' 
+#'
 #' @rdname PhenoExtractMeth
 #' @export
 PhenoDeriv <- function(fit, IsPlot = TRUE, smspline = TRUE, show.lgd = T, ...){
@@ -287,7 +288,7 @@ PhenoDeriv <- function(fit, IsPlot = TRUE, smspline = TRUE, show.lgd = T, ...){
 
 
 #' PhenoGu
-#' 
+#'
 #' @inheritParams PhenoTrs
 #' @importFrom dplyr last
 #' @rdname PhenoExtractMeth
@@ -392,7 +393,7 @@ PhenoGu <- function(fit, IsPlot = TRUE, smspline = TRUE, ...) {
 }
 
 #' PhenoKl
-#' 
+#'
 #' @inheritParams PhenoTrs
 #' @rdname PhenoExtractMeth
 #' @export

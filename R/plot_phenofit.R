@@ -101,7 +101,10 @@ plot_phenofit <- function(fit, d, title = NULL, show.legend = T){
         # geom_point(data = seasons$dt, aes_string(beg , y_beg ), color= "blue") +
         # geom_line(size = 0.4) +
         facet_grid(meth~.) +
-        scale_x_date(breaks = fit$seasons$dt$beg, date_labels = "%Y/%m") + ggtitle(title)
+        scale_x_date(breaks = fit$seasons$dt$beg, date_labels = "%Y/%m") + ggtitle(title) + 
+        theme_gray(base_size = 14) + 
+        theme(axis.title = element_text(size = 14), 
+            axis.text = element_text(size = 14))
 
     if ('QC_flag' %in% colnames(d)){
         # p <- p + geom_point(data = x, aes_string(date, y, shape = SummaryQA, color = SummaryQA), size = 1, alpha = 0.7) +
@@ -162,6 +165,7 @@ make_legend <- function(linename = c("iter1", "iter2", "whit"),
     lgd <- grid::legendGrob(labels[I], pch = pch[I], nrow = 1,
                        # do.lines = T,
                        gp=grid::gpar(lty = lty[I], lwd = lwd[I],
+                               cex = 1.4, 
                                col = colors[I], fill = colors[I]))
     lgd$children[[5]]$children[[1]]$children %<>% .[2] # fix cross point type
     return(lgd)
