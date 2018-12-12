@@ -1,17 +1,24 @@
 # runApp("test/phenology_async/check_season/")
 # load("data/shiny_flux115.rda")
-
 # sites <- sort(sites)
 
 # Define server logic required to draw a histogram
 server <- function(input, output, session) {
-    # define reactiveValues
-    d          <- reactive({ getSiteData(df, input$site) })
-    date_range <- reactive({ range(d()$t) })
-    INPUT <- reactive({
-        getINPUT_GPPobs(df, st, input$site)
+    ## define reactiveValues
+    # INPUTall   <- reactive({ updateINPUT() })
+    output$t_input_veg <- DT::renderDataTable({
+        DT_datatable(df, scrollX = TRUE)
     })
+
+    output$t_input_site <- DT::renderDataTable({
+        DT_datatable(st)    
+    })
+
+    d          <- reactive({ getDf.site(df, input$site) })
+    date_range <- reactive({ range(d()$t) })
+    INPUT <- reactive({ getINPUT.site(df, st, input$site) })
     
+
     brks  <- reactive({
         param <- list(
             FUN_season     = input$FUN_season, 
@@ -28,8 +35,7 @@ server <- function(input, output, session) {
         )
         # param <- lapply(varnames, function(var) input[[var]])
         param <- c(list(INPUT()), param)
-        print(str(param))
-        
+        # print(str(param))
         do.call(check_season, param) # brk return
     })
 
@@ -98,13 +104,9 @@ server <- function(input, output, session) {
         title(INPUT()$titlestr)
         # rv$brks = do.call(check_season, param)
     })
+    
     output$t_gs <- DT::renderDataTable({
-        site <- input$site
-        DT::datatable(brks()$dt, options = list(
-            autoWidth = TRUE,
-            # columnDefs = list(list(width = '10px', targets = c(4:10)))
-            pageLength = 20
-        )) %>%
+        DT_datatable(brks()$dt) %>%
             DT::formatRound(c(4:6), 3) %>%
             DT::formatStyle(columns = c(4:6), 'text-align' = 'center')
     })
@@ -128,11 +130,23 @@ server <- function(input, output, session) {
     })
 
     output$t_phenoMetrics_date <- DT::renderDataTable({
-        DT_datatable(lst_metrics()$date, info = FALSE)
+        d <- lst_metrics()$date
+        d <- d[, 3:ncol(d)] %>% lapply(., format.Date, "%Y/%m/%d") %>% 
+            as.data.frame() %>% 
+            cbind(d[, 1:2], .)
+        DT_datatable(d, 
+            columnDefs = list(list(width = '20px', targets = 3:nrow(d) )),
+            info = FALSE)
     })
 
     output$t_phenoMetrics_doy <- DT::renderDataTable({
-        DT_datatable(lst_metrics()$doy)
+        d <- lst_metrics()$doy
+        d[[3]] %<>% format("%Y/%m/%d")
+        DT_datatable(d,
+            autoWidth = TRUE,
+            # scrollX = TRUE, #"900px",
+            columnDefs = list(list(width = '20%', targets = 3:nrow(d) ))
+        )
     })
     # output$console_phenoMetrics <- renderPrint({ lst_metrics })
 }

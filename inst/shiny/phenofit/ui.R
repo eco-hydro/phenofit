@@ -1,37 +1,13 @@
 # Define UI for application that draws a histogram
-width_sidebar <- 3
+source('ui_tab_1_loading.R')
 # ui <- fluidPage(
 
 ui <- navbarPage(
     "phenofit",
-    selected = "Main",
+    selected = "Load data",
     # tags$head(tags$style(HTML( "hr {border-top: 1px solid black;}" ))),
     tags$script(src = "selectInput.js"),
-
-    tabPanel("Load data", 
-        radioButtons("file_type", "file type:", 
-            choices = c("text", ".rda | .RData"), 
-            selected = "text"),
-        conditionalPanel(condition = "input.file_type == 'text'",
-            fileInput("file_veg", "File of vegetation time-series",
-                multiple = FALSE,
-                accept = c("text/csv",
-                         "text/comma-separated-values,text/plain",
-                         ".csv")),
-            fileInput("file_site", "File of site information",
-                multiple = FALSE,
-                accept = c("text/csv",
-                         "text/comma-separated-values,text/plain",
-                         ".csv"))
-        ),
-        conditionalPanel(condition = "input.file_type == '.rda | .RData'",
-            fileInput("file_rda", "INPUT file",
-                multiple = FALSE,
-                accept = c(".rda", ".RData"))
-        ),
-        numericInput("nptperyear", "nptperyear:", 1, 366, 23)
-        # Input: Select a file ----     
-    ),
+    tab_loading,
     tabPanel(
         "Main",
         fluidRow(
@@ -79,17 +55,13 @@ ui <- navbarPage(
                         2, 0, 12
                     )
                 ),
-                sliderInput(
-                    "threshold_max", "r_max:",
-                    min = 0,  max = 1, value = 0.2,
-                    param_step
+                sliderInput( "threshold_max", "r_max:",
+                    min = 0,  max = 1, value = 0.2, param_step
                 ),
-                sliderInput(
-                    "threshold_min", "r_min:",
+                sliderInput( "threshold_min", "r_min:",
                     min = 0, max = 0.2, value = 0, 0.02
                 ),
-                sliderInput(
-                    "rytrough_max", "rytrough_max:",
+                sliderInput( "rytrough_max", "rytrough_max:",
                     min = 0, max = 1, value = 0.8, param_step
                 ),
                 hr(),
@@ -109,8 +81,7 @@ ui <- navbarPage(
                     selected = list("elmore")
                 ),
                 selectInput(
-                    "wFUN2",
-                    "Choose a weights updating function for Fine Fitting (wFUN2):",
+                    "wFUN2", "Choose a weights updating function for Fine Fitting (wFUN2):",
                     choices = c("wTSM", "wBisquare", "wChen"),
                     selected = "wBisquare"
                 ),
@@ -159,9 +130,9 @@ ui <- navbarPage(
                     DT::dataTableOutput("t_phenoMetrics_doy"),
                     style = "overflow-x: scroll")
             )
-        )),   
+        )),
     navbarMenu("Export",
-        tabPanel("generate script"),
-        tabPanel("export phenological metrics")),
+        tabPanel("Generate code"),
+        tabPanel("Export phenological metrics")),
     tabPanel("help")
 )

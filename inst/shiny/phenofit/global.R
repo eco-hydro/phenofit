@@ -9,45 +9,77 @@ library(plyr)
 library(purrr)
 
 load('data/phenoflux115.rda')
+
 # load('data/phenoflux115_ET&GPP&VI.rda')
 # load('inst/shiny/check_season/data/phenoflux_115.rda')
 # load('inst/shiny/check_season/data/ET&GPP&VI_flux115.rda')
-
 # sites <- sort(sites)
 
 # Generate DT::datatable
-DT_datatable <- function(df, pageLength = 10, ...){
+DT_datatable <- function(
+    df,
+    pageLength = 10,
+    columnDefs = list(list(className = 'dt-center')), ...){
+
     DT::datatable(df, options = list(
         # autoWidth = TRUE,
         # columnDefs = list(list(width = '10px', targets = c(4:10)))
-        columnDefs = list(list(className = 'dt-center')),
         searching = FALSE, lengthChange = FALSE,
-        pageLength = pageLength, ...
+        pageLength = pageLength,
+        columnDefs = columnDefs, ...
     ))
 }
 
-getSiteData  <- function(df, sitename){
-    df[site == sitename, .(t = date, y = GPP_DT, w = 1)] #%T>% plotdata(365)
+
+# tidy GPP data
+tidy_fluxGPP <- function(){
+    gpp <- rowMeans(df[, .(GPP_DT, GPP_NT)], na.rm = T)
+    gpp[gpp < 0] <- 0
+
+    df <<- data.table(site = df$site, t = df$date, y = gpp) # , w = 1 (optional)
+    # df
 }
 
-getINPUT_GPPobs <- function(df, st, sitename){
+updateINPUT <- function(input){
+    if (input$file_type == '.rda | .RData') {
+        load(file_rda)
+    } else if (input$file_type == 'text'){
+        if (file_veg != "") {
+            df    <<- fread(file_veg)
+            sites <<- unique(df$site) %>% sort()
+
+            if (file_site == ""){
+                st <<- data.table(ID = seq_along(sites), site = sites, lat = 30)
+            }
+        }
+        if (file_site != "") st <- fread(file_site)
+    }
+
+    list(df = df, st = st, sites = sites)
+}
+
+
+getDf.site  <- function(df, sitename){
+    dplyr::select(df[site == sitename, ], dplyr::matches("t|y|w"))
+    #%T>% plotdata(365)
+}
+
+
+getINPUT.site <- function(df, st, sitename){
     sp       <- st[site == sitename]
     south    <- sp$lat < 0
     titlestr <- with(sp, sprintf("[%3d] %s, %s, lat = %.2f", ID, site, IGBP, lat))
 
-    d   <- df[site == sitename, .(t = date, GPP_DT, GPP_NT, w = 1)] #%T>% plotdata(365)
-    d$y <- rowMeans(d[, .(GPP_DT, GPP_NT)], na.rm = T)
-    d[y < 0, y := 0] # for GPP_NT
-    # d_obs[site == sitename, .(t = date, y = GPP_DT, w = 1)] %>% plotdata(365)
+    d     <-  df[site == sitename, ]#%T>% plotdata(365)
     d_new <- add_HeadTail(d, south = south)
     INPUT <- do.call(check_input, d_new)
-    # d <- d_obs[site == sitename, ]
 
-    INPUT$south <- south
+    INPUT$south    <- south
     INPUT$titlestr <- titlestr
     # list(INPUT = INPUT, plotdat = d)
     INPUT
 }
+
 
 check_season <- function(INPUT,
                          FUN_season = c("season", "season_3y"),
@@ -60,7 +92,7 @@ check_season <- function(INPUT,
 
     FUN_season <- get(FUN_season[1])
     wFUN       <- get(wFUN)
-    res  <- FUN_season(INPUT, south = INPUT$south, 
+    res  <- FUN_season(INPUT, south = INPUT$south,
                         rFUN = get(rFUN),
                         wFUN = wFUN,
                      IsPlot = IsPlot,
@@ -80,11 +112,11 @@ check_season <- function(INPUT,
     return(res)
 }
 
-plot_data <- function(d, title){
-    par(setting)
-    do.call(check_input, d) %>% plotdata()
-    mtext(title, side = 2, line = 2, cex = 1.3, font = 2)
-}
+# plot_data <- function(d, title){
+#     par(setting)
+#     do.call(check_input, d) %>% plotdata()
+#     mtext(title, side = 2, line = 2, cex = 1.3, font = 2)
+# }
 
 ################################################################################
 ## global parameters for check_season
@@ -94,6 +126,8 @@ fig.height <- 225
 par(setting)
 
 param_step <- 0.1
+
+tidy_fluxGPP() # tidy df_GPP
 
 # https://stackoverflow.com/questions/48592842/show-inf-in-dtdatatable
 options(htmlwidgets.TOJSON_ARGS = list(na = 'string'))
