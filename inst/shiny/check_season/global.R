@@ -5,8 +5,8 @@ library(shiny)
 library(data.table)
 library(magrittr)
 
-load('data/phenoflux_115.rda')
-load('data/phenoflux_115_ET&GPP&VI.rda')
+load('data/phenoflux115.rda')
+load('data/phenoflux115_ET&GPP&VI.rda')
 # load('inst/shiny/check_season/data/phenoflux_115.rda')
 # load('inst/shiny/check_season/data/ET&GPP&VI_flux115.rda')
 
@@ -37,7 +37,7 @@ getINPUT_GPPobs <- function(df, st, sitename){
 
 check_season <- function(INPUT,
                          FUN_season = c("season", "season_3y"),
-                         FUN_fit = "wWHIT",
+                         rFUN = "wWHIT",
                          wFUN = "wTSM",
                          lambda = 1000,
                          iters = 3,
@@ -46,8 +46,9 @@ check_season <- function(INPUT,
 
     FUN_season <- get(FUN_season[1])
     wFUN       <- get(wFUN)
-    res  <- FUN_season(INPUT, south = INPUT$south, rFUN = get(FUN_fit),
-                       wFUN = wFUN,
+    res  <- FUN_season(INPUT, south = INPUT$south, 
+                        rFUN = get(rFUN),
+                        wFUN = wFUN,
                      IsPlot = IsPlot,
                      lambda = lambda,
                      iters = iters,

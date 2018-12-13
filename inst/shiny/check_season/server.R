@@ -11,35 +11,44 @@ server <- function(input, output, session) {
     INPUT <- reactive({
         getINPUT_GPPobs(df, st, input$site)
     })
+    
     brks  <- reactive({
-        varnames <- c("FUN_season", "FUN_fit",
-            "iters", "lambda", "nf", "frame",
-            "wFUN",
-            "maxExtendMonth", "rytrough_max",
-            "threshold_max", "threshold_min", "threshold_max") %>%
-            intersect(names(input)) %>% set_names(., .)
-        param <- lapply(varnames, function(var) input[[var]])
+        param <- list(
+            FUN_season     = input$FUN_season, 
+            rFUN           = input$rFUN,
+            iters          = input$iters, 
+            lambda         = input$lambda, 
+            nf             = input$nf, 
+            frame          = input$frame,
+            wFUN           = input$wFUN,
+            maxExtendMonth = input$maxExtendMonth, 
+            rytrough_max   = input$rytrough_max,
+            threshold_max  = input$threshold_max, 
+            threshold_min  = input$threshold_min
+        )
+        # param <- lapply(varnames, function(var) input[[var]])
         param <- c(list(INPUT()), param)
         do.call(check_season, param) # brk return
     })
+    
     ############################################################################
     # output$txt_title <- renderText({
     #     INPUT()$titlestr
     # })
-    output$plot_GPPobs <- renderPlot({
-        sitename <- input$site
-        # threshold_max <- input$threshold_max
-        # threshold_min <- input$threshold_min
-        # rytrough_max  <- input$rytrough_max
-        # iters  <- input$iters
-        # lambda <- input$lambda
-        # FUNname <- input$FUN
-        par(setting)
-        plot_season(INPUT(), brks(), d(), INPUT()$ylu)
-        abline(h = 1, col = "red")
-        title(INPUT()$titlestr)
-        # rv$brks = do.call(check_season, param)
-    })
+    # output$plot_GPPobs <- renderPlot({
+    #     sitename <- input$site
+    #     # threshold_max <- input$threshold_max
+    #     # threshold_min <- input$threshold_min
+    #     # rytrough_max  <- input$rytrough_max
+    #     # iters  <- input$iters
+    #     # lambda <- input$lambda
+    #     # FUNname <- input$FUN
+    #     par(setting)
+    #     plot_season(INPUT(), brks(), d(), INPUT()$ylu)
+    #     abline(h = 1, col = "red")
+    #     title(INPUT()$titlestr)
+    #     # rv$brks = do.call(check_season, param)
+    # })
 
     output$t_gs <- DT::renderDataTable({
         site <- input$site
@@ -48,8 +57,8 @@ server <- function(input, output, session) {
             # columnDefs = list(list(width = '10px', targets = c(4:10)))
             pageLength = 20
         )) %>%
-            formatRound(c(4:6), 3) %>%
-            formatStyle(columns = c(4:6), 'text-align' = 'center')
+            DT::formatRound(c(4:6), 3) %>%
+            DT::formatStyle(columns = c(4:6), 'text-align' = 'center')
     })
     # output$gppPlot <- renderPlot({
     #     sitename <- input$site
