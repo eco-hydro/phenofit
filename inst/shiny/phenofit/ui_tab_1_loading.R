@@ -4,8 +4,9 @@ width_sidebar <- 3
 
 tab_loading <- tabPanel("Load data",
     # 1.1 loading data
-    fluidRow(             
+    fluidRow(
         column(width_sidebar + 2, 
+            h3('1.1 load data'),         
             radioButtons("file_type", "file type:", 
                 choices = c("text", ".rda | .RData"), 
                 selected = "text"),
@@ -27,7 +28,22 @@ tab_loading <- tabPanel("Load data",
                     multiple = FALSE,
                     accept = c(".rda", ".RData"))
             ),
-            numericInput("nptperyear", "nptperyear:", 23, 12, 366, 1)
+            numericInput("nptperyear", "nptperyear:", 365, 12, 366, 1),
+
+            ## 1.2 check_input
+            h3('1.2 check_input'),
+            textInput("txt_varVI", "vairable of vegetation index", "y"),
+
+            checkboxInput("check_QC2weight", "Convert QC to weight?", FALSE),
+            conditionalPanel(condition = "input.check_QC2weight", 
+                textInput("txt_varQC", "vairable of QC:", ""),
+                selectInput(
+                    "qcFUN", "function of initializing weights according to QC (qcFUN):",
+                    choices = c("qc_summary", "qc_5l", "qc_StateQA", "qc_NDVIv4"),
+                    selected = "qc_summary"
+                )
+            ),
+            actionButton("btn_updateInput", strong("Update INPUT"))
         ),
         column(3, 
             # verbatimTextOutput("console_phenoMetrics", "help info")
@@ -35,7 +51,6 @@ tab_loading <- tabPanel("Load data",
             em("If no input data assigned, the default is Eddy covariance daily GPP data.", 
                 style="color:red"),
             br(), br(), br(), br(), br(), br(),
-
             conditionalPanel(condition = "input.file_type == 'text'", 
                 strong("File of vegetation time-series:"),
                 p(code('file_veg'), " should have the column of 'site', 'y', 't', and 'w' (optional).", tags$br(),  
@@ -52,7 +67,6 @@ tab_loading <- tabPanel("Load data",
                     code("df"), " (data.frame of vegetation time-series) and ",
                     code("st"), " (data.frame of site information)."), 
                 br(),
-
                 p(code('df'), " should have the column of 'site', 'y', 't', and 'w' (optional).", tags$br(),  
                     "If w is missing, weights of all points are 1.0."),
                 p(code('st'), " should have the column of ", 
@@ -60,16 +74,17 @@ tab_loading <- tabPanel("Load data",
                     "IGBPname (string) is optional.")
             )
         ), 
-        colum(2)
+        column(2)
     ), 
-    submitButton("Update INPUT"),
-    # 2.2 check_input
 
-    # 2.3 preview input data
-    hr(),
-    h3("1.1 Vegetation time-series:"),
-    DT::dataTableOutput("t_input_veg", width = "50%"), 
-    
-    h3("1.2 Site information:"),
-    DT::dataTableOutput("t_input_site")
+    br(), 
+    fluidRow(
+        # 2.3 preview input data
+        hr(),
+        h3("1.1 Vegetation time-series:"),
+        DT::dataTableOutput("t_input_veg", width = "50%"), 
+        
+        h3("1.2 Site information:"),
+        DT::dataTableOutput("t_input_site")
+    )
 )

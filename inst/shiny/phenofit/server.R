@@ -6,6 +6,51 @@
 server <- function(input, output, session) {
     ## define reactiveValues
     # INPUTall   <- reactive({ updateINPUT() })
+
+    ############################################################################
+    ################################ observeEvent ##############################
+    observeEvent(input$btn_updateInput, {
+        status_update <- updateINPUT(input) # global function
+
+        # if update successfully, then update corresponding data. 
+        if (status_update){
+            # update VI variables selection
+            updateSelectInput(session, "txt_varVI", 
+                choices = setdiff(colnames(df), c("site", "t", "date")))
+            
+            # update QC variables selection
+            if (input$check_QC2weight){
+                varQCs <- colnames(df) %>% .[grep("QA|QC|qa|qc", .)]
+                if (length(varQCs) == 0){
+                    sel_qc_title <- paste0("vairable of QC: ", 
+                        "No QC variables!")
+                    seq_qc <- ""; varQCs <- ""
+                } else {
+                    sel_qc_title <- "vairable of QC:"
+                    sel_qc <- varQCs[1]
+                }
+                updateSelectInput(session, "txt_varQC", sel_qc_title, 
+                    choices = varQCs, varQCs[1])    
+            }
+
+            var_time   <-  intersect(c("t", "date"), colnames(df))[1]
+            deltaT     <-  as.numeric(diff(df[[var_time]][c(1, 2)]))
+            nptperyear <<- ceiling(365/deltaT)
+
+            updateNumericInput(session, 'nptperyear', value = nptperyear)
+            showNotification('INPUT has been updated!', type = "message")    
+        }
+    })
+
+    observeEvent(input$txt_varVI, {
+        eval(parse(text = sprintf('df[, y := %s]', input$txt_varVI)))
+    })
+
+    observeEvent(input$qcFUN     , convert_QC2weight(input))
+    observeEvent(input$txt_varQC , convert_QC2weight(input))
+    observeEvent(input$nptperyear, { nptperyear <<- input$nptperyear }) 
+    ############################################################################
+
     output$t_input_veg <- DT::renderDataTable({
         DT_datatable(df, scrollX = TRUE)
     })
@@ -18,7 +63,6 @@ server <- function(input, output, session) {
     date_range <- reactive({ range(d()$t) })
     INPUT <- reactive({ getINPUT.site(df, st, input$site) })
     
-
     brks  <- reactive({
         param <- list(
             FUN_season     = input$FUN_season, 
@@ -99,6 +143,7 @@ server <- function(input, output, session) {
     output$plot_gs <- renderPlot({
         sitename <- input$site
         par(setting)
+
         plot_season(INPUT(), brks(), d(), INPUT()$ylu)
         abline(h = 1, col = "red")
         title(INPUT()$titlestr)
