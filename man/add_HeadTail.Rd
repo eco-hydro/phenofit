@@ -15,8 +15,8 @@ following year 31 June; In north hemisphere, growing year is 1 Jan to 31 Dec.}
 
 \item{nptperyear}{Integer, number of images per year}
 
-\item{trs}{If tiny missing (nmissing < trs), than this year is include to
-extract phenology.}
+\item{trs}{If nmissing < trs*nptperyear (little missing), this year is 
+include to extract phenology; if \code{FALSE}, this year is excluded.}
 }
 \value{
 data.table

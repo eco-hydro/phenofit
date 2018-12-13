@@ -10,13 +10,13 @@
 \usage{
 getBits(x, start, end = start)
 
-qc_summary(QA, wmin = 0.2)
+qc_summary(QA, wmin = 0.2, wmid = 0.5, wmax = 1)
 
-qc_StateQA(QA, wmin = 0.2)
+qc_StateQA(QA, wmin = 0.2, wmid = 0.5, wmax = 1)
 
-qc_5l(QA, wmin = 0.2)
+qc_5l(QA, wmin = 0.2, wmid = 0.5, wmax = 1)
 
-qc_NDVIv4(QA)
+qc_NDVIv4(QA, wmin = 0.2, wmid = 0.5, wmax = 1)
 }
 \arguments{
 \item{x}{Binary value}
@@ -28,6 +28,10 @@ qc_NDVIv4(QA)
 \item{QA}{quality control variable}
 
 \item{wmin}{Double, minimum weigth (i.e. weight of snow, ice and cloud).}
+
+\item{wmid}{Dougle, middle weight, i.e. marginal,}
+
+\item{wmax}{Double, maximum weight, i.e. good,}
 }
 \value{
 A list object with
@@ -38,10 +42,10 @@ A list object with
 \describe{
   \item{getBits}{Extract bitcoded QA information from bin value}
   \item{qc_summary}{Initial weigths based on Quality reliability of VI pixel, 
-suit for MOD13A1, MOD13A2 and MOD13Q1 (SummaryQA band).}
+     suit for MOD13A1, MOD13A2 and MOD13Q1 (SummaryQA band).}
   \item{qc_5l}{Initial weights based on Quality control of five-level 
-confidence score, suit for MCD15A3H(LAI, FparLai_QC), MOD17A2H(GPP, Psn_QC) 
-and MOD16A2(ET, ET_QC).}
+     confidence score, suit for MCD15A3H(LAI, FparLai_QC), MOD17A2H(GPP, Psn_QC) 
+     and MOD16A2(ET, ET_QC).}
   \item{qc_NDVIv4}{For NDVIv4}
   \item{qc_StateQA}{Initial weights based on `StateQA`, suit for MOD09A1, MYD09A1. }
 }

@@ -20,7 +20,7 @@ brks2 <- season_3y(INPUT, south = sp$lat[1] < 0,
 
 param <- list(
     INPUT, brks2,
-    methods = c("AG", "zhang", "beck", "elmore", 'Gu'), #,"klos",
+    methods = c("AG", "Beck", "Elmore", "Gu", "Zhang"), #,"klos",
     debug = F, 
     wFUN = wFUN,
     nextent = 2, maxExtendMonth = 3, minExtendMonth = 1,
@@ -40,10 +40,10 @@ test_curvefit <- function(meth){
 }
 
 test_curvefit("AG")
-test_curvefit("zhang")
-test_curvefit("beck")
-test_curvefit("elmore")
+test_curvefit("Beck")
+test_curvefit("Elmore")
 test_curvefit("Gu")
+test_curvefit("Zhang")
 
 # ## check the curve fitting parameters
 # params <- getparam(fit)

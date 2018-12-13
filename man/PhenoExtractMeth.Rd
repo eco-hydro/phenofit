@@ -19,14 +19,14 @@ PhenoKl(fit, IsPlot = TRUE, show.lgd = T, ...)
 \arguments{
 \item{fit}{Curve fitting object returned by \code{curvefit}.}
 
-\item{approach}{to be used to calculate phenology metrics. 
+\item{approach}{to be used to calculate phenology metrics.
 'White' (White et al. 1997) or 'Trs' for simple threshold.}
 
 \item{trs}{threshold to be used for approach "Trs", in (0, 1).}
 
 \item{IsPlot}{whether to plot?}
 
-\item{IsSmoothed}{Boolean. If false, positive derivative in spring and negative 
+\item{IsSmoothed}{Boolean. If false, positive derivative in spring and negative
 derivative will be not applied.}
 
 \item{...}{other parameters to PhenoPlot}

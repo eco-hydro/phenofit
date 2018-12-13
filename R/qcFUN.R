@@ -86,10 +86,10 @@
 #' \describe{
 #'   \item{getBits}{Extract bitcoded QA information from bin value}
 #'   \item{qc_summary}{Initial weigths based on Quality reliability of VI pixel, 
-#' suit for MOD13A1, MOD13A2 and MOD13Q1 (SummaryQA band).}
+#'      suit for MOD13A1, MOD13A2 and MOD13Q1 (SummaryQA band).}
 #'   \item{qc_5l}{Initial weights based on Quality control of five-level 
-#' confidence score, suit for MCD15A3H(LAI, FparLai_QC), MOD17A2H(GPP, Psn_QC) 
-#' and MOD16A2(ET, ET_QC).}
+#'      confidence score, suit for MCD15A3H(LAI, FparLai_QC), MOD17A2H(GPP, Psn_QC) 
+#'      and MOD16A2(ET, ET_QC).}
 #'   \item{qc_NDVIv4}{For NDVIv4}
 #'   \item{qc_StateQA}{Initial weights based on `StateQA`, suit for MOD09A1, MYD09A1. }
 #' }
@@ -98,6 +98,8 @@
 #' @param start Bit starting position, count from zero
 #' @param end Bit ending position
 #' @param wmin Double, minimum weigth (i.e. weight of snow, ice and cloud).
+#' @param wmid Dougle, middle weight, i.e. marginal, 
+#' @param wmax Double, maximum weight, i.e. good, 
 #' @return A list object with
 #' \item{weigths}{Double vector, initial weights}
 #' \item{QC_flag}{Factor vector, with the level of \code{c("snow", "cloud", "shadow", "aerosol", "marginal", "good")}}
@@ -118,14 +120,14 @@ getBits <- function(x, start, end = start){
 #' 
 #' @rdname qcFUN
 #' @export
-qc_summary <- function(QA, wmin = 0.2){
+qc_summary <- function(QA, wmin = 0.2, wmid = 0.5, wmax = 1){
     ## 1. initial weights
     w <- rep(NA, length(QA)) # default weight is zero
     
-    w[QA == 0] <- 1             # clear, good
-    w[QA == 1] <- 0.5           # margin
+    w[QA == 0] <- wmax           # clear, good
+    w[QA == 1] <- wmid           # margin
     
-    w[QA >= 2 & QA <=3] <- wmin # Snow/ice, or cloudy
+    w[QA >= 2 & QA <=3] <- wmin  # Snow/ice, or cloudy
 
     ## 2. initial QC_flag
     QC_flag <- factor(QA, 0:3, c("good", "marginal", "snow", "cloud"))
@@ -135,20 +137,20 @@ qc_summary <- function(QA, wmin = 0.2){
 
 #' @rdname qcFUN
 #' @export
-qc_StateQA <- function(QA, wmin = 0.2){
+qc_StateQA <- function(QA, wmin = 0.2, wmid = 0.5, wmax = 1){
     qc_cloud   = getBits(QA, 0, 1)
     qc_shadow  = getBits(QA, 2, 2)
     qc_aerosol = getBits(QA, 6, 7)   # climatology treated as good values
     qc_snow    = getBits(QA, 12, 12)
 
     ## 1. initial weights
-    w <- rep(0.5, length(QA)) # default weight is zero
+    w <- rep(wmid, length(QA)) # default weight is zero
 
     I_good <- qc_cloud %in% c(0, 3) & qc_aerosol %in% c(0, 1, 2) & !qc_snow
     I_bad  <- qc_snow | qc_cloud %in% c(1, 2) | qc_aerosol == 3
 
     # others are marginal
-    w[I_good] <- 1
+    w[I_good] <- wmax
     w[I_bad]  <- wmin
 
     ## 2. initial QC_flag
@@ -174,25 +176,25 @@ qc_StateQA <- function(QA, wmin = 0.2){
 
 #' @export
 #' @rdname qcFUN
-qc_5l <- function(QA, wmin = 0.2){
+qc_5l <- function(QA, wmin = 0.2, wmid = 0.5, wmax = 1){
     # bit5-7, five-level confidence score
     # QA <- bitwShiftR(bitwAnd(QA, 224), 5) #1110 0000=224L
     QA <- getBits(QA, 5, 7)
     w  <- rep(NA, length(QA)) #default zero
     
-    w[QA <= 1] <- 1            #clear, good
-    w[QA >= 2 & QA <=3] <- 0.5 #geometry problems or others
+    w[QA <= 1] <- wmax            #clear, good
+    w[QA >= 2 & QA <=3] <- wmid #geometry problems or others
     w[QA >  4] <- wmin
     return(w)
 }
 
 #' @rdname qcFUN
-qc_NDVIv4 <- function(QA){
+qc_NDVIv4 <- function(QA, wmin = 0.2, wmid = 0.5, wmax = 1){
     # bit1-2: cloudy, cloud shadow
     QA <- bitwShiftR(bitwAnd(QA, 7), 1) 
     
     w  <- rep(NA, length(QA))
-    w[QA == 0] <- 1   #clear, good
+    w[QA == 0] <- wmax   #clear, good
     w[QA == 2] <- 0.5 #cloud shadow
     return(w)
 }

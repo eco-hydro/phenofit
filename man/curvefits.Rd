@@ -6,8 +6,8 @@
 \usage{
 curvefits(INPUT, brks, wFUN = wTSM, iters = 2, wmin = 0.2,
   nextent = 2, maxExtendMonth = 3, minExtendMonth = 1, minT = 0,
-  methods = c("AG", "zhang", "beck", "elmore", "Gu"), qc = INPUT$w * 0
-  + 1, minPercValid = 0.2, print = TRUE, ...)
+  methods = c("AG", "Beck", "Elmore", "Gu", "Klos", "Zhang"),
+  qc = INPUT$w * 0 + 1, minPercValid = 0.2, print = TRUE, ...)
 }
 \arguments{
 \item{INPUT}{A list object with the elements of 't', 'y', 'w', 'Tn' (option)
@@ -39,8 +39,8 @@ between different growing seasons is smoothing.}
 \item{minT}{Double, use night temperature Tn to define backgroud value.
 Tn < minT is treated as ungrowing season.}
 
-\item{methods}{Character, find curve fitting names, can be one of
-c("AG", "zhang", "beck", "elmore", "Gu").}
+\item{methods}{Fine curve fitting methods, can be one or more of \code{c('AG', 
+'Beck', 'Elmore', 'Gu', 'Klos', 'Zhang')}.}
 
 \item{qc}{Factor (optional), only suit for MOD13A1. SummaryQA code for PhenoExtracr.
 Other dataset, just leave qc as the default.}
@@ -59,5 +59,21 @@ fits Multiple phenofit object.
 Fine Curve fitting for INPUT time-series.
 }
 \examples{
+data("MOD13A1")
 
+dt <- tidy_MOD13.gee(MOD13A1$dt)
+st <- MOD13A1$st
+
+sitename <- dt$site[1]
+d     <- dt[site == sitename, ] # get the first site data
+sp    <- st[site == sitename, ] # station point
+# global parameter
+IsPlot = T
+print  = F
+nptperyear = 23
+ypeak_min  = 0.05
+
+dnew     <- add_HeadTail(d, nptperyear = 23) # add one year in head and tail
+INPUT    <- check_input(dnew$t, dnew$y, dnew$w, nptperyear, 
+                        maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
 }

@@ -37,7 +37,7 @@ Good of fitting
 }
 \examples{
 Y_obs = rnorm(100)
-Y_sim = x + rnorm(100)/4
+Y_sim = Y_obs + rnorm(100)/4
 GOF(Y_obs, Y_sim)
 
 }

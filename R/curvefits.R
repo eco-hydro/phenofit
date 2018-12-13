@@ -19,8 +19,8 @@
 #' between different growing seasons is smoothing.
 #' @param minT Double, use night temperature Tn to define backgroud value.
 #' Tn < minT is treated as ungrowing season.
-#' @param methods Character, find curve fitting names, can be one of
-#' c("AG", "zhang", "beck", "elmore", "Gu").
+#' @param methods Fine curve fitting methods, can be one or more of \code{c('AG', 
+#' 'Beck', 'Elmore', 'Gu', 'Klos', 'Zhang')}. 
 #' @param qc Factor (optional), only suit for MOD13A1. SummaryQA code for PhenoExtracr.
 #' Other dataset, just leave qc as the default.
 #' @param minPercValid If valid percentage is less than \code{minPercValid}, the
@@ -48,15 +48,12 @@
 #' dnew     <- add_HeadTail(d, nptperyear = 23) # add one year in head and tail
 #' INPUT    <- check_input(dnew$t, dnew$y, dnew$w, nptperyear, 
 #'                         maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
-#' INPUT$y0 <- dnew$y   # raw time-series, for visualization
-#' 
-#' 
 #' @export
 curvefits <- function(INPUT, brks,
                       wFUN = wTSM, iters = 2, wmin = 0.2,
                       nextent = 2, maxExtendMonth = 3, minExtendMonth = 1,
                       minT = 0,
-                      methods = c('AG', 'zhang', 'beck', 'elmore', 'Gu'),
+                      methods = c('AG', 'Beck', 'Elmore', 'Gu', 'Klos', 'Zhang'),
                       qc = INPUT$w*0+1, minPercValid = 0.2,
                       print = TRUE, ...)
 {

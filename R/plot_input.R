@@ -23,7 +23,7 @@ plotdata <- function(INPUT, wmin = 0.2, ...){
     colors <- c("grey60", "#00BFC4", "#C77CFF", "#F8766D", "blue", "red", "black")
     pch    <- c(19, 15, 17) # 4
 
-    years    <- year(t)
+    years  <- year(t)
 
     if (length(unique(years)) < 3){
         plot(t, y, type = "l", xaxt="n", ann = FALSE, ...)
@@ -38,7 +38,7 @@ plotdata <- function(INPUT, wmin = 0.2, ...){
         add <- ifelse(i == 1, F, T)
         points(t[I], y[I], pch = pch[i], col = colors[i], cex = 0.65)
     }
-#
+    
     # ylab = expression(paste('GPP ( gC ', m^-2, d^-1, ')'))
     date_beg <- ymd( min(years) *1e4 + 0101 )
     date_end <- ymd( max(years) *1e4 + 0101 )

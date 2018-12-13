@@ -11,7 +11,7 @@ brks2 <- season_3y(INPUT, south = sp$lat[1] < 0,
 
 param <- list(
     INPUT, brks2,
-    methods = c("AG", "zhang", "beck", "elmore", 'Gu'), #,"klos",
+    methods = c("AG", "Zhang", "Beck", "Elmore", 'Gu'), #,"klos",
     debug = F, 
     wFUN = wFUN,
     nextent = 2, maxExtendMonth = 2, minExtendMonth = 1,

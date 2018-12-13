@@ -13,31 +13,37 @@ phenonames <- c('TRS2.SOS', 'TRS2.EOS', 'TRS5.SOS', 'TRS5.EOS', 'TRS6.SOS', 'TRS
 #' @param t The corresponding doy of x
 #' @param tout The output interpolated time.
 #' @param meth optimization method
-#' @param methods curve fitting method names, can be one or more of 'beck', 
-#' 'elmore', 'klos', 'AG', 'Gu', 'zhang'. Note that 'klos' has so many parameters.
-#' Its optimization is not stable.
+#' @param methods Fine curve fitting methods, can be one or more of \code{c('AG', 
+#' 'Beck', 'Elmore', 'Gu', 'Klos', 'Zhang')}. 
 #' @param ... other parameters passed to curve fitting function.
+#' 
+#' @note 'Klos' and 'Gu' have many parameters. It will be slow and not stable.
+#' 
+#' @return fits
+#' @seealso \code{\link{FitAG}}, \code{\link{FitDL.Beck}}, 
+#' \code{\link{FitDL.Elmore}}, \code{\link{FitDL.Gu}}, 
+#' \code{\link{FitDL.Klos}}, \code{\link{FitDL.Zhang}}
 #' 
 #' @export
 curvefit <- function(y, t = index(y), tout = t, meth = 'BFGS',
-    methods = c('spline', 'beck', 'elmore', 'klos', 'AG', 'zhang'), ...)
+    methods = c('AG', 'Beck', 'Elmore', 'Gu', 'Klos', 'Zhang'), ...)
 {
     if (all(is.na(y))) return(NULL)
     if (length(methods) == 1 && methods == 'all')
-        methods <- c('spline', 'beck', 'elmore', 'klos', 'AG', 'Gu', 'zhang')
+        methods <- c('AG', 'Beck', 'Elmore', 'Gu', 'Klos', 'Zhang')
 
     params <- list(y, t, tout, optimFUN = I_optim, method = meth, ...)
 
     # if ('spline' %in% methods) fit.spline <- splinefit(y, t, tout)
 
-    if ('beck'   %in% methods) fit.beck   <- do.call(FitDL.Beck,  c(params, pfun = p_nlminb))  #nlminb
-    if ('elmore' %in% methods) fit.elmore <- do.call(FitDL.Elmore,c(params, pfun = p_nlminb))  #nlminb
+    if ('AG'     %in% methods) fit.AG     <- do.call(FitAG,       c(params, pfun = p_nlminb))     #nlm
+    if ('Beck'   %in% methods) fit.Beck   <- do.call(FitDL.Beck,  c(params, pfun = p_nlminb))  #nlminb
+    if ('Elmore' %in% methods) fit.Elmore <- do.call(FitDL.Elmore,c(params, pfun = p_nlminb))  #nlminb
 
     # best: BFGS, but its speed lower than other function, i.e. nlm
     if ('Gu'     %in% methods) fit.Gu     <- do.call(FitDL.Gu,    c(params, pfun = p_nlminb))  #nlm, ucminf
-    if ('zhang'  %in% methods) fit.zhang  <- do.call(FitDL.Zhang, c(params, pfun = p_nlminb))  #nlm
-    if ('AG'     %in% methods) fit.AG     <- do.call(FitAG,       c(params, pfun = p_nlminb))     #nlm
-    if ('klos'   %in% methods) fit.klos   <- do.call(FitDL.Klos,  c(params, pfun = p_optim))   #BFGS, Nelder-Mead, L-BFGS-B
+    if ('Klos'   %in% methods) fit.Klos   <- do.call(FitDL.Klos,  c(params, pfun = p_optim))   #BFGS, Nelder-Mead, L-BFGS-B
+    if ('Zhang'  %in% methods) fit.Zhang  <- do.call(FitDL.Zhang, c(params, pfun = p_nlminb))  #nlm
 
     names <- ls(pattern = "fit\\.") %>% set_names(., .)
     fits  <- lapply(names, get, envir = environment()) %>%
