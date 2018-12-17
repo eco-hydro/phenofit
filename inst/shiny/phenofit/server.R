@@ -1,12 +1,9 @@
-# runApp("test/phenology_async/check_season/")
-# load("data/shiny_flux115.rda")
-# sites <- sort(sites)
+# shiny::runApp('inst/shiny/phenofit')
 
 # Define server logic required to draw a histogram
 server <- function(input, output, session) {
     ## define reactiveValues
     # INPUTall   <- reactive({ updateINPUT() })
-
     ############################################################################
     ################################ observeEvent ##############################
     observeEvent(input$btn_updateInput, {
@@ -42,46 +39,20 @@ server <- function(input, output, session) {
         }
     })
 
-    observeEvent(input$txt_varVI, {
-        eval(parse(text = sprintf('df[, y := %s]', input$txt_varVI)))
-    })
-
+    observeEvent(input$txt_varVI , updateY(input))
     observeEvent(input$qcFUN     , convert_QC2weight(input))
     observeEvent(input$txt_varQC , convert_QC2weight(input))
     observeEvent(input$nptperyear, { nptperyear <<- input$nptperyear }) 
     ############################################################################
 
-    output$t_input_veg <- DT::renderDataTable({
-        DT_datatable(df, scrollX = TRUE)
-    })
-
-    output$t_input_site <- DT::renderDataTable({
-        DT_datatable(st)    
-    })
+    output$t_input_veg  <- DT::renderDataTable( DT_datatable(df, scrollX = TRUE) )
+    output$t_input_site <- DT::renderDataTable( DT_datatable(st) )
 
     d          <- reactive({ getDf.site(df, input$site) })
     date_range <- reactive({ range(d()$t) })
+
     INPUT <- reactive({ getINPUT.site(df, st, input$site) })
-    
-    brks  <- reactive({
-        param <- list(
-            FUN_season     = input$FUN_season, 
-            rFUN           = input$rFUN,
-            iters          = input$iters, 
-            lambda         = input$lambda, 
-            nf             = input$nf, 
-            frame          = input$frame,
-            wFUN           = input$wFUN,
-            maxExtendMonth = input$maxExtendMonth, 
-            rytrough_max   = input$rytrough_max,
-            threshold_max  = input$threshold_max, 
-            threshold_min  = input$threshold_min
-        )
-        # param <- lapply(varnames, function(var) input[[var]])
-        param <- c(list(INPUT()), param)
-        # print(str(param))
-        do.call(check_season, param) # brk return
-    })
+    brks  <- reactive({ cal_season(input, INPUT())})
 
     # Figure height of fine curve fitting
     heightSize <- reactive({
@@ -107,11 +78,7 @@ server <- function(input, output, session) {
     fineFitting <- reactive({
         # params <- params_fineFitting()
         # print(str(params))
-
-        fit  <- do.call(curvefits, params_fineFitting())
-        fit$INPUT   <- INPUT()
-        fit$seasons <- brks()
-
+        fit  <- do.call(curvefits, params_fineFitting())     
         # params_fineFitting <- getparam(fit)
         # print(str(params_fineFitting))
 
@@ -119,14 +86,12 @@ server <- function(input, output, session) {
         stat  <- ldply(fit$fits, function(fits_meth){
             ldply(fits_meth, statistic.phenofit, .id = "flag")
         }, .id = "meth")
-        fit$stat <- stat
 
         # get phenology information
         p <- lapply(fit$fits, ExtractPheno)
         pheno <- map(p, tidyFitPheno, origin = INPUT()$t[1]) %>% purrr::transpose()
 
-        fit$pheno  <- pheno
-        fit
+        c(fit, list(INPUT = INPUT(), seasons = brks(), stat = stat, pheno = pheno))
     })
 
     lst_metrics <- reactive({
@@ -194,7 +159,23 @@ server <- function(input, output, session) {
         )
     })
     # output$console_phenoMetrics <- renderPrint({ lst_metrics })
+
+    output$download_allsites <- downloadHandler(
+        filename = function() {
+            paste('data-', Sys.Date(), '.RData', sep='')
+        },
+        content = function(file) {
+            fprintf("debug | n = %d\n", length(sites))
+            progress <- shiny::Progress$new(min = 0, max = length(sites))
+
+            # future::future({
+                res <- phenofit_all(input, progress)
+                # # browser()
+                save(res, file = file)    
+            # })
+            # write.csv(mtcars, file)
+        }
+    )
 }
 
-# Run the application
 # shinyApp(ui = ui, server = server)

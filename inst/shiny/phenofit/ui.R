@@ -73,12 +73,12 @@ ui <- navbarPage(
                 checkboxGroupInput("FUN", 
                     "Choose Fine fitting functions (fFUN):",
                     choiceNames  = list("Asymmetric Gaussian (AG)", 
-                        "Piecewise logistic (zhang)", 
-                        "Beck logistic (beck)", 
-                        "Elmore logistic (elmore)", 
-                        "Gu logistic (Gu)"), 
-                    choiceValues = list("AG", "zhang", "beck", "elmore", "Gu"),
-                    selected = list("elmore")
+                        "Beck logistic (Beck)", 
+                        "Elmore logistic (Elmore)", 
+                        "Gu logistic (Gu)", 
+                        "Piecewise logistic (Zhang)"), 
+                    choiceValues = list("AG", "Beck", "Elmore", "Gu", "Zhang"),
+                    selected = list("Elmore")
                 ),
                 selectInput(
                     "wFUN2", "Choose a weights updating function for Fine Fitting (wFUN2):",
@@ -132,7 +132,10 @@ ui <- navbarPage(
             )
         )),
     navbarMenu("Export",
-        tabPanel("Generate code"),
-        tabPanel("Export phenological metrics")),
+        tabPanel("Generate code", 
+            downloadButton("download_allsites", 
+                "Export all sites phenological metrics")
+        )
+    ),
     tabPanel("help")
 )

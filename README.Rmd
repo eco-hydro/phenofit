@@ -38,7 +38,13 @@ You can install phenofit from github with:
 devtools::install_github("kongdd/phenofit")
 ```
 
-## Example
+Or run with `shiny`:
+```{r, eval = FALSE}
+shiny::runGitHub("phenofit", "kongdd", subdir = "inst/shiny/phenofit")
+```
+![](man/Figure/phenofit_shiny.png)
+
+## R code Example
 
 Here, we illustrate how to use `phenofit` to extract vegetation phenology from 
 MOD13A1 in the sampled points. Regional analysis also can be conducted in the 
@@ -183,7 +189,7 @@ brks2 <- season_3y(INPUT, south = sp$lat[1] < 0,
 ## 2.3 Curve fitting
 ```{r curve fitting, fig.height=7, fig.align="center"}
 fit  <- curvefits(INPUT, brks2,
-                  methods = c("AG", "zhang", "beck", "elmore"), #,"klos",, 'Gu'
+                  methods = c("AG", "Zhang", "Beck", "Elmore"), #,"klos",, 'Gu'
                   debug = F, 
                   wFUN = wFUN,
                   nextent = 2, maxExtendMonth = 3, minExtendMonth = 1,

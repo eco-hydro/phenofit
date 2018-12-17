@@ -45,12 +45,12 @@ tab_loading <- tabPanel("Load data",
             ),
             actionButton("btn_updateInput", strong("Update INPUT"))
         ),
-        column(3, 
+        column(6, 
             # verbatimTextOutput("console_phenoMetrics", "help info")
             br(), br(),
-            em("If no input data assigned, the default is Eddy covariance daily GPP data.", 
-                style="color:red"),
-            br(), br(), br(), br(), br(), br(),
+            h3(em("If no input data assigned, the default is Eddy covariance daily GPP data.", 
+                style="color:red")),
+            br(), br(), br(), 
             conditionalPanel(condition = "input.file_type == 'text'", 
                 strong("File of vegetation time-series:"),
                 p(code('file_veg'), " should have the column of 'site', 'y', 't', and 'w' (optional).", tags$br(),  
@@ -73,8 +73,7 @@ tab_loading <- tabPanel("Load data",
                     "'ID (numeric)', 'site (string)', 'lat (double)'. ", tags$br(), 
                     "IGBPname (string) is optional.")
             )
-        ), 
-        column(2)
+        )
     ), 
 
     br(), 
