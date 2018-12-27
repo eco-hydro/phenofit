@@ -23,19 +23,24 @@ theme.nopadding <-
                   axis.key.padding = 0,
                   right.padding = 0))
 
+################################################################################
+
 poly <- readOGR("F:/ArcGIS/continent.shp")
 
-d <- merge(df[meth == "wWH" & iters == "iter1", .(site, R2, Bias, RMSE,
-                                                  Rg, Rg_norm_by_obs, Rg_norm_by_pred)],
-           st[, .(site, lon, lat)]) %>% .[, 2:ncol(.)]
+# load df_info from Fig10_.R
+df = df_info[type == "all", ]
 
+# , Rg, Rg_norm_by_pred
+d <- merge(df[meth == "wWH" & iters == "iter1", .(site, R2, Bias, RMSE,
+                                                  Roughtness = Rg_norm_by_obs)],
+           st[, .(site, lon, lat)]) %>% .[, 2:ncol(.)]
 sp <- df2sp(d)
 
 ################################################################################
 title = eval(substitute(expression(bold("("*lab*") "* text)),
                                   list(lab = letters[1], text = quote(R^2))))
 titles <- list(title, "(b) Bias", "(c) RMSE", "(d) Roughtness")
-titles <- colnames(d) %>% setdiff(c("lat", "lon"))
+# titles <- colnames(d) %>% setdiff(c("lat", "lon"))
 
 
 plot_sppoint <- function(sp, i, brks, sp.layout, cols){
@@ -82,7 +87,7 @@ plot_sppoint <- function(sp, i, brks, sp.layout, cols){
         seq(0, 0.1, 0.02),
         # seq(0.01, 0.03, 0.005)
         # seq(0.02, 0.1, 0.02)
-        seq(0.01, 0.03, 0.005),
+        seq(0.00, 0.08, length.out = 9),
         seq(0.02, 0.06, 0.01),
         seq(0.04, 0.1, 0.01)
     )
@@ -118,10 +123,10 @@ plot_sppoint <- function(sp, i, brks, sp.layout, cols){
         ps[[i]] <- plot_sppoint(sp, i, brks, sp.layout, cols)
     }
 
-    file <- "Fig9_wWH_spatial_performance_v3.jpg"
+    file <- "Figure09 wWHd spatial performance v3.jpg"
     # tiff(file, 15, 6, units = "in", res = 300, compression = "lzw")
     CairoPNG(file, 15, 6, units = "in", dpi = 300)
-    p <- arrangeGrob(grobs = ps, nrow = 3, ncol = 2, padding = unit(0, "line"))
+    p <- arrangeGrob(grobs = ps, nrow = 2, ncol = 2, padding = unit(0, "line"))
     grid.newpage()
     grid.draw(p)
     dev.off()

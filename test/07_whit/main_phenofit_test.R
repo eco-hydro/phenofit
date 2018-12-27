@@ -466,6 +466,11 @@ getFittings2 <- function(fit){
     return(df_fit)
 }
 
+GOF_fineFitting <- function(fit){
+    d <- getFittings2(x)
+    d[, as.list(GOF_extra2(y, value)), .(iters, meth)]
+}
+
 # Get GOF info for every
 get_Fitting <- function(file){
     if (is(file, "list")){

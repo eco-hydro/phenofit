@@ -2,7 +2,7 @@ rm(list = ls())
 source('test/stable/load_pkgs.R')
 source('test/07_whit/whit_lambda/smooth_whit_lambda.R')
 source("test/07_whit/whit_lambda/main_lambda.R")
-
+library(MASS)
 
 check_lambda <- function(lambda){
     n <- length(lambda)
@@ -17,7 +17,7 @@ check_lambda <- function(lambda){
 
 
 library(sf)
-indir <- "Y:/Github/phenofit_cluster/"
+indir <- "V:/result/"
 ## 1. station info
 st   <- sf::read_sf("data_test/whit_lambda/shp/st_1e3_mask.shp")
 coor <- st_geometry(st) %>% do.call(rbind, .) %>% data.table() %>%  set_colnames(c("lon", "lat"))
@@ -28,17 +28,17 @@ st$site %<>% as.character()
 st$IGBPcode %<>% factor(levels = 1:16, labels = IGBPnames_006[1:16])
 colnames(st)[3] <- "IGBP"
 
-dirs <- dir("Y:/Github/phenofit_cluster/result/whit_lambda/v013", full.names = T) %>%
+dirs <- dir("V:/result/whit_lambda/v013", full.names = T) %>%
     set_names(gsub("whit2", "", basename(.)))
 
 ## 2. lambda info
 
 res_formula <- list()
-for (k in 1:12){ #length(dirs)
+for (k in 1:1){ #length(dirs)
     indir <- dirs[k]
     runningId(k, prefix = indir)
 
-    file <- sprintf('Figure/Fig1_lambda_%s.jpg', basename(indir))
+    file <- sprintf('temp/lambda/Fig1_lambda_%s.jpg', basename(indir))
 
     lst <- get_sbatch(indir)
     # lst <- get_sbatch("result/whit_lambda/wBisquare_grp1/")
@@ -64,7 +64,7 @@ for (k in 1:12){ #length(dirs)
 
     ## get formula now
     temp <- merge(d, st[, c(1, 3:5)], by = "site")
-    # temp$lambda %<>% log10()
+    temp$lambda %<>% log10()
 
     predictors <- c("mean", "sd", "cv", "skewness", "kurtosis", "lat")
     response   <- c("lambda")
@@ -88,7 +88,7 @@ for (k in 1:12){ #length(dirs)
         res[[i]] <- select_model(d, index = NULL, IsPlot = F, file = file, type = "coef",
                              optim = T, robust = F)
     }
-    temp <- select_model(dt, index = NULL, IsPlot = T, file = file, type = "coef",
+    l_temp <- select_model(dt, index = NULL, IsPlot = T, file = file, type = "coef",
                              optim = T, robust = F)
 
     d <- melt_list(res, "Id") %>% data.table()

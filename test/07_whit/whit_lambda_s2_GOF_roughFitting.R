@@ -21,8 +21,13 @@ get_RoughFitting_GOF <- function(file){
     # by <- ""
 
     all  <- d[      , as.list(GOF_extra2(y, value)), by]
-    part <- d[w == 1, as.list(GOF_extra2(y, value)), by]
-    info <- listk(all, part)
+    good <- d[w == 1, as.list(GOF_extra2(y, value)), by]
+    info <- listk(all, good) %>% melt_list("type")
+
+# browser()
+
+    perc_good <- d[, .(perc_good = sum(w == 1)/.N), by]
+    info <- merge(perc_good, info)
     info
 }
 
@@ -47,14 +52,13 @@ RoughtFitting_GOF.sbatch <- function(indir){
 # info <- melt_list(lst, "meth")
 
 # indir <- "result/gee_whittaker/valid_v3_noadjparam"
-#
-# RoughtFitting_GOF.sbatch("result/gee_whittaker/valid_v3_adjparam")
-# RoughtFitting_GOF.sbatch("result/gee_whittaker/valid_v3_noadjparam")
-#
-# RoughtFitting_GOF.sbatch("result/gee_whittaker/valid (20180910)")
-# RoughtFitting_GOF.sbatch("result/gee_whittaker/valid (20180912)")
-# RoughtFitting_GOF.sbatch("result/gee_whittaker/valid (20181024)")
-# RoughtFitting_GOF.sbatch("result/gee_whittaker/valid (20181025)")
+
+RoughtFitting_GOF.sbatch("result/gee_whittaker/valid_v3_noadjparam")
+RoughtFitting_GOF.sbatch("result/gee_whittaker/valid_v3_adjparam")
+
+RoughtFitting_GOF.sbatch("result/gee_whittaker/valid (20180910)")
+RoughtFitting_GOF.sbatch("result/gee_whittaker/valid (20180912)")
+RoughtFitting_GOF.sbatch("result/gee_whittaker/valid (20181024)")
 RoughtFitting_GOF.sbatch("result/gee_whittaker/valid (20180912) d714")
 
 # indir <- "result/valid"
