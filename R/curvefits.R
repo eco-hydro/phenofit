@@ -24,7 +24,7 @@
 #' @param QC_flag Factor (optional) returned by \code{qcFUN}, levels should be
 #' in the range of \code{c("snow", "cloud", "shadow", "aerosol", "marginal",
 #' "good")}, others will be categoried into \code{others}. \code{QC_flag} is
-#' used for visualization in \code{\link{ExtractPheno}} and
+#' used for visualization in \code{\link{PhenoExtract}} and
 #' \code{\link{plot_phenofit}}.
 #' @param minPercValid If the percentage of good and marginal quality points is
 #' less than \code{minPercValid}, curve fiting result is set to \code{NA}.

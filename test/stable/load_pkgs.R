@@ -289,7 +289,7 @@ getPheno_phenofit <- function(fit, INPUT, brks, d, file_pdf, titlestr){
     # print(head(stat))
 
     # pheno: list(p_date, p_doy)
-    p <- lapply(fit$fits, ExtractPheno)
+    p <- lapply(fit$fits, PhenoExtract)
     pheno  <- map(p, tidyFitPheno, origin = INPUT$t[1]) %>% purrr::transpose()
     fit$pheno  <- pheno
 

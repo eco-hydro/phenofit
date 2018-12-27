@@ -15,17 +15,22 @@ PhenoPlot <- function(t, y, main = "", ...){
     grid(ny = 4, nx = NA)
 }
 
-#' ExtractPheno
+#' PhenoExtract
 #'
 #' Get yearly vegetation phenological metrics of a curve fitting method
 #'
 #' @param fits Multiple \code{phenofit} object.
 #' @param TRS Threshold for \code{PhenoTrs}.
+#' 
+#' 
 #' @param IsPlot Boolean. Whether to plot figure?
-#'
+#' @param ... ignored.
 #' @return List of every year phenology metrics
 #' @export
-ExtractPheno <- function(fits, TRS = c(0.1, 0.2, 0.5, 0.6), IsPlot = FALSE){
+PhenoExtract <- function(fits, TRS = c(0.1, 0.2, 0.5, 0.6), 
+    analytical = TRUE, smoothed.spline = FALSE,
+    IsPlot = FALSE, ...)
+{
     names <- names(fits)
     pheno_list <- list()
     methods    <- c(paste0("TRS", TRS*10),"DER","GU", "ZHANG")
@@ -96,8 +101,12 @@ ExtractPheno <- function(fits, TRS = c(0.1, 0.2, 0.5, 0.6), IsPlot = FALSE){
             if (i == 1) mtext(sprintf('TRS%d', TRS_last*10))
         }
 
-        param_common  <- list(fit, IsPlot, ylim = ylim)
-        param_common2 <- list(fit, IsPlot, ylim = ylim, show.lgd = show.lgd)
+        param_common  <- list(
+            fit, 
+            analytical = analytical, 
+            smoothed.spline = smoothed.spline,
+            IsPlot, ylim = ylim)
+        param_common2 <- c(param_common, list(show.lgd = show.lgd))
 
         der   <- do.call(PhenoDeriv, param_common2);   if (i == 1 && IsPlot) mtext("DER")
         gu    <- do.call(PhenoGu, param_common)[1:4];  if (i == 1 && IsPlot) mtext("GU")
@@ -122,7 +131,7 @@ ExtractPheno <- function(fits, TRS = c(0.1, 0.2, 0.5, 0.6), IsPlot = FALSE){
 #' Phenology extraction functions
 #'
 #'
-#' @inheritParams D1.phenofit
+#' @inheritParams D
 #'
 #' @param approach to be used to calculate phenology metrics.
 #' 'White' (White et al. 1997) or 'Trs' for simple threshold.
@@ -130,13 +139,12 @@ ExtractPheno <- function(fits, TRS = c(0.1, 0.2, 0.5, 0.6), IsPlot = FALSE){
 #' @param IsPlot whether to plot?
 #' @param show.lgd whether show figure lelend?
 #' @param ... other parameters to PhenoPlot
-#' @param IsSmoothed Boolean. If false, positive derivative in spring and negative
-#' derivative will be not applied.
 #'
 #' @rdname PhenoExtractMeth
 #' @export
 PhenoTrs <- function(fit, approach = c("White", "Trs"), trs = 0.5, #, min.mean = 0.1
-    IsPlot = TRUE, IsSmoothed = T, ...) {
+    IsPlot = TRUE, ...) 
+{
     metrics <- c(sos = NA, eos = NA)
 
     t      <- fit$tout
@@ -206,10 +214,7 @@ PhenoTrs <- function(fit, approach = c("White", "Trs"), trs = 0.5, #, min.mean =
     # metrics <- c(sos = sos, eos = eos, los = los, pop = pop, mgs = mgs,
     #   rsp = NA, rau = NA, peak = peak, msp = msp, mau = mau)
     metrics <- c(sos = sos, eos = eos)#, los = los
-    # if (plot) {
-    #     if (approach == 'White') PlotPhenCycle(x, metrics=metrics, trs=trs, ...)
-    #     if (approach == 'Trs') PlotPhenCycle(ratio, metrics=metrics, trs=trs, ...)
-    # }
+ 
     if (IsPlot){
         main   <- ifelse(all(par("mar") == 0), "", sprintf("TRS%d", trs*10))
         PhenoPlot(t, values, main = main, ...)
@@ -227,11 +232,15 @@ PhenoTrs <- function(fit, approach = c("White", "Trs"), trs = 0.5, #, min.mean =
 
 #' PhenoDeriv
 #'
+#' @inheritParams D
 #' @inheritParams PhenoTrs
 #'
 #' @rdname PhenoExtractMeth
 #' @export
-PhenoDeriv <- function(fit, IsPlot = TRUE, smspline = TRUE, show.lgd = T, ...){
+PhenoDeriv <- function(fit, 
+    analytical = TRUE, smoothed.spline = FALSE,
+    IsPlot = TRUE, show.lgd = T, ...)
+{
     PhenoNames <- c("SOS", "POP", "EOS")
     metrics <- setNames(rep(NA, 3), c("sos", "pop", "eos")) # template
 
@@ -246,7 +255,7 @@ PhenoDeriv <- function(fit, IsPlot = TRUE, smspline = TRUE, show.lgd = T, ...){
     if (all(is.na(values))) return(metrics)
     if (half.season < 5 || half.season > (n - 5)) return(metrics)
 
-    der1   <- D1.phenofit(fit, smspline = smspline)
+    der1   <- D1.phenofit(fit, analytical, smoothed.spline)
     # get SOS and EOS according to first order derivative
     # fixed 20180510, ±5 to make sure sos and eos are not in the POP.
     # I_sos <- median(which.max(der1[1:(half.season - 5)]))
@@ -254,8 +263,10 @@ PhenoDeriv <- function(fit, IsPlot = TRUE, smspline = TRUE, show.lgd = T, ...){
 
     # der.sos (eos) is impossible to occur near the pop.
     nmin  <- 5
-    I_sos <- findpeaks( der1[1:(half.season - 5)]         , nups=nmin, ndowns=nmin, npeaks=1, sortstr=TRUE)$X$pos
-    I_eos <- findpeaks(-der1[(half.season+5):length(der1)], nups=nmin, ndowns=nmin, npeaks=1, sortstr=TRUE)$X$pos + half.season + 4
+    I_sos <- findpeaks( der1[1:(half.season - 5)], nups=nmin, 
+        ndowns=nmin, npeaks=1, sortstr=TRUE)$X$pos
+    I_eos <- findpeaks(-der1[(half.season+5):length(der1)], 
+        nups=nmin, ndowns=nmin, npeaks=1, sortstr=TRUE)$X$pos + half.season + 4
 
     # if half.season > length(der1), error will be occur
     sos <- t[I_sos]
@@ -302,7 +313,10 @@ PhenoDeriv <- function(fit, IsPlot = TRUE, smspline = TRUE, show.lgd = T, ...){
 #' @importFrom dplyr last
 #' @rdname PhenoExtractMeth
 #' @export
-PhenoGu <- function(fit, IsPlot = TRUE, smspline = TRUE, ...) {
+PhenoGu <- function(fit, 
+    analytical = TRUE, smoothed.spline = FALSE,
+    IsPlot = TRUE, ...) 
+{
     PhenoNames <- c("UD", "SD", "DD", "RD")
     metrics <- setNames(rep(NA, 4), c("UD", "SD", "DD", "RD"))
 
@@ -317,7 +331,7 @@ PhenoGu <- function(fit, IsPlot = TRUE, smspline = TRUE, ...) {
     if (all(is.na(values))) return(metrics)
     if (half.season < 5 || half.season > (n - 5)) return(metrics)
 
-    der1   <- D1.phenofit(fit, smspline = smspline)
+    der1   <- D1.phenofit(fit, analytical, smoothed.spline)
     # get SOS and EOS according to first order derivative
     sos.index <- median(which.max(der1[1:(half.season-5)]))
     eos.index <- median(which.min(der1[(half.season+5):length(der1)])) + half.season
@@ -406,7 +420,10 @@ PhenoGu <- function(fit, IsPlot = TRUE, smspline = TRUE, ...) {
 #' @inheritParams PhenoTrs
 #' @rdname PhenoExtractMeth
 #' @export
-PhenoKl <- function(fit, IsPlot = TRUE, show.lgd = T, ...) {
+PhenoKl <- function(fit, 
+    analytical = TRUE, smoothed.spline = FALSE,
+    IsPlot = TRUE, show.lgd = T, ...) 
+{
     PhenoNames <- c("Greenup", "Maturity", "Senescence", "Dormancy")
     metrics <- setNames(rep(NA, 4), PhenoNames)
 
@@ -422,7 +439,7 @@ PhenoKl <- function(fit, IsPlot = TRUE, show.lgd = T, ...) {
     if (all(is.na(values))) return(metrics)
     if (half.season < 5 || half.season > (n - 5)) return(metrics)
 
-    derivs <- curvature.phenofit(fit, smspline = TRUE)
+    derivs <- curvature.phenofit(fit, analytical, smoothed.spline)
     k      <- derivs$k
     # define cutoff date for spline functions
 

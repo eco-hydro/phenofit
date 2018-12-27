@@ -7,7 +7,7 @@
 tidyFitPheno(pheno, origin)
 }
 \arguments{
-\item{pheno}{Extracted phenology from \code{ExtractPheno}}
+\item{pheno}{Extracted phenology from \code{PhenoExtract}}
 
 \item{origin}{time origin, i.e. \code{INPUT$t[1]}}
 }

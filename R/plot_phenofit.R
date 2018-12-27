@@ -177,7 +177,7 @@ lgd <- make_legend()
 #'
 #' Tidy for every method with multiple years phenology data
 #'
-#' @param pheno Extracted phenology from \code{ExtractPheno}
+#' @param pheno Extracted phenology from \code{PhenoExtract}
 #' @param origin time origin, i.e. \code{INPUT$t[1]}
 #'
 #' @export

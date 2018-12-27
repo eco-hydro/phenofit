@@ -309,19 +309,19 @@ grid::grid.newpage(); grid::grid.draw(g)# plot to check the curve fitting
 
 ``` r
 # pheno: list(p_date, p_doy)
-p <- lapply(fit$fits, ExtractPheno)
+p <- lapply(fit$fits, PhenoExtract)
 pheno  <- map(p, tidyFitPheno, origin = INPUT$t[1]) %>% purrr::transpose()
 fit$pheno  <- pheno
 
 # ratio = 1.15
 # file <- "Figure5_Phenology_Extraction_temp.pdf"
 # cairo_pdf(file, 8*ratio, 6*ratio)
-# temp <- ExtractPheno(fit$fits$ELMORE[2:6], IsPlot = T)
+# temp <- PhenoExtract(fit$fits$ELMORE[2:6], IsPlot = T)
 # dev.off()
 # file.show(file)
 
 ## check the extracted phenology
-temp <- ExtractPheno(fit$fits$ELMORE[1:6], IsPlot = T, TRS = 0.5)
+temp <- PhenoExtract(fit$fits$ELMORE[1:6], IsPlot = T, TRS = 0.5)
 ```
 
 <img src="man/Figure/Extract phenology-1.svg" style="display: block; margin: auto;" />

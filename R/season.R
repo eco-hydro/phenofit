@@ -17,13 +17,13 @@
 #' @param iters How many times curve fitting is implemented.
 #' @param wmin Double, minimum weigth (i.e. weight of snow, ice and cloud).
 #' @param lambda The smoothing parameter of \code{\link{wWHIT}}. For 
-#' \code{\link{season_3y}}, if lambda is null, \code{\link{initial_lambda}}
+#' \code{\link{season_3y}}, if lambda is null, \code{\link{init_lambda}}
 #' will be used. Generally, it was set as 10000, 15, and 5 for daily, 8-day 
 #' and 16-day inputs respectively.
 #' @param nf The parameter of \code{\link{wHANTS}}, number of frequencies to be
 #' considered above the zero frequency.
-#' @param frame The parameter of \code{\link{sgfitw}}, moving window size. Suggested by
-#' TIMESAT, default frame = floor(nptperyear/7)*2 + 1.
+#' @param frame The parameter of \code{\link{wSG}}, moving window size. Suggested by
+#' TIMESAT, default \code{frame = floor(nptperyear/7)*2 + 1}.
 #' @param minpeakdistance Numberic, in the unit of points (default as 
 #' \code{nptperyear/6}). The minimum distance of two peaks. If the distance of two
 #' maximum extreme value less than \code{minpeakdistance}, only the real maximum

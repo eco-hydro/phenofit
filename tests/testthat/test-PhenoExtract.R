@@ -49,8 +49,27 @@ expect_silent({
 })
 
 
+# analytical
 expect_silent({
-    p <- lapply(fit$fits, ExtractPheno)
+    p <- lapply(fit$fits, PhenoExtract, 
+        analytical = TRUE, smoothed.spline = FALSE,
+        IsPlot = T)
+    pheno  <- map(p, tidyFitPheno, origin = INPUT$t[1]) %>% purrr::transpose()
+})
+
+# numDeriv
+expect_silent({
+    p <- lapply(fit$fits, PhenoExtract, 
+        analytical = FALSE, smoothed.spline = FALSE,
+        IsPlot = F)
+    pheno  <- map(p, tidyFitPheno, origin = INPUT$t[1]) %>% purrr::transpose()
+})
+
+# spline
+expect_silent({
+    p <- lapply(fit$fits, PhenoExtract, 
+        analytical = FALSE, smoothed.spline = TRUE,
+        IsPlot = F)
     pheno  <- map(p, tidyFitPheno, origin = INPUT$t[1]) %>% purrr::transpose()
 })
 # print(pheno)

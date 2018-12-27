@@ -8,16 +8,19 @@
 \title{Phenology extraction functions}
 \usage{
 PhenoTrs(fit, approach = c("White", "Trs"), trs = 0.5, IsPlot = TRUE,
-  IsSmoothed = T, ...)
+  ...)
 
-PhenoDeriv(fit, IsPlot = TRUE, smspline = TRUE, show.lgd = T, ...)
+PhenoDeriv(fit, analytical = TRUE, smoothed.spline = FALSE,
+  IsPlot = TRUE, show.lgd = T, ...)
 
-PhenoGu(fit, IsPlot = TRUE, smspline = TRUE, ...)
+PhenoGu(fit, analytical = TRUE, smoothed.spline = FALSE,
+  IsPlot = TRUE, ...)
 
-PhenoKl(fit, IsPlot = TRUE, show.lgd = T, ...)
+PhenoKl(fit, analytical = TRUE, smoothed.spline = FALSE,
+  IsPlot = TRUE, show.lgd = T, ...)
 }
 \arguments{
-\item{fit}{Curve fitting object returned by \code{curvefit}.}
+\item{fit}{A curve fitting object returned by \code{curvefit}.}
 
 \item{approach}{to be used to calculate phenology metrics.
 'White' (White et al. 1997) or 'Trs' for simple threshold.}
@@ -26,13 +29,12 @@ PhenoKl(fit, IsPlot = TRUE, show.lgd = T, ...)
 
 \item{IsPlot}{whether to plot?}
 
-\item{IsSmoothed}{Boolean. If false, positive derivative in spring and negative
-derivative will be not applied.}
-
 \item{...}{other parameters to PhenoPlot}
 
-\item{smspline}{If smspline = TRUE or attr(fit$fun, 'gradient') == null,
-it will use smooth.spline to get der1 and der2.}
+\item{analytical}{If true, \code{numDeriv} package \code{grad} and \code{hess}
+will be used; if false, \code{D1} and \code{D2} will be used.}
+
+\item{smoothed.spline}{Whether apply \code{smooth.spline} first?}
 
 \item{show.lgd}{whether show figure lelend?}
 }

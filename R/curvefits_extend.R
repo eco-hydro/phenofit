@@ -4,7 +4,6 @@ phenonames <- c('TRS2.SOS', 'TRS2.EOS', 'TRS5.SOS', 'TRS5.EOS', 'TRS6.SOS', 'TRS
     'GreenUp', 'Maturity', 'Senescence', 'Dormancy')
 
 
-
 #' curve fit vegetation index (VI) time-series
 #'
 #' curve fit VI using  methods
@@ -152,7 +151,7 @@ curvefits2 <- function(t, y, w, nptperyear = 46,
 
     # 4. extract phenology
     # pheno: list(p_date, p_doy)
-    p <- lapply(fit$fits, ExtractPheno)
+    p <- lapply(fit$fits, PhenoExtract)
     pheno  <- map(p, tidyFitPheno, origin = t[1]) %>% purrr::transpose()
 
     fit$INPUT   <- INPUT

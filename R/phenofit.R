@@ -23,7 +23,7 @@ statistic.phenofit <- function(fit){
     pvalue <- NA
     n      <- length(I)
 
-    if (n < 2) return(c(RMSE = NA, NSE = NA, R = R, pvalue = pvalue, n = n))    
+    if (n < 2) return(c(RMSE = NA, NSE = NA, R = R, pvalue = pvalue, n = n))
 
     tryCatch({
         cor.obj <- cor.test(Y_obs, Y_sim, use = "complete.obs")
@@ -40,130 +40,8 @@ statistic.phenofit <- function(fit){
 
 
 
-#' @rdname derivative
-#' @export
-hess.phenofit <- function(fit, tout){
-    FUN <- get(fit$fun, mode = 'function')
-    grad(function(t) grad(FUN, t, par= fit$par), tout)
-}
-
-#' DD
-#' 
-#' D1 first order derivative, D2 second order derivative.
-#' 
-#' @inheritParams grad.phenofit
-#' @param ... ignored.
-#' @rdname D
-#' @export
-D1 <- function(fit, ...) UseMethod('D1', fit)
-
-#' D2
-#' @inheritParams D1
-#' @rdname D
-#' @export
-D2 <- function(fit, ...) UseMethod('D2', fit)
-
-#' curvature
-#' @inheritParams D1
-#' @export
-curvature <- function(fit, ...) UseMethod('curvature', fit)
-
-
-#' Gradient (grad) and Hessian (hess) based on \code{numDeriv} package
-#' 
-#' @param fit Curve fitting object returned by \code{curvefit}.
-#' @param tout A vector of time steps at which the function can be predicted
-#' 
-#' @rdname derivative
-#' 
-#' @examples
-#' FUN <- doubleLog.Beck 
-#' 
-#' @export
-grad.phenofit <- function(fit, tout){
-    FUN <- get(fit$fun, mode = 'function')
-    grad(FUN, tout, par= fit$par)
-}
-
-#' @param numDeriv If true, \code{numDeriv} package \code{grad} and \code{hess} 
-#' will be used; if false, \code{D1} and \code{D2} will be used.
-#' @param smspline If smspline = TRUE or attr(fit$fun, 'gradient') == null,
-#'                 it will use smooth.spline to get der1 and der2.
-#' @param ... Other parameters are ignored.
-#' @rdname derivative
-#' 
-#' @export
-D1.phenofit <- function(fit, numDeriv = FALSE, smspline = FALSE, ...){
-    pred <- last(fit$fits)                 #zoo obj
-    t    <- fit$tout
-    par  <- fit$par
-
-    FUN <- get(fit$fun, mode = 'function')
-    D1  <- attr(FUN, 'gradient')# first order derivative, D1 was 6 times faster
-                                     # than grad, and 20 times faster then diff
-    # the derivate of curve fitting time-series
-    if (numDeriv){
-        der1 <- grad.phenofit(fit, t)
-    }else{
-        if (is.null(D1) || smspline) {
-            # numerical solution
-            spline.eq <- smooth.spline(pred, df = length(pred))
-            der1      <- predict(spline.eq, d = 1)$y
-            # der1 <- diff(pred)/diff(t)
-        } else {
-            der1 <- D1(par, t)[, 1]
-        }
-    }
-    der1[is.infinite(der1)] <- NA
-    #rule = 2, means y range out of xlim also could get a approximate value
-    if (any(is.na(der1))) der1 %<>% na.approx(rule = 2)
-    return(der1)
-}
-
-#' @rdname derivative
-#' @export
-D2.phenofit <- function(fit, numDeriv = FALSE, smspline = FALSE, ...){
-    pred <- last(fit$fits)
-    t    <- fit$tout
-    par  <- fit$par
-
-    FUN  <- get(fit$fun, mode = 'function')
-    D1   <- attr(FUN, 'gradient') # first order derivative, D1 was 6 times faster
-                                  # than grad, and 20 times faster then diff
-    D2   <- attr(FUN, 'hessian')  # second order derivative
-
-    if (numDeriv){
-        der1 <- grad.phenofit(fit, t)
-        der2 <- hess.phenofit(fit, t)
-    }else{
-        if (is.null(D2)  || smspline) {
-            spline.eq <- smooth.spline(pred, df = length(pred))
-            der1 <- predict(spline.eq, d = 1)$y
-            der2 <- predict(spline.eq, d = 2)$y
-        } else{
-            der1 <- D1(par, t)[, 1]
-            der2 <- D2(par, t)[, 1, 1]
-        }
-    }
-    ## in case for NA values
-    der1[is.infinite(der1)] <- NA
-    der2[is.infinite(der2)] <- NA
-    if (any(is.na(der1))) der1 %<>% na.approx(rule = 2)
-    if (any(is.na(der2))) der2 %<>% na.approx(rule = 2)
-
-    return(list(der1 = der1, der2 = der2))
-}
-
-#' @rdname derivative
-#' @export
-curvature.phenofit <- function(fit, numDeriv = FALSE, smspline = FALSE, ...){
-    derivs <- D2.phenofit(fit, numDeriv = numDeriv, smspline = smspline)
-    k      <- derivs$der2 / (1 + derivs$der1 ^ 2) ^ (3 / 2)
-    return(list(k = k, der1 = derivs$der1, der2 = derivs$der2))
-}
-
 #' Display phenofit object
-#' 
+#'
 #' @param x Curve fitting object returned by \code{curvefit}.
 #' @param ... ignored.
 print.phenofit <- function(x, ...){
@@ -181,7 +59,7 @@ print.phenofit <- function(x, ...){
 #'
 #' @param x Curve fitting object returned by \code{curvefit}.
 #' @param ... ignored.
-#' 
+#'
 #' @export
 plot.phenofit <- function(x, ...){
     name <- deparse(substitute(x))
