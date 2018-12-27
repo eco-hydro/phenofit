@@ -2,27 +2,27 @@
 % Please edit documentation in R/doubleLogistics.R
 \name{Logistic}
 \alias{Logistic}
-\alias{doubleLog.zhang}
+\alias{doubleLog.Zhang}
 \alias{doubleAG}
-\alias{doubleLog.beck}
-\alias{doubleLog.elmore}
-\alias{doubleLog.gu}
-\alias{doubleLog.klos}
+\alias{doubleLog.Beck}
+\alias{doubleLog.Elmore}
+\alias{doubleLog.Gu}
+\alias{doubleLog.Klos}
 \title{Double logistics functions}
 \usage{
 Logistic(par, t)
 
-doubleLog.zhang(par, t)
+doubleLog.Zhang(par, t)
 
 doubleAG(par, t)
 
-doubleLog.beck(par, t)
+doubleLog.Beck(par, t)
 
-doubleLog.elmore(par, t)
+doubleLog.Elmore(par, t)
 
-doubleLog.gu(par, t)
+doubleLog.Gu(par, t)
 
-doubleLog.klos(par, t)
+doubleLog.Klos(par, t)
 }
 \arguments{
 \item{par}{A vector of parameters}
@@ -36,12 +36,12 @@ curve fit VI time-series
    \item \code{Logistic} The traditional simplest logistic function. It can
      be only used in half growing season, i.e. vegetation green-up or senescence
      period.
-   \item \code{doubleLog.zhang} Piecewise logistics, Zhang Xiaoyang, RME, 2003.
+   \item \code{doubleLog.Zhang} Piecewise logistics, Zhang Xiaoyang, RME, 2003.
    \item \code{doubleAG} Asymmetric Gaussian.
-   \item \code{doubleLog.beck} Beck logistics.
-   \item \code{doubleLog.gu} Gu logistics.
-   \item \code{doubleLog.elmore} Elmore logistics.
-   \item \code{doubleLog.klos} Klos logistics.
+   \item \code{doubleLog.Beck} Beck logistics.
+   \item \code{doubleLog.Gu} Gu logistics.
+   \item \code{doubleLog.Elmore} Elmore logistics.
+   \item \code{doubleLog.Klos} Klos logistics.
 }
 }
 \details{

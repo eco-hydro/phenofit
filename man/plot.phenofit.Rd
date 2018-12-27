@@ -4,10 +4,12 @@
 \alias{plot.phenofit}
 \title{plot function for phenofit class}
 \usage{
-\method{plot}{phenofit}(fit)
+\method{plot}{phenofit}(x, ...)
 }
 \arguments{
-\item{fit}{Curve fitting result returned by \code{curvefit}.}
+\item{x}{Curve fitting object returned by \code{curvefit}.}
+
+\item{...}{ignored.}
 }
 \description{
 plot curve fitting VI, gradient (first order difference D1), hessian (D2),

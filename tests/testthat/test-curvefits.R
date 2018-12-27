@@ -1,4 +1,4 @@
-context("logistics")
+context("curvefits")
 
 source('helper_MOD13A1.R')
 wFUN = wTSM
@@ -13,20 +13,21 @@ wFUN = wTSM
 # #     rymin_less = 0.6, ypeak_min = ypeak_min,
 # #     max_MaxPeaksperyear =2.5, max_MinPeaksperyear = 3.5
 # # )
-# 
-brks2 <- season_3y(INPUT, south = sp$lat[1] < 0, 
+brks2 <- season_3y(INPUT,
     rFUN = wWHIT, wFUN = wFUN,
     plotdat = d, IsPlot = IsPlot, print = F, IsOnlyPlotbad = F)
 
 param <- list(
     INPUT, brks2,
-    methods = c("AG", "zhang", "beck", "elmore", 'Gu'), #,"klos",
-    debug = F, 
+    methods = c("AG", "Beck", "Elmore", "Gu", "Zhang"), #,"klos",
+    debug = F,
     wFUN = wFUN,
     nextent = 2, maxExtendMonth = 3, minExtendMonth = 1,
-    qc = as.numeric(dnew$SummaryQA), minPercValid = 0.2,
+    qc = dnew$QC_flag, minPercValid = 0.2,
     print = FALSE
 )
+
+meth <- "AG"
 
 test_curvefit <- function(meth){
     test_that(sprintf("`curvefits` with %s", meth), {
@@ -40,10 +41,10 @@ test_curvefit <- function(meth){
 }
 
 test_curvefit("AG")
-test_curvefit("zhang")
-test_curvefit("beck")
-test_curvefit("elmore")
+test_curvefit("Beck")
+test_curvefit("Elmore")
 test_curvefit("Gu")
+test_curvefit("Zhang")
 
 # ## check the curve fitting parameters
 # params <- getparam(fit)

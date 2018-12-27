@@ -1,26 +1,41 @@
 Package: phenofit
 Type: Package
-Title: phenofit
-Version: 0.1.7
-Authors@R: 
-    person("Dongdong", "Kong", role = c("aut", "cre"), email = "kongdd.sysu@gmail.com")
-Description: A remote sensing vegetation index phenology extraction package.
-License: MIT | file LICENSE
+Title: Extract Remote Sensing Vegetation Phenology 
+Version: 0.1.8
+Authors@R: c(
+    person("Dongdong", "Kong", role = c("aut", "cre"), email = "kongdd.sysu@gmail.com"),
+    person("Yongqiang", "Zhang", role = c("aut"), email = "yongqiang.zhang2014@gmail.com"),
+    person("Mingzhong", "Xiao", role = c("aut"), email = "xmingzh@mail2.sysu.edu.cn"),
+    person("Xihui", "Gu", role = c("aut"), email = "guxh@cug.edu.cn"),
+    person("Jianjian", "Cui", role = c("aut"), email = "cuijj6@mail2.sysu.edu.cn"))
+Description: 
+    The merits of 'TIMESAT' and 'phenopix' are adopted. Besides, a simple and 
+    growing season dividing method and a practical snow elimination method 
+    based on Whittaker were proposed. 7 curve fitting methods and 4 phenology 
+    extraction methods were provided. Parameters boundary are considered for 
+    every curve fitting methods according to their ecological meaning. 
+    And 'optimx' is used to select best optimization method for different 
+    curve fitting methods.
+License: GPL-2 | file LICENSE
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 6.1.0
+RoxygenNote: 6.1.1
 LinkingTo: Rcpp, RcppArmadillo
 Depends:
     R (>= 3.1)
-Imports: Rcpp, RcppArmadillo, 
+Imports: Rcpp, 
     tibble, dplyr, purrr, stringr, tidyr, ggplot2, lubridate, 
     data.table, 
+    spam, 
     grid, gridExtra, 
     magrittr, plyr, reshape2, zoo, 
     optimx, ucminf,
     numDeriv, 
-    grDevices, utils, stats
+    grDevices, utils, stats,
+    DT
 Suggests: knitr,
     rmarkdown,
     testthat
 VignetteBuilder: knitr
+URL: https://github.com/kongdd/phenofit
+BugReports: https://github.com/kongdd/phenofit/issues

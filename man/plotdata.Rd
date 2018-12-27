@@ -8,7 +8,7 @@ plotdata(INPUT, wmin = 0.2, ...)
 }
 \arguments{
 \item{INPUT}{A list object with the elements of 't', 'y', 'w', 'Tn' (option)
-and 'ylu', returned by \code{check_input}.}
+and 'ylu', returned by \code{\link{check_input}}.}
 
 \item{wmin}{Double, minimum weigth (i.e. weight of snow, ice and cloud).}
 

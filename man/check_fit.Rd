@@ -11,8 +11,14 @@ check_fit(yfit, ylu)
 
 \item{ylu}{limits of y value, [ymin, ymax]}
 }
+\value{
+yfit, the numeric vector in the range of \code{ylu}.
+}
 \description{
 Curve fitting values are constrained in the range of \code{ylu}.
 Only constrain trough value for a stable background value. But not for peak
 value.
+}
+\examples{
+check_fit(1:10, c(2, 8))
 }

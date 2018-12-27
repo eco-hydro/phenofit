@@ -1,7 +1,7 @@
 #' season
 #'
-#' First smooth VI timeseries by rought curve fitting function (rFUN), then use
-#' findpeak function to get the local maximum and local minimum values.
+#' First smooth VI timeseries by rought curve fitting function (\code{rFUN}), 
+#' then use \code{\link{findpeaks}} to get the local maximum and local minimum values.
 #' Two local minimum defined a growing season. If two local minimum(maximum)
 #' are too closed, then only the smaller(biger) is left.
 #'
@@ -9,32 +9,32 @@
 #' growing season. lambda need to set carefully.
 #'
 #' @param INPUT A list object with the elements of 't', 'y', 'w', 'Tn' (option)
-#' and 'ylu', returned by \code{check_input}.
-#' @param south Boolean. In south hemisphere, growing year is 1 July to the
-#' following year 31 June; In north hemisphere, growing year is 1 Jan to 31 Dec.
+#' and 'ylu', returned by \code{\link{check_input}}.
 #' @param rFUN Coarse curve fitting function, can be one of `wSG`, `wWHIT`
 #' and `wHANTS`.
 #' @param wFUN weights updating function, can be one of 'wTSM', 'wChen' and
 #' 'wBisquare'.
 #' @param iters How many times curve fitting is implemented.
 #' @param wmin Double, minimum weigth (i.e. weight of snow, ice and cloud).
-#' @param lambda the smoothing parameter of \code{wWHIT}. For 'season_3y', if
-#' lambda is null, \code{initial_lambda} will be used.
-#' @param nf the parameter of \code{wHANTS}, number of frequencies to be
-#' considered above the zero frequency
-#' @param frame the parameter of \code{sgfitw}, moving window size. Suggested by
+#' @param lambda The smoothing parameter of \code{\link{wWHIT}}. For 
+#' \code{\link{season_3y}}, if lambda is null, \code{\link{initial_lambda}}
+#' will be used. Generally, it was set as 10000, 15, and 5 for daily, 8-day 
+#' and 16-day inputs respectively.
+#' @param nf The parameter of \code{\link{wHANTS}}, number of frequencies to be
+#' considered above the zero frequency.
+#' @param frame The parameter of \code{\link{sgfitw}}, moving window size. Suggested by
 #' TIMESAT, default frame = floor(nptperyear/7)*2 + 1.
-#' @param minpeakdistance In the unit of points. The minimum distance
-#' (in indices) peaks have to have to be counted. If the distance of two
-#' maximum extreme value less than `minpeakdistance`, only the real maximum
+#' @param minpeakdistance Numberic, in the unit of points (default as 
+#' \code{nptperyear/6}). The minimum distance of two peaks. If the distance of two
+#' maximum extreme value less than \code{minpeakdistance}, only the real maximum
 #' value will be left.
 #' @param threshold_min Threshold is defined as the difference of peak value with
 #' trough value. There are two threshold (left and right). The minimum threshold
 #' should be greater than threshold_min.
-#' @param threshold_max Similar as `threshold_min`, The maximum threshold should
-#' be greater than `threshold_max`.
+#' @param threshold_max Similar as \code{threshold_min}, The maximum threshold should
+#' be greater than \code{threshold_max}.
 #' @param ypeak_min ypeak >= ypeak_min
-#' @param rytrough_max ytrough <= rytrough_max*A, A is the amplitude of y.
+#' @param rytrough_max \code{ytrough <= rytrough_max*A}, A is the amplitude of y.
 #' @param MaxPeaksPerYear This parameter is used to adjust lambda in iterations.
 #' If PeaksPerYear > MaxPeaksPerYear, then lambda = lambda*2.
 #' @param MaxTroughsPerYear This parameter is used to adjust lambda in iterations.
@@ -46,12 +46,18 @@
 #' @param print Whether to print progress information
 #' @param adj.param Adjust rough curve fitting function parameters automatically, 
 #' if too many or to less peak and trough values.
-#' @param ... Other parameters passed to findpeaks
-#'
+#' @param ... For \code{\link{season_3y}}, Other parameters passed to 
+#' \code{\link{season}}; For \code{\link{season}}, other parameters passed to 
+#' \code{\link{findpeaks}}.
+#' 
 #' @export
 #' @return A list object with the elements of 'fit' and 'dt'.
 #' list(dt, di)
-#' $whit
+#' 
+#' @seealso \code{\link{season_3y}}, \code{\link{findpeaks}}.
+# 
+# @examples
+# $whit
 # # A tibble: 574 x 5
 #    t              y     w iter1 iter2
 #    <date>     <dbl> <dbl> <dbl> <dbl>

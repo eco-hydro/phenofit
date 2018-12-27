@@ -19,23 +19,46 @@
 #' between different growing seasons is smoothing.
 #' @param minT Double, use night temperature Tn to define backgroud value.
 #' Tn < minT is treated as ungrowing season.
-#' @param methods Character, find curve fitting names, can be one of
-#' c("AG", "zhang", "beck", "elmore", "Gu").
-#' @param qc Factor (optional), only suit for MOD13A1. SummaryQA code for PhenoExtracr.
-#' Other dataset, just leave qc as the default.
-#' @param minPercValid If valid percentage is less than \code{minPercValid}, the
-#' fits are set to NA.
+#' @param methods Fine curve fitting methods, can be one or more of
+#' \code{c('AG', 'Beck', 'Elmore', 'Gu', 'Klos', 'Zhang')}.
+#' @param QC_flag Factor (optional) returned by \code{qcFUN}, levels should be
+#' in the range of \code{c("snow", "cloud", "shadow", "aerosol", "marginal",
+#' "good")}, others will be categoried into \code{others}. \code{QC_flag} is
+#' used for visualization in \code{\link{ExtractPheno}} and
+#' \code{\link{plot_phenofit}}.
+#' @param minPercValid If the percentage of good and marginal quality points is
+#' less than \code{minPercValid}, curve fiting result is set to \code{NA}.
 #' @param print Whether to print progress information?
 #' @param ... Other parameters will be ignore.
 #'
 #' @return fits Multiple phenofit object.
+#'
+#' @examples
+#' data("MOD13A1")
+#'
+#' dt <- tidy_MOD13.gee(MOD13A1$dt)
+#' st <- MOD13A1$st
+#'
+#' sitename <- dt$site[1]
+#' d     <- dt[site == sitename, ] # get the first site data
+#' sp    <- st[site == sitename, ] # station point
+#' # global parameter
+#' IsPlot = TRUE
+#' print  = FALSE
+#' nptperyear = 23
+#' ypeak_min  = 0.05
+#'
+#' dnew     <- add_HeadTail(d, nptperyear = nptperyear) # add one year in head and tail
+#' INPUT    <- check_input(dnew$t, dnew$y, dnew$w, nptperyear,
+#'                         maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
 #' @export
 curvefits <- function(INPUT, brks,
                       wFUN = wTSM, iters = 2, wmin = 0.2,
                       nextent = 2, maxExtendMonth = 3, minExtendMonth = 1,
                       minT = 0,
-                      methods = c('AG', 'zhang', 'beck', 'elmore', 'Gu'),
-                      qc = INPUT$w*0+1, minPercValid = 0.2,
+                      methods = c('AG', 'Beck', 'Elmore', 'Gu', 'Klos', 'Zhang'),
+                      QC_flag = NULL,
+                      minPercValid = 0.2,
                       print = TRUE, ...)
 {
     nptperyear <- INPUT$nptperyear
@@ -122,7 +145,8 @@ curvefits <- function(INPUT, brks,
                          w = wi, ylu = ylu, iters = iters,
                          methods = methods, meth = 'BFGS', wFUN = wFUN, ...)
         # add original input data here, global calculation can comment this line
-        data <- data.table(y = y0[I], t = doys[I], w = qc[I]) #INPUT$w[I]
+        
+        data <- list(y = y0[I], t = doys[I], QC_flag = QC_flag[I]) %>% as.data.table()
         for (j in seq_along(fit)) fit[[j]]$data <- data
         # x <- fit$ELMORE
         # plot(y~t, x$data, type = "b"); grid()
@@ -143,6 +167,9 @@ curvefits <- function(INPUT, brks,
                 fits = fits))
 }
 
+
+############################## END OF CURVEFITS ################################
+# HIDING FUNCTIONS
 # extend curve fitting period
 get_extentI <- function(w0, MaxExtendWidth, MinExtendWidth, I_beg, I_end, nextent = 1, wmin = 0.2){
     n <- length(w0)

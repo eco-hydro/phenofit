@@ -23,6 +23,7 @@ PhenoPlot <- function(t, y, main = "", ...){
 #' @param TRS Threshold for \code{PhenoTrs}.
 #' @param IsPlot Boolean. Whether to plot figure?
 #'
+#' @return List of every year phenology metrics
 #' @export
 ExtractPheno <- function(fits, TRS = c(0.1, 0.2, 0.5, 0.6), IsPlot = FALSE){
     names <- names(fits)
@@ -34,6 +35,7 @@ ExtractPheno <- function(fits, TRS = c(0.1, 0.2, 0.5, 0.6), IsPlot = FALSE){
         op <- par(mfrow = c(length(fits), 5),
             oma = c(1, 2, 3, 1), mar = rep(0, 4), yaxt = "n", xaxt = "n")
     ylim <- NULL
+
     for (i in seq_along(fits)){
         fit    <- fits[[i]]
         ypred  <- last(fit$fits)
@@ -53,19 +55,26 @@ ExtractPheno <- function(fits, TRS = c(0.1, 0.2, 0.5, 0.6), IsPlot = FALSE){
 
             PhenoPlot(fit$tout, ypred, ylim = ylim)
             lines(ti, yi, lwd = 1, col = "grey60")
-            # pch = 19, col = "grey60"
-            wi <- as.numeric(fit$data$w)
+            
+            QC_flag <- fit$data$QC_flag
+            # Different quality points with different color and shape.
+            if (is.null(QC_flag)){
+                points(ti, yi)
+            } else {
+                # Other levels will be ignored.
+                qc_levels <- c("good", "margin", "snow", "cloud", "aerosol", "shadow")
+                qc_colors <- c("grey60", "#00BFC4", "#F8766D", "#C77CFF", "#C77CFF", "#B79F00") %>% set_names(qc_levels)
+                qc_shapes <- c(19, 15, 4, 25, 25, 17) %>% set_names(qc_levels)
 
-            ## Just designed for MOD13A1
-            # Levels:  good  margin  snow&ice  cloud
-            labels <- c(" good", " margin", " snow&ice", " cloud")
-            colors <- c("grey60", "#00BFC4", "#F8766D", "#C77CFF")
-            pch <- c(19, 15, 4, 17)
-            for (j in 1:4){
-                ind = which(wi == j)
-                if (!is_empty(ind)) points(ti[ind], yi[ind], pch = pch[j], col = colors[j])
+                for (j in seq_along(qc_levels)){
+                    ind = which(QC_flag == j)
+                    if (!is_empty(ind)) {
+                        points(ti[ind], yi[ind], pch = qc_shapes[j], col = qc_colors[j])
+                    }
+                }
             }
-
+            
+            # show legend in the first subplot
             if (i == 1){
                 show.lgd = TRUE
                 legend('topright', c('y', "f(t)"), lty = c(1, 1), pch =c(1, NA), bty='n')
@@ -95,6 +104,7 @@ ExtractPheno <- function(fits, TRS = c(0.1, 0.2, 0.5, 0.6), IsPlot = FALSE){
         zhang <- do.call(PhenoKl, param_common2);      if (i == 1 && IsPlot) mtext("ZHANG")
         pheno_list[[i]] <- c(p_TRS, list(der, gu, zhang)) %>% set_names(methods)
     }
+
     pheno_list %<>% set_names(names)
     return(pheno_list)
 }
@@ -113,16 +123,16 @@ ExtractPheno <- function(fits, TRS = c(0.1, 0.2, 0.5, 0.6), IsPlot = FALSE){
 #'
 #'
 #' @inheritParams D1.phenofit
-#' 
-#' @param approach to be used to calculate phenology metrics. 
+#'
+#' @param approach to be used to calculate phenology metrics.
 #' 'White' (White et al. 1997) or 'Trs' for simple threshold.
 #' @param trs threshold to be used for approach "Trs", in (0, 1).
 #' @param IsPlot whether to plot?
 #' @param show.lgd whether show figure lelend?
 #' @param ... other parameters to PhenoPlot
-#' @param IsSmoothed Boolean. If false, positive derivative in spring and negative 
-#' derivative will be not applied. 
-#' 
+#' @param IsSmoothed Boolean. If false, positive derivative in spring and negative
+#' derivative will be not applied.
+#'
 #' @rdname PhenoExtractMeth
 #' @export
 PhenoTrs <- function(fit, approach = c("White", "Trs"), trs = 0.5, #, min.mean = 0.1
@@ -216,9 +226,9 @@ PhenoTrs <- function(fit, approach = c("White", "Trs"), trs = 0.5, #, min.mean =
 
 
 #' PhenoDeriv
-#' 
+#'
 #' @inheritParams PhenoTrs
-#' 
+#'
 #' @rdname PhenoExtractMeth
 #' @export
 PhenoDeriv <- function(fit, IsPlot = TRUE, smspline = TRUE, show.lgd = T, ...){
@@ -287,7 +297,7 @@ PhenoDeriv <- function(fit, IsPlot = TRUE, smspline = TRUE, show.lgd = T, ...){
 
 
 #' PhenoGu
-#' 
+#'
 #' @inheritParams PhenoTrs
 #' @importFrom dplyr last
 #' @rdname PhenoExtractMeth
@@ -392,7 +402,7 @@ PhenoGu <- function(fit, IsPlot = TRUE, smspline = TRUE, ...) {
 }
 
 #' PhenoKl
-#' 
+#'
 #' @inheritParams PhenoTrs
 #' @rdname PhenoExtractMeth
 #' @export

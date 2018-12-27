@@ -5,23 +5,40 @@
 #' (image date) column which are (\code{Date} variable).
 #' @inheritParams check_input
 #' @inheritParams season
-#' @param trs If tiny missing (nmissing < trs), than this year is include to 
-#' extract phenology.
 #' 
+#' @param trs If nmissing < trs*nptperyear (little missing), this year is 
+#' include to extract phenology; if \code{FALSE}, this year is excluded.
+#'
+#' @note \code{date} is image date; \code{t} is compositing date.
+#'
 #' @return data.table
 #' @importFrom lubridate ddays
+#'
+#' @examples
+#' data("MOD13A1")
+#' 
+#' dt <- tidy_MOD13.gee(MOD13A1$dt)
+#' st <- MOD13A1$st
+#' 
+#' sitename <- dt$site[1]
+#' d     <- dt[site == sitename, ] # get the first site data
+#' sp    <- st[site == sitename, ] # station point
+#' 
+#' nptperyear = 23
+#' dnew     <- add_HeadTail(d, nptperyear = 23) # add one year in head and tail
+#' 
 #' @export
 add_HeadTail <- function(d, south = FALSE, nptperyear, trs = 0.45){
-    # date : image date
-    # t    : compositing date
-    bandname <- intersect(c("t", "date"), colnames(d))[1]
-
     if (missing(nptperyear)){
         nptperyear <- ceiling(365/as.numeric(difftime(d[[bandname]][2], d[[bandname]][1], units = "days")))
     }
+    ntrs  <- nptperyear*trs
 
-    ntrs     <- nptperyear*trs
-    
+    # date : image date
+    # t    : compositing date
+    bandname <- intersect(c("t", "date"), colnames(d))[1]
+    dates    <- d[[bandname]]
+
     ## can coop with years not continuous now
     ntime    <- nrow(d)
 
@@ -29,10 +46,9 @@ add_HeadTail <- function(d, south = FALSE, nptperyear, trs = 0.45){
         # if only one year data, just triplicate it.
         d_tail <- d_head <- d
     } else {
-        step   <- ceiling(365/nptperyear)
-
+        # Fix South Hemisphere
         deltaT <- ddays(181)*south
-        tt <- d[[bandname]] - deltaT
+        tt     <- dates - deltaT
         date_year <- year(tt) #+ ((month(t) >= 7)-1)*South
 
         n_head <- sum(date_year == first(date_year))
@@ -54,7 +70,6 @@ add_HeadTail <- function(d, south = FALSE, nptperyear, trs = 0.45){
         # head
         d_head <- d[I_head,]
         d_tail <- d[I_tail,]
-
     }
 
     deltaT_head <- first(d[[bandname]]) - last(d_head[[bandname]]) - 1
@@ -66,8 +81,6 @@ add_HeadTail <- function(d, south = FALSE, nptperyear, trs = 0.45){
     # make sure date have no overlap
     # d_head <- d_head[t < date_beg]
     # d_tail <- d_tail[t > date_end]
-
     res <- rbind(d_head, d, d_tail)
     res # return
 }
-

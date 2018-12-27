@@ -107,21 +107,21 @@ wChen <- function(y, yfit, w, ..., wmin = 0.2){
 }
 
 # ' #@export
-#' @rdname wFUN
-wBeck <- function(y, yfit, w, ...){
-    # get optimized parameters
-    t   <- seq_along(y)
-    sos <- opt$par[3]
-    eos <- opt$par[5]
+# ' @rdname wFUN
+# wBeck <- function(y, yfit, w, ...){
+#     # get optimized parameters
+#     t   <- seq_along(y)
+#     sos <- opt$par[3]
+#     eos <- opt$par[5]
 
-    m  <- lm(c(0, 100) ~ c(sos, eos))
-    tr <- coef(m)[2] * t + coef(m)[1]
-    tr[tr < 0] <- 0
-    tr[tr > 100] <- 100
+#     m  <- lm(c(0, 100) ~ c(sos, eos))
+#     tr <- coef(m)[2] * t + coef(m)[1]
+#     tr[tr < 0] <- 0
+#     tr[tr > 100] <- 100
 
-    # estimate weights
-    res <- xpred - x
-    weights <- 1/((tr * res + 1)^2)
-    weights[res > 0 & res <= 0.01] <- 1
-    weights[res < 0] <- 4
-}
+#     # estimate weights
+#     res <- xpred - x
+#     weights <- 1/((tr * res + 1)^2)
+#     weights[res > 0 & res <= 0.01] <- 1
+#     weights[res < 0] <- 4
+# }

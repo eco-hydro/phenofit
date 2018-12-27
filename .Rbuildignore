@@ -1,3 +1,4 @@
+^CRAN-RELEASE$
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^submit\.sh$
@@ -16,3 +17,5 @@
 ^README-.*\.png$
 ^appveyor\.yml$
 ^cran-comments\.md$
+^Dockerfile$
+^update 20181028/$

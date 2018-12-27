@@ -5,7 +5,7 @@
 \title{curve fit vegetation index (VI) time-series}
 \usage{
 curvefit(y, t = index(y), tout = t, meth = "BFGS",
-  methods = c("spline", "beck", "elmore", "klos", "AG", "zhang"), ...)
+  methods = c("AG", "Beck", "Elmore", "Gu", "Klos", "Zhang"), ...)
 }
 \arguments{
 \item{y}{Vegetation time-series index, numeric vector}
@@ -16,12 +16,22 @@ curvefit(y, t = index(y), tout = t, meth = "BFGS",
 
 \item{meth}{optimization method}
 
-\item{methods}{curve fitting method names, can be one or more of 'beck', 
-'elmore', 'klos', 'AG', 'Gu', 'zhang'. Note that 'klos' has so many parameters.
-Its optimization is not stable.}
+\item{methods}{Fine curve fitting methods, can be one or more of \code{c('AG', 
+'Beck', 'Elmore', 'Gu', 'Klos', 'Zhang')}.}
 
 \item{...}{other parameters passed to curve fitting function.}
 }
+\value{
+fits
+}
 \description{
 curve fit VI using  methods
+}
+\note{
+'Klos' and 'Gu' have many parameters. It will be slow and not stable.
+}
+\seealso{
+\code{\link{FitAG}}, \code{\link{FitDL.Beck}}, 
+\code{\link{FitDL.Elmore}}, \code{\link{FitDL.Gu}}, 
+\code{\link{FitDL.Klos}}, \code{\link{FitDL.Zhang}}
 }

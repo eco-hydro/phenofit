@@ -12,9 +12,8 @@ using namespace Rcpp;
 //
 
 /**
- * Fix the situation where 3year begining point is later than previous year
- * ending point.
- *
+ * Fix troughs in \code{season_3y} whose date is later than previous year
+ * ending trough, and merge two too close troughs (less than 35 days).
  */
 // [[Rcpp::export]]
 void fix_dt(DataFrame d) {
@@ -27,10 +26,11 @@ void fix_dt(DataFrame d) {
     int n = d.nrow();
     for (int i = 0; i < n - 1; i++){
         // Rcout << i << std::endl;
-        if (date_end[i] > date_beg[i+1]){
-            // minimum value as trough
-            bool con = (val_end[i] <= val_beg[i+1]);
-            Date  newdate = con? date_end[i] : date_beg[i+1]; // get maximum date
+        int delta_days = date_end[i] - date_beg[i+1];
+        bool con = (val_end[i] <= val_beg[i+1]);     // previous end smaller ?
+
+        if (delta_days > 0 || abs(delta_days) <= 50){
+            Date  newdate = con? date_end[i] : date_beg[i+1];
             double newval = con? val_end[i] : val_beg[i+1];
 
             date_end[i]   = newdate; // + (-1);

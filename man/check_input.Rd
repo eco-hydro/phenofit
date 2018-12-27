@@ -16,6 +16,9 @@ check_input(t, y, w, nptperyear, south = FALSE, Tn = NULL,
 
 \item{nptperyear}{Integer, number of images per year}
 
+\item{south}{Boolean. In south hemisphere, growing year is 1 July to the
+following year 31 June; In north hemisphere, growing year is 1 Jan to 31 Dec.}
+
 \item{Tn}{Numeric vector, night temperature, default is null. If provided,
 Tn is used to help divide ungrowing period, and then get background value in
 ungrowing season (see details in \code{\link[phenofit]{backval}}).}
@@ -58,6 +61,27 @@ A list object returned
 \description{
 Check input data, interpolate NA values in y, remove spike values, and set
 weights for NA in y and w.
+}
+\examples{
+data("MOD13A1")
+
+dt <- tidy_MOD13.gee(MOD13A1$dt)
+st <- MOD13A1$st
+
+sitename <- dt$site[1]
+d     <- dt[site == sitename, ] # get the first site data
+sp    <- st[site == sitename, ] # station point
+# global parameter
+IsPlot = TRUE
+print  = FALSE
+nptperyear = 23
+ypeak_min  = 0.05
+
+dnew     <- add_HeadTail(d, nptperyear = nptperyear) # add one year in head and tail
+INPUT    <- check_input(dnew$t, dnew$y, dnew$w, nptperyear, 
+                        maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
+INPUT$y0 <- dnew$y   # raw time-series, for visualization
+
 }
 \seealso{
 \code{\link[phenofit]{backval}}

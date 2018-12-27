@@ -19,3 +19,6 @@ F statistic and R2 at significant level
 \description{
 Determinated correlation critical value
 }
+\examples{
+R2_critical <- R2_sign(30, NumberOfPredictor = 2, alpha = 0.05)
+}

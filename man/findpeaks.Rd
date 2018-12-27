@@ -10,6 +10,8 @@ findpeaks(x, IsDiff = TRUE, nups = 1, ndowns = nups, zero = "0",
   sortstr = FALSE, IsPlot = F)
 }
 \arguments{
+\item{x}{Numeric vector.}
+
 \item{IsDiff}{If want to find extreme values, `IsDiff` should be true; If 
 just want to find the continue negative or positive values, just set 
 `IsDiff` as false.}
@@ -45,6 +47,8 @@ just the first npeaks are returned in the order of index.}
 
 \item{sortstr}{Boolean, Should the peaks be returned sorted in decreasing oreder of 
 their maximum value?}
+
+\item{IsPlot}{Boolean.}
 }
 \description{
 Find peaks (maxima) in a time series. This function is modified from

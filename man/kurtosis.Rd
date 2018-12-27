@@ -17,8 +17,14 @@ computed.}
 before the computation proceeds.}
 
 \item{type}{an integer between 1 and 3 selecting one of the algorithms for
-computing \code{\link[e1071]{skewness}}.}
+computing skewness.}
 }
 \description{
 Inherit from package `e1071`
+}
+\examples{
+x = rnorm(100)
+coef_kurtosis <- kurtosis(x)
+coef_skewness <- skewness(x)
+
 }

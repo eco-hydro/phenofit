@@ -12,6 +12,8 @@
 #' 
 #' @return back If back value is NA, it is impossible to extract phenology here.
 #' 
+#' @note This function only works in every growing season.
+#' 
 #' @references
 #' [1]. Zhang, X., 2015. Reconstruction of a complete global time series of daily 
 #'      vegetation index trajectory from long-term AVHRR data. Remote Sens. Environ. 
@@ -92,30 +94,30 @@ ifelse2 <- function(test, yes, no){
 }
 
 
-nogrowthPolygon <- function(d, Tmin){
-    x <- d$Tn#[100:400]
-    I_ends   <- findBrks(x > Tmin, zero = "-", nups = 1)
-    I_begins <- findBrks(x < Tmin, zero = "-", nups = 1) - 1
+# nogrowthPolygon <- function(d, Tmin){
+#     x <- d$Tn#[100:400]
+#     I_ends   <- findBrks(x > Tmin, zero = "-", nups = 1)
+#     I_begins <- findBrks(x < Tmin, zero = "-", nups = 1) - 1
 
-    plot(type = "b", x); grid(); abline(a = Tmin, b = 0, col = "red")
-    points(I_ends, x[I_ends], col = "red", pch = 19)
-    points(I_begins, x[I_begins], col = "blue", pch = 19)
+#     plot(type = "b", x); grid(); abline(a = Tmin, b = 0, col = "red")
+#     points(I_ends, x[I_ends], col = "red", pch = 19)
+#     points(I_begins, x[I_begins], col = "blue", pch = 19)
 
-    nptperyear <- 23
-    polygons <- list()
-    for (i in seq_along(I_ends)){
-        i_beg <- I_ends[i]
-        i_end <- I_begins[which(I_begins > i_beg & I_begins < i_beg + nptperyear*2/3)]
+#     nptperyear <- 23
+#     polygons <- list()
+#     for (i in seq_along(I_ends)){
+#         i_beg <- I_ends[i]
+#         i_end <- I_begins[which(I_begins > i_beg & I_begins < i_beg + nptperyear*2/3)]
 
-        if (!is_empty(i_end)){
-            polygons[[i]] <- c(i_beg, -Inf, i_end, -Inf, i_end, Inf,i_beg, Inf,i_beg, -Inf) %>%
-                matrix(ncol = 2, byrow = T) %>%
-                set_colnames(c("x", "y")) %>% as.data.frame()
-        }
-    }
-    polygons %<>% set_names(seq_along(.))
-    df_polygon <- melt_list(polygons, "id")
-    df_polygon$date <- d$date[df_polygon$x]
-    return(df_polygon)
-}
+#         if (!is_empty(i_end)){
+#             polygons[[i]] <- c(i_beg, -Inf, i_end, -Inf, i_end, Inf,i_beg, Inf,i_beg, -Inf) %>%
+#                 matrix(ncol = 2, byrow = T) %>%
+#                 set_colnames(c("x", "y")) %>% as.data.frame()
+#         }
+#     }
+#     polygons %<>% set_names(seq_along(.))
+#     df_polygon <- melt_list(polygons, "id")
+#     df_polygon$date <- d$date[df_polygon$x]
+#     return(df_polygon)
+# }
 

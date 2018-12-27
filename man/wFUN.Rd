@@ -5,7 +5,6 @@
 \alias{wTSM}
 \alias{wBisquare}
 \alias{wChen}
-\alias{wBeck}
 \title{Weight updating functions}
 \usage{
 wSELF(y, yfit, w, ...)
@@ -15,8 +14,6 @@ wTSM(y, yfit, w, iter = 2, nptperyear, wfact = 0.5, ...)
 wBisquare(y, yfit, w, ..., wmin = 0.2)
 
 wChen(y, yfit, w, ..., wmin = 0.2)
-
-wBeck(y, yfit, w, ...)
 }
 \arguments{
 \item{y}{Numeric vector, vegetation index time-series}

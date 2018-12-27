@@ -5,13 +5,13 @@ wFUN =  wTSM # wBisquare #
 
 # The `maxExtendMonth` in season_3y and curvefits is different
 # lambda   <- init_lambda(INPUT$y) # lambda for whittaker
-brks2 <- season_3y(INPUT, south = sp$lat[1] < 0, 
+brks2 <- season_3y(INPUT,
     rFUN = wWHIT, wFUN = wFUN,
     plotdat = d, IsPlot = IsPlot, print = F, IsOnlyPlotbad = F)
 
 param <- list(
     INPUT, brks2,
-    methods = c("AG", "zhang", "beck", "elmore", 'Gu'), #,"klos",
+    methods = c("AG", "Zhang", "Beck", "Elmore", 'Gu'), #,"klos",
     debug = F, 
     wFUN = wFUN,
     nextent = 2, maxExtendMonth = 2, minExtendMonth = 1,
@@ -21,6 +21,12 @@ param <- list(
 
 fit  <- do.call(curvefits, param)
 
+# test plot.phenofit
+expect_silent({
+    fit$fits %>% first() %>% # 1th method
+        first() %>% plot()   # 1th year
+})
+
 fit$INPUT   <- INPUT
 fit$seasons <- brks2
 
@@ -29,8 +35,7 @@ params <- getparam(fit)
 print(str(params, 1))
 print(params$AG)
 
-## Get GOF information
-
+# Test GOF 
 expect_silent({
     suppressWarnings({
         stat  <- ldply(fit$fits, function(fits_meth){
@@ -42,3 +47,10 @@ expect_silent({
         grid::grid.newpage(); grid::grid.draw(g)    
     })
 })
+
+
+expect_silent({
+    p <- lapply(fit$fits, ExtractPheno)
+    pheno  <- map(p, tidyFitPheno, origin = INPUT$t[1]) %>% purrr::transpose()
+})
+# print(pheno)

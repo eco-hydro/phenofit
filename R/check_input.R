@@ -11,6 +11,8 @@
 #' @param y Numeric vector, vegetation index time-series
 #' @param w Numeric vector, weights of \code{y}
 #' @param nptperyear Integer, number of images per year
+#' @param south Boolean. In south hemisphere, growing year is 1 July to the
+#' following year 31 June; In north hemisphere, growing year is 1 Jan to 31 Dec.
 #' @param Tn Numeric vector, night temperature, default is null. If provided,
 #' Tn is used to help divide ungrowing period, and then get background value in
 #' ungrowing season (see details in \code{\link[phenofit]{backval}}).
@@ -45,7 +47,26 @@
 #' }
 #'
 #' @seealso \code{\link[phenofit]{backval}}
-#'
+#' @examples
+#' data("MOD13A1")
+#' 
+#' dt <- tidy_MOD13.gee(MOD13A1$dt)
+#' st <- MOD13A1$st
+#' 
+#' sitename <- dt$site[1]
+#' d     <- dt[site == sitename, ] # get the first site data
+#' sp    <- st[site == sitename, ] # station point
+#' # global parameter
+#' IsPlot = TRUE
+#' print  = FALSE
+#' nptperyear = 23
+#' ypeak_min  = 0.05
+#' 
+#' dnew     <- add_HeadTail(d, nptperyear = nptperyear) # add one year in head and tail
+#' INPUT    <- check_input(dnew$t, dnew$y, dnew$w, nptperyear, 
+#'                         maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
+#' INPUT$y0 <- dnew$y   # raw time-series, for visualization
+#' 
 #' @export
 check_input <- function(t, y, w, nptperyear, south = FALSE, Tn = NULL,
     wmin = 0.2, missval, maxgap, alpha = 0.01, ...)
@@ -55,6 +76,7 @@ check_input <- function(t, y, w, nptperyear, south = FALSE, Tn = NULL,
     }
     if (missing(maxgap)) maxgap = ceiling(nptperyear/12*1.5)
 
+    y0  <- y
     n   <- length(y)
     if (missing(w) || is.null(w)) w <- rep(1, n)
 
@@ -113,7 +135,8 @@ check_input <- function(t, y, w, nptperyear, south = FALSE, Tn = NULL,
     if (!is_empty(Tn)){
         Tn <- na.approx(Tn, maxgap = maxgap, na.rm = FALSE)
     }
-    list(t = t, y = y, w = w, Tn = Tn, ylu = ylu, nptperyear = nptperyear, south = south)#quickly return
+    list(t = t, y = y, w = w, Tn = Tn, ylu = ylu, 
+        nptperyear = nptperyear, south = south, y0 = y0)#quickly return
 }
 
 #' check_fit
@@ -124,7 +147,12 @@ check_input <- function(t, y, w, nptperyear, south = FALSE, Tn = NULL,
 #'
 #' @param yfit Numeric vector, curve fitting result
 #' @param ylu limits of y value, [ymin, ymax]
+#' 
+#' @return yfit, the numeric vector in the range of \code{ylu}.
+#' 
 #' @export
+#' @examples
+#' check_fit(1:10, c(2, 8))
 check_fit <- function(yfit, ylu){
     I_max <- yfit > ylu[2]
     I_min <- yfit < ylu[1]

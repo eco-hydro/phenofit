@@ -3,12 +3,13 @@
 #' Before using `season_3y`, INPUT should be added a year in the head and tail
 #' first by \code{add_HeadTail}.
 #' @inheritParams season
-#' @param ny_extend Integer,including previous and subsequent `ny_extend` year
-#' to divding growing season.
+#' @param IsOptim_lambda Whether to optimize Whittaker's parameter lambda by 
+#' V-curve theory?
+#' @param maxExtendMonth Previous and subsequent `maxExtendMonth` data were added
+#' for every year curve fitting.
+#' subsequent `maxExtendMonth` period.
 #' @param titlestr string for title
 #' @param IsOnlyPlotbad If true, only plot partial figures whose NSE < 0.3
-#' @param ... For 'season_3y', Other parameters passed to `season`;
-#' For `season`, other parameters passed to findpeaks.
 #' @param IsPlot.vc Whether to plot V-curve optimized time-series.
 #' 
 #' @rdname season
@@ -16,7 +17,7 @@
 #' @export
 season_3y <- function(INPUT,
     rFUN = wWHIT, wFUN = wTSM, iters = 2, wmin = 0.1,
-    Ioptim_lambda = FALSE,
+    IsOptim_lambda = FALSE,
     lambda = NULL, nf  = 3, frame = floor(INPUT$nptperyear/5)*2 + 1,
     maxExtendMonth = 12,
     ...,
@@ -44,20 +45,20 @@ season_3y <- function(INPUT,
     ypeak_min <- 0.05
     width_ylu <- nptperyear*0 # already 3y group, moving window for ylu unnecessary
 
-    debug <- FALSE
+    debug <- FALSE # IsPlot = debug
     # debug <- TRUE
     # i = 1;
     params <- list(
-            rFUN = rFUN, wFUN = wFUN, iters = iters, wmin = wmin,
-            nf  = nf, frame = frame,
-            IsPlot = debug, plotdat = plotdat, ...)#
+        rFUN = rFUN, wFUN = wFUN, iters = iters, wmin = wmin,
+        nf  = nf, frame = frame,
+        IsPlot = debug, plotdat = plotdat, ...)
 
     has_lambda = !is.null(lambda)
     brks  <- list()
     vcs   <- vector("list", nyear-2) %>% set_names(years[2:(nyear-1)])
 
-    nextent  <- ceiling(maxExtendMonth/12*nptperyear)
-    width_ylu    = nptperyear*2 # This is quite important, to make time-series continuous.
+    nextent   <- ceiling(maxExtendMonth/12*nptperyear)
+    width_ylu <- nptperyear*2 # This is quite important, to make time-series continuous.
     # If data is not continuous, `season_3y` will be error!
     # Fixed at 20180915
     for (i in 2:(nyear-1)){
@@ -93,7 +94,7 @@ season_3y <- function(INPUT,
         input <- c(input, list(ylu = ylu, nptperyear=nptperyear, south=south))
 
         if (!has_lambda) {
-            if (Ioptim_lambda){
+            if (IsOptim_lambda){
                 y <- input$y %>% rm_empty() # should be NA values now
 
                 # update 20181029, add v_curve lambda optimiazaiton in season_3y
@@ -108,7 +109,6 @@ season_3y <- function(INPUT,
             }
         }
 
-# browser()
         params_i = c(list(INPUT = input, lambda = lambda), params)
         brk    <- do.call(season, params_i)
 
@@ -140,16 +140,16 @@ season_3y <- function(INPUT,
         return(NULL)
     }
 
-    dt %<>% subset(len < 650 & len > 45) # mask too long and short gs
-    phenofit:::fix_dt(dt) # c++ address operation, fix growing season overlap
+    dt <- dt[dt$len > 45 & dt$len < 650, ] # mask too long and short gs
+    # phenofit:::fix_dt(dt) # c++ address operation, fix growing season overlap
+    fix_dt(dt) # c++ address operation, fix growing season overlap
     # after fix_dt, growing season length will become shorter
-    dt %<>% subset(len < 650 & len > 45) # mask too long and short gs
+    dt <- dt[dt$len > 45 & dt$len < 650, ] # mask too long and short gs
     brks$dt <- dt
 
     ## VISUALIZATION
     if (IsPlot) plot_season(INPUT, brks, plotdat, ylu = INPUT$ylu, IsOnlyPlotbad)
-
-    if (Ioptim_lambda) brks$optim <- vcs
+    if (IsOptim_lambda) brks$optim <- vcs
     return(brks)
 }
 
@@ -170,43 +170,3 @@ stat_season <- function(INPUT, brks){
     stat
 }
 
-#' plot_season
-#' @rdname season
-#' @export
-plot_season <- function(INPUT, brks, plotdat, ylu, IsOnlyPlotbad = FALSE){
-    stat <- stat_season(INPUT, brks)
-    stat_txt  <- stat[c("R2", "NSE", "sim.cv", "obs.cv")] %>%
-        {paste(names(.), round(., 3), sep = "=", collapse = ", ")}
-
-    # if (NSE < 0 | (cv < 0.1 & NSE < 0.1)) {}
-    # if(IsPlot && (NSE < 0 && cv < 0.2)){
-    if (IsOnlyPlotbad && stat['NSE'] < 0.3) return()
-
-    t  <- brks$whit$t
-    dt <- brks$dt
-    zs <- dplyr::select(brks$whit,dplyr::matches("ziter*"))
-    ypred <- last(zs)
-
-    # if (missing(xlim))
-    xlim <- c(first(brks$dt$beg), last(brks$dt$end))
-
-    # 7.1 PLOT CURVE FITTING TIME-SERIES
-    # need to plot outside, because y, w have been changed.
-    plotdata(plotdat)
-
-    colors <- c("red", "blue", "green")
-    iters  <- ncol(zs)
-    if (iters < 3) colors <- c("red", "green")
-
-    for (i in 1:iters){
-        lines(t, zs[[i]], col = colors[i], lwd = 2)
-    }
-
-    # 7.2 plot break points
-    points(dt$peak, dt$y_peak, pch=20, cex = 1.8, col="red")
-    points(dt$beg , dt$y_beg , pch=20, cex = 1.8, col="blue")
-    points(dt$end , dt$y_end , pch=20, cex = 1.8, col="blue")
-
-    if (!missing(ylu)) abline(h=ylu, col="red", lty=2) # show ylims
-    legend('topleft', stat_txt, adj = c(0.1, 0.8), bty='n', text.col = "red")
-}

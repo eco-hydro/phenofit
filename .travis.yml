@@ -1,27 +1,26 @@
 language: R
 cache: packages
+latex: false
+
 
 matrix:
   include:
-    - os: linux
-      dist: trusty
-      sudo: true
-    - os: osx
-  # allow_failures:
-  #   - os: osx
+    - r: release
+    - r: devel
+    # - os: osx
+    #   fortran: false
 
 warnings_are_errors: false
 
 r_packages:
   - maptools
-
-r_github_packages:
-  - r-lib/covr
+  - covr
 
 before_install:
-  - if [ "${TRAVIS_OS_NAME}" == "osx" ]; then brew install llvm; fi
-  - if [ "${TRAVIS_OS_NAME}" == "osx" ]; then export PATH="/usr/local/opt/llvm/bin:$PATH"; fi
+  - if [ "${TRAVIS_OS_NAME}" == "osx" ]; then 
+      brew install llvm;
+      export PATH="/usr/local/opt/llvm/bin:$PATH";
+    fi
   
 after_success:
   - Rscript -e 'covr::codecov()'
-  

@@ -11,6 +11,13 @@ cv_coef(x, w)
 
 \item{w}{weights of different point}
 }
+\value{
+Named numeric vector, (mean, sd, cv).
+}
 \description{
 weighted CV
+}
+\examples{
+x = rnorm(100)
+coefs <- cv_coef(x)
 }

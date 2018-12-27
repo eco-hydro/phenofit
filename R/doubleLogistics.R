@@ -6,12 +6,12 @@
 #'    \item \code{Logistic} The traditional simplest logistic function. It can
 #'      be only used in half growing season, i.e. vegetation green-up or senescence
 #'      period.
-#'    \item \code{doubleLog.zhang} Piecewise logistics, Zhang Xiaoyang, RME, 2003.
+#'    \item \code{doubleLog.Zhang} Piecewise logistics, Zhang Xiaoyang, RME, 2003.
 #'    \item \code{doubleAG} Asymmetric Gaussian.
-#'    \item \code{doubleLog.beck} Beck logistics.
-#'    \item \code{doubleLog.gu} Gu logistics.
-#'    \item \code{doubleLog.elmore} Elmore logistics.
-#'    \item \code{doubleLog.klos} Klos logistics.
+#'    \item \code{doubleLog.Beck} Beck logistics.
+#'    \item \code{doubleLog.Gu} Gu logistics.
+#'    \item \code{doubleLog.Elmore} Elmore logistics.
+#'    \item \code{doubleLog.Klos} Klos logistics.
 #' }
 #'
 #' All of those function have \code{par} and \code{formula} attributes for the
@@ -39,7 +39,7 @@ attr(Logistic, 'formula') <- expression((mx - mn)/(1 + exp(-rsp*(t - sos))) + mn
 
 #' @rdname logistics
 #' @export
-doubleLog.zhang <- function(par, t){
+doubleLog.Zhang <- function(par, t){
     t0  <- par[1]
     mn  <- par[2]
     mx  <- par[3]
@@ -61,10 +61,10 @@ doubleLog.zhang <- function(par, t){
                          1 + exp( rau*(t[t >  t0] - eos))) + mn
     return(pred)
 }
-attr(doubleLog.zhang, 'name')    <- 'doubleLog.zhang'
-attr(doubleLog.zhang, 'par')     <- c("t0", "mn", "mx", "sos", "rsp", "eos", "rau")
+attr(doubleLog.Zhang, 'name')    <- 'doubleLog.Zhang'
+attr(doubleLog.Zhang, 'par')     <- c("t0", "mn", "mx", "sos", "rsp", "eos", "rau")
 # piecewise function
-attr(doubleLog.zhang, 'formula') <- expression( (mx - mn)/(1 + exp(-rsp*(t - sos))),
+attr(doubleLog.Zhang, 'formula') <- expression( (mx - mn)/(1 + exp(-rsp*(t - sos))),
                                                 (mx - mn)/(1 + exp( rau*(t - eos))) )
 
 #' @rdname logistics
@@ -92,7 +92,7 @@ attr(doubleAG, 'formula') <- expression( mn + (mx - mn)*exp(- ((t0 - t)*rsp) ^a3
 
 #' @rdname logistics
 #' @export
-doubleLog.beck <- function(par, t) {
+doubleLog.Beck <- function(par, t) {
     mn  <- par[1]
     mx  <- par[2]
     sos <- par[3]
@@ -105,13 +105,13 @@ doubleLog.beck <- function(par, t) {
     pred <- mn + (mx - mn)*(1/(1 + exp(-rsp*(t - sos))) + 1/(1 + exp(rau*(t - eos))) - 1)
     return(pred)
 }
-attr(doubleLog.beck, 'name') <- 'doubleLog.beck'
-attr(doubleLog.beck, 'par') <- c("mn", "mx", "sos", "rsp", "eos", "rau")
-attr(doubleLog.beck, 'formula') <- expression(mn + (mx - mn)*(1/(1 + exp(-rsp*(t - sos))) + 1/(1 + exp(rau*(t - eos)))) - 1)
+attr(doubleLog.Beck, 'name') <- 'doubleLog.Beck'
+attr(doubleLog.Beck, 'par') <- c("mn", "mx", "sos", "rsp", "eos", "rau")
+attr(doubleLog.Beck, 'formula') <- expression(mn + (mx - mn)*(1/(1 + exp(-rsp*(t - sos))) + 1/(1 + exp(rau*(t - eos)))) - 1)
 
 #' @rdname logistics
 #' @export
-doubleLog.elmore <- function(par, t) {
+doubleLog.Elmore <- function(par, t) {
     mn  <- par[1]
     mx  <- par[2]
     # m3  <- par[3]
@@ -131,13 +131,13 @@ doubleLog.elmore <- function(par, t) {
     return(pred)
 }
 
-attr(doubleLog.elmore, 'name')    <- 'doubleLog.elmore'
-attr(doubleLog.elmore, 'par')     <- c("mn", "mx", "sos", "rsp", "eos", "rau", "m7")
-attr(doubleLog.elmore, 'formula') <- expression( mn + (mx - m7*t)*( 1/(1 + exp(-rsp*(t-sos))) - 1/(1 + exp(-rau*(t-eos))) ) )
+attr(doubleLog.Elmore, 'name')    <- 'doubleLog.Elmore'
+attr(doubleLog.Elmore, 'par')     <- c("mn", "mx", "sos", "rsp", "eos", "rau", "m7")
+attr(doubleLog.Elmore, 'formula') <- expression( mn + (mx - m7*t)*( 1/(1 + exp(-rsp*(t-sos))) - 1/(1 + exp(-rau*(t-eos))) ) )
 
 #' @rdname logistics
 #' @export
-doubleLog.gu <- function(par, t) {
+doubleLog.Gu <- function(par, t) {
     y0  <- par[1]
     a1  <- par[2]
     a2  <- par[3]
@@ -155,13 +155,13 @@ doubleLog.gu <- function(par, t) {
     pred <- y0 + (a1/(1 + exp(-rsp*(t - sos)))^c1) - (a2/(1 + exp(-rau*(t - eos)))^c2)
     return(pred)
 }
-attr(doubleLog.gu, 'name')    <- 'doubleLog.gu'
-attr(doubleLog.gu, 'par')     <- c('y0', 'a1', 'a2', 'sos', 'rsp', 'eos', 'rau', 'c1', 'c2')
-attr(doubleLog.gu, 'formula') <- expression(y0 + (a1/(1 + exp(-rsp*(t - sos)))^c1) - (a2/(1 + exp(-rau*(t - eos)))^c2))
+attr(doubleLog.Gu, 'name')    <- 'doubleLog.Gu'
+attr(doubleLog.Gu, 'par')     <- c('y0', 'a1', 'a2', 'sos', 'rsp', 'eos', 'rau', 'c1', 'c2')
+attr(doubleLog.Gu, 'formula') <- expression(y0 + (a1/(1 + exp(-rsp*(t - sos)))^c1) - (a2/(1 + exp(-rau*(t - eos)))^c2))
 
 #' @rdname logistics
 #' @export
-doubleLog.klos <- function(par, t) {
+doubleLog.Klos <- function(par, t) {
     a1 <- par[1]
     a2 <- par[2]
     b1 <- par[3]
@@ -179,10 +179,10 @@ doubleLog.klos <- function(par, t) {
         - 1/(1 + q2 * exp(-B2 * (t - m2)))^v2)
     return(pred)
 }
-attr(doubleLog.klos, 'name')    <- 'doubleLog.klos'
-attr(doubleLog.klos, 'par')     <- c('a1', 'a2', 'b1', 'b2', 'c', 'B1', 'B2',
+attr(doubleLog.Klos, 'name')    <- 'doubleLog.Klos'
+attr(doubleLog.Klos, 'par')     <- c('a1', 'a2', 'b1', 'b2', 'c', 'B1', 'B2',
     'm1', 'm2', 'q1', 'q2', 'v1', 'v2')
-attr(doubleLog.klos, 'formula') <- expression((a1*t + b1) + (a2*t^2 + b2*t + c) * (1/(1 + q1 * exp(-B1 * (t - m1)))^v1
+attr(doubleLog.Klos, 'formula') <- expression((a1*t + b1) + (a2*t^2 + b2*t + c) * (1/(1 + q1 * exp(-B1 * (t - m1)))^v1
         - 1/(1 + q2 * exp(-B2 * (t - m2)))^v2))
 
 .qr.solve <- function(a, b, tol = 1e-07, LAPACK = TRUE) {
@@ -216,11 +216,11 @@ attr(doubleLog.klos, 'formula') <- expression((a1*t + b1) + (a2*t^2 + b2*t + c) 
 #' @export
 f_goal <- function(
     par, y, t,
-    fun = c(doubleLog.elmore,
-           doubleLog.beck,
-           doubleLog.klos,
-           doubleLog.gu,
-           doubleLog.zhang,
+    fun = c(doubleLog.Elmore,
+           doubleLog.Beck,
+           doubleLog.Klos,
+           doubleLog.Gu,
+           doubleLog.Zhang,
            doubleAG),
     w, ylu, ...) {
     # FUN <- match.fun(fun)
@@ -259,8 +259,8 @@ f_goal <- function(
 }
 
 # attach gradient and hessian analytical function to curve fitting functions
-.dls <- lapply(c("doubleLog.beck", "doubleLog.elmore", "doubleLog.gu",
-                 "doubleLog.klos", "doubleLog.zhang", "doubleAG"),
+.dls <- lapply(c("doubleLog.Beck", "doubleLog.Elmore", "doubleLog.Gu",
+                 "doubleLog.Klos", "doubleLog.Zhang", "doubleAG"),
                function (FUN){
                  # FUN <- deparse(substitute(fun))
                  fun <- get(FUN)

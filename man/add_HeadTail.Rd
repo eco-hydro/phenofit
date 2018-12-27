@@ -15,12 +15,29 @@ following year 31 June; In north hemisphere, growing year is 1 Jan to 31 Dec.}
 
 \item{nptperyear}{Integer, number of images per year}
 
-\item{trs}{If tiny missing (nmissing < trs), than this year is include to 
-extract phenology.}
+\item{trs}{If nmissing < trs*nptperyear (little missing), this year is 
+include to extract phenology; if \code{FALSE}, this year is excluded.}
 }
 \value{
 data.table
 }
 \description{
 Add one year data in the head and tail
+}
+\note{
+\code{date} is image date; \code{t} is compositing date.
+}
+\examples{
+data("MOD13A1")
+
+dt <- tidy_MOD13.gee(MOD13A1$dt)
+st <- MOD13A1$st
+
+sitename <- dt$site[1]
+d     <- dt[site == sitename, ] # get the first site data
+sp    <- st[site == sitename, ] # station point
+
+nptperyear = 23
+dnew     <- add_HeadTail(d, nptperyear = 23) # add one year in head and tail
+
 }

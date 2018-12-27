@@ -38,17 +38,7 @@ statistic.phenofit <- function(fit){
     return(c(RMSE = RMSE, NSE = NSE, R = R, pvalue = pvalue, n = n))
 }
 
-#' Gradient (grad) and Hessian (hess) based on \code{numDeriv} package
-#' 
-#' @param fit Curve fitting result returned by \code{curvefit}.
-#' @param tout A vector of time steps at which the function can be predicted
-#' 
-#' @rdname derivative
-#' @export
-grad.phenofit <- function(fit, tout){
-    FUN <- get(fit$fun, mode = 'function')
-    grad(FUN, tout, par= fit$par)
-}
+
 
 #' @rdname derivative
 #' @export
@@ -57,29 +47,50 @@ hess.phenofit <- function(fit, tout){
     grad(function(t) grad(FUN, t, par= fit$par), tout)
 }
 
+#' DD
+#' 
+#' D1 first order derivative, D2 second order derivative.
+#' 
+#' @inheritParams grad.phenofit
+#' @param ... ignored.
+#' @rdname D
 #' @export
 D1 <- function(fit, ...) UseMethod('D1', fit)
 
+#' D2
+#' @inheritParams D1
+#' @rdname D
 #' @export
 D2 <- function(fit, ...) UseMethod('D2', fit)
 
+#' curvature
+#' @inheritParams D1
 #' @export
 curvature <- function(fit, ...) UseMethod('curvature', fit)
 
+
+#' Gradient (grad) and Hessian (hess) based on \code{numDeriv} package
+#' 
+#' @param fit Curve fitting object returned by \code{curvefit}.
+#' @param tout A vector of time steps at which the function can be predicted
+#' 
+#' @rdname derivative
+#' 
+#' @examples
+#' FUN <- doubleLog.Beck 
+#' 
 #' @export
-print.phenofit <- function(fit){
+grad.phenofit <- function(fit, tout){
     FUN <- get(fit$fun, mode = 'function')
-    cat(sprintf(" formula:\t%s\n", attr(FUN, "formula") ))
-    cat("pars:\n")
-    print(fit$par)
+    grad(FUN, tout, par= fit$par)
 }
 
-#' @rdname derivative
 #' @param numDeriv If true, \code{numDeriv} package \code{grad} and \code{hess} 
 #' will be used; if false, \code{D1} and \code{D2} will be used.
 #' @param smspline If smspline = TRUE or attr(fit$fun, 'gradient') == null,
 #'                 it will use smooth.spline to get der1 and der2.
 #' @param ... Other parameters are ignored.
+#' @rdname derivative
 #' 
 #' @export
 D1.phenofit <- function(fit, numDeriv = FALSE, smspline = FALSE, ...){
@@ -151,27 +162,41 @@ curvature.phenofit <- function(fit, numDeriv = FALSE, smspline = FALSE, ...){
     return(list(k = k, der1 = derivs$der1, der2 = derivs$der2))
 }
 
+#' Display phenofit object
+#' 
+#' @param x Curve fitting object returned by \code{curvefit}.
+#' @param ... ignored.
+print.phenofit <- function(x, ...){
+    FUN <- get(x$fun, mode = 'function')
+    cat(sprintf(" formula:\t%s\n", attr(FUN, "formula") ))
+    cat("pars:\n")
+    print(x$par)
+}
+
+
 #' plot function for phenofit class
 #'
 #' plot curve fitting VI, gradient (first order difference D1), hessian (D2),
 #' curvature (k) and the change rate of curvature(der.k)
 #'
-#' @inheritParams grad.phenofit
+#' @param x Curve fitting object returned by \code{curvefit}.
+#' @param ... ignored.
+#' 
 #' @export
-plot.phenofit <- function(fit){
-    name <- deparse(substitute(fit))
+plot.phenofit <- function(x, ...){
+    name <- deparse(substitute(x))
 
-    pred <- last(fit$fits)                 #zoo obj
-    t    <- fit$tout
+    pred <- last(x$fits)                 #zoo obj
+    t    <- x$tout
 
     pop    <- t[which.max(pred)]
-    derivs <- curvature(fit)
+    derivs <- curvature(x)
 
     # e <- environment(D1)
     # der1_diff <- c(NA, diff(pred))
     # microbenchmark::microbenchmark(
-    #     gradient <- numDeriv::grad(fit$fun,  t, par = fit$par),
-    #     der1     <- D2(fit),
+    #     gradient <- numDeriv::grad(x$fun,  t, par = x$par),
+    #     der1     <- D2(x),
     #     diff1 <- c(NA, NA, diff(diff(values)))
     # )
     # summary(der1 - gradient)
@@ -181,7 +206,7 @@ plot.phenofit <- function(fit){
 
     multi_p <- max(par()$mfrow) == 1
     op <- ifelse(multi_p, par(mfrow = c(2, 4), oma = c(0, 0, 1, 0)), par())
-    plot(fit$data$t, fit$data$y,
+    plot(x$data$t, x$data$y,
         type= "b", pch = 20, cex = 1.3, col = "grey",
         main = "curve fitting VI", xlab = "Index", ylab = "VI")
     lines(t, pred); grid()
@@ -204,10 +229,10 @@ plot.phenofit <- function(fit){
     # plot(diff(der1_diff), main = "diff2")
 
     # k <- derivs$k
-    PhenoTrs(fit, IsPlot = TRUE, trs = 0.2)
-    PhenoTrs(fit, IsPlot = TRUE, trs = 0.5)
-    metrics <- PhenoGu(fit, IsPlot = TRUE)
-    metrics <- PhenoKl(fit, IsPlot = TRUE)
+    PhenoTrs(x, IsPlot = TRUE, trs = 0.2)
+    PhenoTrs(x, IsPlot = TRUE, trs = 0.5)
+    metrics <- PhenoGu(x, IsPlot = TRUE)
+    metrics <- PhenoKl(x, IsPlot = TRUE)
 
     # show figure title
     op <- par(new = TRUE, mfrow = c(1, 1), oma = rep(0, 4), mar = rep(0, 4))

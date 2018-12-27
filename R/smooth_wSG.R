@@ -1,4 +1,3 @@
-#' @export
 sgolayS <- function(frame, d){
     outer((-(frame-1)/2):((frame-1)/2), 0:d, "^")
 }

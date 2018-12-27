@@ -13,6 +13,9 @@ ExtractPheno(fits, TRS = c(0.1, 0.2, 0.5, 0.6), IsPlot = FALSE)
 
 \item{IsPlot}{Boolean. Whether to plot figure?}
 }
+\value{
+List of every year phenology metrics
+}
 \description{
 Get yearly vegetation phenological metrics of a curve fitting method
 }

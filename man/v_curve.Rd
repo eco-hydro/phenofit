@@ -8,9 +8,11 @@ v_curve(INPUT, lambdas, d = 2, IsPlot = F, wFUN = wTSM, iters = 2)
 }
 \arguments{
 \item{INPUT}{A list object with the elements of 't', 'y', 'w', 'Tn' (option)
-and 'ylu', returned by \code{check_input}.}
+and 'ylu', returned by \code{\link{check_input}}.}
 
-\item{d}{difference order}
+\item{lambdas}{lambda vectors of Whittaker.}
+
+\item{d}{Difference order.}
 
 \item{IsPlot}{Boolean. Whether to plot figure?}
 

@@ -54,7 +54,7 @@ tidy_MOD13.gee <- function(infile, outfile, wmin = 0.2){
     df %<>% getRealDate()
 
     # Initial weights
-    df[, c("w", "QC_flag") := qc_summary(SummaryQA, wmin = 0.2)]
+    df[, c("QC_flag", "w") := qc_summary(SummaryQA, wmin = 0.2)]
     # Remap SummaryQA factor level, plot_phenofit use this variable. For other
     # remote sensing data without `SummaryQA`, need to modify `plot_phenofit`
     
