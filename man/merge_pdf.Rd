@@ -19,3 +19,8 @@ merge_pdf(outfile = "RPlot.pdf", indir = "Figure", pattern = "*.pdf",
 \description{
 rely on python pdfmerge package, \code{pip install pdfmerge}
 }
+\examples{
+\dontrun{
+merge_pdf("RPlot.pdf", indir = 'Figure', pattern = "*.pdf") 
+}
+}

@@ -1,7 +1,7 @@
 context("test-qcFUN")
 
 set.seed(100)
-QA <- runif(100, 0, 2^7) %>% as.integer()
+QA <- as.integer(runif(100, 0, 2^7))
 
 r1 <- qc_summary(QA, wmin = 0.2, wmid = 0.5, wmax = 1)
 r2 <- qc_StateQA(QA, wmin = 0.2, wmid = 0.5, wmax = 1)

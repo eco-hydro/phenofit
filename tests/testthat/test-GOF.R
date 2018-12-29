@@ -1,7 +1,6 @@
 context("GOF")
 
 test_that("GOF works", {
-
     Y_obs <- c(1, 3, 4, 2, NA, 6)
     Y_sim <- c(2, 2, 4, 1, NA, 5)
     w     <- c(1, 1, 1, 0.5, 1, 1) 

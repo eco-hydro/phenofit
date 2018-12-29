@@ -1,7 +1,7 @@
 context("Phenology Extraction")
 
 source('helper_MOD13A1.R')
-wFUN =  wTSM # wBisquare #
+wFUN = wTSM # wBisquare #
 
 # The `maxExtendMonth` in season_3y and curvefits is different
 # lambda   <- init_lambda(INPUT$y) # lambda for whittaker

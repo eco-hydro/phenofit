@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 phenofit
---------
+========
 
 [![Travis Build Status](https://travis-ci.org/kongdd/phenofit.svg?branch=master)](https://travis-ci.org/kongdd/phenofit) [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/kongdd/phenofit?branch=master&svg=true)](https://ci.appveyor.com/project/kongdd/phenofit) [![codecov](https://codecov.io/gh/kongdd/phenofit/branch/master/graph/badge.svg)](https://codecov.io/gh/kongdd/phenofit)
 
@@ -14,8 +14,11 @@ A state-of-the-art **remote sensing vegetation phenology** extraction package: `
 -   We add parameters boundary for every curve fitting methods according to their ecological meaning.
 -   `optimx` is used to select best optimization method for different curve fitting methods.
 
+![title](man/Figure/Figure1_phenofit_flowchart.svg) 
+*<u>Figure 1. The flowchart of phenology extraction in `phenofit`.</u>*
+
 Installation
-------------
+============
 
 You can install phenofit from github with:
 
@@ -32,10 +35,11 @@ shiny::runGitHub("phenofit", "kongdd", subdir = "inst/shiny/phenofit")
 shiny::runApp(system.file("shiny/phenofit", package = "phenofit"))
 ```
 
-![](man/Figure/phenofit_shiny.png)
+![](man/Figure/phenofit_shiny.png) 
+*<u>Figure 2. Shiny interface of `phenofit`.</u>*
 
 R code Example
---------------
+==============
 
 Here, we illustrate how to use `phenofit` to extract vegetation phenology from MOD13A1 in the sampled points. Regional analysis also can be conducted in the similar way.
 
@@ -142,7 +146,7 @@ d$Tn %<>% zoo::na.approx(maxgap = 4)
 plot(d$Tn, type = "l"); abline(a = 5, b = 0, col = "red")
 ```
 
-2.1 Check input data
+2.2 Check input data
 --------------------
 
 ``` r
@@ -154,7 +158,7 @@ INPUT <- check_input(dnew$t, dnew$y, dnew$w,
 INPUT$y0 <- dnew$y 
 ```
 
-2.2 Divide growing seasons
+2.3 Divide growing seasons
 --------------------------
 
 Simply treating calendar year as a complete growing season will induce a considerable error for phenology extraction. A simple growing season dividing method was proposed in `phenofit`.
@@ -201,7 +205,7 @@ brks2 <- season_3y(INPUT,
 
 <img src="man/Figure/divide growing season-1.svg" style="display: block; margin: auto;" />
 
-2.3 Curve fitting
+2.4 Curve fitting
 -----------------
 
 ``` r
@@ -304,12 +308,12 @@ grid::grid.newpage(); grid::grid.draw(g)# plot to check the curve fitting
 
 <img src="man/Figure/curve fitting-1.svg" style="display: block; margin: auto;" />
 
-2.4 Extract phenology.
-----------------------
+2.5 Extract phenology
+---------------------
 
 ``` r
 # pheno: list(p_date, p_doy)
-p <- lapply(fit$fits, PhenoExtract)
+p <- lapply(fit$fits, PhenoExtract, IsPlot = F)
 pheno  <- map(p, tidyFitPheno, origin = INPUT$t[1]) %>% purrr::transpose()
 fit$pheno  <- pheno
 

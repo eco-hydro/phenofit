@@ -25,7 +25,7 @@
 #' 
 #' @examples
 #' set.seed(100)
-#' QA <- runif(100, 0, 2^7) %>% as.integer()
+#' QA <- as.integer(runif(100, 0, 2^7))
 #' 
 #' r1 <- qc_summary(QA, wmin = 0.2, wmid = 0.5, wmax = 1)
 #' r2 <- qc_StateQA(QA, wmin = 0.2, wmid = 0.5, wmax = 1)
@@ -101,8 +101,8 @@ qc_StateQA <- function(QA, wmin = 0.2, wmid = 0.5, wmax = 1){
     list(QC_flag = QC_flag, w = w) # quickly return
 }
 
-#' @export
 #' @rdname qcFUN
+#' @export
 qc_5l <- function(QA, wmin = 0.2, wmid = 0.5, wmax = 1){
     # bit5-7, five-level confidence score
     # QA <- bitwShiftR(bitwAnd(QA, 224), 5) #1110 0000=224L
@@ -116,6 +116,7 @@ qc_5l <- function(QA, wmin = 0.2, wmid = 0.5, wmax = 1){
 }
 
 #' @rdname qcFUN
+#' @export
 qc_NDVIv4 <- function(QA, wmin = 0.2, wmid = 0.5, wmax = 1){
     # bit1-2: cloudy, cloud shadow
     QA <- bitwShiftR(bitwAnd(QA, 7), 1) 

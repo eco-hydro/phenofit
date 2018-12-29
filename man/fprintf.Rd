@@ -27,3 +27,9 @@ Print sprintf result into console, just like C style fprintf function
 
 print the running ID in the console
 }
+\examples{
+cat(fprintf("\%s\\n", "Hello phenofit!"))
+for (i in 1:10){
+    runningId(i, prefix = "phenofit")
+}
+}

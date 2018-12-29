@@ -14,3 +14,6 @@ obj.size(obj, unit = "Mb")
 \description{
 Get object size in \code{unit}
 }
+\examples{
+obj.size(1:100)
+}

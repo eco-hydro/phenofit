@@ -2,6 +2,9 @@
 #' Print sprintf result into console, just like C style fprintf function
 #' @param fmt a character vector of format strings, each of up to 8192 bytes.
 #' @param ... other parameters will be passed to \code{sprintf}
+#' 
+#' @examples
+#' cat(fprintf("%s\n", "Hello phenofit!"))
 #' @export
 fprintf <- function(fmt, ...) cat(sprintf(fmt, ...))
 
@@ -11,6 +14,10 @@ fprintf <- function(fmt, ...) cat(sprintf(fmt, ...))
 #' @param step how long of print step.
 #' @param prefix prefix string
 #' 
+#' @examples
+#' for (i in 1:10){
+#'     runningId(i, prefix = "phenofit")
+#' }
 #' @rdname fprintf
 #' @export
 runningId <- function(i, step = 1, prefix = "") {
@@ -40,63 +47,6 @@ retry <- function(expr, maxTimes = 3){
     return(out)
 }
 
-#' melt_list
-#' 
-#' @param list Data set to melt
-#' @param var.name list names convert into var.name
-#' @param na.rm Should NA values be removed from the data set? 
-#' This will convert explicit missings to implicit missings.
-#' @param ... other parameters to melt.
-#' 
-#' @importFrom reshape2 melt
-#' @export
-melt_list <- function(list, var.name, na.rm = TRUE, ...){
-    if (is.data.table(list[[1]])){
-        names <- names(list)
-        for (i in seq_along(list)){
-            x <- list[[i]]
-            eval(parse(text = sprintf("x$%s <- names[i]", var.name)))
-            list[[i]] <- x
-        }
-        res <- do.call(rbind, list)#return
-    } else{
-        id.vars <- colnames(list[[1]])
-        res <- reshape2::melt(list, ..., id.vars = id.vars, na.rm = na.rm)
-        colnames(res) <- c(id.vars, var.name)
-    }
-    return(res)
-}
-# melt_list <- function(data, var.name, ..., na.rm = FALSE, value.name = "value") {
-#   id.vars <- colnames(data[[1]])
-#   res <- melt(data, ..., id.vars = id.vars, na.rm = na.rm, value.name = value.name)
-#   colnames(res) <- c(id.vars, var.name)
-#   return(res)
-# }
-
-#' listk
-#' @param ... objects, possibly named.
-#' @export
-listk <- function(...){
-  # get variable names from input expressions
-  cols <- as.list(substitute(list(...)))[-1]
-  vars <- names(cols)
-  Id_noname <- if (is.null(vars)) seq_along(cols) else which(vars == "")
-
-  if (length(Id_noname) > 0)
-    vars[Id_noname] <- sapply(cols[Id_noname], deparse)
-  # ifelse(is.null(vars), Id_noname <- seq_along(cols), Id_noname <- which(vars == ""))
-  x <- setNames(list(...), vars)
-  return(x)
-}
-
-#' @param x A list object, with data.frame of element
-#' @rdname listk
-#' @export
-list.cbind <- function(x) do.call(cbind.data.frame, x) %>% set_colnames(names(x))
-
-#' @rdname listk
-#' @export
-list.rbind <- function(x) do.call(rbind.data.frame, x) %>% set_rownames(names(x))#%>% set_rownames(names(x))
 
 #' Add n-day flag
 #' 
@@ -126,31 +76,6 @@ add_dn <- function(d, days = 8){
     return(d)
 }
 
-#' reorder_name
-#' 
-#' @param headvars headvars will be in the head columns.
-#' @param tailvars tailvars will be in the tail columns.
-#' 
-#' @rdname tools
-#' @export
-reorder_name <- function(
-    d,
-    headvars = c("site", "date", "year", "doy", "d8", "d16"),
-    tailvars = "")
-{
-    headvars %<>% intersect(colnames(d))
-    tailvars %<>% intersect(colnames(d))
-    varnames <- c(headvars, setdiff(colnames(d), union(headvars, tailvars)), tailvars)
-    if (is.list(d)) {
-        d[varnames]
-    } else if (is.data.table(d)){
-        # d[, ..varnames]
-        d[, varnames, with = F] #return
-    }else{
-        d[, varnames]
-    }
-}
-
 #' rm_empty
 #' @param x A vector or list
 #' 
@@ -169,6 +94,9 @@ rm_empty <- function(x){
 #' @param d A data.frame vector, or list
 #' @param pattern string used to match \code{names(d)}
 #' 
+#' @examples
+#' df <- data.frame(year = 2010, day = 1:3, month = 1, site = "A")
+#' contain(df, "year|month|day")
 #' @rdname tools
 #' @export
 contain <- function(d, pattern = "NDVI|EVI") {
@@ -183,6 +111,11 @@ contain <- function(d, pattern = "NDVI|EVI") {
 #' @param indir Directory to search pdfs
 #' @param pattern string used to match pdf filename
 #' @param del Booolean. If true, after merge, original pdf files will be delete.
+#' 
+#' @examples
+#' \dontrun{
+#' merge_pdf("RPlot.pdf", indir = 'Figure', pattern = "*.pdf") 
+#' }
 #' @export
 merge_pdf <- function(outfile = "RPlot.pdf", indir = 'Figure', pattern = "*.pdf", del = FALSE){
     # "Y:/R/phenofit/Figs/"
@@ -200,6 +133,10 @@ merge_pdf <- function(outfile = "RPlot.pdf", indir = 'Figure', pattern = "*.pdf"
 #' Get object size in \code{unit}
 #' @param obj Object
 #' @param unit "Kb", "Mb" or "Gb"
+#' 
+#' @examples
+#' obj.size(1:100)
+#' @export
 obj.size <- function(obj, unit = "Mb"){
     cat(format(object.size(obj), unit), "\n")
 }

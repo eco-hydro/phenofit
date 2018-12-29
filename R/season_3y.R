@@ -123,7 +123,7 @@ season_3y <- function(INPUT,
                 y <- input$y %>% rm_empty() # should be NA values now
 
                 # update 20181029, add v_curve lambda optimiazaiton in season_3y
-                vc <- v_curve(input, lambdas = seq(-1, 2, by = 0.005), d = 2,
+                vc <- v_curve(input, lg_lambdas = seq(-1, 2, by = 0.005), d = 2,
                                   wFUN = wFUN, iters = iters,
                         IsPlot = IsPlot.vc)
                
