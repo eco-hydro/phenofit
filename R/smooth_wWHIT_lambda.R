@@ -66,9 +66,9 @@ v_point = function(y, w = 0 * y + 1, lambda = 100, d = 2) {
 #' # INPUT$y0 <- dnew$y   # raw time-series, for visualization
 #' 
 #' lg_lambdas <- seq(0, 3, 0.1)
-#' r <- v_curve(INPUT, lg_lambdas, d = 2, IsPlot = T)
+#' r <- v_curve(INPUT, lg_lambdas, d = 2, IsPlot = TRUE)
 #' @export
-v_curve = function(INPUT, lg_lambdas, d = 2, IsPlot = F,
+v_curve = function(INPUT, lg_lambdas, d = 2, IsPlot = FALSE,
     wFUN = wTSM, iters=2)
 {
     # Compute the V-cure

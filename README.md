@@ -14,7 +14,7 @@ A state-of-the-art **remote sensing vegetation phenology** extraction package: `
 -   We add parameters boundary for every curve fitting methods according to their ecological meaning.
 -   `optimx` is used to select best optimization method for different curve fitting methods.
 
-![title](man/Figure/Figure1_phenofit_flowchart.svg) 
+![title](man/Figure/Figure1_phenofit_flowchart.svg)   
 *<u>Figure 1. The flowchart of phenology extraction in `phenofit`.</u>*
 
 Installation

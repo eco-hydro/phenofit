@@ -48,7 +48,7 @@ shiny::runGitHub("phenofit", "kongdd", subdir = "inst/shiny/phenofit")
 shiny::runApp(system.file("shiny/phenofit", package = "phenofit"))
 ```
 
-![](man/Figure/phenofit_shiny.png)
+![](man/Figure/phenofit_shiny.png)   
 *<u>Figure 2. Shiny interface of `phenofit`.</u>*
 
 # R code Example

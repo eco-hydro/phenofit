@@ -4,7 +4,7 @@
 \alias{v_curve}
 \title{v_curve}
 \usage{
-v_curve(INPUT, lg_lambdas, d = 2, IsPlot = F, wFUN = wTSM,
+v_curve(INPUT, lg_lambdas, d = 2, IsPlot = FALSE, wFUN = wTSM,
   iters = 2)
 }
 \arguments{
@@ -46,5 +46,5 @@ INPUT    <- check_input(dnew$t, dnew$y, dnew$w, nptperyear,
 # INPUT$y0 <- dnew$y   # raw time-series, for visualization
 
 lg_lambdas <- seq(0, 3, 0.1)
-r <- v_curve(INPUT, lg_lambdas, d = 2, IsPlot = T)
+r <- v_curve(INPUT, lg_lambdas, d = 2, IsPlot = TRUE)
 }
