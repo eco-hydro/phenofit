@@ -115,7 +115,7 @@ optim_lambda <- function(sitename, df, deltaT, extend = T,
             cairo_pdf(file, 10, 4)
             par(mar = c(2.5, 2.5, 1, 0.2),
                 mgp = c(1.3, 0.6, 0), oma = c(0, 0, 0.5, 0))
-            plotdata(d, nptperyear)
+            plot_input(d, nptperyear)
             lines(ziter1~t, df_sm, col = "blue", lwd = 1.2)
             lines(ziter2~t, df_sm, col = "red", lwd = 1.2)
             title(titlestr)

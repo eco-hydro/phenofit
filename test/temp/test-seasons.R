@@ -44,7 +44,7 @@ brks  <- season(INPUT, lambda=15, nptperyear, iters = 3, wFUN = wTSM, IsPlot = T
 
 yfits <- whitsmw(INPUT$y, INPUT$w, nptperyear, INPUT$ylu, wFUN, iters = 3, lambda = 2000)
 
-plotdata(INPUT, nptperyear)
+plot_input(INPUT, nptperyear)
 colors <- c("red", "blue", "green")
 for (i in 1:(ncol(yfits) - 1)){
     lines(INPUT$t, yfits[, i+1, drop = T], col = colors[i])

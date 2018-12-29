@@ -15,6 +15,7 @@
 #' @importFrom lubridate ddays
 #'
 #' @examples
+#' library(phenofit)
 #' data("MOD13A1")
 #' 
 #' dt <- tidy_MOD13.gee(MOD13A1$dt)
@@ -25,7 +26,7 @@
 #' sp    <- st[site == sitename, ] # station point
 #' 
 #' nptperyear = 23
-#' dnew     <- add_HeadTail(d, nptperyear = 23) # add one year in head and tail
+#' dnew     <- add_HeadTail(d, nptperyear = nptperyear) # add one year in head and tail
 #' 
 #' @export
 add_HeadTail <- function(d, south = FALSE, nptperyear, trs = 0.45){

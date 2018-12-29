@@ -318,7 +318,7 @@ get_phenofit_GPPobs <- function(sitename,
     brks2 <- brks_lst[[i]]
 
     ## 1. prepare inputs
-    d   <- df[site == sitename, .(t = date, GPP_DT, GPP_NT, w = 1)] #%T>% plotdata(365)
+    d   <- df[site == sitename, .(t = date, GPP_DT, GPP_NT, w = 1)] #%T>% plot_input(365)
     d$y <- rowMeans(d[, .(GPP_DT, GPP_NT)], na.rm = T)
     d[y < 0, y := 0] # for GPP_NT
 

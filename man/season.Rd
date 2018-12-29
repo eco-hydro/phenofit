@@ -25,31 +25,32 @@ season_3y(INPUT, rFUN = wWHIT, wFUN = wTSM, iters = 2, wmin = 0.1,
 stat_season(INPUT, brks)
 }
 \arguments{
-\item{INPUT}{A list object with the elements of 't', 'y', 'w', 'Tn' (option)
-and 'ylu', returned by \code{\link{check_input}}.}
+\item{INPUT}{A list object with the elements of \code{t}, \code{y}, \code{w}, 
+\code{Tn} (optional) and \code{ylu}, returned by \code{\link{check_input}}.}
 
 \item{brks}{A list object returned by \code{season_3y}.}
 
-\item{plotdat}{A list or data.table, with 't', 'y' and 'w'. Only if
-IsPlot=true, plotdata will be used to plot. Known that y and w in \code{INPUT}
-have been changed, we suggest using the original data.table.}
+\item{plotdat}{A list or data.table, with \code{t}, \code{y} and \code{w}. 
+Only if \code{IsPlot=TRUE}, \code{\link{plot_input}} will be used to plot. 
+Known that y and w in \code{INPUT} have been changed, we suggest using the 
+original data.table.}
 
 \item{ylu}{limits of y value, [ymin, ymax]}
 
 \item{IsOnlyPlotbad}{If true, only plot partial figures whose NSE < 0.3}
 
-\item{rFUN}{Coarse curve fitting function, can be one of `wSG`, `wWHIT`
-and `wHANTS`.}
+\item{rFUN}{Rough curve fitting function, can be one of \code{\link{wSG}}, 
+\code{\link{wWHIT}} and \code{\link{wHANTS}}.}
 
-\item{wFUN}{weights updating function, can be one of 'wTSM', 'wChen' and
-'wBisquare'.}
+\item{wFUN}{weights updating function, can be one of \code{\link{wTSM}}, 
+\code{\link{wChen}}, \code{\link{wBisquare}} and \code{\link{wSELF}}.}
 
 \item{iters}{How many times curve fitting is implemented.}
 
 \item{wmin}{Double, minimum weigth (i.e. weight of snow, ice and cloud).}
 
 \item{lambda}{The smoothing parameter of \code{\link{wWHIT}}. For 
-\code{\link{season_3y}}, if lambda is null, \code{\link{init_lambda}}
+\code{\link{season_3y}}, if lambda is \code{NULL}, \code{\link{init_lambda}}
 will be used. Generally, it was set as 10000, 15, and 5 for daily, 8-day 
 and 16-day inputs respectively.}
 
@@ -121,6 +122,31 @@ first by \code{add_HeadTail}.
 \details{
 Then according to season pos, based to local maximum position divide yearly
 growing season. lambda need to set carefully.
+}
+\examples{
+library(phenofit)
+data("MOD13A1")
+
+dt <- tidy_MOD13.gee(MOD13A1$dt)
+st <- MOD13A1$st
+
+sitename <- dt$site[1]
+d     <- dt[site == sitename, ] # get the first site data
+sp    <- st[site == sitename, ] # station point
+# global parameter
+IsPlot = TRUE
+print  = FALSE
+nptperyear = 23
+ypeak_min  = 0.05
+wFUN = wTSM
+
+dnew     <- add_HeadTail(d, nptperyear = nptperyear) # add one year in head and tail
+INPUT    <- check_input(dnew$t, dnew$y, dnew$w, nptperyear,
+                        maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
+
+brks2 <- season_3y(INPUT,
+    rFUN = wWHIT, wFUN = wFUN,
+    plotdat = d, IsPlot = IsPlot, print = FALSE, IsOnlyPlotbad = FALSE)
 }
 \seealso{
 \code{\link{season_3y}}, \code{\link{findpeaks}}.

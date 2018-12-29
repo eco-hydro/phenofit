@@ -18,7 +18,11 @@
 #         pred = xpred.out, par = NULL, fun = NULL), class = "phenofit")
 # }
 
-#' Fitting double logistics, asymmetric gaussian functions
+#' @name FitDL
+#' @title Fine curve fitting functions.
+#' 
+#' @description Fine curve fitting functions, e.g. double logistics, Asymmetric 
+#' Gaussian. They are used to fit vegetation time-series in every growing season.
 #'
 #' @param y input vegetation index time-series.
 #' @param t the corresponding doy(day of year) of y.
@@ -35,13 +39,17 @@
 #'      2006. Improved monitoring of vegetation dynamics at very high latitudes:
 #'      A new method using MODIS NDVI. Remote Sens. Environ.
 #'      https://doi.org/10.1016/j.rse.2005.10.021.
+NULL
+
 #' @rdname FitDL
 #' @export
-FitDL.Zhang <- function(y, t = index(y), tout = t, optimFUN = I_optimx,
-                        method = 'nlm', w, ...){
+FitDL.Zhang <- function(y, t = index(y), tout = t, 
+    optimFUN = I_optimx, method = 'nlm', w, ...)
+{
+    if (missing(w)) w <- rep(1, length(y))
     e <- init_param(y, t, w)
 
-    FUN    <- "doubleLog.Zhang"
+    sFUN    <- "doubleLog.Zhang"
     prior  <- with(e, rbind(
         c(doy.mx   , mn, mx, doy[1]   , k  , doy[2]   , k  ),
         c(doy.mx   , mn, mx, doy[1]+t1, k*2, doy[2]-t1, k*2),
@@ -55,17 +63,19 @@ FitDL.Zhang <- function(y, t = index(y), tout = t, optimFUN = I_optimx,
     # lower[["r"]] %>% multiply_by(1/3)
     # upper[["r"]] %>% multiply_by(3)
     # browser()
-    optim_pheno(prior, FUN, y, t, tout, optimFUN, method, w, lower = lower, upper = upper, ...)#quick return
+    optim_pheno(prior, sFUN, y, t, tout, optimFUN, method, w, lower = lower, upper = upper, ...)
 }
 
 #' @rdname FitDL
 #' @export
-FitAG <- function(y, t = index(y), tout = t, optimFUN = I_optimx,
-    method = 'nlminb', w, ...){
+FitAG <- function(y, t = index(y), tout = t, 
+    optimFUN = I_optimx, method = 'nlminb', w, ...)
+{
+    if (missing(w)) w <- rep(1, length(y))
     e <- init_param(y, t, w)
     # print(ls.str(envir = e))
 
-    FUN <- "doubleAG"
+    sFUN <- "doubleAG"
     prior <- with(e, rbind(
         c(doy.mx, mn, mx, 1/half    , 2, 1/half, 2),
         # c(doy.mx, mn, mx, 0.2*half, 1  , 0.2*half, 1),
@@ -75,16 +85,18 @@ FitAG <- function(y, t = index(y), tout = t, optimFUN = I_optimx,
     lower  <- with(e$lims, c(t0[1], mn[1], mx[1], 1/(1.4*e$half), 2, 1/(1.4*e$half), 2))
     upper  <- with(e$lims, c(t0[2], mn[2], mx[2], 1/(0.1*e$half), 6, 1/(0.1*e$half), 6))
 
-    optim_pheno(prior, FUN, y, t, tout, optimFUN, method, w, lower = lower, upper = upper, ...)#quick return
+    optim_pheno(prior, sFUN, y, t, tout, optimFUN, method, w, lower = lower, upper = upper, ...)
 }
 
 #' @rdname FitDL
 #' @export
-FitDL.Beck <- function(y, t = index(y), tout = t, optimFUN = I_optimx,
-    method = 'nlminb', w, ...) {
+FitDL.Beck <- function(y, t = index(y), tout = t, 
+    optimFUN = I_optimx, method = 'nlminb', w, ...)
+{
+    if (missing(w)) w <- rep(1, length(y))
     e <- init_param(y, t, w)
 
-    FUN   <- "doubleLog.Beck"
+    sFUN   <- "doubleLog.Beck"
     prior <- with(e, rbind(
         c(mn, mx, doy[1]   , k  , doy[2]   , k  ),
         c(mn, mx, doy[1]+t1, k*2, doy[2]-t2, k*2)))
@@ -93,7 +105,7 @@ FitDL.Beck <- function(y, t = index(y), tout = t, optimFUN = I_optimx,
     lower  <- sapply(param_lims, `[`, 1)
     upper  <- sapply(param_lims, `[`, 2)
 
-    optim_pheno(prior, FUN, y, t, tout, optimFUN, method, w, lower = lower, upper = upper, ...)#return
+    optim_pheno(prior, sFUN, y, t, tout, optimFUN, method, w, lower = lower, upper = upper, ...)
 }
 # mn + (mx - mn)*(1/(1 + exp(-rsp*(t - sos))) + 1/(1 + exp(rau*(t - eos))))
 # attr(doubleLog.Beck, 'par') <- c("mn", "mx", "sos", "rsp", "eos", "rau")
@@ -106,12 +118,13 @@ FitDL.Beck <- function(y, t = index(y), tout = t, optimFUN = I_optimx,
 #'      https://doi.org/10.1111/j.1365-2486.2011.02521.x. \cr
 #' @rdname FitDL
 #' @export
-FitDL.Elmore <- function(y, t = index(y), tout = t, optimFUN = I_optimx,
-    method = 'nlminb', w, ...) {
+FitDL.Elmore <- function(y, t = index(y), tout = t, 
+    optimFUN = I_optimx, method = 'nlminb', w, ...) 
+{
     e <- init_param(y, t, w)
 
     # doy_q  <- quantile(t, c(0.1, 0.25, 0.5, 0.75, 0.9), na.rm = TRUE)
-    FUN   <- "doubleLog.Elmore"
+    sFUN   <- "doubleLog.Elmore"
     prior <- with(e, rbind(
         c(mn, mx - mn, doy[1]+t1, k*2.5  , doy[2]-t2, k*2.5  , 0.002),
         c(mn, mx - mn, doy[1]   , k*1.25 , doy[2]   , k*1.25 , 0.002),
@@ -122,7 +135,7 @@ FitDL.Elmore <- function(y, t = index(y), tout = t, optimFUN = I_optimx,
     lower  <- c(sapply(param_lims, `[`, 1), 0  )
     upper  <- c(sapply(param_lims, `[`, 2), Inf)
 
-    optim_pheno(prior, FUN, y, t, tout, optimFUN, method, w, lower = lower, upper = upper, ...)#return
+    optim_pheno(prior, sFUN, y, t, tout, optimFUN, method, w, lower = lower, upper = upper, ...)
 }
 
 # c(mn, mx - mn, doy[2], half*0.1, doy[4], half*0.1, 0.002),
@@ -146,8 +159,10 @@ FitDL.Elmore <- function(y, t = index(y), tout = t, optimFUN = I_optimx,
 #'
 #' @rdname FitDL
 #' @export
-FitDL.Gu <- function(y, t = index(y), tout = t, optimFUN = I_optimx,
-    method = "nlminb", w, ...) {
+FitDL.Gu <- function(y, t = index(y), tout = t, 
+    optimFUN = I_optimx, method = "nlminb", w, ...)
+{
+    if (missing(w)) w <- rep(1, length(y))
     e <- init_param(y, t, w)
 
     a  <- e$ampl
@@ -156,7 +171,7 @@ FitDL.Gu <- function(y, t = index(y), tout = t, optimFUN = I_optimx,
     c1 <- 1
     c2 <- 1
 
-    FUN <- "doubleLog.Gu"
+    sFUN  <- "doubleLog.Gu"
     prior <- with(e, rbind(
         c(mn, a, a, doy[1]-t1, k/2 , doy[2]+t2, k/2, 1  , 1),
         c(mn, a, a, doy[1]   , k   , doy[2]   , k  , 2  , 2),
@@ -169,13 +184,15 @@ FitDL.Gu <- function(y, t = index(y), tout = t, optimFUN = I_optimx,
     lower  <- c(sapply(param_lims, `[`, 1), 0  , 0)
     upper  <- c(sapply(param_lims, `[`, 2), Inf, Inf)
 
-    optim_pheno(prior, FUN, y, t, tout, optimFUN, method, w, lower = lower, upper = upper, ...)#return
+    optim_pheno(prior, sFUN, y, t, tout, optimFUN, method, w, lower = lower, upper = upper, ...)
 }
 
 #' @rdname FitDL
 #' @export
-FitDL.Klos <- function(y, t = index(y), tout = t, optimFUN = I_optimx,
-    method = 'BFGS', w, ...) {
+FitDL.Klos <- function(y, t = index(y), tout = t, 
+    optimFUN = I_optimx, method = 'BFGS', w, ...)
+{
+    if (missing(w)) w <- rep(1, length(y))
     e <- init_param(y, t, w)
 
     a1 <- 0
@@ -206,9 +223,8 @@ FitDL.Klos <- function(y, t = index(y), tout = t, optimFUN = I_optimx,
         c(a1, a2, b1, b2, c, B1, B2, m1.bis, m2, q1, q2, v1, v2))
     })
     
-    
-    FUN <- "doubleLog.Klos"
-    optim_pheno(prior, FUN, y, t, tout, optimFUN, method, w, ...)#quickly return
+    sFUN <- "doubleLog.Klos"
+    optim_pheno(prior, sFUN, y, t, tout, optimFUN, method, w, ...)
 }
 
 #' init_param

@@ -27,7 +27,7 @@ I <- match(lambda, lambdas)
 
 
 # yfit <- whitsmw2(INPUT$y, INPUT$w, INPUT$ylu, nptperyear, iters=3, lambdas=5e4, validation = F)
-# plotdata(INPUT, nptperyear)
+# plot_input(INPUT, nptperyear)
 # colors <- c("red", "blue", "green")
 # for (i in 1:(ncol(yfit$data) - 1)){
 #     lines(INPUT$t, yfit$data[, i+1, drop = T], col = colors[i], lwd = 2)

@@ -16,10 +16,11 @@ f_goal(par, y, t, fun = c(doubleLog.Elmore, doubleLog.Beck,
 
 \item{fun}{A curve fitting function, see \code{\link{Logistic}}.}
 
-\item{w}{Numeric vector, weights of \code{y}}
+\item{w}{(optional) Numeric vector, weights of \code{y}. If not specified, 
+weights of all \code{NA} values will be \code{wmin}, the others will be 1.0.}
 
-\item{ylu}{[low, high] of time-series y (curve fitting values are constrained
-in the range of \code{ylu}.}
+\item{ylu}{\code{ymin, ymax}, which is used to force \code{ypred} in the 
+range of \code{ylu}.}
 
 \item{...}{other parameters will be ignored.}
 }

@@ -9,8 +9,9 @@
 #'
 #' @param t Numeric vector, \code{Date} variable
 #' @param y Numeric vector, vegetation index time-series
-#' @param w Numeric vector, weights of \code{y}
-#' @param nptperyear Integer, number of images per year
+#' @param w (optional) Numeric vector, weights of \code{y}. If not specified, 
+#' weights of all \code{NA} values will be \code{wmin}, the others will be 1.0.
+#' @param nptperyear Integer, number of images per year.
 #' @param south Boolean. In south hemisphere, growing year is 1 July to the
 #' following year 31 June; In north hemisphere, growing year is 1 Jan to 31 Dec.
 #' @param Tn Numeric vector, night temperature, default is null. If provided,
@@ -48,6 +49,7 @@
 #'
 #' @seealso \code{\link[phenofit]{backval}}
 #' @examples
+#' library(phenofit)
 #' data("MOD13A1")
 #' 
 #' dt <- tidy_MOD13.gee(MOD13A1$dt)
@@ -161,23 +163,25 @@ check_fit <- function(yfit, ylu){
     return(yfit)
 }
 
-# values out of ylu, set to be na and interpolate it.
-# Not export
-check_fit2 <- function(y, ylu){
-    I <- which(y < ylu[1] | y > ylu[2])
-    if (length(I) > 0){
-        n    <-length(y)
-        y[I] <- NA
-        y <- na.approx(y, na.rm = F)
-        # if still have na values in y
-        I_nona <- which(!is.na(y)) # not NA id
-        if (length(I_nona) != n){
-            # na values must are in tail or head now
-            iBegin <- first(I_nona)
-            iEnd   <- last(I_nona)
-            if (iBegin > 2) y[1:iBegin] <- y[iBegin]
-            if (iEnd < n)   y[iEnd:n]   <- y[iEnd]
-        }
-    }
-    return(y)
-}
+# #' check_fit2
+# #' 
+# #' values out of ylu, set to be na and interpolate it.
+# #' @export
+# check_fit2 <- function(y, ylu){
+#     I <- which(y < ylu[1] | y > ylu[2])
+#     if (length(I) > 0){
+#         n    <-length(y)
+#         y[I] <- NA
+#         y <- na.approx(y, na.rm = F)
+#         # if still have na values in y
+#         I_nona <- which(!is.na(y)) # not NA id
+#         if (length(I_nona) != n){
+#             # na values must are in tail or head now
+#             iBegin <- first(I_nona)
+#             iEnd   <- last(I_nona)
+#             if (iBegin > 2) y[1:iBegin] <- y[iBegin]
+#             if (iEnd < n)   y[iEnd:n]   <- y[iEnd]
+#         }
+#     }
+#     return(y)
+# }

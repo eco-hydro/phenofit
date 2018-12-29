@@ -76,6 +76,7 @@ skewness <- function (x, na.rm = FALSE, type = 3) {
 #' 
 #' @return Named numeric vector, (mean, sd, cv).
 #' @examples
+#' library(phenofit)
 #' x = rnorm(100)
 #' coefs <- cv_coef(x)
 cv_coef <- function(x, w){
@@ -95,13 +96,13 @@ cv_coef <- function(x, w){
 }
 
 
-#' Determinated correlation critical value
+#' Critical value of determined correlation
 #' 
 #' @param n length of observation.
 #' @param NumberOfPredictor Number of predictor.
 #' @param alpha significant level.
 #' 
-#' @return F statistic and R2 at significant level
+#' @return \code{F} statistic and \code{R2} at significant level.
 #' 
 #' @examples
 #' R2_critical <- R2_sign(30, NumberOfPredictor = 2, alpha = 0.05)

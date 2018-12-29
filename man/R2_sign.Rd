@@ -2,7 +2,7 @@
 % Please edit documentation in R/coefficients.R
 \name{R2_sign}
 \alias{R2_sign}
-\title{Determinated correlation critical value}
+\title{Critical value of determined correlation}
 \usage{
 R2_sign(n, NumberOfPredictor = 2, alpha = 0.05)
 }
@@ -14,10 +14,10 @@ R2_sign(n, NumberOfPredictor = 2, alpha = 0.05)
 \item{alpha}{significant level.}
 }
 \value{
-F statistic and R2 at significant level
+\code{F} statistic and \code{R2} at significant level.
 }
 \description{
-Determinated correlation critical value
+Critical value of determined correlation
 }
 \examples{
 R2_critical <- R2_sign(30, NumberOfPredictor = 2, alpha = 0.05)

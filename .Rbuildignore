@@ -1,6 +1,9 @@
 ^CRAN-RELEASE$
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^.*\.Rproj$
+^.*\.gcda$
+^.*\.gcno$
 ^submit\.sh$
 ^README\.md$
 ^README\.Rmd$
@@ -19,3 +22,4 @@
 ^cran-comments\.md$
 ^Dockerfile$
 ^update 20181028/$
+^README\.Rmd$

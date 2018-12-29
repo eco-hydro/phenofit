@@ -11,7 +11,8 @@ backval(y, t, w, Tn, minT = 5, nptperyear, ...)
 
 \item{t}{Numeric vector, \code{Date} variable}
 
-\item{w}{Numeric vector, weights of \code{y}}
+\item{w}{(optional) Numeric vector, weights of \code{y}. If not specified, 
+weights of all \code{NA} values will be \code{wmin}, the others will be 1.0.}
 
 \item{Tn}{Numeric vector, night temperature, default is null. If provided,
 Tn is used to help divide ungrowing period, and then get background value in
@@ -19,7 +20,7 @@ ungrowing season (see details in \code{\link[phenofit]{backval}}).}
 
 \item{minT}{min temperature for growing season.}
 
-\item{nptperyear}{Integer, number of images per year}
+\item{nptperyear}{Integer, number of images per year.}
 
 \item{...}{Others will be ignored.}
 }
@@ -33,7 +34,8 @@ Calculate backgroud values for vegetation index.
 Night temperature Tn >= Tmin (default 5 degree) defined as raw growing season.  
 Background value is determined from two neighboring vegetation in raw growing 
 season by assuming that the background and vegetation abundance could remain 
-the same during a consecutive two yearperiod. Details can be seen in Zhang et al., (2015).
+the same during a consecutive two yearperiod. 
+Details can be seen in Zhang et al., (2015).
 }
 \note{
 This function only works in every growing season.

@@ -18,6 +18,7 @@ Named numeric vector, (mean, sd, cv).
 weighted CV
 }
 \examples{
+library(phenofit)
 x = rnorm(100)
 coefs <- cv_coef(x)
 }

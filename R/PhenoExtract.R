@@ -19,10 +19,9 @@ PhenoPlot <- function(t, y, main = "", ...){
 #'
 #' Get yearly vegetation phenological metrics of a curve fitting method
 #'
+#' @inheritParams D
 #' @param fits Multiple \code{phenofit} object.
 #' @param TRS Threshold for \code{PhenoTrs}.
-#' 
-#' 
 #' @param IsPlot Boolean. Whether to plot figure?
 #' @param ... ignored.
 #' @return List of every year phenology metrics

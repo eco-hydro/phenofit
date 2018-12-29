@@ -105,6 +105,11 @@ list.rbind <- function(x) do.call(rbind.data.frame, x) %>% set_rownames(names(x)
 #' 
 #' @param d data.frame or data.table
 #' @param days Integer number or vector, can't have duplicated value.
+#' 
+#' @examples
+#' date = seq.Date(as.Date("2010-01-01"), as.Date("2010-12-31"), by = "day")
+#' d <- data.frame(date)
+#' dnew <- add_dn(d, days = c(8, 16))
 #' @export
 add_dn <- function(d, days = 8){
     if (class(d$date) != 'Date')
@@ -122,17 +127,23 @@ add_dn <- function(d, days = 8){
 }
 
 #' reorder_name
+#' 
 #' @param headvars headvars will be in the head columns.
 #' @param tailvars tailvars will be in the tail columns.
+#' 
 #' @rdname tools
 #' @export
-reorder_name <- function(d,
-                         headvars = c("site", "date", "year", "doy", "d8", "d16"),
-                         tailvars = ""){
+reorder_name <- function(
+    d,
+    headvars = c("site", "date", "year", "doy", "d8", "d16"),
+    tailvars = "")
+{
     headvars %<>% intersect(colnames(d))
     tailvars %<>% intersect(colnames(d))
     varnames <- c(headvars, setdiff(colnames(d), union(headvars, tailvars)), tailvars)
-    if (is.data.table(d)){
+    if (is.list(d)) {
+        d[varnames]
+    } else if (is.data.table(d)){
         # d[, ..varnames]
         d[, varnames, with = F] #return
     }else{

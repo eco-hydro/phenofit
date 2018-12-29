@@ -13,7 +13,7 @@ add_HeadTail(d, south = FALSE, nptperyear, trs = 0.45)
 \item{south}{Boolean. In south hemisphere, growing year is 1 July to the
 following year 31 June; In north hemisphere, growing year is 1 Jan to 31 Dec.}
 
-\item{nptperyear}{Integer, number of images per year}
+\item{nptperyear}{Integer, number of images per year.}
 
 \item{trs}{If nmissing < trs*nptperyear (little missing), this year is 
 include to extract phenology; if \code{FALSE}, this year is excluded.}
@@ -28,6 +28,7 @@ Add one year data in the head and tail
 \code{date} is image date; \code{t} is compositing date.
 }
 \examples{
+library(phenofit)
 data("MOD13A1")
 
 dt <- tidy_MOD13.gee(MOD13A1$dt)
@@ -38,6 +39,6 @@ d     <- dt[site == sitename, ] # get the first site data
 sp    <- st[site == sitename, ] # station point
 
 nptperyear = 23
-dnew     <- add_HeadTail(d, nptperyear = 23) # add one year in head and tail
+dnew     <- add_HeadTail(d, nptperyear = nptperyear) # add one year in head and tail
 
 }

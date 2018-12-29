@@ -12,9 +12,10 @@ check_input(t, y, w, nptperyear, south = FALSE, Tn = NULL,
 
 \item{y}{Numeric vector, vegetation index time-series}
 
-\item{w}{Numeric vector, weights of \code{y}}
+\item{w}{(optional) Numeric vector, weights of \code{y}. If not specified, 
+weights of all \code{NA} values will be \code{wmin}, the others will be 1.0.}
 
-\item{nptperyear}{Integer, number of images per year}
+\item{nptperyear}{Integer, number of images per year.}
 
 \item{south}{Boolean. In south hemisphere, growing year is 1 July to the
 following year 31 June; In north hemisphere, growing year is 1 Jan to 31 Dec.}
@@ -63,6 +64,7 @@ Check input data, interpolate NA values in y, remove spike values, and set
 weights for NA in y and w.
 }
 \examples{
+library(phenofit)
 data("MOD13A1")
 
 dt <- tidy_MOD13.gee(MOD13A1$dt)

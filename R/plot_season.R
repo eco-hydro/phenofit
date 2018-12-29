@@ -26,7 +26,7 @@ plot_season <- function(INPUT, brks, plotdat, ylu, IsOnlyPlotbad = FALSE){
     #  need to plot outside, because y, w have been changed.
     # plotdat   <- INPUT[c("t", "y", "w", "ylu")]
     # if (!is.null(INPUT$y0)) plotdat$y <- INPUT$y0
-    plotdata(plotdat)
+    plot_input(plotdat)
 
     colors <- c("red", "blue", "green")
     iters  <- ncol(zs)

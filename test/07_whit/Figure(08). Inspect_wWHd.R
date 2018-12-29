@@ -80,7 +80,7 @@ plot_season <- function(INPUT, brks, plotdat, ylu, IsOnlyPlotbad = FALSE){
     at   <- (seq(2000, 2018, 3)*10000+0101) %>% ymd()
     # 7.1 PLOT CURVE FITTING TIME-SERIES
     # need to plot outside, because y, w have been changed.
-    plotdata(plotdat, xlim = xlim, xaxt="n")
+    plot_input(plotdat, xlim = xlim, xaxt="n")
     axis(1, at = at, labels = seq(2000, 2018, 3))
 
     colors <- c("red", "blue", "green")

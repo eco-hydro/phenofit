@@ -20,13 +20,14 @@ wChen(y, yfit, w, ..., wmin = 0.2)
 
 \item{yfit}{Numeric vector curve fitting values.}
 
-\item{w}{Numeric vector, weights of \code{y}}
+\item{w}{(optional) Numeric vector, weights of \code{y}. If not specified, 
+weights of all \code{NA} values will be \code{wmin}, the others will be 1.0.}
 
 \item{...}{other parameters are ignored.}
 
 \item{iter}{iteration of curve fitting.}
 
-\item{nptperyear}{Integer, number of images per year}
+\item{nptperyear}{Integer, number of images per year.}
 
 \item{wfact}{weight adaptation factor (0-1), equal to the reciprocal of
 'Adaptation strength' in TIMESAT.}

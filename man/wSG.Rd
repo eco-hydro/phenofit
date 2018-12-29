@@ -10,9 +10,10 @@ wSG(y, w, nptperyear, ylu, wFUN = wTSM, iters = 2,
 \arguments{
 \item{y}{Numeric vector, vegetation index time-series}
 
-\item{w}{Numeric vector, weights of \code{y}}
+\item{w}{(optional) Numeric vector, weights of \code{y}. If not specified, 
+weights of all \code{NA} values will be \code{wmin}, the others will be 1.0.}
 
-\item{nptperyear}{Integer, number of images per year}
+\item{nptperyear}{Integer, number of images per year.}
 
 \item{ylu}{[low, high] of time-series y (curve fitting values are constrained
 in the range of \code{ylu}.}

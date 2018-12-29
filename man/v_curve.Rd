@@ -4,24 +4,47 @@
 \alias{v_curve}
 \title{v_curve}
 \usage{
-v_curve(INPUT, lambdas, d = 2, IsPlot = F, wFUN = wTSM, iters = 2)
+v_curve(INPUT, lg_lambdas, d = 2, IsPlot = F, wFUN = wTSM,
+  iters = 2)
 }
 \arguments{
-\item{INPUT}{A list object with the elements of 't', 'y', 'w', 'Tn' (option)
-and 'ylu', returned by \code{\link{check_input}}.}
+\item{INPUT}{A list object with the elements of \code{t}, \code{y}, \code{w}, 
+\code{Tn} (optional) and \code{ylu}, returned by \code{\link{check_input}}.}
 
-\item{lambdas}{lambda vectors of Whittaker.}
+\item{lg_lambdas}{\code{lg} lambda vectors of Whittaker parameter.}
 
 \item{d}{Difference order.}
 
 \item{IsPlot}{Boolean. Whether to plot figure?}
 
-\item{wFUN}{weights updating function, can be one of 'wTSM', 'wChen' and
-'wBisquare'.}
+\item{wFUN}{weights updating function, can be one of \code{\link{wTSM}}, 
+\code{\link{wChen}}, \code{\link{wBisquare}} and \code{\link{wSELF}}.}
 
 \item{iters}{How many times curve fitting is implemented.}
 }
 \description{
 V-curve is used to optimize Whittaker parameter lambda.
 Update 20180605 add weights updating to whittaker lambda selecting
+}
+\examples{
+library(phenofit)
+data("MOD13A1")
+
+dt <- tidy_MOD13.gee(MOD13A1$dt)
+st <- MOD13A1$st
+
+sitename <- dt$site[1]
+d     <- dt[site == sitename, ] # get the first site data
+sp    <- st[site == sitename, ] # station point
+# global parameter
+IsPlot = TRUE
+nptperyear = 23
+
+dnew     <- add_HeadTail(d, nptperyear = nptperyear) # add one year in head and tail
+INPUT    <- check_input(dnew$t, dnew$y, dnew$w, nptperyear, 
+                        maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
+# INPUT$y0 <- dnew$y   # raw time-series, for visualization
+
+lg_lambdas <- seq(0, 3, 0.1)
+r <- v_curve(INPUT, lg_lambdas, d = 2, IsPlot = T)
 }

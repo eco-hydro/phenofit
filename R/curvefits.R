@@ -34,6 +34,7 @@
 #' @return fits Multiple phenofit object.
 #'
 #' @examples
+#' library(phenofit)
 #' data("MOD13A1")
 #'
 #' dt <- tidy_MOD13.gee(MOD13A1$dt)
@@ -47,10 +48,30 @@
 #' print  = FALSE
 #' nptperyear = 23
 #' ypeak_min  = 0.05
-#'
+#' wFUN = wTSM
+#' 
 #' dnew     <- add_HeadTail(d, nptperyear = nptperyear) # add one year in head and tail
 #' INPUT    <- check_input(dnew$t, dnew$y, dnew$w, nptperyear,
 #'                         maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
+#' 
+#' brks2 <- season_3y(INPUT,
+#'     rFUN = wWHIT, wFUN = wFUN,
+#'     plotdat = d, IsPlot = IsPlot, print = FALSE, IsOnlyPlotbad = FALSE)
+#' 
+#' fit <- curvefits(
+#'     INPUT, brks2,
+#'     methods = c("AG", "Beck", "Elmore", "Gu", "Zhang"), #,"klos",
+#'     verbose = FALSE,
+#'     wFUN = wFUN,
+#'     nextent = 2, maxExtendMonth = 3, minExtendMonth = 1,
+#'     qc = dnew$QC_flag, minPercValid = 0.2,
+#'     print = FALSE
+#' )
+#' 
+#' fit$INPUT   <- INPUT
+#' fit$seasons <- brks2
+#' g <- plot_phenofit(fit, d)
+#' grid::grid.newpage(); grid::grid.draw(g)
 #' @export
 curvefits <- function(INPUT, brks,
                       wFUN = wTSM, iters = 2, wmin = 0.2,
@@ -143,7 +164,7 @@ curvefits <- function(INPUT, brks,
 
         fit  <- curvefit(yi, ti, tout, nptperyear = nptperyear,
                          w = wi, ylu = ylu, iters = iters,
-                         methods = methods, meth = 'BFGS', wFUN = wFUN, ...)
+                         methods = methods, wFUN = wFUN, ...)
         # add original input data here, global calculation can comment this line
         
         data <- list(y = y0[I], t = doys[I], QC_flag = QC_flag[I]) %>% as.data.table()

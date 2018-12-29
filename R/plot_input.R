@@ -3,7 +3,7 @@
 #' @inheritParams season
 #' @param ... other parameter will be ignored.
 #' @export
-plotdata <- function(INPUT, wmin = 0.2, ...){
+plot_input <- function(INPUT, wmin = 0.2, ...){
     t <- INPUT$t
     y <- INPUT$y
     w <- INPUT$w
@@ -51,7 +51,7 @@ plotdata <- function(INPUT, wmin = 0.2, ...){
 }
 
 # still under debug, 20180920
-# plotdata.plotly <- function(){
+# plot_input.plotly <- function(){
 #     w <- INPUT$w
 #     if (is.null(w)) w <- rep(1, length(t))
 #     # nptperyear <- INPUT$nptperyear

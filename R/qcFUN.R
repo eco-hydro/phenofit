@@ -1,85 +1,3 @@
-# source('R/GPP_Pheno/main_QC.R')
-# 
-# 1. GPPobs  |
-# 2. LAI     | FparLai_QC
-# ------------------------------------------------------------------------------
-# Bits 5-7: SCF_QC (five-level confidence score)
-# bitwShiftR(255L, 5)
-# 000 (0): Main (RT) method used, best result possible (no saturation)
-# 001 (1): Main (RT) method used with saturation. Good, very usable
-# 010 (2): Main (RT) method failed due to bad geometry, empirical algorithm used
-# 011 (3): Main (RT) method failed due to problems other than geometry, empirical algorithm used
-# 100 (4): Pixel not produced at all, value couldn't be retrieved (possible reasons: bad L1B data, unusable MOD09GA data)
-# 
-# 2. MOD13A1 | SummaryQA
-# ------------------------------------------------------------------------------
-#    SummaryQA      : Pixel reliability summary QA
-#    -1 Fill/No data: Not processed
-#    0 Good data    : Use with confidence
-#    1 Marginal data: Useful but look at detailed QA for more information
-#    2 Snow/ice     : Pixel covered with snow/ice
-#    3 Cloudy       : Pixel is cloudy
-# 
-# 3. MOD13Q1 | SummaryQA, same as MOD13A1
-# 4. MODGPP  | Psn_QC
-# ------------------------------------------------------------------------------
-#    Bits 5, 6, 7: 5-level Confidence Quality score.
-#    000 (0): Very best possible
-#    001 (1): Good,very usable, but not the best
-#    010 (2): Substandard due to geometry problems - use with caution
-#    011 (3): Substandard due to other than geometry problems - use with caution
-#    100 (4): couldn't retrieve pixel (not produced at all - non-terrestrial biome)
-#    111 (7): Fill Value
-#    
-# 5. NDVIv4  | QA:
-# QC bit flags, bit #: description (1 = yes, 0 = no)
-# 0 : Unused
-# 1 : Pixel is cloudy
-# 2 : Pixel contains cloud shadow
-# 3 : Pixel is over water
-# 4 : Pixel is over sunglint
-# 5 : Pixel is over dense dark vegetation
-# 6 : Pixel is at night (high solar zenith)
-# 7 : Channels 1-5 are valid
-# 8 : Channel 1 value is invalid
-# 9 : Channel 2 value is invalid
-# 10: Channel 3 value is invalid
-# 11: Channel 4 value is invalid
-# 12: Channel 5 value is invalid
-# 13: RHO3 value is invalid
-# 14: BRDF correction is invalid
-# 15: Polar flag, latitude over 60 degrees (land) or 50 degrees (ocean)
-
-## QC control for MOD09A1
-# https://developers.google.com/earth-engine/datasets/catalog/MODIS_006_MOD09A1
-# Bits 0-1: Cloud state
-# 0: Clear
-# 1: Cloudy
-# 2: Mixed
-# 3: Not set, assumed clear
-#
-# Bit 2: Cloud shadow
-# 0: No
-# 1: Yes
-#
-# Bits 6-7: Aerosol quantity
-# 0: Climatology
-# 1: Low
-# 2: Average
-# 3: High
-#
-# Bit 10: Internal cloud algorithm flag
-# 0: No cloud
-# 1: Cloud
-#
-# Bit 12: MOD35 snow/ice flag
-# 0: No
-# 1: Yes
-#
-# Bit 15: Internal snow mask
-# 0: No snow
-# 1: Snow
-
 #' Initial weights according to qc
 #' 
 #' @description
@@ -105,6 +23,14 @@
 #' \item{QC_flag}{Factor vector, with the level of 
 #' \code{c("snow", "cloud", "shadow", "aerosol", "marginal", "good")}}
 #' 
+#' @examples
+#' set.seed(100)
+#' QA <- runif(100, 0, 2^7) %>% as.integer()
+#' 
+#' r1 <- qc_summary(QA, wmin = 0.2, wmid = 0.5, wmax = 1)
+#' r2 <- qc_StateQA(QA, wmin = 0.2, wmid = 0.5, wmax = 1)
+#' r3 <- qc_5l(QA, wmin = 0.2, wmid = 0.5, wmax = 1)
+#' r4 <- qc_NDVIv4(QA, wmin = 0.2, wmid = 0.5, wmax = 1)
 #' @rdname qcFUN
 #' @export
 getBits <- function(x, start, end = start){
@@ -199,3 +125,85 @@ qc_NDVIv4 <- function(QA, wmin = 0.2, wmid = 0.5, wmax = 1){
     w[QA == 2] <- 0.5 #cloud shadow
     return(w)
 }
+
+# source('R/GPP_Pheno/main_QC.R')
+# 
+# 1. GPPobs  |
+# 2. LAI     | FparLai_QC
+# ------------------------------------------------------------------------------
+# Bits 5-7: SCF_QC (five-level confidence score)
+# bitwShiftR(255L, 5)
+# 000 (0): Main (RT) method used, best result possible (no saturation)
+# 001 (1): Main (RT) method used with saturation. Good, very usable
+# 010 (2): Main (RT) method failed due to bad geometry, empirical algorithm used
+# 011 (3): Main (RT) method failed due to problems other than geometry, empirical algorithm used
+# 100 (4): Pixel not produced at all, value couldn't be retrieved (possible reasons: bad L1B data, unusable MOD09GA data)
+# 
+# 2. MOD13A1 | SummaryQA
+# ------------------------------------------------------------------------------
+#    SummaryQA      : Pixel reliability summary QA
+#    -1 Fill/No data: Not processed
+#    0 Good data    : Use with confidence
+#    1 Marginal data: Useful but look at detailed QA for more information
+#    2 Snow/ice     : Pixel covered with snow/ice
+#    3 Cloudy       : Pixel is cloudy
+# 
+# 3. MOD13Q1 | SummaryQA, same as MOD13A1
+# 4. MODGPP  | Psn_QC
+# ------------------------------------------------------------------------------
+#    Bits 5, 6, 7: 5-level Confidence Quality score.
+#    000 (0): Very best possible
+#    001 (1): Good,very usable, but not the best
+#    010 (2): Substandard due to geometry problems - use with caution
+#    011 (3): Substandard due to other than geometry problems - use with caution
+#    100 (4): couldn't retrieve pixel (not produced at all - non-terrestrial biome)
+#    111 (7): Fill Value
+#    
+# 5. NDVIv4  | QA:
+# QC bit flags, bit #: description (1 = yes, 0 = no)
+# 0 : Unused
+# 1 : Pixel is cloudy
+# 2 : Pixel contains cloud shadow
+# 3 : Pixel is over water
+# 4 : Pixel is over sunglint
+# 5 : Pixel is over dense dark vegetation
+# 6 : Pixel is at night (high solar zenith)
+# 7 : Channels 1-5 are valid
+# 8 : Channel 1 value is invalid
+# 9 : Channel 2 value is invalid
+# 10: Channel 3 value is invalid
+# 11: Channel 4 value is invalid
+# 12: Channel 5 value is invalid
+# 13: RHO3 value is invalid
+# 14: BRDF correction is invalid
+# 15: Polar flag, latitude over 60 degrees (land) or 50 degrees (ocean)
+
+## QC control for MOD09A1
+# https://developers.google.com/earth-engine/datasets/catalog/MODIS_006_MOD09A1
+# Bits 0-1: Cloud state
+# 0: Clear
+# 1: Cloudy
+# 2: Mixed
+# 3: Not set, assumed clear
+#
+# Bit 2: Cloud shadow
+# 0: No
+# 1: Yes
+#
+# Bits 6-7: Aerosol quantity
+# 0: Climatology
+# 1: Low
+# 2: Average
+# 3: High
+#
+# Bit 10: Internal cloud algorithm flag
+# 0: No cloud
+# 1: Cloud
+#
+# Bit 12: MOD35 snow/ice flag
+# 0: No
+# 1: Yes
+#
+# Bit 15: Internal snow mask
+# 0: No snow
+# 1: Snow

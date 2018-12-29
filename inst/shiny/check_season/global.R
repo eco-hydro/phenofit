@@ -5,15 +5,15 @@ library(shiny)
 library(data.table)
 library(magrittr)
 
-load('data/phenoflux_115.rda')
-load('data/phenoflux_115_ET&GPP&VI.rda')
+load('data/phenoflux115.rda')
+load('data/phenoflux115_ET&GPP&VI.rda')
 # load('inst/shiny/check_season/data/phenoflux_115.rda')
 # load('inst/shiny/check_season/data/ET&GPP&VI_flux115.rda')
 
 # sites <- sort(sites)
 
 getSiteData  <- function(df, sitename){
-    df[site == sitename, .(t = date, y = GPP_DT, w = 1)] #%T>% plotdata(365)
+    df[site == sitename, .(t = date, y = GPP_DT, w = 1)] #%T>% plot_input(365)
 }
 
 getINPUT_GPPobs <- function(df, st, sitename){
@@ -21,10 +21,10 @@ getINPUT_GPPobs <- function(df, st, sitename){
     south    <- sp$lat < 0
     titlestr <- with(sp, sprintf("[%3d] %s, %s, lat = %.2f", ID, site, IGBP, lat))
 
-    d   <- df[site == sitename, .(t = date, GPP_DT, GPP_NT, w = 1)] #%T>% plotdata(365)
+    d   <- df[site == sitename, .(t = date, GPP_DT, GPP_NT, w = 1)] #%T>% plot_input(365)
     d$y <- rowMeans(d[, .(GPP_DT, GPP_NT)], na.rm = T)
     d[y < 0, y := 0] # for GPP_NT
-    # d_obs[site == sitename, .(t = date, y = GPP_DT, w = 1)] %>% plotdata(365)
+    # d_obs[site == sitename, .(t = date, y = GPP_DT, w = 1)] %>% plot_input(365)
     d_new <- add_HeadTail(d, south = south)
     INPUT <- do.call(check_input, d_new)
     # d <- d_obs[site == sitename, ]
@@ -37,7 +37,7 @@ getINPUT_GPPobs <- function(df, st, sitename){
 
 check_season <- function(INPUT,
                          FUN_season = c("season", "season_3y"),
-                         FUN_fit = "wWHIT",
+                         rFUN = "wWHIT",
                          wFUN = "wTSM",
                          lambda = 1000,
                          iters = 3,
@@ -46,8 +46,9 @@ check_season <- function(INPUT,
 
     FUN_season <- get(FUN_season[1])
     wFUN       <- get(wFUN)
-    res  <- FUN_season(INPUT, south = INPUT$south, rFUN = get(FUN_fit),
-                       wFUN = wFUN,
+    res  <- FUN_season(INPUT, south = INPUT$south, 
+                        rFUN = get(rFUN),
+                        wFUN = wFUN,
                      IsPlot = IsPlot,
                      lambda = lambda,
                      iters = iters,
@@ -67,7 +68,7 @@ check_season <- function(INPUT,
 
 plot_data <- function(d, title){
     par(setting)
-    do.call(check_input, d) %>% plotdata()
+    do.call(check_input, d) %>% plot_input()
     mtext(title, side = 2, line = 2, cex = 1.3, font = 2)
 }
 

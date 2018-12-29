@@ -26,14 +26,14 @@ v_point = function(y, w = 0 * y + 1, lambda = 100, d = 2) {
 }
 
 # sometimes not converge
-v_opt = function(y, w = 0 * y + 1, d = 2, lambdas = c(0, 4), tol = 0.01) {
-    # Locate the optimal value of log10(lambda) with optimizer
-    # Specify bounds of search range for log10(lambda) in paramter 'lambdas'
+# v_opt = function(y, w = 0 * y + 1, d = 2, lambdas = c(0, 4), tol = 0.01) {
+#     # Locate the optimal value of log10(lambda) with optimizer
+#     # Specify bounds of search range for log10(lambda) in paramter 'lambdas'
 
-    v_fun = function(lla, y, w, d) v_point(y, w, 10 ^ lla, d)
-    op = optimize(v_fun, lambdas, y, w, d, tol = tol)
-    return(op$minimum)
-}
+#     v_fun = function(lla, y, w, d) v_point(y, w, 10 ^ lla, d)
+#     op = optimize(v_fun, lambdas, y, w, d, tol = tol)
+#     return(op$minimum)
+# }
 
 #' v_curve
 #'
@@ -42,13 +42,35 @@ v_opt = function(y, w = 0 * y + 1, d = 2, lambdas = c(0, 4), tol = 0.01) {
 #'
 #' @inheritParams season
 #' @inheritParams wWHIT
-#' @param lambdas lambda vectors of Whittaker.
+#' @param lg_lambdas \code{lg} lambda vectors of Whittaker parameter.
 #' @param d Difference order.
 #' @param IsPlot Boolean. Whether to plot figure?
-#'
+#' 
+#' @examples
+#' library(phenofit)
+#' data("MOD13A1")
+#' 
+#' dt <- tidy_MOD13.gee(MOD13A1$dt)
+#' st <- MOD13A1$st
+#' 
+#' sitename <- dt$site[1]
+#' d     <- dt[site == sitename, ] # get the first site data
+#' sp    <- st[site == sitename, ] # station point
+#' # global parameter
+#' IsPlot = TRUE
+#' nptperyear = 23
+#' 
+#' dnew     <- add_HeadTail(d, nptperyear = nptperyear) # add one year in head and tail
+#' INPUT    <- check_input(dnew$t, dnew$y, dnew$w, nptperyear, 
+#'                         maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
+#' # INPUT$y0 <- dnew$y   # raw time-series, for visualization
+#' 
+#' lg_lambdas <- seq(0, 3, 0.1)
+#' r <- v_curve(INPUT, lg_lambdas, d = 2, IsPlot = T)
 #' @export
-v_curve = function(INPUT, lambdas, d = 2, IsPlot = F,
-    wFUN = wTSM, iters=2) {
+v_curve = function(INPUT, lg_lambdas, d = 2, IsPlot = F,
+    wFUN = wTSM, iters=2)
+{
     # Compute the V-cure
     y <- INPUT$y
     w <- INPUT$w
@@ -61,7 +83,7 @@ v_curve = function(INPUT, lambdas, d = 2, IsPlot = F,
         second = FALSE, lambda=NA)
 
     fits = pens = NULL
-    for (lla in lambdas) {
+    for (lla in lg_lambdas) {
         # param$lambda <- 10^lla
         # z    <- do.call(wWHIT, param)$zs %>% dplyr::last()
 
@@ -75,11 +97,11 @@ v_curve = function(INPUT, lambdas, d = 2, IsPlot = F,
     # Construct V-curve
     dfits   = diff(fits)
     dpens   = diff(pens)
-    llastep = lambdas[2] - lambdas[1]
+    llastep = lg_lambdas[2] - lg_lambdas[1]
     v       = sqrt(dfits ^ 2 + dpens ^ 2) / (log(10) * llastep)
 
-    nla     = length(lambdas)
-    lamids  = (lambdas[-1] + lambdas[-nla]) / 2
+    nla     = length(lg_lambdas)
+    lamids  = (lg_lambdas[-1] + lg_lambdas[-nla]) / 2
     k       = which.min(v)
     lambda  = 10 ^ lamids[k]
 
@@ -92,9 +114,8 @@ v_curve = function(INPUT, lambdas, d = 2, IsPlot = F,
 
     # result of v_curve
     vc <- list(lambda = lambda, vmin = v[k], 
-        fit = d_sm, optim = data.table(lambda_log10 = lamids, v = v)) 
+        fit = d_sm, optim = data.table(lg_lambda = lamids, v = v)) 
     
-
     cal_COEF <- function(y){
         y <- y[!is.na(y)]
         list(mean = mean(y),
@@ -118,7 +139,7 @@ v_curve = function(INPUT, lambdas, d = 2, IsPlot = F,
         title(sprintf("v-curve, lambda = %5.2f", lambda))
         grid()
 
-        plotdata(INPUT, wmin = 0.2)
+        plot_input(INPUT, wmin = 0.2)
         colors <- c("blue", "red")
 
         lines(vc$fit$t, last(vc$fit), col = "blue", lwd = 1.2)

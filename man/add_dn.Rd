@@ -15,3 +15,8 @@ add_dn(d, days = 8)
 To aggregated data into n-day (e.g. 8-day, 16-day) like MODIS product, a 
 n-day flag is need.
 }
+\examples{
+date = seq.Date(as.Date("2010-01-01"), as.Date("2010-12-31"), by = "day")
+d <- data.frame(date)
+dnew <- add_dn(d, days = c(8, 16))
+}

@@ -5,7 +5,8 @@
 #' Night temperature Tn >= Tmin (default 5 degree) defined as raw growing season.  
 #' Background value is determined from two neighboring vegetation in raw growing 
 #' season by assuming that the background and vegetation abundance could remain 
-#' the same during a consecutive two yearperiod. Details can be seen in Zhang et al., (2015).
+#' the same during a consecutive two yearperiod. 
+#' Details can be seen in Zhang et al., (2015).
 #' 
 #' @inheritParams check_input
 #' @param minT min temperature for growing season.
@@ -23,6 +24,7 @@
 #'      Consistency between sun-induced chlorophyll fluorescence and gross primary 
 #'      production of vegetation in North America. Remote Sens. Environ. 
 #'      183, 154–169. https://doi.org/10.1016/j.rse.2016.05.015.
+#' 
 #' @export
 backval <- function(y, t, w, Tn, minT = 5, nptperyear, ...){
     # get median of 5 smallest values in y[index]
@@ -76,21 +78,6 @@ backval <- function(y, t, w, Tn, minT = 5, nptperyear, ...){
     # # update data
     # y[y < back] <- back
     # w[y < back] <- 1
-}
-
-#' ifelse2
-#' ternary operator just like java `test ? yes : no`
-#' 
-#' @param test an object which can be coerced to logical mode.
-#' @param yes return values for true elements of test.
-#' @param no return values for false elements of test.
-#' @export
-ifelse2 <- function(test, yes, no){
-    if (test){
-        yes
-    } else{
-        no
-    }
 }
 
 

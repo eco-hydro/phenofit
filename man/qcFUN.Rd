@@ -51,3 +51,12 @@ A list object with
   \item{qc_StateQA}{Initial weights based on `StateQA`, suit for MOD09A1, MYD09A1. }
 }
 }
+\examples{
+set.seed(100)
+QA <- runif(100, 0, 2^7) \%>\% as.integer()
+
+r1 <- qc_summary(QA, wmin = 0.2, wmid = 0.5, wmax = 1)
+r2 <- qc_StateQA(QA, wmin = 0.2, wmid = 0.5, wmax = 1)
+r3 <- qc_5l(QA, wmin = 0.2, wmid = 0.5, wmax = 1)
+r4 <- qc_NDVIv4(QA, wmin = 0.2, wmid = 0.5, wmax = 1)
+}

@@ -8,16 +8,16 @@
 #' Then according to season pos, based to local maximum position divide yearly
 #' growing season. lambda need to set carefully.
 #'
-#' @param INPUT A list object with the elements of 't', 'y', 'w', 'Tn' (option)
-#' and 'ylu', returned by \code{\link{check_input}}.
-#' @param rFUN Coarse curve fitting function, can be one of `wSG`, `wWHIT`
-#' and `wHANTS`.
-#' @param wFUN weights updating function, can be one of 'wTSM', 'wChen' and
-#' 'wBisquare'.
+#' @param INPUT A list object with the elements of \code{t}, \code{y}, \code{w}, 
+#' \code{Tn} (optional) and \code{ylu}, returned by \code{\link{check_input}}.
+#' @param rFUN Rough curve fitting function, can be one of \code{\link{wSG}}, 
+#' \code{\link{wWHIT}} and \code{\link{wHANTS}}.
+#' @param wFUN weights updating function, can be one of \code{\link{wTSM}}, 
+#' \code{\link{wChen}}, \code{\link{wBisquare}} and \code{\link{wSELF}}.
 #' @param iters How many times curve fitting is implemented.
 #' @param wmin Double, minimum weigth (i.e. weight of snow, ice and cloud).
 #' @param lambda The smoothing parameter of \code{\link{wWHIT}}. For 
-#' \code{\link{season_3y}}, if lambda is null, \code{\link{init_lambda}}
+#' \code{\link{season_3y}}, if lambda is \code{NULL}, \code{\link{init_lambda}}
 #' will be used. Generally, it was set as 10000, 15, and 5 for daily, 8-day 
 #' and 16-day inputs respectively.
 #' @param nf The parameter of \code{\link{wHANTS}}, number of frequencies to be
@@ -40,9 +40,10 @@
 #' @param MaxTroughsPerYear This parameter is used to adjust lambda in iterations.
 #' If TroughsPerYear > MaxTroughsPerYear, then lambda = lambda*2.
 #' @param IsPlot Boolean
-#' @param plotdat A list or data.table, with 't', 'y' and 'w'. Only if
-#' IsPlot=true, plotdata will be used to plot. Known that y and w in \code{INPUT}
-#' have been changed, we suggest using the original data.table.
+#' @param plotdat A list or data.table, with \code{t}, \code{y} and \code{w}. 
+#' Only if \code{IsPlot=TRUE}, \code{\link{plot_input}} will be used to plot. 
+#' Known that y and w in \code{INPUT} have been changed, we suggest using the 
+#' original data.table.
 #' @param print Whether to print progress information
 #' @param adj.param Adjust rough curve fitting function parameters automatically, 
 #' if too many or to less peak and trough values.

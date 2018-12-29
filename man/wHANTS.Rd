@@ -12,7 +12,8 @@ wHANTS(y, t, w, nf = 3, ylu, periodlen = 365, nptperyear,
 
 \item{t}{Numeric vector, \code{Date} variable}
 
-\item{w}{Numeric vector, weights of \code{y}}
+\item{w}{(optional) Numeric vector, weights of \code{y}. If not specified, 
+weights of all \code{NA} values will be \code{wmin}, the others will be 1.0.}
 
 \item{nf}{number of frequencies to be considered above the zero frequency}
 
@@ -22,7 +23,7 @@ in the range of \code{ylu}.}
 \item{periodlen}{length of the base period, measured in virtual samples
 (days, dekads, months, etc.). nptperyear in timesat.}
 
-\item{nptperyear}{Integer, number of images per year}
+\item{nptperyear}{Integer, number of images per year.}
 
 \item{wFUN}{weights updating function, can be one of 'wTSM', 'wChen' and 
 'wBisquare'.}

@@ -12,6 +12,11 @@ PhenoExtract(fits, TRS = c(0.1, 0.2, 0.5, 0.6), analytical = TRUE,
 
 \item{TRS}{Threshold for \code{PhenoTrs}.}
 
+\item{analytical}{If true, \code{numDeriv} package \code{grad} and \code{hess}
+will be used; if false, \code{D1} and \code{D2} will be used.}
+
+\item{smoothed.spline}{Whether apply \code{smooth.spline} first?}
+
 \item{IsPlot}{Boolean. Whether to plot figure?}
 
 \item{...}{ignored.}
