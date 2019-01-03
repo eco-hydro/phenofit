@@ -148,8 +148,8 @@ FitDL.Elmore <- function(y, t = index(y), tout = t,
 # attr(doubleLog.Elmore, 'formula') <- expression( mn + (mx - m7*t)*( 1/(1 + exp(-rsp*(t-sos))) - 1/(1 + exp(-rau*(t-eos))) ) )
 
 #' @references
-#' [3]. Gu, L., Post, W.M., Baldocchi, D.D., Black, T.A., Suyker, A.E., Verma,
-#'      S.B., Vesala, T., Wofsy, S.C., 2009. Characterizing the Seasonal Dynamics
+#' [3]. Gu, L., Post, W.M., Baldocchi, D.D., Black, TRUE.A., Suyker, A.E., Verma,
+#'      S.B., Vesala, TRUE., Wofsy, S.C., 2009. Characterizing the Seasonal Dynamics
 #'      of Plant Community Photosynthesis Across a Range of Vegetation Types,
 #'      in: Noormets, A. (Ed.), Phenology of Ecosystem Processes: Applications
 #'      in Global Change Research. Springer New York, New York, NY, pp. 35-58.
@@ -227,53 +227,3 @@ FitDL.Klos <- function(y, t = index(y), tout = t,
     optim_pheno(prior, sFUN, y, t, tout, optimFUN, method, w, ...)
 }
 
-#' init_param
-#' Initialize double logistic function parameters
-#' 
-#' @inheritParams FitDL.Zhang
-#' @export
-init_param <- function(y, t, w){
-    if (any(is.na(y)))
-        stop("NA in the time series are not allowed: fill them with e.g. na.approx()")
-    if (missing(w)) w <- rep(1, length(y))
-
-    w_min  <- 0.5 # weights greater than w_min are treated as good values.
-    # fixed 2018-07-25, If have no enough good points, then set w_min=0
-    if (sum(w >= w_min)/length(y) < .4) w_min <- 0
-
-    mx     <- max(y[w >= w_min], na.rm = TRUE)
-    mn     <- min(y[w >= w_min], na.rm = TRUE)
-    avg    <- mean(y, na.rm = TRUE)
-
-    doy.mx <- t[which.max(y)]
-    # fixed 06 March, 2018; Avoid doy.mx not in the range of doy
-    # doy    <- quantile(t, c(0.25, 0.75), na.rm = TRUE),
-    doy  <- c((doy.mx + first(t))/2, (last(t) + doy.mx) /2)
-    t1   <- (doy.mx - doy[1])/3 # adjust for doy[1]
-    t2   <- (doy[2] - doy.mx)/3 # adjust for doy[2]
-
-    # if (doy[1] >= doy.mx) doy[1] <- (doy.mx - first(t))/2 + first(t)
-    # if (doy[2] <= doy.mx) doy[2] <- (last(t) - doy.mx) /2 + doy.mx
-    ampl   <- mx - mn
-    deltaY <- ampl*0.1
-    deltaT <- (max(t) - min(t))/4
-    half   <- (max(t) - min(t))/2
-
-    k      <- 4/half*2.67 #approximate value
-    # k limits: about 0.004 - 0.2
-    # kmin <- 4 / (half * 5), half = 200, k = 0.004
-    # kmax <- 4 / (half / 5), half = 100, k = 0.2
-
-    # parameters limit
-    lims = list(
-        t0  = c(doy.mx - deltaT, doy.mx + deltaT),
-        mn  = c(mn - deltaY    , mn + deltaY),
-        mx  = c(mx - deltaY*2  , mx + deltaY*2),
-        r   = c(k/3, k*3),
-        sos = c(min(t)         , doy.mx + deltaT),
-        eos = c(doy.mx - deltaT, max(t))
-    )
-    listk( mx, mn, ampl, doy, doy.mx,
-        deltaT, deltaY, half, t1, t2,
-        k, lims)
-}

@@ -18,7 +18,7 @@ in the range of \code{ylu}.}
 
 \item{nptperyear}{Integer, number of images per year.}
 
-\item{wFUN}{weights updating function, can be one of 'wTSM', 'wChen' and 
+\item{wFUN}{weights updating function, can be one of 'wTSM', 'wChen' and
 'wBisquare'.}
 
 \item{iters}{How many times curve fitting is implemented.}
@@ -34,8 +34,23 @@ smoothing is unnecessary.}
 
 \item{...}{Additional parameters are passed to \code{wFUN}.}
 }
+\value{
+\itemize{
+   \item \code{ws} weights of every iteration
+   \item \code{zs} curve fittings of every iteration
+}
+}
 \description{
 Weigthed Whittaker Smoother
+}
+\examples{
+library(phenofit)
+data("MOD13A1")
+dt <- tidy_MOD13.gee(MOD13A1$dt)
+d <- dt[site == "AT-Neu", ]
+
+l <- check_input(d$t, d$y, d$w, nptperyear=23)
+r_wWHIT <- wWHIT(l$y, l$w, l$ylu, nptperyear = 23, iters = 2)
 }
 \references{
 [1]. Eilers, P.H.C., 2003. A perfect smoother. Anal. Chem. https://doi.org/10.1021/ac034173t \cr

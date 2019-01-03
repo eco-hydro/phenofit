@@ -7,7 +7,7 @@
 \alias{stat_season}
 \title{plot_season}
 \usage{
-plot_season(INPUT, brks, plotdat, ylu, IsOnlyPlotbad = FALSE)
+plot_season(INPUT, brks, plotdat, ylu, IsPlot.OnlyBad = FALSE)
 
 season(INPUT, rFUN = wWHIT, wFUN = wTSM, iters = 2, wmin = 0.1,
   lambda, nf = 3, frame = floor(INPUT$nptperyear/5) * 2 + 1,
@@ -19,8 +19,8 @@ season(INPUT, rFUN = wWHIT, wFUN = wTSM, iters = 2, wmin = 0.1,
 season_3y(INPUT, rFUN = wWHIT, wFUN = wTSM, iters = 2, wmin = 0.1,
   IsOptim_lambda = FALSE, lambda = NULL, nf = 3,
   frame = floor(INPUT$nptperyear/5) * 2 + 1, maxExtendMonth = 12, ...,
-  IsPlot = T, IsPlot.vc = FALSE, plotdat = INPUT, print = TRUE,
-  titlestr = "", IsOnlyPlotbad = TRUE)
+  IsPlot = TRUE, IsPlot.vc = FALSE, IsPlot.OnlyBad = TRUE,
+  plotdat = INPUT, print = TRUE, titlestr = "")
 
 stat_season(INPUT, brks)
 }
@@ -37,7 +37,7 @@ original data.table.}
 
 \item{ylu}{limits of y value, [ymin, ymax]}
 
-\item{IsOnlyPlotbad}{If true, only plot partial figures whose NSE < 0.3}
+\item{IsPlot.OnlyBad}{If true, only plot partial figures whose NSE < 0.3.}
 
 \item{rFUN}{Rough curve fitting function, can be one of \code{\link{wSG}}, 
 \code{\link{wWHIT}} and \code{\link{wHANTS}}.}
@@ -93,7 +93,7 @@ if too many or to less peak and trough values.}
 \code{\link{season}}; For \code{\link{season}}, other parameters passed to 
 \code{\link{findpeaks}}.}
 
-\item{IsOptim_lambda}{Whether to optimize Whittaker's parameter lambda by 
+\item{IsOptim_lambda}{Whether to optimize Whittaker's parameter lambda by
 V-curve theory?}
 
 \item{maxExtendMonth}{Previous and subsequent `maxExtendMonth` data were added
@@ -108,7 +108,7 @@ subsequent `maxExtendMonth` period.}
 A list object with the elements of 'fit' and 'dt'.
 list(dt, di)
 
-List object, list(whit, dt, stat)
+List object, list(whit, dt)
 }
 \description{
 First smooth VI timeseries by rought curve fitting function (\code{rFUN}), 
@@ -144,9 +144,14 @@ dnew     <- add_HeadTail(d, nptperyear = nptperyear) # add one year in head and 
 INPUT    <- check_input(dnew$t, dnew$y, dnew$w, nptperyear,
                         maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
 
+brks  <- season(INPUT,
+    rFUN = wWHIT, wFUN = wFUN,
+    lambda = 10,
+    plotdat = d, IsPlot = IsPlot, print = FALSE, IsPlot.OnlyBad = FALSE)
 brks2 <- season_3y(INPUT,
     rFUN = wWHIT, wFUN = wFUN,
-    plotdat = d, IsPlot = IsPlot, print = FALSE, IsOnlyPlotbad = FALSE)
+    lambda = 10,
+    plotdat = d, IsPlot = IsPlot, print = FALSE, IsPlot.OnlyBad = FALSE)
 }
 \seealso{
 \code{\link{season_3y}}, \code{\link{findpeaks}}.

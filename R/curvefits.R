@@ -49,28 +49,26 @@
 #' nptperyear = 23
 #' ypeak_min  = 0.05
 #' wFUN = wTSM
-#' 
+#'
 #' dnew     <- add_HeadTail(d, nptperyear = nptperyear) # add one year in head and tail
 #' INPUT    <- check_input(dnew$t, dnew$y, dnew$w, nptperyear,
 #'                         maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
-#' 
+#'
 #' brks2 <- season_3y(INPUT,
 #'     rFUN = wWHIT, wFUN = wFUN,
 #'     plotdat = d, IsPlot = IsPlot, print = FALSE, IsOnlyPlotbad = FALSE)
-#' 
+#'
 #' fit <- curvefits(
 #'     INPUT, brks2,
-#'     methods = c("AG", "Beck", "Elmore", "Gu", "Zhang"), #,"klos",
+#'     methods = c("AG", "Beck", "Elmore", "Zhang"), #,"klos", "Gu"
 #'     verbose = FALSE,
 #'     wFUN = wFUN,
-#'     nextent = 2, maxExtendMonth = 3, minExtendMonth = 1,
-#'     qc = dnew$QC_flag, minPercValid = 0.2,
-#'     print = FALSE
-#' )
-#' 
-#' fit$INPUT   <- INPUT
-#' fit$seasons <- brks2
-#' g <- plot_phenofit(fit, d)
+#'     nextent = 2, maxExtendMonth = 2, minExtendMonth = 1,
+#'     QC_flag = dnew$QC_flag, minPercValid = 0.2,
+#'     print = TRUE)
+#'
+#' df_fit <- get_fitting(fit)
+#' g <- plot_phenofit(df_fit, brks2)
 #' grid::grid.newpage(); grid::grid.draw(g)
 #' @export
 curvefits <- function(INPUT, brks,
@@ -82,73 +80,66 @@ curvefits <- function(INPUT, brks,
                       minPercValid = 0.2,
                       print = TRUE, ...)
 {
+    if (all(is.na(INPUT$y))) return(NULL)
+
     nptperyear <- INPUT$nptperyear
     t     <- INPUT$t
     years <- year(t)
-    n    <- length(t)
-    doys <- as.numeric(difftime(t, t[1], units = "day") + 1)#days from origin
+    n     <- length(t)
+
+    # doys  <- as.numeric(t) # days from origin
+    doys <- as.numeric(difftime(t, date.origin, units = "day") + 1)
 
     # Tn for background module
-    Tn     <- INPUT$Tn #if has no Tn, NULL will be return
-    has_Tn <- ifelse(is_empty(Tn), F, T)
-    y0     <- INPUT$y0 #original y
     w <- w0 <- INPUT$w
+    y0     <- INPUT$y0 # original y
+    Tn     <- INPUT$Tn # if has no Tn, NULL will be return
+    has_Tn <- ifelse(is_empty(Tn), F, TRUE)
 
-    if (is.null(y0)) y0 <- INPUT$y
-    if (all(is.na(INPUT$y))) return(NULL)
-
-    # possible snow or cloud, replaced with whittaker smooth.
+    # possible snow or cloud, replaced with Whittaker smoothing.
     I_w <- match(brks$whit$t, t) %>% rm_empty()
 
     I_fix <- which(w[I_w] == wmin)
     I_y   <- I_w[I_fix]
     INPUT$y[I_y] <- dplyr::last(brks$whit)[I_fix]
     w[I_w] <- brks$whit %>% {.[, contain(., "witer"), with = F]} %>% last()
-    #w[I_fix]       <- wmin + 0.1 # exert the function of whitaker smoother
+    # w[I_fix] <- wmin + 0.1 # exert the function of whitaker smoother
 
-    di <- brks$di
-    if (is.null(di)){
-        getDateId <- function(dates) match(dates, t) #%>% rm_empty()
-        getDateId_before <- function(dates) sapply(dates, function(date) last(which(t <= date)))
-        getDateId_after  <- function(dates) sapply(dates, function(date) first(which(t >= date)))
+    # growing season dividing
+    getDateId <- function(dates) match(dates, t) #%>% rm_empty()
+    getDateId_before <- function(dates) sapply(dates, function(date) last(which(t <= date)))
+    getDateId_after  <- function(dates) sapply(dates, function(date) first(which(t >= date)))
 
-        di <- data.table( beg  = getDateId_before(brks$dt$beg),
-                          peak = getDateId_before(brks$dt$peak),
-                          end  = getDateId_after(brks$dt$end)) %>% na.omit()
-    }
+    di <- data.table( beg  = getDateId_before(brks$dt$beg),
+                      peak = getDateId_before(brks$dt$peak),
+                      end  = getDateId_after(brks$dt$end)) %>% na.omit()
 
-    # plot(y, type = "b"); grid()
-    # lines(brks$whit$iter3, col = "blue")
-    # lines(INPUT$y        , col = "red")
     MaxExtendWidth = ceiling(nptperyear/12*maxExtendMonth)
     MinExtendWidth = ceiling(nptperyear/12*minExtendMonth)
-    width_ylu    = nptperyear*2
+    width_ylu      = nptperyear*2
 
     y    <- INPUT$y
     fits <- list()
-    for (i in 1:nrow(di)){ #
+    for (i in 1:nrow(di)){
         if (print) runningId(i, prefix = '\t[curvefits] ')
 
-        I    <- di$beg[i]:di$end[i]
+        I     <- di$beg[i]:di$end[i]
         I_beg <- di$beg[i]
         I_end <- di$end[i]
 
         I_extend <- get_extentI(w0, MaxExtendWidth, MinExtendWidth, I_beg, I_end, nextent, wmin)
 
-        ### 2. input data
+        ## 2. input data
         ti   <- doys[I_extend]
         yi   <- INPUT$y[I_extend]
         wi   <- w[I_extend]
         # yi_good <- yi[w0[I_extend] > wmin]
 
-        ### update ylu in a three year moving window
+        ## update ylu in a three year moving window
         ylu <- get_ylu (y, years, w0, width_ylu, I_beg:I_end, Imedian = TRUE, wmin)
         ylu <- merge_ylu(INPUT$ylu, ylu)
-
         # yi[yi < ylu[1]] <- ylu[1] # update y value
 
-        # original weights, put in w0 incurvefitting is unwisdom, but for plot
-        # w0   <- qc[I_extend] #INPUT$w
         # add background module here, 20180513
         if (has_Tn){
             Tni        <- Tn[I_extend]
@@ -159,33 +150,32 @@ curvefits <- function(INPUT, brks,
                 wi[I_back] <- 0.5
             }
         }
-        beginI = ifelse(i == 1, 1, 2) # make sure no overlap
-        tout <- doys[I] %>% {.[beginI]:last(.)} # make sure return the same length result.
+        beginI <- ifelse(i == 1, 1, 2) # make sure no overlap
+        tout   <- doys[I] %>% {.[beginI]:last(.)} # make sure return the same length result.
 
-        fit  <- curvefit(yi, ti, tout, nptperyear = nptperyear,
+        fFITs  <- curvefit(yi, ti, tout, nptperyear = nptperyear,
                          w = wi, ylu = ylu, iters = iters,
                          methods = methods, wFUN = wFUN, ...)
         # add original input data here, global calculation can comment this line
-        
-        data <- list(y = y0[I], t = doys[I], QC_flag = QC_flag[I]) %>% as.data.table()
-        for (j in seq_along(fit)) fit[[j]]$data <- data
-        # x <- fit$ELMORE
-        # plot(y~t, x$data, type = "b"); grid()
-        # lines(x$tout, x$fits$iter2)
 
-        #if too much missing values
+        # \code{y} at here is original time-series without checked
+        data <- list(t = doys[I], y = y0[I], QC_flag = QC_flag[I]) %>% as.data.table()
+        fFITs$data <- data
+
+        # if too much missing values
         if (sum(wi > pmax(wmin+0.1, 0.2))/length(wi) < minPercValid){
-            fit %<>% map(function(x){
-                x$fits %<>% map(~.x*NA) # list()
+            fFITs %<>% map(function(x){
+                x$zs %<>% map(~.x*NA) # list()
                 return(x)
             })
         }
-        fits[[i]] <- fit
+        fits[[i]] <- fFITs
     }
     # L1:curve fitting method, L2:yearly flag
-    fits %<>% set_names(brks$dt$flag) %>% purrr::transpose()
-    return(list(tout = t[first(di$beg):last(di$end)],  #dates for OUTPUT curve fitting VI
-                fits = fits))
+    fits %<>% set_names(brks$dt$flag) # %>% purrr::transpose()
+    fits
+    # return(list(tout = t[first(di$beg):last(di$end)],  # dates for OUTPUT curve fitting VI
+    #             fits = fits))
 }
 
 
@@ -203,8 +193,8 @@ get_extentI <- function(w0, MaxExtendWidth, MinExtendWidth, I_beg, I_end, nexten
 
         # at least `nextent` marginal point in previous and following season
         # I_beg2 and I_end2 have been constrained in the range of [1, n]
-        I_beg2 <- I_beg_raw[ which(w0[I_beg_raw] > wmin)[nextent]  ]
-        I_end2 <- I_end_raw[ which(w0[I_end_raw] > wmin)[nextent]  ]
+        I_beg2 <- I_beg_raw[ which(w0[I_beg_raw] > wmin)[nextent] ]
+        I_end2 <- I_end_raw[ which(w0[I_end_raw] > wmin)[nextent] ]
     }
 
     # in case of previous and subsequent season good values too closed

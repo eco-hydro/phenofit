@@ -15,10 +15,12 @@ phenonames <- c('TRS2.SOS', 'TRS2.EOS', 'TRS5.SOS', 'TRS5.EOS', 'TRS6.SOS', 'TRS
 #' 'Beck', 'Elmore', 'Gu', 'Klos', 'Zhang')}. 
 #' @param ... other parameters passed to curve fitting function.
 #' 
-#' @note 'Klos' and 'Gu' have many parameters. It will be slow and not stable.
+#' @note 'Klos' have too many parameters. It will be slow and not stable.
 #' 
-#' @return fits
-#' @seealso \code{\link{FitAG}}, \code{\link{FitDL.Beck}}, 
+#' @return fFITs S3 object, see \code{\link{fFITs}} for details.
+#' 
+#' @seealso \code{\link{fFITs}}, 
+#' \code{\link{FitAG}}, \code{\link{FitDL.Beck}}, 
 #' \code{\link{FitDL.Elmore}}, \code{\link{FitDL.Gu}}, 
 #' \code{\link{FitDL.Klos}}, \code{\link{FitDL.Zhang}}
 #' 
@@ -38,7 +40,7 @@ phenonames <- c('TRS2.SOS', 'TRS2.EOS', 'TRS5.SOS', 'TRS5.EOS', 'TRS6.SOS', 'TRS
 #' y <- fFUN(par, t)
 #' 
 #' methods <- c("AG", "Beck", "Elmore", "Gu", "Zhang") # "Klos" too slow
-#' fit <- curvefit(y, t, tout, methods)
+#' fFITs <- curvefit(y, t, tout, methods)
 #' @export
 curvefit <- function(y, t = index(y), tout = t, 
     methods = c('AG', 'Beck', 'Elmore', 'Gu', 'Klos', 'Zhang'), ...)
@@ -60,27 +62,9 @@ curvefit <- function(y, t = index(y), tout = t,
     if ('Zhang'  %in% methods) fit.Zhang  <- do.call(FitDL.Zhang, c(params, method = "nlminb"))  #nlm
 
     names <- ls(pattern = "fit\\.") %>% set_names(., .)
-    fits  <- lapply(names, get, envir = environment()) %>%
+    fFITs <- lapply(names, get, envir = environment()) %>%
         set_names(toupper(gsub("fit\\.", "", names))) #remove `fit.` and update names
-    return(fits)
-}
 
-
-#' Get parameters from curve fitting result
-#'
-#' @param fit Curve fitting result by \code{curvefits} result. 
-#' @export
-getparam <- function(fit){
-    llply(fit$fits, function(x){
-        ldply(x, . %>% .$par, .id = "flag") %>% as_tibble()
-    })
-}
-
-#' @param fits Multiple methods curve fitting results by \code{curvefits} result. 
-#' @rdname getparam
-#' @export
-getparams <- function(fits){
-    pars <- map(fits, getparams) %>% purrr::transpose() %>%
-        map(~melt_list(.x, "site") %>% as_tibble())
-    return(pars)
+    structure(list(data = data.table(y, t), tout = tout, fFIT = fFITs), 
+        class = 'fFITs')
 }

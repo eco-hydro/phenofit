@@ -98,7 +98,7 @@ backval <- function(y, t, w, Tn, minT = 5, nptperyear, ...){
 
 #         if (!is_empty(i_end)){
 #             polygons[[i]] <- c(i_beg, -Inf, i_end, -Inf, i_end, Inf,i_beg, Inf,i_beg, -Inf) %>%
-#                 matrix(ncol = 2, byrow = T) %>%
+#                 matrix(ncol = 2, byrow = TRUE) %>%
 #                 set_colnames(c("x", "y")) %>% as.data.frame()
 #         }
 #     }

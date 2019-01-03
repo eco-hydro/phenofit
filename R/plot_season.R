@@ -5,14 +5,14 @@
 #' @rdname season
 #' 
 #' @export
-plot_season <- function(INPUT, brks, plotdat, ylu, IsOnlyPlotbad = FALSE){
+plot_season <- function(INPUT, brks, plotdat, ylu, IsPlot.OnlyBad = FALSE){
     stat <- stat_season(INPUT, brks)
     stat_txt  <- stat[c("R2", "NSE", "sim.cv", "obs.cv")] %>% unlist() %>% 
         {paste(names(.), round(., 3), sep = "=", collapse = ", ")}
 
     # if (NSE < 0 | (cv < 0.1 & NSE < 0.1)) {}
     # if(IsPlot && (NSE < 0 && cv < 0.2)){
-    if (IsOnlyPlotbad && stat['NSE'] < 0.3) return()
+    if (IsPlot.OnlyBad && stat['NSE'] < 0.3) return()
 
     t  <- brks$whit$t
     dt <- brks$dt

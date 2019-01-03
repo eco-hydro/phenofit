@@ -4,14 +4,18 @@
 \alias{plot_phenofit}
 \title{plot_phenofit}
 \usage{
-plot_phenofit(fit, d, title = NULL, show.legend = T)
+plot_phenofit(df_fit, seasons, title = NULL, font.size = 14,
+  show.legend = TRUE)
 }
 \arguments{
-\item{fit}{Object returned by \code{curvefits}.}
+\item{df_fit}{data.frame of curve fittings returned by \code{\link{get_fitting}}.}
 
-\item{d}{original input data}
+\item{seasons}{Growing season dividing object returned by \code{\link{season}}
+and \code{\link{season_3y}}.}
 
-\item{title}{String}
+\item{title}{String, title of figure.}
+
+\item{font.size}{Font size of axis.text}
 
 \item{show.legend}{Boolean}
 }

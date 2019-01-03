@@ -45,9 +45,11 @@ e.g. in the start or end of growing season.}
 \value{
 A list object returned
 \itemize{
-\item{y} Numeric vector
-\item{t} Numeric vector
-\item{w} Numeric vector
+\item{t } Numeric vector
+\item{y0} Numeric vector, original vegetation time-series.
+\item{y } Numeric vector, checked vegetation time-series, \code{NA} values 
+are interpolated. 
+\item{w } Numeric vector
 \item{Tn} Numeric vector
 \item{ylu} =[ymin, ymax]. \code{w_critical} is used to filter not too
      bad values. If the percentage good values (w=1) is greater than 30\%, then
@@ -80,10 +82,8 @@ nptperyear = 23
 ypeak_min  = 0.05
 
 dnew     <- add_HeadTail(d, nptperyear = nptperyear) # add one year in head and tail
-INPUT    <- check_input(dnew$t, dnew$y, dnew$w, nptperyear, 
+INPUT    <- check_input(dnew$t, dnew$y, dnew$w, nptperyear = nptperyear, 
                         maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
-INPUT$y0 <- dnew$y   # raw time-series, for visualization
-
 }
 \seealso{
 \code{\link[phenofit]{backval}}

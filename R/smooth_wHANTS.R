@@ -1,19 +1,19 @@
 #' Weighted HANTS SMOOTH
 #'
 #' Weighted HANTS smoother
-#' 
+#'
 #' @inheritParams check_input
 #' @param nf number of frequencies to be considered above the zero frequency
 #' @param ylu [low, high] of time-series y (curve fitting values are constrained
 #' in the range of \code{ylu}.
 #' @param periodlen length of the base period, measured in virtual samples
 #'           (days, dekads, months, etc.). nptperyear in timesat.
-#' @param wFUN weights updating function, can be one of 'wTSM', 'wChen' and 
+#' @param wFUN weights updating function, can be one of 'wTSM', 'wChen' and
 #' 'wBisquare'.
 #' @param iters How many times curve fitting is implemented.
 #' @param wmin Double, minimum weigth (i.e. weight of snow, ice and cloud).
 #' @param ... Additional parameters are passed to \code{wFUN}.
-#' 
+#'
 #' @author
 #' Wout Verhoef, NLR, Remote Sensing Dept. June 1998
 #' Mohammad Abouali (2011), Converted to MATLAB
@@ -23,6 +23,15 @@
 #'    \item \code{ws} weights of every iteration
 #'    \item \code{zs} curve fittings of every iteration
 #' }
+#'
+#' @examples
+#' library(phenofit)
+#' data("MOD13A1")
+#' dt <- tidy_MOD13.gee(MOD13A1$dt)
+#' d <- dt[site == "AT-Neu", ]
+#'
+#' l <- check_input(d$t, d$y, d$w, nptperyear=23)
+#' r_wHANTS <- wHANTS(l$y, l$t, l$w, ylu = l$ylu, nptperyear = 23, iters = 2)
 #' @export
 # Modified:
 #   Apply suppression of high amplitudes for near-singular case by
@@ -46,6 +55,7 @@ wHANTS <- function(y, t, w, nf = 3, ylu, periodlen = 365, nptperyear,
     ncol <- min(2*nf+1, n)
 
     mat <- array(0, dim = c(n, ncol) )
+
     amp <- numeric(nf+1)
     phi <- numeric(nf+1)
     yz  <- numeric(n)
@@ -99,6 +109,6 @@ wHANTS <- function(y, t, w, nf = 3, ylu, periodlen = 365, nptperyear,
 
     fits %<>% set_names(paste0('ziter', 1:iters))
     ws   %<>% set_names(paste0('witer', 1:iters))
-    list(ws = ws, zs = fits)
+    list(zs = fits, ws = ws)
     # list(fit = fits, amp = amp, phi = phi) #quickly return
 }

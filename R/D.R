@@ -1,6 +1,6 @@
 # ' @rdname derivative
 # ' @export
-hess.phenofit <- function(fit, tout){
+hess.fFIT <- function(fit, tout){
     FUN <- get(fit$fun, mode = 'function')
     grad(function(t) grad(FUN, t, par= fit$par), tout)
 }
@@ -16,26 +16,18 @@ hess.phenofit <- function(fit, tout){
 # ' 
 # ' @rdname derivative
 # ' @export
-grad.phenofit <- function(fit, tout){
+grad.fFIT <- function(fit, tout){
     FUN <- get(fit$fun, mode = 'function')
     grad(FUN, tout, par = fit$par)
 }
-
-# FUN <- doubleLog.Beck
-# par <- c(
-#     mn = 0.1, mx = 0.7,
-#     sos = 100, rsp = 0.15,
-#     eos = 250, rau = 0.15)
-# t    <- seq(1, 365, 8)
-# tout <- seq(1, 365, 1)
-# y <- FUN(par, t) + rnorm(length(t), sd = 0.5)
 
 
 #' @title D
 #' @name D
 #' 
 #' @description Get derivative of \code{phenofit} object.
-#' \code{D1} first order derivative, \code{D2} second order derivative.
+#' \code{D1} first order derivative, \code{D2} second order derivative, n
+#' \code{curvature} curvature.
 #'
 #' @details If \code{fit$fun} has no gradient function or \code{smoothed.spline = TRUE}, 
 #' time-series smoothed by spline first, and get derivatives at last. 
@@ -48,6 +40,34 @@ grad.phenofit <- function(fit, tout){
 #' @param smoothed.spline Whether apply \code{smooth.spline} first?
 #' @param ... Other parameters will be ignored.
 #' 
+#' @return 
+#' \itemize{
+#' \item der1 First order derivative
+#' \item der2 Second order derivative
+#' \item k    Curvature
+#' }
+#' 
+#' @examples
+#' library(phenofit)
+#' # simulate vegetation time-series
+#' fFUN = doubleLog.Beck
+#' par  = c(
+#'     mn  = 0.1,
+#'     mx  = 0.7,
+#'     sos = 50,
+#'     rsp = 0.1,
+#'     eos = 250,
+#'     rau = 0.1)
+#' t    <- seq(1, 365, 8)
+#' tout <- seq(1, 365, 1)
+#' y <- fFUN(par, t)
+#' 
+#' methods <- c("AG", "Beck", "Elmore", "Gu", "Zhang") # "Klos" too slow
+#' fFITs <- curvefit(y, t, tout, methods)
+#' fFIT  <- fFITs$fFIT$AG
+#' d1 <- D1(fFIT)
+#' d2 <- D2(fFIT)
+#' d_k <- curvature(fFIT)
 #' @rdname D
 NULL
 
@@ -59,10 +79,9 @@ D1 <- function(fit, analytical = TRUE, smoothed.spline = FALSE, ...) UseMethod('
 #' @export
 D2 <- function(fit, analytical = TRUE, smoothed.spline = FALSE, ...) UseMethod('D2', fit)
 
-#' @rdname D
 #' @export
-D1.phenofit <- function(fit, analytical = TRUE, smoothed.spline = FALSE, ...){
-    pred <- last(fit$fits)
+D1.fFIT <- function(fit, analytical = TRUE, smoothed.spline = FALSE, ...){
+    pred <- last(fit$zs)
     t    <- fit$tout
     par  <- fit$par
 
@@ -75,7 +94,7 @@ D1.phenofit <- function(fit, analytical = TRUE, smoothed.spline = FALSE, ...){
 
     if (is.null(D1) || smoothed.spline) {
         # 1. Numerical solution
-        spline.eq <- smooth.spline(pred, df = length(pred))
+        spline.eq <- smooth.spline(pred, df = length(pred)*0.1)
         der1      <- predict(spline.eq, d = 1)$y
         # der1 <- diff(pred)/diff(t)
     } else if (analytical){
@@ -83,7 +102,7 @@ D1.phenofit <- function(fit, analytical = TRUE, smoothed.spline = FALSE, ...){
         der1 <- D1(par, t)[, 1] # the default option
     } else {
         # numerical approximation
-        der1 <- grad.phenofit(fit, t)     
+        der1 <- grad.fFIT(fit, t)     
     }
 
     der1[is.infinite(der1)] <- NA
@@ -92,10 +111,9 @@ D1.phenofit <- function(fit, analytical = TRUE, smoothed.spline = FALSE, ...){
     return(der1)
 }
 
-#' @rdname D
 #' @export
-D2.phenofit <- function(fit, analytical = TRUE, smoothed.spline = FALSE, ...){
-    pred <- last(fit$fits)
+D2.fFIT <- function(fit, analytical = TRUE, smoothed.spline = FALSE, ...){
+    pred <- last(fit$zs)
     t    <- fit$tout
     par  <- fit$par
 
@@ -115,8 +133,8 @@ D2.phenofit <- function(fit, analytical = TRUE, smoothed.spline = FALSE, ...){
         der2 <- D2(par, t)[, 1, 1]
     } else {
         # numerical approximation
-        der1 <- grad.phenofit(fit, t)
-        der2 <- hess.phenofit(fit, t)
+        der1 <- grad.fFIT(fit, t)
+        der2 <- hess.fFIT(fit, t)
     }
     
     ## in case for NA values
@@ -128,14 +146,13 @@ D2.phenofit <- function(fit, analytical = TRUE, smoothed.spline = FALSE, ...){
     return(list(der1 = der1, der2 = der2))
 }
 
-#' curvature
-#' @inheritParams D1
+#' @rdname D
 #' @export
 curvature <- function(fit, analytical = TRUE, smoothed.spline = FALSE, ...) UseMethod('curvature', fit)
 
 #' @export
-curvature.phenofit <- function(fit, analytical = TRUE, smoothed.spline = FALSE, ...){
-    derivs <- D2.phenofit(fit, analytical, smoothed.spline)
+curvature.fFIT <- function(fit, analytical = TRUE, smoothed.spline = FALSE, ...){
+    derivs <- D2.fFIT(fit, analytical, smoothed.spline)
     k      <- derivs$der2 / (1 + derivs$der1 ^ 2) ^ (3 / 2)
-    return(list(k = k, der1 = derivs$der1, der2 = derivs$der2))
+    c(derivs, list(k = k))
 }

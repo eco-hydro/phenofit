@@ -1,75 +1,66 @@
 context("Phenology Extraction")
 
-source('helper_MOD13A1.R')
+# source('helper_MOD13A1.R')
 wFUN = wTSM # wBisquare #
 
 # The `maxExtendMonth` in season_3y and curvefits is different
 # lambda   <- init_lambda(INPUT$y) # lambda for whittaker
 brks2 <- season_3y(INPUT,
     rFUN = wWHIT, wFUN = wFUN,
-    plotdat = d, IsPlot = IsPlot, print = F, IsOnlyPlotbad = F)
+    plotdat = d, IsPlot = IsPlot, IsPlot.OnlyBad = F, print = F)
 
 param <- list(
     INPUT, brks2,
     methods = c("AG", "Zhang", "Beck", "Elmore", 'Gu'), #,"klos",
-    debug = F, 
+    verbose = F,
     wFUN = wFUN,
     nextent = 2, maxExtendMonth = 2, minExtendMonth = 1,
-    qc = as.numeric(dnew$SummaryQA), minPercValid = 0.2,
+    QC_flag = dnew$QC_flag, minPercValid = 0.2,
     print = FALSE
 )
 
 fit  <- do.call(curvefits, param)
 
-# test plot.phenofit
+# test plot.fFIT
 expect_silent({
-    fit$fits %>% first() %>% # 1th method
-        first() %>% plot()   # 1th year
+    fit[[1]] %>% plot()   # 1th year
 })
 
-fit$INPUT   <- INPUT
-fit$seasons <- brks2
-
 ## check the curve fitting parameters
-params <- getparam(fit)
+params <- get_param(fit)
 print(str(params, 1))
 print(params$AG)
 
-# Test GOF 
+# Test GOF
 expect_silent({
     suppressWarnings({
-        stat  <- ldply(fit$fits, function(fits_meth){
-            ldply(fits_meth, statistic.phenofit, .id = "flag")
-        }, .id = "meth")
-        fit$stat <- stat
+        stat <- ldply(fit, GOF_fFITs, .id = "flag") %>% data.table()
 
-        g <- plot_phenofit(fit, d)
-        grid::grid.newpage(); grid::grid.draw(g)    
+        df_fit <- get_fitting(fit)
+
+        g <- plot_phenofit(df_fit, brks2)
+        grid::grid.newpage(); grid::grid.draw(g)
     })
 })
 
 
 # analytical
 expect_silent({
-    p <- lapply(fit$fits, PhenoExtract, 
+    p <- PhenoExtract(fit,
         analytical = TRUE, smoothed.spline = FALSE,
         IsPlot = T)
-    pheno  <- map(p, tidyFitPheno, origin = INPUT$t[1]) %>% purrr::transpose()
 })
 
 # numDeriv
 expect_silent({
-    p <- lapply(fit$fits, PhenoExtract, 
+    p <- PhenoExtract(fit,
         analytical = FALSE, smoothed.spline = FALSE,
         IsPlot = F)
-    pheno  <- map(p, tidyFitPheno, origin = INPUT$t[1]) %>% purrr::transpose()
 })
 
 # spline
 expect_silent({
-    p <- lapply(fit$fits, PhenoExtract, 
+    p <- PhenoExtract(fit,
         analytical = FALSE, smoothed.spline = TRUE,
         IsPlot = F)
-    pheno  <- map(p, tidyFitPheno, origin = INPUT$t[1]) %>% purrr::transpose()
 })
-# print(pheno)

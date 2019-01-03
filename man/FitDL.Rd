@@ -62,8 +62,8 @@ Gaussian. They are used to fit vegetation time-series in every growing season.
      length in mid-Atlantic forests. Glob. Chang. Biol. 18, 656-674.
      https://doi.org/10.1111/j.1365-2486.2011.02521.x. \cr
 
-[3]. Gu, L., Post, W.M., Baldocchi, D.D., Black, T.A., Suyker, A.E., Verma,
-     S.B., Vesala, T., Wofsy, S.C., 2009. Characterizing the Seasonal Dynamics
+[3]. Gu, L., Post, W.M., Baldocchi, D.D., Black, TRUE.A., Suyker, A.E., Verma,
+     S.B., Vesala, TRUE., Wofsy, S.C., 2009. Characterizing the Seasonal Dynamics
      of Plant Community Photosynthesis Across a Range of Vegetation Types,
      in: Noormets, A. (Ed.), Phenology of Ecosystem Processes: Applications
      in Global Change Research. Springer New York, New York, NY, pp. 35-58.

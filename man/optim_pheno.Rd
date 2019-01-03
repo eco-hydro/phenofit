@@ -29,16 +29,16 @@ values are to be found. \code{prior} is suggested giving a column name.}
 \item{w}{(optional) Numeric vector, weights of \code{y}. If not specified, 
 weights of all \code{NA} values will be \code{wmin}, the others will be 1.0.}
 
-\item{nptperyear}{Integer, number of images per year, passed to \code{wFUN}. 
-Only \code{\link{wTSM}} needs \code{nptperyear}. If not specified, 
+\item{nptperyear}{Integer, number of images per year, passed to \code{wFUN}.
+Only \code{\link{wTSM}} needs \code{nptperyear}. If not specified,
 \code{nptperyear} will be calculated based on \code{t}.}
 
-\item{ylu}{\code{ymin, ymax}, which is used to force \code{ypred} in the 
+\item{ylu}{\code{ymin, ymax}, which is used to force \code{ypred} in the
 range of \code{ylu}.}
 
 \item{iters}{How many times curve fitting is implemented.}
 
-\item{wFUN}{weights updating function, can be one of 'wTSM', 'wChen' and 
+\item{wFUN}{weights updating function, can be one of 'wTSM', 'wChen' and
 'wBisquare'.}
 
 \item{verbose}{Whether to display intermediate variables?}
@@ -46,9 +46,9 @@ range of \code{ylu}.}
 \item{...}{other parameters passed to \code{I_optimFUN}}
 }
 \value{
-list(pred, par, fun)
+fFIT object, see \code{\link{fFIT}} for details.
 }
 \description{
 Interface of optimization functions for double logistics and other parametric
-curve fitting functions
+curve fitting functions.
 }

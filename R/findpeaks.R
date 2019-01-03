@@ -84,7 +84,7 @@ findpeaks <- function (x, IsDiff = TRUE, nups = 1, ndowns = nups, zero = "0", pe
     for (i in 1:n) {
         # for duplicated extreme values, get the median
         vals <- x[x1[i]:x2[i]]
-        maxI <- which(vals == max(vals, na.rm = T))
+        maxI <- which(vals == max(vals, na.rm = TRUE))
         xp[i] <- floor(median(maxI)) + x1[i] - 1
         xv[i] <- x[xp[i]]
     }

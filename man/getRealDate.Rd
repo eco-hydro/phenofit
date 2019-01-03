@@ -16,3 +16,10 @@ A data.table with a new column \code{t}, which is the exact compositing date.
 \description{
 convert MODIS \code{DayOfYear} to the exact compositing date.
 }
+\examples{
+library(phenofit)
+data("MOD13A1")
+
+df  <- MOD13A1$dt
+df2 <- getRealDate(df)
+}

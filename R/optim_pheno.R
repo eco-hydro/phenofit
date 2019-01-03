@@ -1,18 +1,18 @@
 #' optim_pheno
 #'
 #' Interface of optimization functions for double logistics and other parametric
-#' curve fitting functions
-#' 
+#' curve fitting functions.
+#'
 #' @inheritParams wHANTS
 #' @param prior A vector of initial values for the parameters for which optimal
 #' values are to be found. \code{prior} is suggested giving a column name.
 #' @param sFUN The name of fine curve fitting functions, can be one of \code{
 #' 'FitAG', 'FitDL.Beck', 'FitDL.Elmore', 'FitDL.Gu' and 'FitDL.Klos',
 #' 'FitDL.Zhang'}.
-#' @param nptperyear Integer, number of images per year, passed to \code{wFUN}. 
-#' Only \code{\link{wTSM}} needs \code{nptperyear}. If not specified, 
+#' @param nptperyear Integer, number of images per year, passed to \code{wFUN}.
+#' Only \code{\link{wTSM}} needs \code{nptperyear}. If not specified,
 #' \code{nptperyear} will be calculated based on \code{t}.
-#' @param ylu \code{ymin, ymax}, which is used to force \code{ypred} in the 
+#' @param ylu \code{ymin, ymax}, which is used to force \code{ypred} in the
 #' range of \code{ylu}.
 #' @param tout Corresponding doy of prediction.
 #' @param I_optimFUN Interface of optimization function, can be one of
@@ -21,21 +21,28 @@
 #' @param verbose Whether to display intermediate variables?
 #' @param ... other parameters passed to \code{I_optimFUN}
 #'
-#' @return list(pred, par, fun)
+#' @return fFIT object, see \code{\link{fFIT}} for details.
+#'
 #' @import optimx
 #' @export
 optim_pheno <- function(
-    prior, sFUN, 
+    prior, sFUN,
     y, t, tout,
     I_optimFUN = I_optim, method,
-    w, nptperyear, ylu, 
+    w, nptperyear, ylu,
     iters = 2, wFUN = wTSM,
     verbose = FALSE, ...)
 {
+    # To improve the performance of optimization, \code{t} needs to be normalized.
+    # t_0    <- t
+    tout_0 <- tout
+    # tout   <- tout - t[1] + 1
+    # t      <- t - t[1] + 1
+
     # check input parameters
     if (missing(w))          w   <- rep(1, length(y))
     if (missing(nptperyear)) nptperyear <- ceiling(365/mean(as.numeric(diff(t))))
-    if (missing(ylu))        ylu <- range(y, na.rm = T)
+    if (missing(ylu))        ylu <- range(y, na.rm = TRUE)
     A <- diff(ylu) # y amplitude
 
     FUN <- get(sFUN, mode = "function" )
@@ -48,17 +55,15 @@ optim_pheno <- function(
     ws   <- list() #record weights for every iteration
     ## 1. add weights updating methods here
     par   <- setNames(numeric(length(parnames))*NA, parnames)
-    xpred <- rep(NA, length(tout))
+    ypred <- rep(NA, length(tout))
 
     if (verbose){
         boundary <- list(...)[c('lower', 'upper')] %>% do.call(rbind, .) %>%
             set_colnames(parnames) %>% as_tibble()
-        # upper <- list(...)$upper
         print(boundary)
     }
 
     for (i in 1:iters){
-
         ws[[i]] <- w
         # pass verbose for optimx optimization methods selection
         opt.df  <- I_optimFUN(prior, FUN, y, t, tout, method = method, w = w, verbose = verbose, ...)
@@ -90,9 +95,9 @@ optim_pheno <- function(
                 par   <- opt[, parnames] %>% unlist()
                 # put opt par into prior for the next iteration
                 prior <- rbind(prior[1:(nrow(prior)-1), ], par, deparse.level = 0)
-                xpred <- FUN(par, tout)
+                ypred <- FUN(par, tout)
                 # too much missing values
-                # if (sum(w == 0)/length(w) > 0.5) xpred <- xpred*NA
+                # if (sum(w == 0)/length(w) > 0.5) ypred <- ypred*NA
 
                 # fixed 04 March, 2018;
                 w <- tryCatch(
@@ -103,18 +108,18 @@ optim_pheno <- function(
                         message(sprintf('[%s]: %s', sFUN, e$message))
                         return(w) #return original w
                     })
-                xpred %<>% check_fit(ylu) #values out of ylu are set as NA
+                ypred %<>% check_fit(ylu) #values out of ylu are set as NA
             }
         }
-        fits[[i]] <- xpred
+        fits[[i]] <- ypred
     }
     fits %<>% set_names(paste0('iter', 1:iters))
     ws   %<>% set_names(paste0('iter', 1:iters)) # %>% as_tibble()
 
     # 02. uncertain part also could add here
     # returned object FUN need to be futher optimized
-    structure(list(tout = tout, fits = fits, ws = ws,
-        par  = par, fun = sFUN), class = 'phenofit')
+    structure(list(tout = tout_0, zs = fits, ws = ws,
+        par  = par, fun = sFUN), class = 'fFIT')
 }
 
 # 1. Firstly, using \pkg{optimx} package to select the best performance

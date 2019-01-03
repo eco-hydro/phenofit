@@ -25,7 +25,7 @@ in the range of \code{ylu}.}
 
 \item{nptperyear}{Integer, number of images per year.}
 
-\item{wFUN}{weights updating function, can be one of 'wTSM', 'wChen' and 
+\item{wFUN}{weights updating function, can be one of 'wTSM', 'wChen' and
 'wBisquare'.}
 
 \item{iters}{How many times curve fitting is implemented.}
@@ -42,6 +42,15 @@ in the range of \code{ylu}.}
 }
 \description{
 Weighted HANTS smoother
+}
+\examples{
+library(phenofit)
+data("MOD13A1")
+dt <- tidy_MOD13.gee(MOD13A1$dt)
+d <- dt[site == "AT-Neu", ]
+
+l <- check_input(d$t, d$y, d$w, nptperyear=23)
+r_wHANTS <- wHANTS(l$y, l$t, l$w, ylu = l$ylu, nptperyear = 23, iters = 2)
 }
 \author{
 Wout Verhoef, NLR, Remote Sensing Dept. June 1998

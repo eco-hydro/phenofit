@@ -17,13 +17,16 @@
 #'
 #' @author Paul Eilers, Jan Gerretzen
 #' @examples
-#' \dontrun{
-#' data(gaschrom)
-#' plot(gaschrom[1,], type = "l", ylim = c(0, 100))
-#' lines(whit2(gaschrom[1,], lambda = 1e5), col = 2)
-#' lines(whit2(gaschrom[1,], lambda = 1e6), col = 3)
-#' lines(whit2(gaschrom[1,], lambda = 1e7), col = 4)
-#' }
+#' library(phenofit)
+#' data("MOD13A1")
+#' dt <- tidy_MOD13.gee(MOD13A1$dt)
+#' y <- dt[site == "AT-Neu", ][1:120, y]
+#' 
+#' plot(y, type = "b")
+#' lines(whit2(y, lambda = 2), col = 2)
+#' lines(whit2(y, lambda = 10), col = 3)
+#' lines(whit2(y, lambda = 100), col = 4)
+#' legend("bottomleft", paste("lambda = ", c(2, 10, 15)), col = 2:4, lty = rep(1, 3))
 #' @export
 whit2 <- function(y, lambda, w = rep(1, ny))
 {
@@ -52,10 +55,21 @@ whit2 <- function(y, lambda, w = rep(1, ny))
 #' just prepared for this situation. If lambda value has been optimized, second
 #' smoothing is unnecessary.
 #'
+#' @inherit wHANTS return
+#' 
 #' @references
 #' [1]. Eilers, P.H.C., 2003. A perfect smoother. Anal. Chem. https://doi.org/10.1021/ac034173t \cr
 #' [2]. Frasso, G., Eilers, P.H.C., 2015. L- and V-curves for optimal smoothing. Stat.
 #'      Modelling 15, 91–111. https://doi.org/10.1177/1471082X14549288
+#' 
+#' @examples
+#' library(phenofit)
+#' data("MOD13A1")
+#' dt <- tidy_MOD13.gee(MOD13A1$dt)
+#' d <- dt[site == "AT-Neu", ]
+#' 
+#' l <- check_input(d$t, d$y, d$w, nptperyear=23)
+#' r_wWHIT <- wWHIT(l$y, l$w, l$ylu, nptperyear = 23, iters = 2)
 #' @export
 wWHIT <- function(y, w, ylu, nptperyear, wFUN = wTSM, iters=1, lambda=15,
     second = FALSE, ...) #, df = NULL
@@ -82,9 +96,9 @@ wWHIT <- function(y, w, ylu, nptperyear, wFUN = wTSM, iters=1, lambda=15,
 
             ## Based on our test, check_fit and upper envelope will decrease 
             # `wWWHIT`'s performance (20181029). 
+            z <- check_fit(z, ylu)
+            yiter[yiter < z] <- z[yiter < z] # upper envelope
             
-            # z <- check_fit(z, ylu)
-            # yiter[yiter < z] <- z[yiter < z] # upper envelope
             fits[[i]] <- z
             # wnew <- wFUN(y, z, w, i, nptperyear, ...)
             # yiter <- z# update y with smooth values 
@@ -92,7 +106,7 @@ wWHIT <- function(y, w, ylu, nptperyear, wFUN = wTSM, iters=1, lambda=15,
         fits %<>% set_names(paste0('ziter', 1:iters))
         ws   %<>% set_names(paste0('witer', 1:iters))
 
-        OUT[[j]] <- list(ws = ws, zs = fits)
+        OUT[[j]] <- list(zs = fits, ws = ws)
     }
     if (length(lambda) == 1) OUT <- OUT[[1]]
     return(OUT)

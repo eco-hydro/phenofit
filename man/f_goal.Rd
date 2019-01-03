@@ -2,10 +2,9 @@
 % Please edit documentation in R/doubleLogistics.R
 \name{f_goal}
 \alias{f_goal}
-\title{Common goal function of those curve fitting methods}
+\title{Goal function of fine curve fitting methods}
 \usage{
-f_goal(par, y, t, fun = c(doubleLog.Elmore, doubleLog.Beck,
-  doubleLog.Klos, doubleLog.Gu, doubleLog.Zhang, doubleAG), w, ylu, ...)
+f_goal(par, y, t, fun, w, ylu, ...)
 }
 \arguments{
 \item{par}{A vector of parameters}
@@ -14,19 +13,46 @@ f_goal(par, y, t, fun = c(doubleLog.Elmore, doubleLog.Beck,
 
 \item{t}{Numeric vector, \code{Date} variable}
 
-\item{fun}{A curve fitting function, see \code{\link{Logistic}}.}
+\item{fun}{A curve fitting function, can be one of \code{doubleAG}, 
+\code{doubleLog.Beck}, \code{doubleLog.Elmore}, \code{doubleLog.Gu}, 
+\code{doubleLog.Klos}, \code{doubleLog.Zhang}, see \code{\link{Logistic}} 
+for details.}
 
 \item{w}{(optional) Numeric vector, weights of \code{y}. If not specified, 
 weights of all \code{NA} values will be \code{wmin}, the others will be 1.0.}
 
-\item{ylu}{\code{ymin, ymax}, which is used to force \code{ypred} in the 
+\item{ylu}{\code{ymin, ymax}, which is used to force \code{ypred} in the
 range of \code{ylu}.}
 
-\item{...}{other parameters will be ignored.}
+\item{...}{others will be ignored.}
 }
 \value{
-RMSE root mean square error of curve fitting values.
+RMSE Root Mean Square Error of curve fitting values.
 }
 \description{
-Common goal function of those curve fitting methods
+Goal function of fine curve fitting methods
+}
+\examples{
+library(phenofit)
+# simulate vegetation time-series
+fFUN = doubleLog.Beck
+par  = c(
+    mn  = 0.1,
+    mx  = 0.7,
+    sos = 50,
+    rsp = 0.1,
+    eos = 250,
+    rau = 0.1)
+t    <- seq(1, 365, 8)
+tout <- seq(1, 365, 1)
+y <- fFUN(par, t)
+
+par0 <- c(
+    mn  = 0.15,
+    mx  = 0.65,
+    sos = 100,
+    rsp = 0.12,
+    eos = 200,
+    rau = 0.12)
+f_goal(par0, y, t, fFUN)
 }

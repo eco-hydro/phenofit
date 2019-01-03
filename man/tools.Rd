@@ -37,6 +37,13 @@ reorder_name(df, newname)
 reorder_name(dt, newname)
 reorder_name(l, newname)
 
+# numeric
+x <- c(1:5, NA)
+rm_empty(x)
+
+# list
+l <- list(1:5, NULL, NA)
+rm_empty(l)
 df <- data.frame(year = 2010, day = 1:3, month = 1, site = "A")
 contain(df, "year|month|day")
 }

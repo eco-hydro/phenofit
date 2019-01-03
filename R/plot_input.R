@@ -2,6 +2,27 @@
 #'
 #' @inheritParams season
 #' @param ... other parameter will be ignored.
+#' 
+#' @examples
+#' library(phenofit)
+#' data("MOD13A1")
+#' 
+#' dt <- tidy_MOD13.gee(MOD13A1$dt)
+#' st <- MOD13A1$st
+#' 
+#' sitename <- dt$site[1]
+#' d     <- dt[site == sitename, ] # get the first site data
+#' sp    <- st[site == sitename, ] # station point
+#' # global parameter
+#' IsPlot = TRUE
+#' print  = FALSE
+#' nptperyear = 23
+#' ypeak_min  = 0.05
+#' 
+#' dnew     <- add_HeadTail(d, nptperyear = nptperyear) # add one year in head and tail
+#' INPUT    <- check_input(dnew$t, dnew$y, dnew$w, nptperyear, 
+#'                         maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
+#' plot_input(INPUT)
 #' @export
 plot_input <- function(INPUT, wmin = 0.2, ...){
     t <- INPUT$t
@@ -18,7 +39,7 @@ plot_input <- function(INPUT, wmin = 0.2, ...){
     # axis(side=1, at = at, labels = format(at, fmt))
 
     # divide into three categories
-    wf <- 4 - findInterval(w, c(-Inf, wmin, 0.5, 1), left.open = T)
+    wf <- 4 - findInterval(w, c(-Inf, wmin, 0.5, 1), left.open = TRUE)
 
     colors <- c("grey60", "#00BFC4", "#C77CFF", "#F8766D", "blue", "red", "black")
     pch    <- c(19, 15, 17) # 4
@@ -35,7 +56,7 @@ plot_input <- function(INPUT, wmin = 0.2, ...){
     Ids <- unique(wf)
     for (i in 1:3){
         I = wf == i
-        add <- ifelse(i == 1, F, T)
+        add <- ifelse(i == 1, F, TRUE)
         points(t[I], y[I], pch = pch[i], col = colors[i], cex = 0.65)
     }
     
@@ -64,7 +85,7 @@ plot_input <- function(INPUT, wmin = 0.2, ...){
 #     # axis(side=1, at = at, labels = format(at, fmt))
 
 #     # divide into three categories
-#     wf <- 4 - findInterval(w, c(-Inf, wmin, 0.5, 1), left.open = T)
+#     wf <- 4 - findInterval(w, c(-Inf, wmin, 0.5, 1), left.open = TRUE)
 
 #     colors <- c("grey60", "#00BFC4", "#F8766D", "#C77CFF", "blue", "red", "black")
 #     pch    <- c(19, 15, 4)
@@ -77,7 +98,7 @@ plot_input <- function(INPUT, wmin = 0.2, ...){
 
 #     d <- lst_sm$MOD13A1[site == sitename & scale == "0m"]
 #     d[is.na(w), w := 0.1]
-#     d$wf <- 4 - findInterval(d$w, c(-Inf, wmin, 0.5, 1), left.open = T)
+#     d$wf <- 4 - findInterval(d$w, c(-Inf, wmin, 0.5, 1), left.open = TRUE)
 #     d$wf %<>% as.factor()
 
 #     plot_ly(data = d, x = ~t, y = ~NDVI) %>%

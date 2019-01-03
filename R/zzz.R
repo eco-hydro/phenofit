@@ -26,7 +26,7 @@ NULL
     if(getRversion() >= "2.15.1") {
         utils::globalVariables(
             c(".SD", ".N", 
-              "meth", "doy", # tidyFitPheno
+              "meth", "doy", "origin", # tidyFitPheno
               "DayOfYear", "SummaryQA", "site", "EVI", "w", "QC_flag", # tidy_MOD13.gee
               "beg", "end",  # plot_phenofit
               "val", "type", "flag", "peak" # season

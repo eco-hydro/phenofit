@@ -33,3 +33,8 @@ Tidy contents include: \cr
 1. add exact compositing date, see \code{\link{getRealDate}}. \cr
 2. Init weigths according \code{SummaryQA}, see \code{\link{qc_summary}}. \cr
 }
+\examples{
+library(phenofit)
+data("MOD13A1")
+dt <- tidy_MOD13.gee(MOD13A1$dt)
+}

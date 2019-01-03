@@ -6,6 +6,13 @@
 #'
 #' @return
 #' A data.table with a new column \code{t}, which is the exact compositing date.
+#' 
+#' @examples
+#' library(phenofit)
+#' data("MOD13A1")
+#' 
+#' df  <- MOD13A1$dt
+#' df2 <- getRealDate(df)
 #' @export
 getRealDate <- function(df){
     df[, `:=`(date = ymd(date))]
@@ -17,11 +24,6 @@ getRealDate <- function(df){
     df[abs(DayOfYear - doy) <  300, t := as.Date(sprintf("%d-%03d", year  , DayOfYear), "%Y-%j")]
     df
 }
-
-qc_values <- c("0", "1", "2", "3")
-qc_levels <- c("good", "margin", "snow/ice", "cloud")
-qc_colors <- c("grey60", "#00BFC4", "#F8766D", "#C77CFF") %>% set_names(qc_levels)
-qc_shapes <- c(19, 15, 4, 17) %>% set_names(qc_levels)
 
 #' tidy_MOD13.gee
 #'
@@ -47,6 +49,11 @@ qc_shapes <- c(19, 15, 4, 17) %>% set_names(qc_levels)
 #' \item{SummaryQA}{A factor, QA types, one of "good", "margin", "snow/ice"
 #' or "cloud".}
 #' }
+#' 
+#' @examples
+#' library(phenofit)
+#' data("MOD13A1")
+#' dt <- tidy_MOD13.gee(MOD13A1$dt)
 #' @export
 tidy_MOD13.gee <- function(infile, outfile, wmin = 0.2){
     df <- infile

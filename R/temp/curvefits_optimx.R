@@ -35,7 +35,7 @@ curvefit_optimx <- function(x, t = index(x), tout = t,
     if ('Klos'   %in% methods) fit.Klos   <- do.call(FitDL.Klos, params)        #BFGS, Nelder-Mead, L-BFGS-B
 
     # test for optimx methods
-    # fit   <- FitDL.Zhang  (x, t, tout, optimFUN = optimx_fun, debug = T, method = 'BFGS')
+    # fit   <- FitDL.Zhang  (x, t, tout, optimFUN = optimx_fun, debug = TRUE, method = 'BFGS')
     names <- ls(pattern = "fit\\.") %>% set_names(., .)
     fits  <- lapply(names, get, envir = environment()) %>%
         set_names(toupper(gsub("fit\\.", "", names))) #remove `fit.` and update names

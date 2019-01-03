@@ -33,9 +33,11 @@
 #'
 #' @return A list object returned
 #' \itemize{
-#' \item{y} Numeric vector
-#' \item{t} Numeric vector
-#' \item{w} Numeric vector
+#' \item{t } Numeric vector
+#' \item{y0} Numeric vector, original vegetation time-series.
+#' \item{y } Numeric vector, checked vegetation time-series, \code{NA} values 
+#' are interpolated. 
+#' \item{w } Numeric vector
 #' \item{Tn} Numeric vector
 #' \item{ylu} =[ymin, ymax]. \code{w_critical} is used to filter not too
 #'      bad values. If the percentage good values (w=1) is greater than 30\%, then
@@ -65,10 +67,8 @@
 #' ypeak_min  = 0.05
 #' 
 #' dnew     <- add_HeadTail(d, nptperyear = nptperyear) # add one year in head and tail
-#' INPUT    <- check_input(dnew$t, dnew$y, dnew$w, nptperyear, 
+#' INPUT    <- check_input(dnew$t, dnew$y, dnew$w, nptperyear = nptperyear, 
 #'                         maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
-#' INPUT$y0 <- dnew$y   # raw time-series, for visualization
-#' 
 #' @export
 check_input <- function(t, y, w, nptperyear, south = FALSE, Tn = NULL,
     wmin = 0.2, missval, maxgap, alpha = 0.01, ...)
@@ -82,13 +82,13 @@ check_input <- function(t, y, w, nptperyear, south = FALSE, Tn = NULL,
     n   <- length(y)
     if (missing(w) || is.null(w)) w <- rep(1, n)
 
-    # ylu   <- quantile(y[w == 1], c(alpha/2, 1 - alpha), na.rm = T) #only consider good value
-    # ylu   <- range(y, na.rm = T)
+    # ylu   <- quantile(y[w == 1], c(alpha/2, 1 - alpha), na.rm = TRUE) #only consider good value
+    # ylu   <- range(y, na.rm = TRUE)
     # only remove low values
     w_critical <- wmin
-    if (sum(w == 1, na.rm = T) >= n*0.4){
+    if (sum(w == 1, na.rm = TRUE) >= n*0.4){
         w_critical <- 1
-    }else if (sum(w >= 0.5, na.rm = T) > n*0.4){
+    }else if (sum(w >= 0.5, na.rm = TRUE) > n*0.4){
         # Just set a small portion for boreal regions. In this way, it will give
         # more weights to marginal data.
         w_critical <- 0.5
@@ -119,8 +119,8 @@ check_input <- function(t, y, w, nptperyear, south = FALSE, Tn = NULL,
     y[y > ylu[2] & w < w_critical] <- missval
 
     ## 2. rm spike values
-    std   <- sd(y, na.rm = T)
-    ymean <- cbind(y[c(1, 1:(n - 2), n-1)], y[c(2, 3:n, n)]) %>% rowMeans(na.rm = T)
+    std   <- sd(y, na.rm = TRUE)
+    ymean <- cbind(y[c(1, 1:(n - 2), n-1)], y[c(2, 3:n, n)]) %>% rowMeans(na.rm = TRUE)
     # y[abs(y - ymean) > std]
     # which(abs(y - ymean) > std)
     I_spike <- which(abs(y - ymean) > 2*std & w < w_critical) # 95.44% interval
@@ -128,7 +128,7 @@ check_input <- function(t, y, w, nptperyear, south = FALSE, Tn = NULL,
 
     ## 3. gap-fill NA values
     w[is.na(w) | is.na(y)] <- wmin
-    w[w <= wmin]  <- wmin
+    w[w <= wmin] <- wmin
     # left missing values were interpolated by `na.approx`
     y <- na.approx(y, maxgap = maxgap, na.rm = FALSE)
     # If still have na values after na.approx, just replace it with `missval`.
@@ -137,8 +137,8 @@ check_input <- function(t, y, w, nptperyear, south = FALSE, Tn = NULL,
     if (!is_empty(Tn)){
         Tn <- na.approx(Tn, maxgap = maxgap, na.rm = FALSE)
     }
-    list(t = t, y = y, w = w, Tn = Tn, ylu = ylu, 
-        nptperyear = nptperyear, south = south, y0 = y0)#quickly return
+    list(t = t, y0 = y0, y = y, w = w, Tn = Tn, ylu = ylu, 
+        nptperyear = nptperyear, south = south)
 }
 
 #' check_fit

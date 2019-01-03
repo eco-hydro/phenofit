@@ -88,16 +88,14 @@ brks2 <- season_3y(INPUT,
 
 fit <- curvefits(
     INPUT, brks2,
-    methods = c("AG", "Beck", "Elmore", "Gu", "Zhang"), #,"klos",
+    methods = c("AG", "Beck", "Elmore", "Zhang"), #,"klos", "Gu"
     verbose = FALSE,
     wFUN = wFUN,
-    nextent = 2, maxExtendMonth = 3, minExtendMonth = 1,
-    qc = dnew$QC_flag, minPercValid = 0.2,
-    print = FALSE
-)
+    nextent = 2, maxExtendMonth = 2, minExtendMonth = 1,
+    QC_flag = dnew$QC_flag, minPercValid = 0.2,
+    print = TRUE)
 
-fit$INPUT   <- INPUT
-fit$seasons <- brks2
-g <- plot_phenofit(fit, d)
+df_fit <- get_fitting(fit)
+g <- plot_phenofit(df_fit, brks2)
 grid::grid.newpage(); grid::grid.draw(g)
 }

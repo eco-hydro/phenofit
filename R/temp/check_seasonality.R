@@ -18,12 +18,12 @@ check_seasonality <- function(INPUT, IsPlot = F, plotdat = INPUT, nf = 3, ...){
             lines(plotdat$t, fit[[i+1]], col = colors[i], lwd = 2)
         }
     }
-    stat  <- GOF(INPUT$y, dplyr::last(fit), INPUT$w, include.cv = T)
+    stat  <- GOF(INPUT$y, dplyr::last(fit), INPUT$w, include.cv = TRUE)
     stat # quickly return
 }
 
 # #' REMOVE non-seasonality points according to HANTS smooth result
-# rmNonSeasonality <- function(dt, IsPlot = T, file = 'SI.pdf'){
+# rmNonSeasonality <- function(dt, IsPlot = TRUE, file = 'SI.pdf'){
 #     if (IsPlot){
 #         CairoPDF(file, width = 10, height = 2*6)
 #         par(mfrow = c(6, 1), mar = c(2, 3, 2, 1), mgp = c(1.5, 0.6, 0))
@@ -44,7 +44,7 @@ check_seasonality <- function(INPUT, IsPlot = F, plotdat = INPUT, nf = 3, ...){
 
 #         # vc <- v_curve(INPUT$y, w = INPUT$w, llas = seq(-2, 2, by = 0.01), d = 2, show = F); lambda <- vc$lambda
 #         # lambda <- init_lambda(INPUT$y)
-#         # if ( sum(d$w >= 0.5, na.rm = T) > nrow(d) * 0.3){
+#         # if ( sum(d$w >= 0.5, na.rm = TRUE) > nrow(d) * 0.3){
 #             INPUT <- check_input(d$t, d$y, d$w, maxgap = nptperyear / 4, alpha = 0.02)
 
 #             INPUT_SI <- INPUT

@@ -3,18 +3,18 @@
 #' Before using `season_3y`, INPUT should be added a year in the head and tail
 #' first by \code{add_HeadTail}.
 #' @inheritParams season
-#' @param IsOptim_lambda Whether to optimize Whittaker's parameter lambda by 
+#' @param IsOptim_lambda Whether to optimize Whittaker's parameter lambda by
 #' V-curve theory?
 #' @param maxExtendMonth Previous and subsequent `maxExtendMonth` data were added
 #' for every year curve fitting.
 #' subsequent `maxExtendMonth` period.
 #' @param titlestr string for title
-#' @param IsOnlyPlotbad If true, only plot partial figures whose NSE < 0.3
 #' @param IsPlot.vc Whether to plot V-curve optimized time-series.
-#' 
+#' @param IsPlot.OnlyBad If true, only plot partial figures whose NSE < 0.3.
+#'
 #' @rdname season
-#' @return List object, list(whit, dt, stat)
-#' 
+#' @return List object, list(whit, dt)
+#'
 #' @examples
 #' library(phenofit)
 #' data("MOD13A1")
@@ -31,14 +31,19 @@
 #' nptperyear = 23
 #' ypeak_min  = 0.05
 #' wFUN = wTSM
-#' 
+#'
 #' dnew     <- add_HeadTail(d, nptperyear = nptperyear) # add one year in head and tail
 #' INPUT    <- check_input(dnew$t, dnew$y, dnew$w, nptperyear,
 #'                         maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
-#' 
+#'
+#' brks  <- season(INPUT,
+#'     rFUN = wWHIT, wFUN = wFUN,
+#'     lambda = 10,
+#'     plotdat = d, IsPlot = IsPlot, print = FALSE, IsPlot.OnlyBad = FALSE)
 #' brks2 <- season_3y(INPUT,
 #'     rFUN = wWHIT, wFUN = wFUN,
-#'     plotdat = d, IsPlot = IsPlot, print = FALSE, IsOnlyPlotbad = FALSE)
+#'     lambda = 10,
+#'     plotdat = d, IsPlot = IsPlot, print = FALSE, IsPlot.OnlyBad = FALSE)
 #' @export
 season_3y <- function(INPUT,
     rFUN = wWHIT, wFUN = wTSM, iters = 2, wmin = 0.1,
@@ -46,9 +51,8 @@ season_3y <- function(INPUT,
     lambda = NULL, nf  = 3, frame = floor(INPUT$nptperyear/5)*2 + 1,
     maxExtendMonth = 12,
     ...,
-    IsPlot = T, IsPlot.vc = FALSE, 
-    plotdat = INPUT, print = TRUE, titlestr = "",
-    IsOnlyPlotbad = TRUE)
+    IsPlot = TRUE, IsPlot.vc = FALSE, IsPlot.OnlyBad = TRUE,
+    plotdat = INPUT, print = TRUE, titlestr = "")
 {
     nptperyear <- INPUT$nptperyear
     south      <- INPUT$south
@@ -99,23 +103,7 @@ season_3y <- function(INPUT,
         # extend curve fitting period, for continuity.
         I <- seq( max(1, first(I) - nextent), min(last(I) + nextent, nlen) )
 
-        # # triplicate HANTS test, 2018-09-19
-        # # Not perfect at all for regions with multiple growing season.
-        # # No one method can cope with all the situation.
-        # {
-        #     nextent <- length(I)
-        #     I_beg <- max(1, first(I) - nextent)
-        #     I_end <- min(last(I) + nextent, nlen)
-
-        #     yi <- INPUT$y[I]
-        #     yhead <- I_beg:(first(I) - 1) %>% { . - .[1] + 1} %>% yi[.]
-        #     ytail <- (last(I)+1):I_end %>% { . - .[1] + 1} %>% yi[.]
-        #     yi <- c(yhead, yi, ytail)
-        #     I <- I_beg:I_end
-        #     input$y          <- yi
-        # }
-
-        input <- lapply(INPUT[1:3], `[`, I)
+        input <- lapply(INPUT[c("t", "y", "w")], `[`, I) # y, t, w
         input <- c(input, list(ylu = ylu, nptperyear=nptperyear, south=south))
 
         if (!has_lambda) {
@@ -126,7 +114,7 @@ season_3y <- function(INPUT,
                 vc <- v_curve(input, lg_lambdas = seq(-1, 2, by = 0.005), d = 2,
                                   wFUN = wFUN, iters = iters,
                         IsPlot = IsPlot.vc)
-               
+
                 lambda <- vc$lambda
                 vcs[[i-1]] <- vc
             } else {
@@ -173,10 +161,26 @@ season_3y <- function(INPUT,
     brks$dt <- dt
 
     ## VISUALIZATION
-    if (IsPlot) plot_season(INPUT, brks, plotdat, ylu = INPUT$ylu, IsOnlyPlotbad)
+    if (IsPlot) plot_season(INPUT, brks, plotdat, ylu = INPUT$ylu, IsPlot.OnlyBad)
     if (IsOptim_lambda) brks$optim <- vcs
     return(brks)
 }
+
+# # triplicate HANTS test, 2018-09-19
+# # Not perfect at all for regions with multiple growing season.
+# # No one method can cope with all the situation.
+# {
+#     nextent <- length(I)
+#     I_beg <- max(1, first(I) - nextent)
+#     I_end <- min(last(I) + nextent, nlen)
+
+#     yi <- INPUT$y[I]
+#     yhead <- I_beg:(first(I) - 1) %>% { . - .[1] + 1} %>% yi[.]
+#     ytail <- (last(I)+1):I_end %>% { . - .[1] + 1} %>% yi[.]
+#     yi <- c(yhead, yi, ytail)
+#     I <- I_beg:I_end
+#     input$y <- yi
+# }
 
 #' statistics
 #' @rdname season
@@ -185,7 +189,7 @@ stat_season <- function(INPUT, brks){
     d_fit <- brks$whit %>% .[,.SD,.SDcols=c(1, ncol(.))] %>% set_colnames(c("t", "ypred"))
     d <- merge(d_org, d_fit, by = "t")
 
-    stat <- with(d, GOF(y, ypred, w, include.cv = T))# %>% as.list()
+    stat <- with(d, GOF(y, ypred, w, include.cv = TRUE))# %>% as.list()
     stat['nseason'] <- nrow(brks$dt)
 
     # str_title <- sprintf("[%s] IGBP = %s, %s, lat = %.2f", sitename, IGBP_name, stat_str, lat)

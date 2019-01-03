@@ -18,7 +18,7 @@ weights of all \code{NA} values will be \code{wmin}, the others will be 1.0.}
 \item{ylu}{[low, high] of time-series y (curve fitting values are constrained
 in the range of \code{ylu}.}
 
-\item{wFUN}{weights updating function, can be one of 'wTSM', 'wChen' and 
+\item{wFUN}{weights updating function, can be one of 'wTSM', 'wChen' and
 'wBisquare'.}
 
 \item{iters}{How many times curve fitting is implemented.}
@@ -29,6 +29,28 @@ in the range of \code{ylu}.}
 
 \item{...}{Additional parameters are passed to \code{wFUN}.}
 }
+\value{
+\itemize{
+   \item \code{ws} weights of every iteration
+   \item \code{zs} curve fittings of every iteration
+}
+}
 \description{
 Weighted Savitzky-Golay
+}
+\examples{
+library(phenofit)
+data("MOD13A1")
+dt <- tidy_MOD13.gee(MOD13A1$dt)
+d <- dt[site == "AT-Neu", ]
+
+l <- check_input(d$t, d$y, d$w, nptperyear=23)
+r_wSG <- wSG(l$y, l$w, l$ylu, nptperyear = 23, iters = 2)
+}
+\references{
+[1]. Chen, J., J\"onsson, P., Tamura, M., Gu, Z., Matsushita, B., Eklundh, L.,
+     2004. A simple method for reconstructing a high-quality NDVI time-series
+     data set based on the Savitzky-Golay filter. Remote Sens. Environ. 91,
+     332-344. https://doi.org/10.1016/j.rse.2004.03.014. \cr
+[2]. https://en.wikipedia.org/wiki/Savitzky%E2%80%93Golay_filter
 }

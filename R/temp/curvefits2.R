@@ -32,8 +32,7 @@ curvefits2 <- function(t, y, w, nptperyear = 46,
 
     # 4. extract phenology
     # pheno: list(p_date, p_doy)
-    p <- lapply(fit$fits, PhenoExtract)
-    pheno  <- map(p, tidyFitPheno, origin = t[1]) %>% purrr::transpose()
+    pheno <- lapply(fit$fits, PhenoExtract)
 
     fit$INPUT   <- INPUT
     fit$seasons <- brks

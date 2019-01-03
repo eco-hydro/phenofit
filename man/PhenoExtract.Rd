@@ -2,13 +2,21 @@
 % Please edit documentation in R/PhenoExtract.R
 \name{PhenoExtract}
 \alias{PhenoExtract}
+\alias{PhenoExtract.fFITs}
 \title{PhenoExtract}
 \usage{
-PhenoExtract(fits, TRS = c(0.1, 0.2, 0.5, 0.6), analytical = TRUE,
+PhenoExtract(fits, method, TRS = c(0.2, 0.5), analytical = TRUE,
   smoothed.spline = FALSE, IsPlot = FALSE, ...)
+
+PhenoExtract.fFITs(fFITs, method, TRS = c(0.2, 0.5), analytical = TRUE,
+  smoothed.spline = FALSE, IsPlot = FALSE, title_left = "",
+  show.title_top = TRUE)
 }
 \arguments{
-\item{fits}{Multiple \code{phenofit} object.}
+\item{fits}{A list of \code{\link{fFITs}} object, for a single curve fitting
+method.}
+
+\item{method}{Which fine curve fitting method to be extracted?}
 
 \item{TRS}{Threshold for \code{PhenoTrs}.}
 
@@ -20,10 +28,46 @@ will be used; if false, \code{D1} and \code{D2} will be used.}
 \item{IsPlot}{Boolean. Whether to plot figure?}
 
 \item{...}{ignored.}
+
+\item{fFITs}{\code{fFITs} object returned by \code{\link{curvefit}}.}
+
+\item{title_left}{String of growing season flag.}
+
+\item{show.title_top}{Whether to show top title? Generally, only show top
+title in the first row.}
 }
 \value{
 List of every year phenology metrics
 }
 \description{
 Get yearly vegetation phenological metrics of a curve fitting method
+}
+\note{
+Please note that only a single fine curve fitting method allowed here!
+}
+\examples{
+library(phenofit)
+# simulate vegetation time-series
+fFUN = doubleLog.Beck
+par  = c(
+    mn  = 0.1,
+    mx  = 0.7,
+    sos = 50,
+    rsp = 0.1,
+    eos = 250,
+    rau = 0.1)
+t    <- seq(1, 365, 8)
+tout <- seq(1, 365, 1)
+y <- fFUN(par, t)
+
+methods <- c("AG", "Beck", "Elmore", "Gu", "Zhang") # "Klos" too slow
+fFITs <- curvefit(y, t, tout, methods)
+
+par(mfrow = c(1, 5),
+    oma = c(1, 2, 3, 1), mar = rep(0, 4), yaxt = "n", xaxt = "n")
+pheno <- PhenoExtract.fFITs(fFITs, "AG", IsPlot = TRUE)
+
+# multiple years
+fits <- list(`2001` = fFITs, `2002` = fFITs)
+pheno <- PhenoExtract(fits, "AG", IsPlot=TRUE)
 }

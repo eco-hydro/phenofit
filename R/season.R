@@ -141,7 +141,7 @@ season <- function(INPUT,
         INPUT$ylu <- ylu
         A         <- diff(ylu)
 
-        # ylu   <- quantile(ypred, c(alpha/2, 1 - alpha), na.rm = T)
+        # ylu   <- quantile(ypred, c(alpha/2, 1 - alpha), na.rm = TRUE)
         ## Plateau peak will lead to failed to find local extreme values.
         #  To avoid fluctuating in peak of growing season or flat peak growing
         #  season, like fluxsite: ZM-Mon

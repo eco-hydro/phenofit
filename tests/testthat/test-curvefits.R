@@ -53,7 +53,7 @@ test_curvefit("Zhang")
 
 # ## Get GOF information
 # stat  <- ldply(fit$fits, function(fits_meth){
-#     ldply(fits_meth, statistic.phenofit, .id = "flag")
+#     ldply(fits_meth, statistic.fFIT, .id = "flag")
 # }, .id = "meth")
 # fit$stat <- stat
 # print(head(stat))

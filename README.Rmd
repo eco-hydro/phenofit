@@ -2,9 +2,6 @@
 output: github_document
 ---
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
-
-
 ```{r, echo = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
@@ -19,6 +16,8 @@ knitr::opts_chunk$set(
 [![Travis Build Status](https://travis-ci.org/kongdd/phenofit.svg?branch=master)](https://travis-ci.org/kongdd/phenofit)
 [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/kongdd/phenofit?branch=master&svg=true)](https://ci.appveyor.com/project/kongdd/phenofit)
 [![codecov](https://codecov.io/gh/kongdd/phenofit/branch/master/graph/badge.svg)](https://codecov.io/gh/kongdd/phenofit)
+[![License](http://img.shields.io/badge/license-GPL%20%28%3E=%202%29-brightgreen.svg?style=flat)](http://www.gnu.org/licenses/gpl-2.0.html)
+[![CRAN](http://www.r-pkg.org/badges/version/phenofit)](https://cran.r-project.org/package=phenofit)
 
 A state-of-the-art **remote sensing vegetation phenology** extraction package: `phenofit`
 
@@ -164,8 +163,6 @@ dnew  <- add_HeadTail(d, south, nptperyear = 23) # add additional one year in he
 INPUT <- check_input(dnew$t, dnew$y, dnew$w, 
                      nptperyear, south, 
                      maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
-# y0 is used for plot. Original y value has been interpolated and changed.
-INPUT$y0 <- dnew$y 
 ```
 
 ## 2.3 Divide growing seasons
@@ -191,48 +188,44 @@ lambda <- init_lambda(INPUT$y)
 brks2 <- season_3y(INPUT, 
                    FUN = wWHIT, wFUN = wFUN,
                    maxExtendMonth = 6, threshold_min = 0.1,
-                   IsPlot = IsPlot, print = print, IsOnlyPlotbad = F)
+                   IsPlot = IsPlot, IsPlot.OnlyBad = FALSE, print = print)
 ```
 
 ## 2.4 Curve fitting
 ```{r curve fitting, fig.height=7, fig.align="center"}
 fit  <- curvefits(INPUT, brks2,
                   methods = c("AG", "Zhang", "Beck", "Elmore"), #,"klos",, 'Gu'
-                  debug = F, 
+                  verbose = FALSE, 
                   wFUN = wFUN,
                   nextent = 2, maxExtendMonth = 3, minExtendMonth = 1,
                   QC_flag = dnew$QC_flag, minPercValid = 0.2,
                   print = print)
-fit$INPUT   <- INPUT
-fit$seasons <- brks2
 
 ## check the curve fitting parameters
-params <- getparam(fit)
+params <- get_param(fit)
 print(str(params, 1))
 print(params$AG)
 
+df_fit <- get_fitting(fit)
 ## Get GOF information
-stat  <- ldply(fit$fits, function(fits_meth){
-    ldply(fits_meth, statistic.phenofit, .id = "flag")
-}, .id = "meth")
-fit$stat <- stat
+stat <- ldply(fit, GOF_fFITs, .id = "flag") %>% data.table()
+# fit$stat <- stat
 print(head(stat))
 
-print(fit$fits$AG$`2002_1`$ws)
+# print(fit$fits$AG$`2002_1`$ws)
+print(fit$`2002_1`$fFIT$AG$ws)
 ## visualization
 # svg("Figure1_phenofit_curve_fitting.svg", 11, 7)
 # Cairo::CairoPDF(file_pdf, 11, 6) #
 # dev.off()
-g <- plot_phenofit(fit, d, titlestr)
+g <- plot_phenofit(df_fit, brks2, titlestr)
 grid::grid.newpage(); grid::grid.draw(g)# plot to check the curve fitting
 ```
 
 ## 2.5 Extract phenology
 ```{r Extract phenology, fig.height=5, fig.width=8, fig.align="center"}
 # pheno: list(p_date, p_doy)
-p <- lapply(fit$fits, PhenoExtract, IsPlot = F)
-pheno  <- map(p, tidyFitPheno, origin = INPUT$t[1]) %>% purrr::transpose()
-fit$pheno  <- pheno
+pheno <- PhenoExtract(fit, IsPlot = F) #%>% map(~melt_list(., "meth"))
 
 # ratio = 1.15
 # file <- "Figure5_Phenology_Extraction_temp.pdf"
@@ -242,8 +235,8 @@ fit$pheno  <- pheno
 # file.show(file)
 
 ## check the extracted phenology
-temp <- PhenoExtract(fit$fits$ELMORE[1:6], IsPlot = T, TRS = 0.5)
+p <- PhenoExtract(fit[1:6], "ELMORE", IsPlot = T)
 
-print(str(pheno, 2))
+# print(str(pheno, 1))
 head(pheno$doy$AG)
 ```

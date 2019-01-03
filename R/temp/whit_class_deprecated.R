@@ -134,7 +134,7 @@ smooth_HdH = compiler::cmpfun(smooth_HdH)
 #' @export
 #' @examples
 #' bisection(f_whitdf, 10, 1e6, toly =1e-1)
-bisection <- function(f, a, b, tolx = 1e-7, toly = 1e-3, maxit = 1000, trace = T,
+bisection <- function(f, a, b, tolx = 1e-7, toly = 1e-3, maxit = 1000, trace = TRUE,
                       ln = TRUE, ...)
 {
     # f = FUN(par, ...) #for other parameters

@@ -24,29 +24,6 @@ runningId <- function(i, step = 1, prefix = "") {
     if (mod(i, step) == 0) cat(sprintf("%s running %d ...\n", prefix, i))
 }
 
-#' retry
-#' retry to execute expr until success before reaches the max try times (maxTimes)
-#' 
-#' @param expr expression to be evaluated
-#' @param maxTimes maximum try times
-#' 
-#' @export
-retry <- function(expr, maxTimes = 3){
-    eTimes <- 0
-    out    <- NULL
-    while (eTimes < maxTimes){
-      out <- tryCatch({
-          expr
-          eTimes <- maxTimes
-      }, error = function(e){
-          eTimes <<- eTimes + 1
-          message(sprintf("[try%d]: %s", eTimes, e))
-          NULL #If error return NULL
-      })
-    }
-    return(out)
-}
-
 
 #' Add n-day flag
 #' 
@@ -79,6 +56,14 @@ add_dn <- function(d, days = 8){
 #' rm_empty
 #' @param x A vector or list
 #' 
+#' @examples
+#' # numeric
+#' x <- c(1:5, NA)
+#' rm_empty(x)
+#' 
+#' # list
+#' l <- list(1:5, NULL, NA)
+#' rm_empty(l)
 #' @rdname tools
 #' @export
 rm_empty <- function(x){
@@ -119,7 +104,7 @@ contain <- function(d, pattern = "NDVI|EVI") {
 #' @export
 merge_pdf <- function(outfile = "RPlot.pdf", indir = 'Figure', pattern = "*.pdf", del = FALSE){
     # "Y:/R/phenofit/Figs/"
-    files <- dir(indir, pattern, full.names = T)
+    files <- dir(indir, pattern, full.names = TRUE)
     cmd <- sprintf("pdfmerge -o %s %s", outfile, paste(files, collapse = " "))
 
     shell(cmd, wait = del)

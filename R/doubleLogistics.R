@@ -100,7 +100,7 @@ doubleLog.Beck <- function(par, t) {
     eos <- par[5]
     rau <- par[6]
     # if (sos >= eos) return(rep(9999, length(t)))
-    try(if (eos < sos) return(rep(99, length(t))), silent = T)
+    try(if (eos < sos) return(rep(99, length(t))), silent = TRUE)
 
     pred <- mn + (mx - mn)*(1/(1 + exp(-rsp*(t - sos))) + 1/(1 + exp(rau*(t - eos))) - 1)
     return(pred)
@@ -204,25 +204,48 @@ attr(doubleLog.Klos, 'formula') <- expression((a1*t + b1) + (a2*t^2 + b2*t + c) 
 # std.errors <- sqrt(diag(vc) * s2)     # standard errors
 # return: stdError=std.error
 
-#' Common goal function of those curve fitting methods
+#' Goal function of fine curve fitting methods
 #'
 #' @inheritParams optim_pheno
 #' @inheritParams Logistic
 #'
-#' @param fun A curve fitting function, see \code{\link{Logistic}}.
-#' @param ... other parameters will be ignored.
+#' @param fun A curve fitting function, can be one of \code{doubleAG}, 
+#' \code{doubleLog.Beck}, \code{doubleLog.Elmore}, \code{doubleLog.Gu}, 
+#' \code{doubleLog.Klos}, \code{doubleLog.Zhang}, see \code{\link{Logistic}} 
+#' for details.
+#' @param ... others will be ignored.
 #'
-#' @return RMSE root mean square error of curve fitting values.
+#' @return RMSE Root Mean Square Error of curve fitting values.
+#' 
+#' @examples
+#' library(phenofit)
+#' # simulate vegetation time-series
+#' fFUN = doubleLog.Beck
+#' par  = c(
+#'     mn  = 0.1,
+#'     mx  = 0.7,
+#'     sos = 50,
+#'     rsp = 0.1,
+#'     eos = 250,
+#'     rau = 0.1)
+#' t    <- seq(1, 365, 8)
+#' tout <- seq(1, 365, 1)
+#' y <- fFUN(par, t)
+#' 
+#' par0 <- c(
+#'     mn  = 0.15,
+#'     mx  = 0.65,
+#'     sos = 100,
+#'     rsp = 0.12,
+#'     eos = 200,
+#'     rau = 0.12)
+#' f_goal(par0, y, t, fFUN)
 #' @export
 f_goal <- function(
     par, y, t,
-    fun = c(doubleLog.Elmore,
-           doubleLog.Beck,
-           doubleLog.Klos,
-           doubleLog.Gu,
-           doubleLog.Zhang,
-           doubleAG),
-    w, ylu, ...) {
+    fun,
+    w, ylu, ...)
+{
     # FUN <- match.fun(fun)
     if (!all(is.finite(par))) return(9999)
 

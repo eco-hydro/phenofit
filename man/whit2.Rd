@@ -21,13 +21,16 @@ This function smoothes signals with a finite difference penalty of order 2.
 This function is modified from `ptw` package.
 }
 \examples{
-\dontrun{
-data(gaschrom)
-plot(gaschrom[1,], type = "l", ylim = c(0, 100))
-lines(whit2(gaschrom[1,], lambda = 1e5), col = 2)
-lines(whit2(gaschrom[1,], lambda = 1e6), col = 3)
-lines(whit2(gaschrom[1,], lambda = 1e7), col = 4)
-}
+library(phenofit)
+data("MOD13A1")
+dt <- tidy_MOD13.gee(MOD13A1$dt)
+y <- dt[site == "AT-Neu", ][1:120, y]
+
+plot(y, type = "b")
+lines(whit2(y, lambda = 2), col = 2)
+lines(whit2(y, lambda = 10), col = 3)
+lines(whit2(y, lambda = 100), col = 4)
+legend("bottomleft", paste("lambda = ", c(2, 10, 15)), col = 2:4, lty = rep(1, 3))
 }
 \references{
 [1]. Eilers, P.H.C. (2004) "Parametric Time Warping", Analytical Chemistry,

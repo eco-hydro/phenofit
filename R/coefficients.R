@@ -116,7 +116,7 @@ R2_sign <- function(n, NumberOfPredictor = 2, alpha = 0.05){
     
     # F = 485.1
     # F = R2/freedom_r/((1-R2)/freedom_e)
-    # Rc = sqrt(/(qf(1 - alpha, 1, freedom) + freedom)) %T>% print  # 0.11215    
+    # Rc = sqrt(/(qf(1 - alpha, 1, freedom) + freedom)) %TRUE>% print  # 0.11215    
     return(list(F = F, R2 = R2))
 }
 

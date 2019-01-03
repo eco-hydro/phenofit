@@ -37,8 +37,8 @@ grad_ft <- function(FUN){
     parnames <- c("t", attr(FUN, 'par'))
     if (length(formula) == 2){
         # piece wise function
-        f1 <- deriv(formula[1], "t", func = T, function.arg = parnames)
-        f2 <- deriv(formula[2], "t", func = T, function.arg = parnames)
+        f1 <- deriv(formula[1], "t", func = TRUE, function.arg = parnames)
+        f2 <- deriv(formula[2], "t", func = TRUE, function.arg = parnames)
         # environment(f1) <- environment() #assign enclosure env
         # environment(f2) <- environment()
         # ans <- function(t) f1(t) * (t <= t0) + f2(t) * (t > t0)
@@ -51,7 +51,7 @@ grad_ft <- function(FUN){
             return(values)
         }
     }else if (length(formula) == 1){
-        ans <- deriv(formula[1], "t", func = T, function.arg = parnames)
+        ans <- deriv(formula[1], "t", func = TRUE, function.arg = parnames)
     }
     # environment(ans) <- environment()
     return(ans)
@@ -63,8 +63,8 @@ hess_ft <- function(FUN){
     formula <- attr(FUN, 'formula')
     parnames <- c("t", attr(FUN, 'par'))
     if (length(formula) == 2){
-        f1 <- deriv3(formula[1], "t", func = T, function.arg = parnames)
-        f2 <- deriv3(formula[2], "t", func = T, function.arg = parnames)
+        f1 <- deriv3(formula[1], "t", func = TRUE, function.arg = parnames)
+        f2 <- deriv3(formula[2], "t", func = TRUE, function.arg = parnames)
         # environment(f1) <- environment() #assign enclosure env
         # environment(f2) <- environment()
         # ans <- function(t) f1(t) * (t <= t0) + f2(t) * (t > t0)
@@ -77,18 +77,18 @@ hess_ft <- function(FUN){
             return(values)
         }
     }else if (length(formula) == 1){
-        ans <- deriv3(formula[1], "t", func = T, function.arg = parnames)
+        ans <- deriv3(formula[1], "t", func = TRUE, function.arg = parnames)
     }
     # environment(ans) <- environment()
     return(ans)
 }
-# hess_ft = . %>% {deriv3(attr(., 'formula'), 't', func = T)}
+# hess_ft = . %>% {deriv3(attr(., 'formula'), 't', func = TRUE)}
 
 grad_fpar = . %>% {
-    deriv (attr(., 'formula'), attr(., 'par'), func = T)}
+    deriv (attr(., 'formula'), attr(., 'par'), func = TRUE)}
 
 hess_fpar = . %>% {
-    deriv3(attr(., 'formula'), attr(., 'par'), func = T)}
+    deriv3(attr(., 'formula'), attr(., 'par'), func = TRUE)}
 
 # ' Higher derivatives
 # '
@@ -111,7 +111,7 @@ DD <- function(expr, name, order = 1) {
 # '
 # ' @rdname curvefit_deriv
 gradf_t <- function(FUN) {
-    # f <- deriv(attr(FUN, 'formula'), 't', func = T) #attr(FUN, 'par')
+    # f <- deriv(attr(FUN, 'formula'), 't', func = TRUE) #attr(FUN, 'par')
     # print(environment())
     f <- grad_ft(FUN) #binding env, look variables in enclosure env
     # f2 <- test()
@@ -142,7 +142,7 @@ gradf_t <- function(FUN) {
 # ' @rdname curvefit_deriv
 hessf_t <- function(FUN) {
     f <- hess_ft(FUN)
-    # f <- deriv3(attr(FUN, 'formula'), 't', func = T) #attr(FUN, 'par')
+    # f <- deriv3(attr(FUN, 'formula'), 't', func = TRUE) #attr(FUN, 'par')
     function(par, t){
         ans <- do.call(f, c(list(t = t), as.list(par)))
         # e <- list2env(as.list(par), envir = environment(f))

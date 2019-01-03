@@ -20,14 +20,14 @@ curvefit(y, t = index(y), tout = t, methods = c("AG", "Beck",
 \item{...}{other parameters passed to curve fitting function.}
 }
 \value{
-fits
+fFITs S3 object, see \code{\link{fFITs}} for details.
 }
 \description{
 Curve fit vegetation index (VI) time-series of every growing season using 
 fine curve fitting methods.
 }
 \note{
-'Klos' and 'Gu' have many parameters. It will be slow and not stable.
+'Klos' have too many parameters. It will be slow and not stable.
 }
 \examples{
 library(phenofit)
@@ -45,9 +45,10 @@ tout <- seq(1, 365, 1)
 y <- fFUN(par, t)
 
 methods <- c("AG", "Beck", "Elmore", "Gu", "Zhang") # "Klos" too slow
-fit <- curvefit(y, t, tout, methods)
+fFITs <- curvefit(y, t, tout, methods)
 }
 \seealso{
+\code{\link{fFITs}}, 
 \code{\link{FitAG}}, \code{\link{FitDL.Beck}}, 
 \code{\link{FitDL.Elmore}}, \code{\link{FitDL.Gu}}, 
 \code{\link{FitDL.Klos}}, \code{\link{FitDL.Zhang}}

@@ -14,10 +14,24 @@ tout <- seq(1, 365, 1)
 y <- fFUN(par, t)
 
 methods <- c("AG", "Beck", "Elmore", "Gu", "Klos", "Zhang")
-# fit <- curvefit(y, t, tout, methods)
+suppressWarnings(fit <- curvefit(y, t, tout, methods))
 
-test_that("multiplication works", {
-    expect_silent(suppressWarnings(
-        fit <- curvefit(y, t, tout, methods)
-    ))
+# test_that("curvefit works", {
+#     expect_silent(suppressWarnings(
+#         fit <- curvefit(y, t, tout, methods)
+#     ))
+# })
+
+# test_that("print.curvefit works", {
+#     expect_silent(print(fit))
+# })
+
+# Klos is not convergent.
+test_that("plot.fFITs works", {
+    expect_silent(plot.fFITs(fit))
+})
+
+test_that("GOF_fFITs works", {
+    expect_silent({info <- GOF_fFITs(fit)})
+    print(info)
 })
