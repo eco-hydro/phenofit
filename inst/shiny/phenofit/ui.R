@@ -4,7 +4,7 @@ source('ui_tab_1_loading.R')
 
 ui <- navbarPage(
     "phenofit",
-    selected = "Load data",
+    selected = "Main", #"Load data",
     # tags$head(tags$style(HTML( "hr {border-top: 1px solid black;}" ))),
     tags$script(src = "selectInput.js"),
     tab_loading,
@@ -59,13 +59,13 @@ ui <- navbarPage(
                         2, 0, 12
                     )
                 ),
-                sliderInput( "threshold_max", "r_max:",
+                sliderInput( "r_max", "r_max:",
                     min = 0,  max = 1, value = 0.2, param_step
                 ),
-                sliderInput( "threshold_min", "r_min:",
+                sliderInput( "r_min", "r_min:",
                     min = 0, max = 0.2, value = 0, 0.02
                 ),
-                sliderInput( "rytrough_max", "rytrough_max:",
+                sliderInput( "rtrough_max", "rtrough_max:",
                     min = 0, max = 1, value = 0.8, param_step
                 ),
                 hr(),

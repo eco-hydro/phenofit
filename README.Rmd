@@ -187,7 +187,7 @@ lambda <- init_lambda(INPUT$y)
 # get growing season breaks in a 3-year moving window
 brks2 <- season_3y(INPUT, 
                    FUN = wWHIT, wFUN = wFUN,
-                   maxExtendMonth = 6, threshold_min = 0.1,
+                   maxExtendMonth = 6, r_min = 0.1,
                    IsPlot = IsPlot, IsPlot.OnlyBad = FALSE, print = print)
 ```
 
@@ -208,7 +208,7 @@ print(params$AG)
 
 df_fit <- get_fitting(fit)
 ## Get GOF information
-stat <- ldply(fit, GOF_fFITs, .id = "flag") %>% data.table()
+stat <- get_GOF(fit)
 # fit$stat <- stat
 print(head(stat))
 

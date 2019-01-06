@@ -225,8 +225,8 @@ get_ylu <- function(y, years, w0, width, I, Imedian = TRUE, wmin = 0.2){
     I_end  <- last(I)
 
     # if less than 0.6*12 ≈ 8
-
     I_win  <- pmax(1, I_beg - width) : pmin(n, I_end + width)
+
     w0_win <- w0[I_win]
     I_win  <- I_win[which(w0_win > wmin)]
 

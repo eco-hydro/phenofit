@@ -29,3 +29,7 @@ adjust roughn curve fitting parameters.
 * Add V-curve optimization in `season_3y` for Whittaker's parameter lambda.
 * Remove `check_fit` and `upper envelope` in `wWHIT`.
 * Update `v-curve`.
+
+# phenofit 0.1.8 (2019-01-06)    
+1. `shiny` app `phenofit` released.
+2. add `QC_flag` to the output of `check__input`.

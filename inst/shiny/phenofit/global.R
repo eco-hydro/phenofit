@@ -1,4 +1,6 @@
-source('main_phenofit.R')
+# shiny::runApp("inst/shiny/phenofit/")
+
+source('global_phenofit.R')
 library(tidyselect)
 
 # library(future)

@@ -28,13 +28,13 @@
 #' \code{nptperyear/6}). The minimum distance of two peaks. If the distance of two
 #' maximum extreme value less than \code{minpeakdistance}, only the real maximum
 #' value will be left.
-#' @param threshold_min Threshold is defined as the difference of peak value with
+#' @param r_min Threshold is defined as the difference of peak value with
 #' trough value. There are two threshold (left and right). The minimum threshold
-#' should be greater than threshold_min.
-#' @param threshold_max Similar as \code{threshold_min}, The maximum threshold should
-#' be greater than \code{threshold_max}.
+#' should be greater than r_min.
+#' @param r_max Similar as \code{r_min}, The maximum threshold should
+#' be greater than \code{r_max}.
 #' @param ypeak_min ypeak >= ypeak_min
-#' @param rytrough_max \code{ytrough <= rytrough_max*A}, A is the amplitude of y.
+#' @param rtrough_max \code{ytrough <= rtrough_max*A}, A is the amplitude of y.
 #' @param MaxPeaksPerYear This parameter is used to adjust lambda in iterations.
 #' If PeaksPerYear > MaxPeaksPerYear, then lambda = lambda*2.
 #' @param MaxTroughsPerYear This parameter is used to adjust lambda in iterations.
@@ -80,8 +80,8 @@ season <- function(INPUT,
                    rFUN = wWHIT, wFUN = wTSM, iters = 2, wmin = 0.1,
                    lambda, nf  = 3, frame = floor(INPUT$nptperyear/5)*2 + 1,
                    minpeakdistance,
-                   threshold_max = 0.2, threshold_min = 0.05,
-                   ypeak_min   = 0.1, rytrough_max = 0.6,
+                   r_max = 0.2, r_min = 0.05,
+                   ypeak_min   = 0.1, rtrough_max = 0.6,
                    MaxPeaksPerYear = 2, MaxTroughsPerYear = 3,
                    IsPlot  = FALSE, plotdat = INPUT, print = FALSE, 
                    adj.param = TRUE,
@@ -154,18 +154,18 @@ season <- function(INPUT,
         # }
         #
         # local minimum values
-        # peak values is small for minimum values, so can't use threshold_min here
+        # peak values is small for minimum values, so can't use r_min here
         peaks <- findpeaks(-ypred,
-                           threshold_max = threshold_max*A,
-                           threshold_min = threshold_min*0,
+                           r_max = r_max*A,
+                           r_min = r_min*0,
                            minpeakdistance = minpeakdistance, zero = "-", nups = 0)
         pos_min   <- peaks$X
         pos_min[, 1] %<>% multiply_by(-1)
         ntrough_PerYear <- length(peaks$gregexpr)/nyear#max peaks
         # local maximum values,
         peaks <- findpeaks(ypred, zero = "+",
-                           threshold_max = threshold_max*A,
-                           threshold_min = threshold_min*A, # A
+                           r_max = r_max*A,
+                           r_min = r_min*A, # A
                            minpeakdistance = minpeakdistance,
                            minpeakheight = 0.1*A + ylu[1], nups = 1) #, ypeak_min
         pos_max <- peaks$X
@@ -202,9 +202,9 @@ season <- function(INPUT,
     #  rough curve fitting time-series
     rfit = as.data.table(c(list(t = t, y = y), yfits$ws, yfits$zs))
 
-    # 1.1 the local minimum value should small than rytrough_max*A
+    # 1.1 the local minimum value should small than rtrough_max*A
     if (!is.null(pos_min)) {
-        pos_min <- pos_min[(val - ylu[1]) <= rytrough_max*A, ]
+        pos_min <- pos_min[(val - ylu[1]) <= rtrough_max*A, ]
         pos_min[, type := -1]
     }
     if (!is.null(pos_max)) pos_max[, type :=  1]
@@ -243,7 +243,7 @@ season <- function(INPUT,
         if (length(I_del) > 0) pos <- pos[-I_del, ]
         # 1.3 remove replicated
         pos$flag <- cumsum(c(1, diff(pos$type) != 0))
-        pos      <- ddply(pos, .(flag), rm_duplicate, y = ypred, threshold = threshold_min*A)[, 2:6]
+        pos      <- ddply(pos, .(flag), rm_duplicate, y = ypred, threshold = r_min*A)[, 2:6]
     }
 
     pos$t    <- t[pos$pos]

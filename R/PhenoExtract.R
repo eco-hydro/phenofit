@@ -19,7 +19,7 @@ PhenoPlot <- function(t, y, main = "", ...){
 #'
 #' Get yearly vegetation phenological metrics of a curve fitting method
 #'
-#' @inheritParams GOF_fFITs
+#' @inheritParams get_GOF
 #' @inheritParams D
 #' @param fits A list of \code{\link{fFITs}} object, for a single curve fitting
 #' method.

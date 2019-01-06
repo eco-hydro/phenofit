@@ -7,10 +7,9 @@ server <- function(input, output, session) {
     # df_rv    <- reactive(rv$df)
     # sites_rv <- reactive(rv$sites)
 
-    # INPUTall   <- reactive({ updateINPUT() })
     ############################################################################
     ################################ observeEvent ##############################
-    
+
     observeEvent(input$txt_varVI , {
         update_VI(rv, input$txt_varVI)
     })
@@ -47,11 +46,12 @@ server <- function(input, output, session) {
         file_site <- input$file_site$datapath
 
         if (check_file(file_veg)) {
-            df    <- fread(file_veg) %>% check_datestr()
-            sites <- unique(df$site) %>% sort()
+            df    <<- fread(file_veg) %>% check_datestr()
+            sites <<- unique(df$site) %>% sort()
 
             if (!check_file(file_site)){
-                rv$st <- data.table(ID = seq_along(sites), site = sites, lat = 30)
+                st <<- data.table(ID = seq_along(sites), site = sites, lat = 30)
+                rv$st <- st
             }
 
             rv$df <- df
@@ -101,7 +101,8 @@ server <- function(input, output, session) {
 
         if (check_file(file_veg)) {
             if (check_file(file_site)){
-                rv$st <- fread(file_site)
+                st <<- fread(file_site)
+                rv$st <- st
             }
         }
     })
@@ -129,10 +130,10 @@ server <- function(input, output, session) {
         list(
             INPUT(), brks(),
             methods = input$FUN, #c("AG", "zhang", "beck", "elmore", 'Gu'), #,"klos",
-            debug = F,
+            verbose = F,
             wFUN = get(input$wFUN2),
             nextent = 2, maxExtendMonth = 3, minExtendMonth = 1,
-            qc = 1,
+            QC_flag = NULL,
             minPercValid = 0.2,
             print = TRUE
         )
@@ -144,21 +145,14 @@ server <- function(input, output, session) {
         # print(str(params))
         fit  <- do.call(curvefits, params_fineFitting())
         # params_fineFitting <- getparam(fit)
-        # print(str(params_fineFitting))
 
-        ## Get GOF information
-        stat  <- ldply(fit$fits, function(fits_meth){
-            ldply(fits_meth, statistic.fFIT, .id = "flag")
-        }, .id = "meth")
+        stat <- get_GOF(fit)                       # Goodness-Of-Fit
+        pheno <- PhenoExtract(fit, IsPlot=FALSE)   # Phenological metrics
 
-        # get phenology information
-        p <- lapply(fit$fits, PhenoExtract)
-        pheno <- map(p, tidyFitPheno, origin = INPUT()$t[1]) %>% purrr::transpose()
-
-        c(fit, list(INPUT = INPUT(), seasons = brks(), stat = stat, pheno = pheno))
+        list(fit = fit, INPUT = INPUT(), seasons = brks(), stat = stat, pheno = pheno)
     })
 
-    lst_metrics <- reactive({
+    lst_metrics <- reactive({        
         fineFitting()$pheno %>% map(function(lst){
             d <- melt_list(lst, "meth") %>% reorder_name(c("site", "meth", "flag", "origin"))
             colnames(d) %<>% gsub("GU.|ZHANG.", "", .)
@@ -192,7 +186,9 @@ server <- function(input, output, session) {
     })
 
     output$plot_fineFitting <- renderPlot({
-        g <- plot_phenofit(fineFitting(), d(), INPUT()$titlestr)
+        df_fit <- get_fitting(fineFitting()$fit)
+
+        g <- plot_phenofit(df_fit, brks(), INPUT()$titlestr)
         grid::grid.draw(g)
     })
 

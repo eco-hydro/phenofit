@@ -2,8 +2,7 @@
 #'
 #' Get curve fitting data.frame
 #'
-#' @param fit Object returned by \code{curvefits}.
-#' @inheritParams GOF_fFITs
+#' @inheritParams get_GOF
 #'
 #' @examples
 #' library(phenofit)

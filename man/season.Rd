@@ -11,10 +11,10 @@ plot_season(INPUT, brks, plotdat, ylu, IsPlot.OnlyBad = FALSE)
 
 season(INPUT, rFUN = wWHIT, wFUN = wTSM, iters = 2, wmin = 0.1,
   lambda, nf = 3, frame = floor(INPUT$nptperyear/5) * 2 + 1,
-  minpeakdistance, threshold_max = 0.2, threshold_min = 0.05,
-  ypeak_min = 0.1, rytrough_max = 0.6, MaxPeaksPerYear = 2,
-  MaxTroughsPerYear = 3, IsPlot = FALSE, plotdat = INPUT,
-  print = FALSE, adj.param = TRUE, ...)
+  minpeakdistance, r_max = 0.2, r_min = 0.05, ypeak_min = 0.1,
+  rtrough_max = 0.6, MaxPeaksPerYear = 2, MaxTroughsPerYear = 3,
+  IsPlot = FALSE, plotdat = INPUT, print = FALSE, adj.param = TRUE,
+  ...)
 
 season_3y(INPUT, rFUN = wWHIT, wFUN = wTSM, iters = 2, wmin = 0.1,
   IsOptim_lambda = FALSE, lambda = NULL, nf = 3,
@@ -65,16 +65,16 @@ TIMESAT, default \code{frame = floor(nptperyear/7)*2 + 1}.}
 maximum extreme value less than \code{minpeakdistance}, only the real maximum
 value will be left.}
 
-\item{threshold_max}{Similar as \code{threshold_min}, The maximum threshold should
-be greater than \code{threshold_max}.}
+\item{r_max}{Similar as \code{r_min}, The maximum threshold should
+be greater than \code{r_max}.}
 
-\item{threshold_min}{Threshold is defined as the difference of peak value with
+\item{r_min}{Threshold is defined as the difference of peak value with
 trough value. There are two threshold (left and right). The minimum threshold
-should be greater than threshold_min.}
+should be greater than r_min.}
 
 \item{ypeak_min}{ypeak >= ypeak_min}
 
-\item{rytrough_max}{\code{ytrough <= rytrough_max*A}, A is the amplitude of y.}
+\item{rtrough_max}{\code{ytrough <= rtrough_max*A}, A is the amplitude of y.}
 
 \item{MaxPeaksPerYear}{This parameter is used to adjust lambda in iterations.
 If PeaksPerYear > MaxPeaksPerYear, then lambda = lambda*2.}

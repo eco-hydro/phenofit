@@ -96,6 +96,7 @@ update_VI <- function(rv, varname){
     print('\t update_VI ...')
     if (!is.null(varname) && !(varname %in% c("", "y"))) {
         eval(parse(text = sprintf('rv$df$y <- rv$df$%s', varname)))
+        df <<- rv$df
     }
 }
 
@@ -104,20 +105,21 @@ convert_QC2weight <- function(input){
     qcFUN <- input$qcFUN
     varQC <- input$txt_varQC
 
-    if (varQC %in% colnames(df)){
+    if (!(varQC %in% colnames(df))){
         warning(sprintf("No QC variable %s in df! ", varQC))
     }
 
     if (input$check_QC2weight && varQC %in% colnames(df)){
         eval(parse(text = sprintf('df[, c("w", "QC_flag") := %s(%s, wmin = 0.2)]',
             qcFUN, varQC)))
+        df <<- df
     }
 }
 
 ################################################################################
 #' getDf.site
-#' 
-#' Select the data of specific site. Only those variables 
+#'
+#' Select the data of specific site. Only those variables
 #' \code{c('t', 'y', 'w')} selected.
 getDf.site  <- function(df, sitename, dateRange){
     d <- dplyr::select(df[site == sitename, ], dplyr::matches("t|y|w|QC_flag"))
@@ -142,12 +144,12 @@ getINPUT.site <- function(df, st, sitename, dateRange){
     titlestr <- sprintf("[%s] IGBP=%s, lat = %.2f", sp$site, IGBP, sp$lat)
 
     d <- getDf.site(df, sitename, dateRange)
-    d_new <- add_HeadTail(d, south = south, nptperyear)
-    INPUT <- do.call(check_input, d_new)
 
-    INPUT$south    <- south
+    dnew     <- add_HeadTail(d, south = south, nptperyear = nptperyear)
+    INPUT    <- check_input(dnew$t, dnew$y, dnew$w, nptperyear = nptperyear, south = south,
+                            maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
+
     INPUT$titlestr <- titlestr
-    # list(INPUT = INPUT, plotdat = d)
     INPUT
 }
 
@@ -166,13 +168,15 @@ cal_season <- function(input, INPUT){
         frame          = input$frame,
         wFUN           = input$wFUN,
         maxExtendMonth = input$maxExtendMonth,
-        rytrough_max   = input$rytrough_max,
-        threshold_max  = input$threshold_max,
-        threshold_min  = input$threshold_min
+        rtrough_max   = input$rtrough_max,
+        r_max  = input$r_max,
+        r_min  = input$r_min
     )
     # param <- lapply(varnames, function(var) input[[var]])
+
     param <- c(list(INPUT = INPUT), param)
     # print(str(param))
+
     do.call(check_season, param) # brk return
 }
 
@@ -184,7 +188,6 @@ check_season <- function(INPUT,
                          iters = 3,
                          IsPlot = F, ...) {
     # sitename <- "US-ARM" # "FR-LBr", "ZA-Kru", "US-ARM"
-
     FUN_season <- get(FUN_season[1])
     wFUN       <- get(wFUN)
 
@@ -192,7 +195,7 @@ check_season <- function(INPUT,
                      rFUN = get(rFUN),
                      wFUN = wFUN,
                      IsPlot = IsPlot,
-                     IsPlot.OnlyBad = FALSE,                     
+                     IsPlot.OnlyBad = FALSE,
                      lambda = lambda,
                      iters = iters,
                      MaxPeaksPerYear = 3,
@@ -246,7 +249,7 @@ phenofit_all <- function(input, progress = NULL){
         fprintf("phenofit (n = %d) | running %03d ... \n", i, n)
 
         sitename <- sites[i]
-        INPUT    <- getINPUT.site(df, st, sitename)
+        INPUT    <- getINPUT.site(df, st, sitename, input$dateRange)
 
         # Rough Fitting and gs dividing
         brks   <- cal_season(input, INPUT)
@@ -254,11 +257,8 @@ phenofit_all <- function(input, progress = NULL){
         params <- c(list(INPUT = INPUT, brks = brks), params_fineFitting)
         fit    <- do.call(curvefits, params)
 
-        # Good of fitting of Fine Fitting
-        stat <- ldply(fit, GOF_fFITs, .id = "flag") %>% data.table()
-
-        # Phenological Metrics
-        pheno <- PhenoExtract(fit)
+        stat  <- get_GOF(fit)                       # Goodness-Of-Fit
+        pheno <- PhenoExtract(fit, IsPlot=FALSE)   # Phenological metrics
 
         ans   <- list(fit = fit, INPUT = INPUT, seasons = brks, stat = stat, pheno = pheno)
         ############################# CALCULATION FINISHED #####################

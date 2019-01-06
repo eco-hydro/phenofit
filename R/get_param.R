@@ -1,7 +1,7 @@
 #' Get parameters from curve fitting result
 #'
 #' @param fits Multiple methods curve fitting results by \code{curvefits} result.
-#' @inheritParams GOF_fFITs
+#' @inheritParams get_GOF
 #'
 #' @examples
 #' library(phenofit)

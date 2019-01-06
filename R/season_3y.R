@@ -67,14 +67,14 @@ season_3y <- function(INPUT,
         #.[2:(length(.)-1)] # rm head and tail filled years
     nyear     <- length(years)
 
-    I_beg <- first(which(date_year == years[2]))
-    I_end <- first(which(date_year == last(years))) - 1
-    I0    <- I_beg:I_end
+    # I_beg <- first(which(date_year == years[2]))
+    # I_end <- first(which(date_year == last(years))) - 1
+    # I0    <- I_beg:I_end
 
     ypeak_min <- 0.05
     width_ylu <- nptperyear*0 # already 3y group, moving window for ylu unnecessary
 
-    debug <- FALSE # IsPlot = debug
+    debug <- FALSE #FALSE # IsPlot = debug
     # debug <- TRUE
     # i = 1;
     params <- list(
@@ -97,6 +97,7 @@ season_3y <- function(INPUT,
         # I <- which(date_year %in% years[(i-ny_extend):(i+ny_extend)]) # 3y index
         I   <- which(date_year %in% years[i]) # 3y index
         # `nextent` is not enough
+
         ylu <- get_ylu (INPUT$y, date_year, INPUT$w, width = width_ylu, I, Imedian = TRUE, wmin)
         ylu <- merge_ylu(INPUT$ylu, ylu) # curvefits.R
 
@@ -131,8 +132,8 @@ season_3y <- function(INPUT,
         }
 
         if (is.null(brk$dt) || nrow(brk$dt) == 0){
-            # if have no brks, try to decrease threshold_max
-            params_i$threshold_max <- max(params_i$threshold_max-0.1, 0.05)
+            # if have no brks, try to decrease r_max
+            params_i$r_max <- max(params_i$r_max-0.1, 0.05)
             brk <- do.call(season, params_i)
             # we need `rfit` time-series, so can't skip NULL brks.
             if (!is.null(brk$dt)){

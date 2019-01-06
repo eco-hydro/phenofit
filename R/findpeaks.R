@@ -19,11 +19,11 @@
 #' @param minpeakdistance The minimum distance (in indices) peaks have to have
 #' to be counted. If the distance of two maximum extreme value less than
 #' `minpeakdistance`, only the real maximum value will be left.
-#' @param threshold_min Threshold is defined as the difference of peak value with
+#' @param r_min Threshold is defined as the difference of peak value with
 #' trough value. There are two threshold (left and right). The minimum threshold
-#' should be greater than threshold_min.
-#' @param threshold_max Similar as `threshold_min`, The maximum threshold should
-#' be greater than `threshold_max`.
+#' should be greater than r_min.
+#' @param r_max Similar as `r_min`, The maximum threshold should
+#' be greater than `r_max`.
 #' @param npeaks  the number of peaks to return. If \code{sortstr} = true, the 
 #' largest npeaks maximum values will be returned; If \code{sortstr} = false, 
 #' just the first npeaks are returned in the order of index.
@@ -42,13 +42,13 @@
 #' }
 #'
 #' plot(pSignal, type="l", col="navy"); grid()
-#' x <- findpeaks(pSignal, npeaks=3, threshold_min=4, sortstr=TRUE)
+#' x <- findpeaks(pSignal, npeaks=3, r_min=4, sortstr=TRUE)
 #' points(val~pos, x$X, pch=20, col="maroon")
 #'
 #' @export
 findpeaks <- function (x, IsDiff = TRUE, nups = 1, ndowns = nups, zero = "0", peakpat = NULL,
                        minpeakheight = -Inf, minpeakdistance = 1,
-                       threshold_min = 0, threshold_max = 0,
+                       r_min = 0, r_max = 0,
                        npeaks = 0, sortstr = FALSE, IsPlot = F)
 {
     stopifnot(is.vector(x, mode = "numeric") ||
@@ -89,8 +89,8 @@ findpeaks <- function (x, IsDiff = TRUE, nups = 1, ndowns = nups, zero = "0", pe
         xv[i] <- x[xp[i]]
     }
     inds <- which(xv >= minpeakheight &
-                      xv - pmin(x[x1], x[x2]) >= threshold_max &
-                      xv - pmax(x[x1], x[x2]) >= threshold_min)
+                      xv - pmin(x[x1], x[x2]) >= r_max &
+                      xv - pmax(x[x1], x[x2]) >= r_min)
     X <- cbind(xv[inds], xp[inds], x1[inds], x2[inds])
 
     if (length(X) == 0) return(NULL)

@@ -197,7 +197,7 @@ lambda <- init_lambda(INPUT$y)
 # get growing season breaks in a 3-year moving window
 brks2 <- season_3y(INPUT, 
                    FUN = wWHIT, wFUN = wFUN,
-                   maxExtendMonth = 6, threshold_min = 0.1,
+                   maxExtendMonth = 6, r_min = 0.1,
                    IsPlot = IsPlot, IsPlot.OnlyBad = FALSE, print = print)
 #   [season_3y]  running 1 ...
 #   [season_3y]  running 2 ...

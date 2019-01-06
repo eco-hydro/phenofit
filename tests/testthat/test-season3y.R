@@ -15,7 +15,7 @@ source('helper_MOD13A1.R')
 param = listk(
     INPUT, south = sp$lat[1] < 0, 
     rFUN = wWHIT, wFUN = wTSM, iters = 3,
-    threshold_min = 0,
+    r_min = 0,
     IsPlot = IsPlot, plotdat = d, print = FALSE, IsOnlyPlotbad = F
 )
 

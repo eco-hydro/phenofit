@@ -19,12 +19,11 @@ plot_phenofit <- function(df_fit,
 {
     methods <- df_fit$meth %>% table() %>% names()
     nmethod <- length(methods) # how many curve fitting methods?
-    
+
     d_obs <- df_fit[meth == meth[1]] # t, y
     d_obs$meth <- NULL
-    
+
     # pdat    <- get_fitting(fit)
-    # seasons <- fit$seasons
     p <- ggplot(df_fit, aes_string("t", "y", color = "iters")) +
         geom_line (data = seasons$whit, aes_string("t", "ziter2"), color = "black", size = 0.8) + # show in front
         geom_vline(data = seasons$dt, aes(xintercept = as.numeric(beg)), size = 0.4, linetype=2, color = "blue") +
@@ -57,7 +56,9 @@ plot_phenofit <- function(df_fit,
     }else{
         p <- p + geom_point(aes_string("t", "y"), size = 2, alpha = 0.5, color = "grey60") +
             # geom_line (data = seasons$whit, aes_string(t, ziter2), color = "black", size = 0.8) + # show in front
-            geom_line(aes_string(color = "iters"), size = 1)
+            geom_line(aes_string(y = "ziter1"), size = 0.8, alpha = 0.7, color = "blue") +
+            geom_line(aes_string(y = "ziter2"), size = 0.8, alpha = 0.7, color = "red") +
+            ylab('Vegetation Index')
     }
 
     # geom_vline(data = pdat2, aes_string(xintercept=date, linetype = pmeth, color = pmeth), size = 0.4, alpha = 1) +

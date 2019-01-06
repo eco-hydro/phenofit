@@ -44,11 +44,11 @@ ui <- fluidPage(
                     2, 0, 12)
             ),
             selectInput("site","Choose a site:", choices = sites, selected = "US-Me2"), #CH-Fru, FR-LBr
-            sliderInput("threshold_max", "threshold_max:",
+            sliderInput("r_max", "r_max:",
                 min = 0, max = 1, value = 0.2, param_step ),
-            sliderInput( "threshold_min", "threshold_min:",
+            sliderInput( "r_min", "r_min:",
                 min = 0, max = 0.2, value = 0, 0.02 ),
-            sliderInput( "rytrough_max", "rytrough_max:",
+            sliderInput( "rtrough_max", "rtrough_max:",
                 min = 0, max = 1, value = 0.8, param_step)
         ),
 
