@@ -32,6 +32,6 @@ test_that("plot.fFITs works", {
 })
 
 test_that("get_GOF works", {
-    expect_silent({info <- get_GOF(fit)})
+    expect_silent({info <- get_GOF.fFITs(fit)})
     print(info)
 })

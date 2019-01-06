@@ -4,7 +4,7 @@
 \alias{check_input}
 \title{check_input}
 \usage{
-check_input(t, y, w, nptperyear, south = FALSE, Tn = NULL,
+check_input(t, y, w, QC_flag, nptperyear, south = FALSE, Tn = NULL,
   wmin = 0.2, missval, maxgap, alpha = 0.01, ...)
 }
 \arguments{
@@ -14,6 +14,12 @@ check_input(t, y, w, nptperyear, south = FALSE, Tn = NULL,
 
 \item{w}{(optional) Numeric vector, weights of \code{y}. If not specified, 
 weights of all \code{NA} values will be \code{wmin}, the others will be 1.0.}
+
+\item{QC_flag}{Factor (optional) returned by \code{qcFUN}, levels should be
+in the range of \code{c("snow", "cloud", "shadow", "aerosol", "marginal",
+"good")}, others will be categoried into \code{others}. \code{QC_flag} is
+used for visualization in \code{\link{get_pheno}} and
+\code{\link{plot_phenofit}}.}
 
 \item{nptperyear}{Integer, number of images per year.}
 
@@ -81,11 +87,13 @@ IsPlot = TRUE
 print  = FALSE
 nptperyear = 23
 ypeak_min  = 0.05
+wFUN = wTSM
 
 # add one year in head and tail
 dnew     <- add_HeadTail(d, south = south, nptperyear = nptperyear) 
-INPUT    <- check_input(dnew$t, dnew$y, dnew$w, nptperyear = nptperyear, south = south, 
-                        maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
+INPUT    <- check_input(dnew$t, dnew$y, dnew$w, QC_flag = dnew$QC_flag,
+     nptperyear = nptperyear, south = south, 
+     maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
 }
 \seealso{
 \code{\link[phenofit]{backval}}

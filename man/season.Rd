@@ -133,6 +133,7 @@ st <- MOD13A1$st
 sitename <- dt$site[1]
 d     <- dt[site == sitename, ] # get the first site data
 sp    <- st[site == sitename, ] # station point
+south <- sp$lat < 0
 # global parameter
 IsPlot = TRUE
 print  = FALSE
@@ -140,14 +141,17 @@ nptperyear = 23
 ypeak_min  = 0.05
 wFUN = wTSM
 
-dnew     <- add_HeadTail(d, nptperyear = nptperyear) # add one year in head and tail
-INPUT    <- check_input(dnew$t, dnew$y, dnew$w, nptperyear,
-                        maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
-
+# add one year in head and tail
+dnew     <- add_HeadTail(d, south = south, nptperyear = nptperyear) 
+INPUT    <- check_input(dnew$t, dnew$y, dnew$w, QC_flag = dnew$QC_flag,
+     nptperyear = nptperyear, south = south, 
+     maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
+# all year as a whole
 brks  <- season(INPUT,
     rFUN = wWHIT, wFUN = wFUN,
     lambda = 10,
     plotdat = d, IsPlot = IsPlot, print = FALSE, IsPlot.OnlyBad = FALSE)
+# curve fitting by year
 brks2 <- season_3y(INPUT,
     rFUN = wWHIT, wFUN = wFUN,
     lambda = 10,

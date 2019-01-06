@@ -29,7 +29,7 @@ NULL
 #' plot curve fitting VI, gradient (first order difference D1), hessian (D2),
 #' curvature (k) and the change rate of curvature(der.k)
 #'
-#' @inheritParams PhenoExtract
+#' @inheritParams get_pheno
 #' @param x Fine curve fitting object \code{\link{fFITs}} returned by
 #' \code{\link{curvefit}}.
 #' @param ... ignored.

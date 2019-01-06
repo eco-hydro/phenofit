@@ -10,6 +10,10 @@
 #' @param show.legend Boolean
 #'
 #' @importFrom dplyr left_join
+#' 
+#' @example inst/examples/ex-check_input.R
+#' @example inst/examples/ex-visual.R
+#' 
 #' @export
 plot_phenofit <- function(df_fit,
                           seasons,

@@ -1,7 +1,6 @@
 # shiny::runApp("inst/shiny/phenofit/")
-
+source('global_shiny.R')
 source('global_phenofit.R')
-library(tidyselect)
 
 # library(future)
 # plan(multisession)

@@ -12,38 +12,12 @@
 #' @param IsPlot.vc Whether to plot V-curve optimized time-series.
 #' @param IsPlot.OnlyBad If true, only plot partial figures whose NSE < 0.3.
 #'
-#' @rdname season
 #' @return List object, list(whit, dt)
 #'
-#' @examples
-#' library(phenofit)
-#' data("MOD13A1")
-#'
-#' dt <- tidy_MOD13.gee(MOD13A1$dt)
-#' st <- MOD13A1$st
-#'
-#' sitename <- dt$site[1]
-#' d     <- dt[site == sitename, ] # get the first site data
-#' sp    <- st[site == sitename, ] # station point
-#' # global parameter
-#' IsPlot = TRUE
-#' print  = FALSE
-#' nptperyear = 23
-#' ypeak_min  = 0.05
-#' wFUN = wTSM
-#'
-#' dnew     <- add_HeadTail(d, nptperyear = nptperyear) # add one year in head and tail
-#' INPUT    <- check_input(dnew$t, dnew$y, dnew$w, nptperyear,
-#'                         maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
-#'
-#' brks  <- season(INPUT,
-#'     rFUN = wWHIT, wFUN = wFUN,
-#'     lambda = 10,
-#'     plotdat = d, IsPlot = IsPlot, print = FALSE, IsPlot.OnlyBad = FALSE)
-#' brks2 <- season_3y(INPUT,
-#'     rFUN = wWHIT, wFUN = wFUN,
-#'     lambda = 10,
-#'     plotdat = d, IsPlot = IsPlot, print = FALSE, IsPlot.OnlyBad = FALSE)
+#' @example inst/examples/ex-check_input.R
+#' @example inst/examples/ex-season.R
+#' 
+#' @rdname season
 #' @export
 season_3y <- function(INPUT,
     rFUN = wWHIT, wFUN = wTSM, iters = 2, wmin = 0.1,

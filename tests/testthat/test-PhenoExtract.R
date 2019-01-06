@@ -15,7 +15,7 @@ param <- list(
     verbose = F,
     wFUN = wFUN,
     nextent = 2, maxExtendMonth = 2, minExtendMonth = 1,
-    QC_flag = dnew$QC_flag, minPercValid = 0.2,
+    minPercValid = 0.2,
     print = FALSE
 )
 
@@ -34,11 +34,10 @@ print(params$AG)
 # Test GOF
 expect_silent({
     suppressWarnings({
-        stat <- ldply(fit, GOF_fFITs, .id = "flag") %>% data.table()
+        stat  <- get_GOF(fit)
+        d_fit <- get_fitting(fit)
 
-        df_fit <- get_fitting(fit)
-
-        g <- plot_phenofit(df_fit, brks2)
+        g <- plot_phenofit(d_fit, brks2)
         grid::grid.newpage(); grid::grid.draw(g)
     })
 })
@@ -46,21 +45,21 @@ expect_silent({
 
 # analytical
 expect_silent({
-    p <- PhenoExtract(fit,
+    p <- get_pheno(fit,
         analytical = TRUE, smoothed.spline = FALSE,
-        IsPlot = T)
+        IsPlot = TRUE)
 })
 
 # numDeriv
 expect_silent({
-    p <- PhenoExtract(fit,
+    p <- get_pheno(fit,
         analytical = FALSE, smoothed.spline = FALSE,
-        IsPlot = F)
+        IsPlot = FALSE)
 })
 
 # spline
 expect_silent({
-    p <- PhenoExtract(fit,
+    p <- get_pheno(fit,
         analytical = FALSE, smoothed.spline = TRUE,
-        IsPlot = F)
+        IsPlot = FALSE)
 })

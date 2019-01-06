@@ -41,11 +41,15 @@ par  = c(
 t    <- seq(1, 365, 8)
 tout <- seq(1, 365, 1)
 y <- fFUN(par, t)
-
 methods <- c("AG", "Beck", "Elmore", "Gu", "Zhang") # "Klos" too slow
 fFITs <- curvefit(y, t, tout, methods)
+# multiple years
+fits  <- list(`2001` = fFITs, `2002` = fFITs)
 
-get_GOF.fFITs(fFITs)
+d_param   <- get_param(fits)
+d_GOF     <- get_GOF(fits)
+d_fitting <- get_fitting(fits)
+pheno     <- get_pheno(fits, "AG", IsPlot=TRUE)
 }
 \references{
 [1]. https://en.wikipedia.org/wiki/Nash-Sutcliffe_model_efficiency_coefficient \cr

@@ -9,7 +9,6 @@ server <- function(input, output, session) {
 
     ############################################################################
     ################################ observeEvent ##############################
-
     observeEvent(input$txt_varVI , {
         update_VI(rv, input$txt_varVI)
     })
@@ -147,7 +146,7 @@ server <- function(input, output, session) {
         # params_fineFitting <- getparam(fit)
 
         stat <- get_GOF(fit)                       # Goodness-Of-Fit
-        pheno <- PhenoExtract(fit, IsPlot=FALSE)   # Phenological metrics
+        pheno <- get_pheno(fit, IsPlot=FALSE)   # Phenological metrics
 
         list(fit = fit, INPUT = INPUT(), seasons = brks(), stat = stat, pheno = pheno)
     })

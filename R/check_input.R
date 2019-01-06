@@ -11,6 +11,11 @@
 #' @param y Numeric vector, vegetation index time-series
 #' @param w (optional) Numeric vector, weights of \code{y}. If not specified, 
 #' weights of all \code{NA} values will be \code{wmin}, the others will be 1.0.
+#' @param QC_flag Factor (optional) returned by \code{qcFUN}, levels should be
+#' in the range of \code{c("snow", "cloud", "shadow", "aerosol", "marginal",
+#' "good")}, others will be categoried into \code{others}. \code{QC_flag} is
+#' used for visualization in \code{\link{get_pheno}} and
+#' \code{\link{plot_phenofit}}.
 #' @param nptperyear Integer, number of images per year.
 #' @param south Boolean. In south hemisphere, growing year is 1 July to the
 #' following year 31 June; In north hemisphere, growing year is 1 Jan to 31 Dec.
@@ -50,31 +55,13 @@
 #' }
 #'
 #' @seealso \code{\link[phenofit]{backval}}
-#' @examples
-#' library(phenofit)
-#' data("MOD13A1")
-#' 
-#' dt <- tidy_MOD13.gee(MOD13A1$dt)
-#' st <- MOD13A1$st
-#' 
-#' sitename <- dt$site[1]
-#' d     <- dt[site == sitename, ] # get the first site data
-#' sp    <- st[site == sitename, ] # station point
-#' south <- sp$lat < 0
-#' # global parameter
-#' IsPlot = TRUE
-#' print  = FALSE
-#' nptperyear = 23
-#' ypeak_min  = 0.05
-#' 
-#' # add one year in head and tail
-#' dnew     <- add_HeadTail(d, south = south, nptperyear = nptperyear) 
-#' INPUT    <- check_input(dnew$t, dnew$y, dnew$w, nptperyear = nptperyear, south = south, 
-#'                         maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
+#' @example inst/examples/ex-check_input.R
 #' @export
-check_input <- function(t, y, w, nptperyear, south = FALSE, Tn = NULL,
+check_input <- function(t, y, w, QC_flag,
+    nptperyear, south = FALSE, Tn = NULL,
     wmin = 0.2, missval, maxgap, alpha = 0.01, ...)
 {
+    if (missing(QC_flag)) QC_flag <- NULL
     if (missing(nptperyear)){
         nptperyear <- ceiling(365/as.numeric(difftime(t[2], t[1], units = "days")))
     }
@@ -139,7 +126,7 @@ check_input <- function(t, y, w, nptperyear, south = FALSE, Tn = NULL,
     if (!is_empty(Tn)){
         Tn <- na.approx(Tn, maxgap = maxgap, na.rm = FALSE)
     }
-    list(t = t, y0 = y0, y = y, w = w, Tn = Tn, ylu = ylu, 
+    list(t = t, y0 = y0, y = y, w = w, QC_flag = QC_flag, Tn = Tn, ylu = ylu, 
         nptperyear = nptperyear, south = south)
 }
 

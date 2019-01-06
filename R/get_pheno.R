@@ -15,7 +15,7 @@ PhenoPlot <- function(t, y, main = "", ...){
     grid(ny = 4, nx = NA)
 }
 
-#' PhenoExtract
+#' get_pheno
 #'
 #' Get yearly vegetation phenological metrics of a curve fitting method
 #'
@@ -35,34 +35,10 @@ PhenoPlot <- function(t, y, main = "", ...){
 #' Please note that only a single fine curve fitting method allowed here!
 #'
 #' @return List of every year phenology metrics
-#'
-#' @examples
-#' library(phenofit)
-#' # simulate vegetation time-series
-#' fFUN = doubleLog.Beck
-#' par  = c(
-#'     mn  = 0.1,
-#'     mx  = 0.7,
-#'     sos = 50,
-#'     rsp = 0.1,
-#'     eos = 250,
-#'     rau = 0.1)
-#' t    <- seq(1, 365, 8)
-#' tout <- seq(1, 365, 1)
-#' y <- fFUN(par, t)
-#'
-#' methods <- c("AG", "Beck", "Elmore", "Gu", "Zhang") # "Klos" too slow
-#' fFITs <- curvefit(y, t, tout, methods)
-#'
-#' par(mfrow = c(1, 5),
-#'     oma = c(1, 2, 3, 1), mar = rep(0, 4), yaxt = "n", xaxt = "n")
-#' pheno <- PhenoExtract.fFITs(fFITs, "AG", IsPlot = TRUE)
-#'
-#' # multiple years
-#' fits <- list(`2001` = fFITs, `2002` = fFITs)
-#' pheno <- PhenoExtract(fits, "AG", IsPlot=TRUE)
+#' 
+#' @example inst/examples/ex-get_fitting_param_GOF.R
 #' @export
-PhenoExtract <- function(fits, method,
+get_pheno <- function(fits, method,
     TRS = c(0.2, 0.5),
     analytical = TRUE, smoothed.spline = FALSE,
     IsPlot = FALSE, ...)
@@ -100,7 +76,7 @@ PhenoExtract <- function(fits, method,
             show.title_top <- ifelse(i == 1, TRUE, FALSE)
 
             # browser()
-            PhenoExtract.fFITs(fFITs, method,
+            get_pheno.fFITs(fFITs, method,
                 TRS = TRS,
                 analytical = analytical, smoothed.spline = smoothed.spline,
                 IsPlot = IsPlot,
@@ -120,9 +96,9 @@ PhenoExtract <- function(fits, method,
     map(res, tidyFitPheno) %>% purrr::transpose() 
 }
 
-#' @rdname PhenoExtract
+#' @rdname get_pheno
 #' @export
-PhenoExtract.fFITs <- function(fFITs, method,
+get_pheno.fFITs <- function(fFITs, method,
     TRS = c(0.2, 0.5),
     analytical = TRUE, smoothed.spline = FALSE,
     IsPlot = FALSE,
@@ -140,7 +116,7 @@ PhenoExtract.fFITs <- function(fFITs, method,
         method <- meths[1]
     }
 
-    # PhenoExtract methods
+    # get_pheno methods
     methods  <- c(paste0("TRS", TRS*10),"DER","GU", "ZHANG")
     TRS_last <- last(TRS) # only display last threshold figure
 
@@ -183,7 +159,7 @@ PhenoExtract.fFITs <- function(fFITs, method,
             show.lgd <- TRUE
             legend('topright', c('y', "f(t)"), lty = c(1, 1), pch =c(1, NA), bty='n')
         }
-        stat <- GOF_fFITs(fFITs)
+        stat <- get_GOF.fFITs(fFITs)
         stat <- subset(stat, meth == method)
 
         stat_txt <- sprintf("  R=%.2f, p=%.3f\n RMSE=%.3f\nNSE=%.2f\n",
