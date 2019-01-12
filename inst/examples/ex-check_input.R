@@ -1,11 +1,11 @@
 library(phenofit)
 data("MOD13A1")
 
-dt <- tidy_MOD13.gee(MOD13A1$dt)
+df <- tidy_MOD13.gee(MOD13A1$dt)
 st <- MOD13A1$st
 
-sitename <- dt$site[1]
-d     <- dt[site == sitename, ] # get the first site data
+sitename <- 'CA-NS6' #df$site[1]
+d     <- df[site == sitename, ] # get the first site data
 sp    <- st[site == sitename, ] # station point
 south <- sp$lat < 0
 # global parameter

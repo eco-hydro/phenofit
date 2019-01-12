@@ -36,8 +36,8 @@ fFITs <- curvefit(y, t, tout, methods)
 # multiple years
 fits  <- list(`2001` = fFITs, `2002` = fFITs)
 
-d_param   <- get_param(fits)
+l_param   <- get_param(fits)
 d_GOF     <- get_GOF(fits)
 d_fitting <- get_fitting(fits)
-pheno     <- get_pheno(fits, "AG", IsPlot=TRUE)
+l_pheno   <- get_pheno(fits, "AG", IsPlot=TRUE)
 }

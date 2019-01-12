@@ -1,4 +1,48 @@
 ################################################################################
+#' updateInput_phenofit
+#'
+#' Update shiny components when input changes.
+#' @param session shiny session
+#' @param rv reactiveValues defined in the server, has variables of
+#' 'df', 'st' and 'sites'
+updateInput_phenofit <- function(session, rv) {
+    ## update `nptperyear`
+    var_time   <-  intersect(c("date", "t"), colnames(rv$df))[1]
+    deltaT     <-  as.numeric(diff(rv$df[[var_time]][c(1, 2)]))
+    nptperyear <<- ceiling(365/deltaT)
+
+    updateNumericInput(session, 'nptperyear', value = nptperyear)
+
+    ## update `var_VI``
+    updateSelectInput(session, "txt_varVI",
+        choices = select_var_VI(rv$df),
+        selected = select_var_VI(rv$df)[1])
+
+    # print("here")
+    # browser()
+    # update_VI(rv, input$txt_varVI) # update_VI right now.
+
+    ## update `var_QC`
+    varQCs <- colnames(rv$df) %>% .[grep("QA|QC|qa|qc", .)]
+    if (length(varQCs) == 0){
+        sel_qc_title <- paste0("vairable of QC: ",
+            "No QC variables!")
+        seq_qc <- ""; varQCs <- ""
+    } else {
+        sel_qc_title <- "vairable of QC:"
+        sel_qc <- varQCs[1]
+    }
+
+    # Do not update values when varQC changes. Because, it also rely on
+    # qcFUN
+    updateSelectInput(session, "txt_varQC", sel_qc_title,
+        choices = varQCs, varQCs[1])
+
+    ## Update `site` in main panel
+    updateSelectInput(session, "site",
+                      choices = rv$sites, rv$sites[1])
+}
+
 #' getDf.site
 #'
 #' Select the data of specific site. Only those variables
@@ -54,6 +98,9 @@ cal_season <- function(input, INPUT){
         r_max  = input$r_max,
         r_min  = input$r_min
     )
+
+    print(str(param, 1))
+    print(sprintf('nptperyear = %d', INPUT$nptperyear))
     # param <- lapply(varnames, function(var) input[[var]])
 
     param <- c(list(INPUT = INPUT), param)

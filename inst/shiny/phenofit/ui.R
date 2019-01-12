@@ -21,7 +21,7 @@ ui <- navbarPage(
                 selectInput("site", "Choose a site:",
                     choices = sites, selected = sites[1]
                 ),
-                numericInput("iters", "iters:", 2, 1, 3),
+                numericInput("iters", "iters of Rough fitting:", 2, 1, 4),
                 selectInput(
                     "FUN_season", "Choose a season dividing function (FUN_season):",
                     choices = c('season', 'season_3y'),
@@ -49,13 +49,13 @@ ui <- navbarPage(
                     )
                 ),
                 conditionalPanel(condition = "input.rFUN == 'wHANTS'",
-                    numericInput("nf", "number of frequencies (nf):", 3, 1, 6)
+                    numericInput("nf", "number of frequencies (nf):", 2, 1, 6)
                 ),
                 conditionalPanel(
                     condition = "input.FUN_season == 'season_3y'",
                     numericInput(
                         "maxExtendMonth",
-                        "Include n previous and subsequent month (maxExtendMonth):",
+                        "Include n previous and subsequent month in Rough fitting (maxExtendMonth):",
                         2, 0, 12
                     )
                 ),
@@ -74,6 +74,7 @@ ui <- navbarPage(
                 ################################################################
                 ## curve fitting, select curve fitting methods
                 h3("2. Fine Curve fitting"),
+                numericInput("iters2", "iters of Fine fitting:", 2, 1, 4),
                 checkboxGroupInput("FUN", 
                     "Choose Fine fitting functions (fFUN):",
                     choiceNames  = list("Asymmetric Gaussian (AG)", 
@@ -88,6 +89,16 @@ ui <- navbarPage(
                     "wFUN2", "Choose a weights updating function for Fine Fitting (wFUN2):",
                     choices = c("wTSM", "wBisquare", "wChen"),
                     selected = "wBisquare"
+                ),
+                numericInput(
+                    "nextent2",
+                    "Extend curve fitting window, until n good or marginal elements are found in previous and subsequent growing season (nextent).",
+                    1, 0, 10
+                ),
+                numericInput(
+                    "maxExtendMonth2",
+                    "Max extend window size (month) in Fine fitting (maxExtendMonth):",
+                    2, 0, 12
                 ),
                 hr(),
                 br(),

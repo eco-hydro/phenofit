@@ -17,6 +17,10 @@ server <- function(input, output, session) {
     observeEvent(input$txt_varQC , convert_QC2weight(input))
 
     observeEvent(input$nptperyear, {
+        nptperyear <<- input$nptperyear
+
+        fprintf('running here: nptperyear = %d', nptperyear);
+
         # Update wSG parameter
         updateNumericInput(session,
             "frame", "moving window size (frame):",
@@ -52,45 +56,9 @@ server <- function(input, output, session) {
                 st <<- data.table(ID = seq_along(sites), site = sites, lat = 30)
                 rv$st <- st
             }
-
             rv$df <- df
             rv$site <- sites
-
-            ## update `nptperyear`
-            var_time   <-  intersect(c("t", "date"), colnames(df))[1]
-            deltaT     <-  as.numeric(diff(df[[var_time]][c(1, 2)]))
-            nptperyear <<- ceiling(365/deltaT)
-
-            updateNumericInput(session, 'nptperyear', value = nptperyear)
-
-            ## update `var_VI``
-            updateSelectInput(session, "txt_varVI",
-                choices = select_var_VI(rv$df),
-                selected = select_var_VI(rv$df)[1])
-
-            # print("here")
-            # browser()
-            # update_VI(rv, input$txt_varVI) # update_VI right now.
-
-            ## update `var_QC`
-            varQCs <- colnames(rv$df) %>% .[grep("QA|QC|qa|qc", .)]
-            if (length(varQCs) == 0){
-                sel_qc_title <- paste0("vairable of QC: ",
-                    "No QC variables!")
-                seq_qc <- ""; varQCs <- ""
-            } else {
-                sel_qc_title <- "vairable of QC:"
-                sel_qc <- varQCs[1]
-            }
-
-            # Do not update values when varQC changes. Because, it also rely on
-            # qcFUN
-            updateSelectInput(session, "txt_varQC", sel_qc_title,
-                choices = varQCs, varQCs[1])
-
-            ## Update `site` in main panel
-            updateSelectInput(session, "site",
-                              choices = sites, sites[1])
+            updateInput_phenofit(session, rv)
         }
     })
 
@@ -103,6 +71,22 @@ server <- function(input, output, session) {
                 st <<- fread(file_site)
                 rv$st <- st
             }
+        }
+    })
+
+    observeEvent(input$file_rda, {
+        file_veg  <- input$file_rda$datapath
+        if (check_file(file_veg)) {
+            load(file_veg)
+            df <<- df %>% check_datestr()
+            sites <<- unique(df$site) %>% sort()
+            st <<- st
+            
+            rv$df <- df
+            rv$st <- st    
+            rv$sites <- sites
+            
+            updateInput_phenofit(session, rv)
         }
     })
 
@@ -121,18 +105,20 @@ server <- function(input, output, session) {
     # Figure height of fine curve fitting
     heightSize <- reactive({
         n <- length(input$FUN)
-        height <- 250
+        height <- 150
         ifelse(n == 1, height+50, height)*n
     }) # number of fine curve fitting
 
     params_fineFitting <- reactive({
         list(
             INPUT(), brks(),
+            iters = input$iters2,
             methods = input$FUN, #c("AG", "zhang", "beck", "elmore", 'Gu'), #,"klos",
             verbose = F,
             wFUN = get(input$wFUN2),
-            nextent = 2, maxExtendMonth = 3, minExtendMonth = 1,
-            QC_flag = NULL,
+            nextent = input$nextent2, 
+            maxExtendMonth = input$maxExtendMonth2, 
+            minExtendMonth = 1,
             minPercValid = 0.2,
             print = TRUE
         )
