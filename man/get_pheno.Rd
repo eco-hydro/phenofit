@@ -6,11 +6,12 @@
 \title{get_pheno}
 \usage{
 get_pheno(fits, method, TRS = c(0.2, 0.5), analytical = TRUE,
-  smoothed.spline = FALSE, IsPlot = FALSE, ...)
+  smoothed.spline = FALSE, IsPlot = FALSE, showName_fitting = TRUE,
+  ...)
 
 get_pheno.fFITs(fFITs, method, TRS = c(0.2, 0.5), analytical = TRUE,
   smoothed.spline = FALSE, IsPlot = FALSE, title_left = "",
-  show.title_top = TRUE)
+  showName_pheno = TRUE)
 }
 \arguments{
 \item{fits}{A list of \code{\link{fFITs}} object, for a single curve fitting
@@ -27,14 +28,17 @@ will be used; if false, \code{D1} and \code{D2} will be used.}
 
 \item{IsPlot}{Boolean. Whether to plot figure?}
 
+\item{showName_fitting}{Whether to show the name of fine curve fitting method
+in top title?}
+
 \item{...}{ignored.}
 
 \item{fFITs}{\code{fFITs} object returned by \code{\link{curvefit}}.}
 
 \item{title_left}{String of growing season flag.}
 
-\item{show.title_top}{Whether to show top title? Generally, only show top
-title in the first row.}
+\item{showName_pheno}{Whether to show names of phenological methods in top title? 
+Generally, only show top title in the first row.}
 }
 \value{
 List of every year phenology metrics

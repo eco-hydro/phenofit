@@ -19,7 +19,7 @@ season(INPUT, rFUN = wWHIT, wFUN = wTSM, iters = 2, wmin = 0.1,
 season_3y(INPUT, rFUN = wWHIT, wFUN = wTSM, iters = 2, wmin = 0.1,
   IsOptim_lambda = FALSE, lambda = NULL, nf = 3,
   frame = floor(INPUT$nptperyear/5) * 2 + 1, maxExtendMonth = 12, ...,
-  IsPlot = TRUE, IsPlot.vc = FALSE, IsPlot.OnlyBad = TRUE,
+  IsPlot = TRUE, IsPlot.vc = FALSE, IsPlot.OnlyBad = FALSE,
   plotdat = INPUT, print = TRUE, titlestr = "")
 
 stat_season(INPUT, brks)

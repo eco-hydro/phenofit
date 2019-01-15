@@ -27,8 +27,10 @@ PhenoPlot <- function(t, y, main = "", ...){
 #' @param TRS Threshold for \code{PhenoTrs}.
 #' @param IsPlot Boolean. Whether to plot figure?
 #' @param title_left String of growing season flag.
-#' @param show.title_top Whether to show top title? Generally, only show top
-#' title in the first row.
+#' @param showName_fitting Whether to show the name of fine curve fitting method
+#' in top title?
+#' @param showName_pheno Whether to show names of phenological methods in top title? 
+#' Generally, only show top title in the first row.
 #' @param ... ignored.
 #'
 #' @note
@@ -41,7 +43,7 @@ PhenoPlot <- function(t, y, main = "", ...){
 get_pheno <- function(fits, method,
     TRS = c(0.2, 0.5),
     analytical = TRUE, smoothed.spline = FALSE,
-    IsPlot = FALSE, ...)
+    IsPlot = FALSE, showName_fitting = TRUE, ...)
 {
     if (!is.list(fits)) {
         stop("Unsupported input type!")
@@ -50,8 +52,7 @@ get_pheno <- function(fits, method,
     if (class(fits) == 'fFITs') {
         fits <- list(fits)
     }
-
-    names   <- names(fits)
+    names       <- names(fits)
     # nseason <- length(fits)
 
     if (missing(method)) {
@@ -65,30 +66,36 @@ get_pheno <- function(fits, method,
         method <- methods[k]
 
         if (IsPlot){
-            op <- par(mfrow = c(length(fits), 5),
-                oma = c(1, 2, 4, 1), mar = rep(0, 4), yaxt = "n", xaxt = "n")
+            if (showName_fitting){
+                oma <- c(1, 2, 4, 1)
+            } else {
+                oma <- c(1, 2, 3, 1)
+            }
+            op <- par(mfrow = c(length(fits), 5), oma = oma, 
+                mar = rep(0, 4), yaxt = "n", xaxt = "n")
         }
 
         # fFITs
         pheno_list <- llply(seq_along(names) %>% set_names(names), function(i){
             fFITs <- fits[[i]]
-            title_left     <- names[i]
-            show.title_top <- ifelse(i == 1, TRUE, FALSE)
+            title_left <- names[i]
+            showName_pheno <- ifelse(i == 1, TRUE, FALSE)
 
             # browser()
             get_pheno.fFITs(fFITs, method,
                 TRS = TRS,
                 analytical = analytical, smoothed.spline = smoothed.spline,
                 IsPlot = IsPlot,
-                title_left = title_left, show.title_top = show.title_top)
+                title_left = title_left, showName_pheno = showName_pheno)
         })
 
         if (IsPlot){
             par(new = TRUE, mfrow = c(1, 1), oma = rep(0, 4), mar = rep(0, 4))
             plot(0, axes = F, type = "n", xaxt = "n", yaxt = "n") #
-            text(1, 1, method, font = 2, cex = 1.3)
+            if (showName_fitting) {
+                text(1, 1, method, font = 2, cex = 1.3)            
+            }
         }
-
         pheno_list
     })
 
@@ -102,7 +109,7 @@ get_pheno.fFITs <- function(fFITs, method,
     TRS = c(0.2, 0.5),
     analytical = TRUE, smoothed.spline = FALSE,
     IsPlot = FALSE,
-    title_left = "", show.title_top = TRUE)
+    title_left = "", showName_pheno = TRUE)
 {
     meths <- names(fFITs$fFIT)
     if (missing(method)) {
@@ -155,7 +162,7 @@ get_pheno.fFITs <- function(fFITs, method,
         }
 
         # show legend in first subplot
-        if (show.title_top){
+        if (showName_pheno){
             show.lgd <- TRUE
             legend('topright', c('y', "f(t)"), lty = c(1, 1), pch =c(1, NA), bty='n')
         }
@@ -168,7 +175,7 @@ get_pheno.fFITs <- function(fFITs, method,
         legend('topleft', stat_txt, adj = c(0.2, 0.2), bty='n', text.col = "red")
         mtext(title_left, side = 2)
     }
-    if (show.title_top && IsPlot) mtext("fitting")
+    if (showName_pheno && IsPlot) mtext("fitting")
     # browser()
 
     p_TRS <- map(TRS, function(trs) {
@@ -177,7 +184,7 @@ get_pheno.fFITs <- function(fFITs, method,
 
     if (IsPlot && !all_na) {
         p_TRS_last <- PhenoTrs(fFIT, approach="White", trs=TRS_last, IsPlot = IsPlot, ylim = ylim)
-        if (show.title_top) mtext(sprintf('TRS%d', TRS_last*10))
+        if (showName_pheno) mtext(sprintf('TRS%d', TRS_last*10))
     }
 
     param_common  <- list(fFIT,
@@ -185,9 +192,9 @@ get_pheno.fFITs <- function(fFITs, method,
         IsPlot, ylim = ylim)
     param_common2 <- c(param_common, list(show.lgd = show.lgd))
 
-    der   <- do.call(PhenoDeriv, param_common2);  if (show.title_top && IsPlot) mtext("DER")
-    gu    <- do.call(PhenoGu, param_common)[1:4]; if (show.title_top && IsPlot) mtext("GU")
-    zhang <- do.call(PhenoKl, param_common2);     if (show.title_top && IsPlot) mtext("ZHANG")
+    der   <- do.call(PhenoDeriv, param_common2);  if (showName_pheno && IsPlot) mtext("DER")
+    gu    <- do.call(PhenoGu, param_common)[1:4]; if (showName_pheno && IsPlot) mtext("GU")
+    zhang <- do.call(PhenoKl, param_common2);     if (showName_pheno && IsPlot) mtext("ZHANG")
 
     c(p_TRS, list(der, gu, zhang)) %>% set_names(methods)
 }

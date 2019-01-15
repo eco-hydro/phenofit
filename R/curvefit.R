@@ -63,7 +63,7 @@ curvefit <- function(y, t = index(y), tout = t,
 
     names <- ls(pattern = "fit\\.") %>% set_names(., .)
     fFITs <- lapply(names, get, envir = environment()) %>%
-        set_names(toupper(gsub("fit\\.", "", names))) #remove `fit.` and update names
+        set_names(gsub("fit\\.", "", names)) #remove `fit.` and update names
 
     structure(list(data = data.table(y, t), tout = tout, fFIT = fFITs), 
         class = 'fFITs')

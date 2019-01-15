@@ -25,7 +25,7 @@ season_3y <- function(INPUT,
     lambda = NULL, nf  = 3, frame = floor(INPUT$nptperyear/5)*2 + 1,
     maxExtendMonth = 12,
     ...,
-    IsPlot = TRUE, IsPlot.vc = FALSE, IsPlot.OnlyBad = TRUE,
+    IsPlot = TRUE, IsPlot.vc = FALSE, IsPlot.OnlyBad = FALSE,
     plotdat = INPUT, print = TRUE, titlestr = "")
 {
     nptperyear <- INPUT$nptperyear
