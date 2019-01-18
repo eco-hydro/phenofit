@@ -46,18 +46,19 @@ plot_input <- function(INPUT, wmin = 0.2, ...){
 
     years  <- year(t)
 
+    main <- 'Vegetation Index'
     if (length(unique(years)) < 3){
-        plot(t, y, type = "l", xaxt="n", ann = FALSE, ...)
+        plot(t, y, type = "l", xaxt="n", ann = FALSE, main = main, ...)
         axis.Date(1, at=seq(min(t), max(t), by="month"), format="%Y-%m")
     } else {
-        plot(t, y, type = "l", ann = FALSE, ...)
+        plot(t, y, type = "l", ann = FALSE, main = main, ...)
     }
 
     Ids <- unique(wf)
     for (i in 1:3){
         I = wf == i
         add <- ifelse(i == 1, F, TRUE)
-        points(t[I], y[I], pch = pch[i], col = colors[i], cex = 0.65)
+        points(t[I], y[I], pch = pch[i], col = colors[i], cex = 0.8)
     }
     
     # ylab = expression(paste('GPP ( gC ', m^-2, d^-1, ')'))

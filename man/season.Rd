@@ -7,7 +7,8 @@
 \alias{stat_season}
 \title{plot_season}
 \usage{
-plot_season(INPUT, brks, plotdat, ylu, IsPlot.OnlyBad = FALSE)
+plot_season(INPUT, brks, plotdat, ylu, IsPlot.OnlyBad = FALSE,
+  show.legend = TRUE)
 
 season(INPUT, rFUN = wWHIT, wFUN = wTSM, iters = 2, wmin = 0.1,
   lambda, nf = 3, frame = floor(INPUT$nptperyear/5) * 2 + 1,
@@ -38,6 +39,8 @@ original data.table.}
 \item{ylu}{limits of y value, [ymin, ymax]}
 
 \item{IsPlot.OnlyBad}{If true, only plot partial figures whose NSE < 0.3.}
+
+\item{show.legend}{Whether to show legend?}
 
 \item{rFUN}{Rough curve fitting function, can be one of \code{\link{wSG}}, 
 \code{\link{wWHIT}} and \code{\link{wHANTS}}.}
