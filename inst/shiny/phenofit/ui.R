@@ -24,8 +24,8 @@ ui <- navbarPage(
                 numericInput("iters", "iters of Rough fitting:", 2, 1, 4),
                 selectInput(
                     "FUN_season", "Choose a season dividing function (FUN_season):",
-                    choices = c('season', 'season_3y'),
-                    selected = "season_3y"
+                    choices = c('season', 'season_mov'),
+                    selected = "season_mov"
                 ),
                 selectInput(
                     "wFUN", "Choose a weights updating function for Rough Fitting (wFUN):",
@@ -52,7 +52,7 @@ ui <- navbarPage(
                     numericInput("nf", "number of frequencies (nf):", 2, 1, 6)
                 ),
                 conditionalPanel(
-                    condition = "input.FUN_season == 'season_3y'",
+                    condition = "input.FUN_season == 'season_mov'",
                     numericInput(
                         "maxExtendMonth",
                         "Include n previous and subsequent month in Rough fitting (maxExtendMonth):",

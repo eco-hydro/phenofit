@@ -78,14 +78,18 @@ data("MOD13A1")
 df <- tidy_MOD13.gee(MOD13A1$dt)
 st <- MOD13A1$st
 
-sitename <- 'CA-NS6' #df$site[1]
-d     <- df[site == sitename, ] # get the first site data
-sp    <- st[site == sitename, ] # station point
+date_start <- as.Date('2013-01-01')
+date_end   <- as.Date('2016-12-31')
+
+sitename <- 'CA-NS6' # df$site[1]
+d     <- df[site == sitename & (date >= date_start & date <= date_end), ]
+sp    <- st[site == sitename, ]
 south <- sp$lat < 0
+nptperyear <- 23
+
 # global parameter
 IsPlot = TRUE
 print  = FALSE
-nptperyear = 23
 ypeak_min  = 0.05
 wFUN = wTSM
 

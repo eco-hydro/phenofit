@@ -6,7 +6,7 @@
 #' @param INPUT A list object with the elements of 't', 'y', 'w', 'Tn' (option)
 #' and 'ylu', returned by \code{check_input}.
 #' @param brks A list object with the elements of 'fit' and 'dt', returned by
-#' \code{season} or \code{season_3y}, which contains the growing season
+#' \code{season} or \code{season_mov}, which contains the growing season
 #' dividing information.
 #' @param nextent Extend curve fitting window, until \code{nextent} good or
 #' marginal element are found in previous and subsequent growing season.
@@ -49,7 +49,7 @@ curvefits <- function(INPUT, brks,
     n     <- length(t)
 
     # doys  <- as.numeric(t) # days from origin
-    doys <- as.numeric(difftime(t, date.origin, units = "day") + 1)
+    doys <- as.numeric(difftime(t, date.origin, units = "day")) # + 1
 
     # Tn for background module
     w <- w0 <- INPUT$w

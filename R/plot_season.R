@@ -1,9 +1,10 @@
 #' plot_season
-#'
-#' @param brks A list object returned by \code{season_3y}.
+#' 
+#' Plot growing season divding result.
+#' 
+#' @param brks A list object returned by \code{season_mov}.
 #' @param show.legend Whether to show legend?
 #' @inheritParams check_fit
-#' @rdname season
 #'
 #' @importFrom grid viewport pushViewport grid.draw
 #' @export

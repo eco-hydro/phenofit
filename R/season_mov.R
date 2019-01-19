@@ -1,13 +1,10 @@
-#' Growing season dividing in the 3-year length moving window
-#'
-#' Before using `season_3y`, INPUT should be added a year in the head and tail
-#' first by \code{add_HeadTail}.
-#' @inheritParams season
+#' @title Growing season dividing
+#' @name season
+#' 
 #' @param IsOptim_lambda Whether to optimize Whittaker's parameter lambda by
 #' V-curve theory?
 #' @param maxExtendMonth Previous and subsequent `maxExtendMonth` data were added
-#' for every year curve fitting.
-#' subsequent `maxExtendMonth` period.
+#' for every year curve fitting. 
 #' @param titlestr string for title
 #' @param IsPlot.vc Whether to plot V-curve optimized time-series.
 #' @param IsPlot.OnlyBad If true, only plot partial figures whose NSE < 0.3.
@@ -17,9 +14,8 @@
 #' @example inst/examples/ex-check_input.R
 #' @example inst/examples/ex-season.R
 #' 
-#' @rdname season
 #' @export
-season_3y <- function(INPUT,
+season_mov <- function(INPUT,
     rFUN = wWHIT, wFUN = wTSM, iters = 2, wmin = 0.1,
     IsOptim_lambda = FALSE,
     lambda = NULL, nf  = 3, frame = floor(INPUT$nptperyear/5)*2 + 1,
@@ -62,10 +58,10 @@ season_3y <- function(INPUT,
 
     nextent   <- ceiling(maxExtendMonth/12*nptperyear)
     width_ylu <- nptperyear*2 # This is quite important, to make time-series continuous.
-    # If data is not continuous, `season_3y` will be error!
+    # If data is not continuous, `season_mov` will be error!
     # Fixed at 20180915
     for (i in 2:(nyear-1)){
-        if (print) runningId(i-1, prefix = '\t[season_3y] ')
+        if (print) runningId(i-1, prefix = '\t[season_mov] ')
 
         year_i <- years[i]
         # I <- which(date_year %in% years[(i-ny_extend):(i+ny_extend)]) # 3y index
@@ -85,7 +81,7 @@ season_3y <- function(INPUT,
             if (IsOptim_lambda){
                 y <- input$y %>% rm_empty() # should be NA values now
 
-                # update 20181029, add v_curve lambda optimiazaiton in season_3y
+                # update 20181029, add v_curve lambda optimiazaiton in season_mov
                 vc <- v_curve(input, lg_lambdas = seq(-1, 2, by = 0.005), d = 2,
                                   wFUN = wFUN, iters = iters,
                         IsPlot = IsPlot.vc)

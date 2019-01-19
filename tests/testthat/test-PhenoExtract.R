@@ -3,9 +3,9 @@ context("Phenology Extraction")
 # source('helper_MOD13A1.R')
 wFUN = wTSM # wBisquare #
 
-# The `maxExtendMonth` in season_3y and curvefits is different
+# The `maxExtendMonth` in season_mov and curvefits is different
 # lambda   <- init_lambda(INPUT$y) # lambda for whittaker
-brks2 <- season_3y(INPUT,
+brks2 <- season_mov(INPUT,
     rFUN = wWHIT, wFUN = wFUN,
     plotdat = d, IsPlot = IsPlot, IsPlot.OnlyBad = F, print = F)
 

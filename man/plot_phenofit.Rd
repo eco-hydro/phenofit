@@ -11,7 +11,7 @@ plot_phenofit(d_fit, seasons, title = NULL, font.size = 14,
 \item{d_fit}{data.frame of curve fittings returned by \code{\link{get_fitting}}.}
 
 \item{seasons}{Growing season dividing object returned by \code{\link{season}}
-and \code{\link{season_3y}}.}
+and \code{\link{season_mov}}.}
 
 \item{title}{String, title of figure.}
 
@@ -29,14 +29,18 @@ data("MOD13A1")
 df <- tidy_MOD13.gee(MOD13A1$dt)
 st <- MOD13A1$st
 
-sitename <- 'CA-NS6' #df$site[1]
-d     <- df[site == sitename, ] # get the first site data
-sp    <- st[site == sitename, ] # station point
+date_start <- as.Date('2013-01-01')
+date_end   <- as.Date('2016-12-31')
+
+sitename <- 'CA-NS6' # df$site[1]
+d     <- df[site == sitename & (date >= date_start & date <= date_end), ]
+sp    <- st[site == sitename, ]
 south <- sp$lat < 0
+nptperyear <- 23
+
 # global parameter
 IsPlot = TRUE
 print  = FALSE
-nptperyear = 23
 ypeak_min  = 0.05
 wFUN = wTSM
 
@@ -46,7 +50,7 @@ INPUT    <- check_input(dnew$t, dnew$y, dnew$w, QC_flag = dnew$QC_flag,
      nptperyear = nptperyear, south = south, 
      maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
 # Rough fitting and growing season dividing
-brks2 <- season_3y(INPUT,
+brks2 <- season_mov(INPUT,
     rFUN = wWHIT, wFUN = wFUN,
     plotdat = d, IsPlot = IsPlot, print = FALSE, IsPlot.OnlyBad = FALSE)
 # Fine fitting

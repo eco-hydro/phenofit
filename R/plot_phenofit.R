@@ -4,7 +4,7 @@
 #'
 #' @param d_fit data.frame of curve fittings returned by \code{\link{get_fitting}}.
 #' @param seasons Growing season dividing object returned by \code{\link{season}}
-#' and \code{\link{season_3y}}.
+#' and \code{\link{season_mov}}.
 #' @param title String, title of figure.
 #' @param font.size Font size of axis.text
 #' @param show.legend Boolean
@@ -80,31 +80,3 @@ plot_phenofit <- function(d_fit,
     }
     return(p)
 }
-
-# make_legend
-make_legend <- function(linename = c("iter1", "iter2", "whit"),
-        linecolor = c("blue", "red", "black")){
-    npoints   <- length(qc_levels)
-
-    labels <- c(qc_levels,linename)
-    colors <- c(qc_colors, linecolor)
-
-    # labels <- c(" good", " margin", " snow/ice", " cloud", linename)
-    # colors <- c("grey60", "#00BFC4", "#F8766D", "#C77CFF", linecolor)
-    nline <- length(linename)
-    pch <- c(qc_shapes, rep(NA, nline))
-
-    lty <- rep(0, npoints);  lty[3] <- 1
-    lty <- c(lty, rep(1, nline))
-    lwd <- c(rep(1, npoints), rep(3, nline))
-
-    I   <- 1:length(colors)
-    lgd <- grid::legendGrob(labels[I], pch = pch[I], nrow = 1,
-                       # do.lines = TRUE,
-                       gp=grid::gpar(lty = lty[I], lwd = lwd[I],
-                               cex = 1.2,
-                               col = colors[I], fill = colors[I]))
-    lgd$children[[5]]$children[[1]]$children %<>% .[2] # fix cross point type
-    return(lgd)
-}
-lgd <- make_legend()

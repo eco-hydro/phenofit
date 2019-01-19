@@ -36,7 +36,7 @@ getINPUT_GPPobs <- function(df, st, sitename){
 }
 
 check_season <- function(INPUT,
-                         FUN_season = c("season", "season_3y"),
+                         FUN_season = c("season", "season_mov"),
                          rFUN = "wWHIT",
                          wFUN = "wTSM",
                          lambda = 1000,

@@ -12,7 +12,7 @@ using namespace Rcpp;
 //
 
 /**
- * Fix troughs in \code{season_3y} whose date is later than previous year
+ * Fix troughs in \code{season_mov} whose date is later than previous year
  * ending trough, and merge two too close troughs (less than 35 days).
  */
 // [[Rcpp::export]]

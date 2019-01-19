@@ -12,5 +12,4 @@ Round 6:
 2. Test majority function by testthat (85% lines hint in codecov).
 3. References have been added in help document of majority functions.
 
-## This is a new release.
 This is a new release, so there are no reverse dependencies.

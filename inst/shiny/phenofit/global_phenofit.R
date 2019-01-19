@@ -110,7 +110,7 @@ cal_season <- function(input, INPUT){
 }
 
 check_season <- function(INPUT,
-                         FUN_season = c("season", "season_3y"),
+                         FUN_season = c("season", "season_mov"),
                          rFUN = "wWHIT",
                          wFUN = "wTSM",
                          lambda = 1000,

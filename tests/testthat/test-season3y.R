@@ -20,18 +20,18 @@ param = listk(
 )
 
 param$rFUN <- wSG
-# brks <- do.call(season_3y, param)
+# brks <- do.call(season_mov, param)
 
-test_that("`season_3y` with wWHIT", {
-    expect_silent(brks <- do.call(season_3y, param))
+test_that("`season_mov` with wWHIT", {
+    expect_silent(brks <- do.call(season_mov, param))
 })
 
-test_that("`season_3y` with wHANTS", {
+test_that("`season_mov` with wHANTS", {
     param$rFUN <- wHANTS
-    expect_silent(brks <- do.call(season_3y, param))
+    expect_silent(brks <- do.call(season_mov, param))
 })
 
-test_that("`season_3y` with wSG", {
+test_that("`season_mov` with wSG", {
     param$rFUN <- wSG
-    expect_silent(brks <- do.call(season_3y, param))
+    expect_silent(brks <- do.call(season_mov, param))
 })

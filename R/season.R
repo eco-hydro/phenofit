@@ -1,12 +1,20 @@
-#' season
-#'
-#' First smooth VI timeseries by rought curve fitting function (\code{rFUN}), 
-#' then use \code{\link{findpeaks}} to get the local maximum and local minimum values.
-#' Two local minimum defined a growing season. If two local minimum(maximum)
-#' are too closed, then only the smaller(biger) is left.
-#'
-#' Then according to season pos, based to local maximum position divide yearly
-#' growing season. lambda need to set carefully.
+#' @title Growing season dividing
+#' @name season
+#' 
+#' @description
+#' Divide growing seasons according to rough fitting (\code{rFUN}) result .
+#' 
+#' For \code{season}, rough fitting is applied in a whole.
+#' For \code{season_mov} Rough fit in every year, during which 
+#' \code{maxExtendMonth} is extended.
+#' 
+#' @details
+#' Before dividing growing season, \code{INPUT} should be added a year in head 
+#' and tail first by \code{add_HeadTail}.
+#' 
+#' Finally, use \code{\link{findpeaks}} to get local maximum and local minimum values.
+#' Two local minimum define a growing season. 
+#' If two local minimum(maximum) are too closed, then only the smaller(biger) is left.
 #'
 #' @param INPUT A list object with the elements of \code{t}, \code{y}, \code{w}, 
 #' \code{Tn} (optional) and \code{ylu}, returned by \code{\link{check_input}}.
@@ -17,7 +25,7 @@
 #' @param iters How many times curve fitting is implemented.
 #' @param wmin Double, minimum weigth (i.e. weight of snow, ice and cloud).
 #' @param lambda The smoothing parameter of \code{\link{wWHIT}}. For 
-#' \code{\link{season_3y}}, if lambda is \code{NULL}, \code{\link{init_lambda}}
+#' \code{\link{season_mov}}, if lambda is \code{NULL}, \code{\link{init_lambda}}
 #' will be used. Generally, it was set as 10000, 15, and 5 for daily, 8-day 
 #' and 16-day inputs respectively.
 #' @param nf The parameter of \code{\link{wHANTS}}, number of frequencies to be
@@ -47,16 +55,15 @@
 #' @param print Whether to print progress information
 #' @param adj.param Adjust rough curve fitting function parameters automatically, 
 #' if too many or to less peak and trough values.
-#' @param ... For \code{\link{season_3y}}, Other parameters passed to 
+#' @param ... For \code{\link{season_mov}}, Other parameters passed to 
 #' \code{\link{season}}; For \code{\link{season}}, other parameters passed to 
 #' \code{\link{findpeaks}}.
 #' 
-#' @export
 #' @return A list object with the elements of 'fit' and 'dt'.
 #' list(dt, di)
 #' 
-#' @seealso \code{\link{season_3y}}, \code{\link{findpeaks}}.
-# 
+#' @seealso \code{\link{season_mov}}, \code{\link{findpeaks}}.
+#' @export
 # @examples
 # $whit
 # # A tibble: 574 x 5
@@ -125,7 +132,7 @@ season <- function(INPUT,
         alpha <- 0.01
 
         # default is three year data input, median will be much better
-        # This module was primarily designed for `season_3y`. It also works for
+        # This module was primarily designed for `season_mov`. It also works for
         # group large than 3-year. 2-year median will be underestimated.
         if (nyear >= 2.5){ # considering NA values, nyear of 3-year will be smaller.
 

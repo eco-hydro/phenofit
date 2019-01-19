@@ -20,13 +20,13 @@ strategy.
 # phenofit 0.1.6 (2018-10-26)
 
 * Melt parameters (i.e. `nptperyear` and `south`) into `INPUT`. `check_input`,
- `season`, `season_3y` and `curvefits` are impacted.
+ `season`, `season_mov` and `curvefits` are impacted.
 * Add `adj.param` parameter to `season`, which determine whether to automatically 
 adjust roughn curve fitting parameters.
 
 # phenofit 0.1.7 (2018-10-29)
 
-* Add V-curve optimization in `season_3y` for Whittaker's parameter lambda.
+* Add V-curve optimization in `season_mov` for Whittaker's parameter lambda.
 * Remove `check_fit` and `upper envelope` in `wWHIT`.
 * Update `v-curve`.
 

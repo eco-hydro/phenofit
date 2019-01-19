@@ -11,12 +11,16 @@ get_fitting <- function(fit){
 }
 
 #' @rdname get_fitting
-#' 
+#'
 #' @importFrom purrr map_dfc
 #' @export
 get_fitting.fFITs <- function(fFITs){
-    t <- fFITs$data$t
-    I <- match(t, fFITs$tout)
+    t  <- fFITs$data$t
+    # fix error: t not in tout
+    I  <- match(t, fFITs$tout)
+    Ix <- which(!is.na(I))
+    I  <- I[Ix]
+    t  <- t[Ix]
 
     iters <- length(fFITs$fFIT[[1]]$zs)
     df <- fFITs$fFIT %>% map(function(x){
@@ -25,7 +29,7 @@ get_fitting.fFITs <- function(fFITs){
         cbind(t, d_z) # , d_w
     }) %>% melt_list("meth") %>% as.data.table()
 
-    df <- merge(fFITs$data, df, id = "t")
+    df <- merge(fFITs$data[Ix], df, id = "t")
     df$t %<>% as.Date(date.origin)
     df
 }
