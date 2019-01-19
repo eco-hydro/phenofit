@@ -4,8 +4,8 @@
 #' @description
 #' Divide growing seasons according to rough fitting (\code{rFUN}) result .
 #' 
-#' For \code{season}, rough fitting is applied in a whole.
-#' For \code{season_mov} Rough fit in every year, during which 
+#' For \code{season}, rough fitting is applied for whole.
+#' For \code{season_mov} rough fitting is applied in every year, during which 
 #' \code{maxExtendMonth} is extended.
 #' 
 #' @details
@@ -59,12 +59,14 @@
 #' \code{\link{season}}; For \code{\link{season}}, other parameters passed to 
 #' \code{\link{findpeaks}}.
 #' 
-#' @return A list object with the elements of 'fit' and 'dt'.
-#' list(dt, di)
+#' @return 
+#' \describe{
+#' \item{whit}{Rough fitting result.}
+#' \item{dt}{Growing season dividing information.}
+#' }
 #' 
-#' @seealso \code{\link{season_mov}}, \code{\link{findpeaks}}.
+#' @seealso \code{\link{findpeaks}}.
 #' @export
-# @examples
 # $whit
 # # A tibble: 574 x 5
 #    t              y     w iter1 iter2
@@ -72,17 +74,9 @@
 #  1 2002-07-04  9.43 0.149 10.1  10.5
 #   $dt
 # # A tibble: 11 x 7
-# # Groups:   year [11]
 #    beg        peak       end        len     year season flag
 #    <date>     <date>     <date>     <time> <dbl>  <int> <chr>
 #  1 2003-01-09 2003-07-12 2004-02-18 406     2003      1 2003_1
-#   $di
-# # A tibble: 11 x 3
-#      beg  peak   end
-#    <dbl> <dbl> <dbl>
-#  1  25.0  48.0  76.0
-# if more than one continuous maximum(minimum) values, only kept the bigger
-# (smaller) one
 season <- function(INPUT,
                    rFUN = wWHIT, wFUN = wTSM, iters = 2, wmin = 0.1,
                    lambda, nf  = 3, frame = floor(INPUT$nptperyear/5)*2 + 1,

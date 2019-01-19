@@ -2,9 +2,10 @@
 #' 
 #' Plot growing season divding result.
 #' 
-#' @param brks A list object returned by \code{season_mov}.
+#' @inheritParams season
+#' @inheritParams wHANTS
+#' @param brks A list object returned by \code{season} or \code{season_mov}.
 #' @param show.legend Whether to show legend?
-#' @inheritParams check_fit
 #'
 #' @importFrom grid viewport pushViewport grid.draw
 #' @export
@@ -51,7 +52,6 @@ plot_season <- function(INPUT, brks, plotdat, ylu,
 
     if (!missing(ylu)) abline(h=ylu, col="red", lty=2) # show ylims
     legend('topleft', stat_txt, adj = c(0.05, 0.8), bty='n', text.col = "red")
-
 
     if (show.legend){
         lgd <- make_legend(c("iter1", "iter2"), linecolor = c("blue", "red"))

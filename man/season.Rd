@@ -95,18 +95,22 @@ for every year curve fitting.}
 \item{IsPlot.OnlyBad}{If true, only plot partial figures whose NSE < 0.3.}
 
 \item{titlestr}{string for title}
+
+\item{brks}{A list object returned by \code{season} or \code{season_mov}.}
 }
 \value{
-A list object with the elements of 'fit' and 'dt'.
-list(dt, di)
+\describe{
+\item{whit}{Rough fitting result.}
+\item{dt}{Growing season dividing information.}
+}
 
 List object, list(whit, dt)
 }
 \description{
 Divide growing seasons according to rough fitting (\code{rFUN}) result .
 
-For \code{season}, rough fitting is applied in a whole.
-For \code{season_mov} Rough fit in every year, during which 
+For \code{season}, rough fitting is applied for whole.
+For \code{season_mov} rough fitting is applied in every year, during which 
 \code{maxExtendMonth} is extended.
 }
 \details{
@@ -156,5 +160,5 @@ brks2 <- season_mov(INPUT,
     plotdat = d, IsPlot = IsPlot, print = FALSE, IsPlot.OnlyBad = FALSE)
 }
 \seealso{
-\code{\link{season_mov}}, \code{\link{findpeaks}}.
+\code{\link{findpeaks}}.
 }

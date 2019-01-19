@@ -15,11 +15,14 @@
 #' @param ylu \code{ymin, ymax}, which is used to force \code{ypred} in the
 #' range of \code{ylu}.
 #' @param tout Corresponding doy of prediction.
-#' @param I_optimFUN Interface of optimization function, can be one of
-#' \code{\link{I_optim}} and \code{\link{I_optimx}}.
-#' @param method The name of optimization method, passed to \code{I_optimFUN}.
+#' @param method The name of optimization method to solve fine fitting, passed 
+#' to \code{\link{I_optim}} or \code{\link{I_optimx}}. 
+#' \code{I_optim} supports \code{'BFGS','CG','Nelder-Mead',
+#' 'L-BFGS-B', 'nlm', 'nlminb', 'ucminf'};
+#' \code{I_optimx} supports \code{'spg','Rcgmin','Rvmmin', 'newuoa','bobyqa','nmkb','hjkb'}.
+#' 
 #' @param verbose Whether to display intermediate variables?
-#' @param ... other parameters passed to \code{I_optimFUN}
+#' @param ... other parameters passed to \code{\link{I_optim}} or \code{\link{I_optimx}}.
 #'
 #' @return fFIT object, see \code{\link{fFIT}} for details.
 #'
@@ -27,12 +30,21 @@
 #' @export
 optim_pheno <- function(
     prior, sFUN,
-    y, t, tout,
-    I_optimFUN = I_optim, method,
+    y, t, tout, method,
     w, nptperyear, ylu,
     iters = 2, wFUN = wTSM,
     verbose = FALSE, ...)
-{
+{   
+    methods_optim  <- c('BFGS','CG','Nelder-Mead', 'L-BFGS-B', 'nlm', 'nlminb', 'ucminf')
+    methods_optimx <- c('spg','Rcgmin','Rvmmin', 'newuoa','bobyqa','nmkb','hjkb')
+
+    if (method %in% methods_optim){
+        I_optimFUN <- I_optim
+    } else if (method %in% methods_optimx){
+        I_optimFUN <- I_optimx
+    } else {
+        stop(sprintf('optimization method (%s) is not supported!', method))
+    }
     # To improve the performance of optimization, \code{t} needs to be normalized.
     # t_0    <- t
     tout_0 <- tout

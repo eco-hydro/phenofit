@@ -36,7 +36,7 @@ curve fit VI time-series
    \item \code{Logistic} The traditional simplest logistic function. It can
      be only used in half growing season, i.e. vegetation green-up or senescence
      period.
-   \item \code{doubleLog.Zhang} Piecewise logistics, Zhang Xiaoyang, RME, 2003.
+   \item \code{doubleLog.Zhang} Piecewise logistics, (Zhang Xiaoyang, RSE, 2003).
    \item \code{doubleAG} Asymmetric Gaussian.
    \item \code{doubleLog.Beck} Beck logistics.
    \item \code{doubleLog.Gu} Gu logistics.

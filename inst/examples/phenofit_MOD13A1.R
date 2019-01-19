@@ -57,9 +57,11 @@ dev.off()
 # save(df, st, file = "flux10_MOD13A1.rda")
 # shiny::runApp("inst/shiny/phenofit/", 80, TRUE)
 
-is_comp <- FALSE
+is_comp <- TRUE # FALSE
 
 if (is_comp) {
+    library(data.table)
+
     d_fit <- merge(d[, .(date, t)], d_fitting)
     d_comp <- fread("../phenofit_comp.txt")
     d_comp$date %<>% ymd()
@@ -67,13 +69,13 @@ if (is_comp) {
 
     dplot <- merge(d_fit, d_comp[, .(date, TIMESAT, phenopix)], all.x = T, by = "date")
 
-    font.size = 14
-    method = "Beck"
+    font.size <- 14
+    method <- "Beck"
     data <- dplot[meth == method]
 
     # order  <- c(2, 1, 3)
     colors <- c("red", "blue", "black")
-    lgd <- make_legend(linename = c("phenofit", "TIMESAT", "phenopix"),
+    lgd <- phenofit:::make_legend(linename = c("phenofit", "TIMESAT", "phenopix"),
             linecolor = colors, cex = 1.2)
     p <- ggplot(data, aes_string("t", "y")) +
         geom_point(size = 3, alpha = 0.75,

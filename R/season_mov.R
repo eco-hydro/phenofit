@@ -154,6 +154,7 @@ season_mov <- function(INPUT,
 # }
 
 #' statistics
+#' @param brks A list object returned by \code{season} or \code{season_mov}.
 #' @rdname season
 stat_season <- function(INPUT, brks){
     d_org <- as.data.table(INPUT[c("t", "y", "w")])
