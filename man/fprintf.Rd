@@ -8,7 +8,7 @@ Print sprintf result into console, just like C style fprintf function}
 \usage{
 fprintf(fmt, ...)
 
-runningId(i, step = 1, prefix = "")
+runningId(i, step = 1, N, prefix = "")
 }
 \arguments{
 \item{fmt}{a character vector of format strings, each of up to 8192 bytes.}
@@ -18,6 +18,8 @@ runningId(i, step = 1, prefix = "")
 \item{i}{the running Id.}
 
 \item{step}{how long of print step.}
+
+\item{N}{The number of total iteration}
 
 \item{prefix}{prefix string}
 }

@@ -54,7 +54,8 @@ plot_season <- function(INPUT, brks, plotdat, ylu,
     legend('topleft', stat_txt, adj = c(0.05, 0.8), bty='n', text.col = "red")
 
     if (show.legend){
-        lgd <- make_legend(c("iter1", "iter2"), linecolor = c("blue", "red"))
+        # fix in the futher
+        lgd <- make_legend(c("iter1", "iter2"), linecolor = c("blue", "red")) # , nmax_points = 4
         pos.y <- 0.04
         pushViewport(viewport(x = unit(0.5, "npc"), y = unit(pos.y, "npc"),
                               width = unit(0.8, "npc"), height = unit(pos.y*2, "npc")))

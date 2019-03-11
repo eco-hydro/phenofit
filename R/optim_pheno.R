@@ -120,7 +120,7 @@ optim_pheno <- function(
                         message(sprintf('[%s]: %s', sFUN, e$message))
                         return(w) #return original w
                     })
-                ypred %<>% check_fit(ylu) #values out of ylu are set as NA
+                ypred %<>% check_ylu(ylu) #values out of ylu are set as NA
             }
         }
         fits[[i]] <- ypred

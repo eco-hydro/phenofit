@@ -9,7 +9,7 @@ R2_sign(n, NumberOfPredictor = 2, alpha = 0.05)
 \arguments{
 \item{n}{length of observation.}
 
-\item{NumberOfPredictor}{Number of predictor.}
+\item{NumberOfPredictor}{Number of predictor, including constant.}
 
 \item{alpha}{significant level.}
 }
@@ -21,4 +21,7 @@ Critical value of determined correlation
 }
 \examples{
 R2_critical <- R2_sign(30, NumberOfPredictor = 2, alpha = 0.05)
+}
+\references{
+Chen Yanguang (2012), Geographical Data analysis with MATLAB.
 }

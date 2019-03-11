@@ -59,7 +59,7 @@
 #' @export
 check_input <- function(t, y, w, QC_flag,
     nptperyear, south = FALSE, Tn = NULL,
-    wmin = 0.2, missval, maxgap, alpha = 0.01, ...)
+    wmin = 0.2, missval, maxgap, alpha = 0.02, ...)
 {
     if (missing(QC_flag)) QC_flag <- NULL
     if (missing(nptperyear)){
@@ -85,7 +85,7 @@ check_input <- function(t, y, w, QC_flag,
     y_good <- y[w >= w_critical] %>% rm_empty()
     ylu    <- c(pmax( quantile(y_good, alpha/2), 0),
                quantile(y_good, 1 - alpha/2))
-    # When check_fit, ylu_max is not used. ylu_max is only used for dividing
+    # When check_ylu, ylu_max is not used. ylu_max is only used for dividing
     # growing seasons.
 
     # adjust weights according to ylu
@@ -130,7 +130,7 @@ check_input <- function(t, y, w, QC_flag,
         nptperyear = nptperyear, south = south)
 }
 
-#' check_fit
+#' check_ylu
 #'
 #' Curve fitting values are constrained in the range of \code{ylu}.
 #' Only constrain trough value for a stable background value. But not for peak
@@ -143,8 +143,8 @@ check_input <- function(t, y, w, QC_flag,
 #' 
 #' @export
 #' @examples
-#' check_fit(1:10, c(2, 8))
-check_fit <- function(yfit, ylu){
+#' check_ylu(1:10, c(2, 8))
+check_ylu <- function(yfit, ylu){
     I_max <- yfit > ylu[2]
     I_min <- yfit < ylu[1]
     # yfit[I_max] <- ylu[2]
@@ -152,11 +152,11 @@ check_fit <- function(yfit, ylu){
     return(yfit)
 }
 
-# #' check_fit2
+# #' check_ylu2
 # #' 
 # #' values out of ylu, set to be na and interpolate it.
 # #' @export
-# check_fit2 <- function(y, ylu){
+# check_ylu2 <- function(y, ylu){
 #     I <- which(y < ylu[1] | y > ylu[2])
 #     if (length(I) > 0){
 #         n    <-length(y)

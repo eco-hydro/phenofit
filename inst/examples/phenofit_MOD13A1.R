@@ -56,7 +56,6 @@ dev.off()
 # for shiny app: phenofit
 # save(df, st, file = "flux10_MOD13A1.rda")
 # shiny::runApp("inst/shiny/phenofit/", 80, TRUE)
-
 is_comp <- TRUE # FALSE
 
 if (is_comp) {

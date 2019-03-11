@@ -20,17 +20,33 @@
 #' ypeak_min  = 0.05
 #' 
 #' dnew     <- add_HeadTail(d, nptperyear = nptperyear) # add one year in head and tail
-#' INPUT    <- check_input(dnew$t, dnew$y, dnew$w, nptperyear, 
+#' INPUT    <- check_input(dnew$t, dnew$y, dnew$w, d$QC_flag, nptperyear, 
 #'                         maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
 #' plot_input(INPUT)
 #' @export
 plot_input <- function(INPUT, wmin = 0.2, ...){
-    t <- INPUT$t
     y <- INPUT$y
+    t <- INPUT$t
     w <- INPUT$w
-    if (is.null(w)) w <- rep(1, length(t))
-    # nptperyear <- INPUT$nptperyear
+    n <- length(y)
 
+    if (is.null(t)) {
+        t <- 1:n
+        years <- NULL
+    } else {
+        years  <- year(t)
+    }
+    if (is.null(w)) w <- rep(1, n)
+
+    QC_flag <- INPUT$QC_flag
+    if (is.null(QC_flag)){
+        # divide into three categories: good, marginal and bad
+        wf <- 4 - findInterval(w, c(-Inf, wmin, 0.5, 1), left.open = TRUE)
+        QC_flag <- factor(wf, 1:3, c("good", "marginal", "cloud")) %>% as.character() %>% 
+            factor(qc_levels)
+    }
+
+    # nptperyear <- INPUT$nptperyear
     npt <- length(y)
     # show grid lines
     par(mgp = c(1.5, 0.5, 0)) #oma = c(1, 2, 3, 1)
@@ -38,35 +54,32 @@ plot_input <- function(INPUT, wmin = 0.2, ...){
     # fmt <- ifelse(yday(at[1]) == 1, "%Y", "%Y/%m/%d")
     # axis(side=1, at = at, labels = format(at, fmt))
 
-    # divide into three categories
-    wf <- 4 - findInterval(w, c(-Inf, wmin, 0.5, 1), left.open = TRUE)
-
-    colors <- c("grey60", "#00BFC4", "#C77CFF", "#F8766D", "blue", "red", "black")
+    # colors <- c("grey60", "#00BFC4", "#C77CFF", "#F8766D", "blue", "red", "black")
     pch    <- c(19, 15, 17) # 4
 
-    years  <- year(t)
-
     main <- 'Vegetation Index'
-    if (length(unique(years)) < 3){
+    if (!is.null(years) && length(unique(years)) < 3){
         plot(t, y, type = "l", xaxt="n", ann = FALSE, main = main, ...)
         axis.Date(1, at=seq(min(t), max(t), by="month"), format="%Y-%m")
     } else {
         plot(t, y, type = "l", ann = FALSE, main = main, ...)
     }
 
-    Ids <- unique(wf)
-    for (i in 1:3){
-        I = wf == i
+    # Ids <- unique(wf)
+    for (i in 1:length(qc_levels)){
+        I = QC_flag == qc_levels[i]
         add <- ifelse(i == 1, F, TRUE)
-        points(t[I], y[I], pch = pch[i], col = colors[i], cex = 0.8)
+        points(t[I], y[I], pch = qc_shapes[i], bg = qc_colors[i], col = qc_colors[i], cex = 0.8)
     }
     
     # ylab = expression(paste('GPP ( gC ', m^-2, d^-1, ')'))
-    date_beg <- ymd( min(years) *1e4 + 0101 )
-    date_end <- ymd( max(years) *1e4 + 0101 )
+    if (!is.null(years)){
+        date_beg <- ymd( min(years) *1e4 + 0101 )
+        date_end <- ymd( max(years) *1e4 + 0101 )
 
-    t_grids  <- seq.Date(date_beg, date_end, by = "year")
-    abline(v = t_grids, col = "grey60", lty = 3)
+        t_grids  <- seq.Date(date_beg, date_end, by = "year")
+        abline(v = t_grids, col = "grey60", lty = 3)
+    }
     grid(nx = NA, NULL)
     ylu <- INPUT$ylu
     if (!is.null(ylu)) abline(h=ylu, col="red", lty=2) # show ylims

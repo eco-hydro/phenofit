@@ -5,7 +5,7 @@
 \title{check_input}
 \usage{
 check_input(t, y, w, QC_flag, nptperyear, south = FALSE, Tn = NULL,
-  wmin = 0.2, missval, maxgap, alpha = 0.01, ...)
+  wmin = 0.2, missval, maxgap, alpha = 0.02, ...)
 }
 \arguments{
 \item{t}{Numeric vector, \code{Date} variable}

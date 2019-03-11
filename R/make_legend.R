@@ -1,27 +1,34 @@
 # make_legend
-make_legend <- function(linename = c("iter1", "iter2", "whit"),
-        linecolor = c("blue", "red", "black"), cex = 1.2){
-    npoints   <- length(qc_levels)
+make_legend <- function(
+    linename = c("iter1", "iter2", "whit"),
+    linecolor = c("blue", "red", "black"), cex = 1.2,
+    nmax_points = 6, nrow = 1)
+{
+    nline <- length(linename)
+    nmax_points <- min(nmax_points, length(qc_levels))
 
-    labels <- c(qc_levels,linename)
-    colors <- c(qc_colors, linecolor)
+    I_sel <-  1:nmax_points
+    labels <- c(qc_levels[I_sel], linename)
+    colors <- c(qc_colors[I_sel], linecolor)[1:(nline+nmax_points)]
 
     # labels <- c(" good", " margin", " snow/ice", " cloud", linename)
     # colors <- c("grey60", "#00BFC4", "#F8766D", "#C77CFF", linecolor)
-    nline <- length(linename)
-    pch <- c(qc_shapes, rep(NA, nline))
+    pch <- c(qc_shapes[I_sel], rep(NA, nline))
 
-    lty <- rep(0, npoints);  lty[3] <- 1
+    lty <- rep(0, nmax_points);  lty[3] <- 1
     lty <- c(lty, rep(1, nline))
-    lwd <- c(rep(1, npoints), rep(3, nline))
+    lwd <- c(rep(1, nmax_points), rep(3, nline))
 
     I   <- 1:length(colors)
-    lgd <- grid::legendGrob(labels[I], pch = pch[I], nrow = 1,
-                       # do.lines = TRUE,
-                       gp=grid::gpar(lty = lty[I], lwd = lwd[I],
-                               cex = cex,
-                               col = colors[I], fill = colors[I]))
-    lgd$children[[5]]$children[[1]]$children %<>% .[2] # fix cross point type
+    lgd <- grid::legendGrob(labels[I], pch = pch[I],
+        nrow = nrow, byrow = T,
+        # do.lines = TRUE,
+        gp=grid::gpar(lty = lty[I], lwd = lwd[I],
+               cex = cex,
+               col = colors[I], fill = colors[I]))
+    lgd$children[[5]]$children[[1]]$children %<>% .[2] # fix cross point type (3th)
     return(lgd)
 }
+
 lgd <- make_legend()
+lgd_short <- make_legend(nmax_points = 4)

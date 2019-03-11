@@ -257,7 +257,7 @@ f_goal <- function(
     if (!missing(ylu)){
         # points out of ylu should be punished!
         w[pred < ylu[1] | pred > ylu[2]] <- 0
-        # pred   <- check_fit(pred, ylu)
+        # pred   <- check_ylu(pred, ylu)
     }
     SSE  <- sum((y - pred)^2 * w)
     RMSE <- sqrt(SSE/length(y))
