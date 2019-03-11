@@ -1,4 +1,4 @@
-source('test/stable/load_pkgs.R')
+source("test/load_pkgs.R")
 
 indir <- "test/GEE/data"
 files <- dir(indir, '*.csv', full.names = T)

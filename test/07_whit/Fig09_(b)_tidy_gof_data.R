@@ -1,4 +1,4 @@
-source('test/stable/load_pkgs.R')
+source("test/load_pkgs.R")
 source("test/07_whit/main_phenofit_test.R")
 source("test/07_whit/main_Whittaker_Figures.R")
 source("test/07_whit/dat_flux&cam_phenofit.R")

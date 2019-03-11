@@ -1,5 +1,5 @@
 # read GEE json data, clipped by buffered points
-source("test/stable/load_pkgs.R")
+source("test/load_pkgs.R")
 
 indir <- paste0(dir_flush, "ET&GPP/fluxnet212")
 df <- read_jsons.gee(indir, pattern = ".*MOD16A2.*.geojson", IsSave = T)  # ET

@@ -1,4 +1,4 @@
-source('test/stable/load_pkgs.R')
+source("test/load_pkgs.R")
 
 load('F:/Github/PML_v2/fluxsites_tidy/data/INPUTS/flux129_Phenofit_multi_INPUTS.rda')
 stations <- fread('F:/Github/PML_v2/fluxsites_tidy/data/INPUTS/fluxsites_129.csv')

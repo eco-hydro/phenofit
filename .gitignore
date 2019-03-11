@@ -62,7 +62,7 @@ src-i386/
 src-x64/
 inst/doc
 temp/
-# test/
+test/
 
 # Office document
 notebook
@@ -70,3 +70,6 @@ notebook
 *.xlsx
 *.docx
 *.pdf
+
+# TIMESAT file
+*.set

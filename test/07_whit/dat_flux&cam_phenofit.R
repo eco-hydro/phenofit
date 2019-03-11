@@ -1,5 +1,5 @@
 # load station data of MOD13A1 at flux and phenocam sites
-source('test/stable/load_pkgs.R')
+source("test/load_pkgs.R")
 # source("test/07_whit/dat_flux&cam_phenofit.R")
 
 ################################################################################
