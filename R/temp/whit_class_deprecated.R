@@ -19,7 +19,7 @@ wWHIT_d <- function(y, w, ylu, nptperyear, wFUN = wTSM, iters=1, lambdas=1000, d
             z <- smooth_HdH(z_temp, w, lambda=lambda)$z #genius move
             
             if (!validation){
-                z <- check_fit(z, ylu)
+                z <- check_ylu(z, ylu)
             }
             fits[[i]] <- z
             # yiter <- z# update y with smooth values

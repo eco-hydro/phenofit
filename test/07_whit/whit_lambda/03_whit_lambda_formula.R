@@ -1,9 +1,13 @@
 rm(list = ls())
-source('test/stable/load_pkgs.R')
+
+library(MASS)
+library(sf)
+
+source("test/load_pkgs.R")
 source('test/07_whit/whit_lambda/smooth_whit_lambda.R')
 source("test/07_whit/whit_lambda/main_lambda.R")
-library(MASS)
 
+#' Remove two maximum and minimum lambda
 check_lambda <- function(lambda){
     n <- length(lambda)
     lambda <- sort(lambda)
@@ -15,9 +19,7 @@ check_lambda <- function(lambda){
     c(mean = mean(lambda), sd = sd(lambda))
 }
 
-
-library(sf)
-indir <- "V:/result/"
+indir <- "I:/result/"
 ## 1. station info
 st   <- sf::read_sf("data_test/whit_lambda/shp/st_1e3_mask.shp")
 coor <- st_geometry(st) %>% do.call(rbind, .) %>% data.table() %>%  set_colnames(c("lon", "lat"))
@@ -28,7 +30,7 @@ st$site %<>% as.character()
 st$IGBPcode %<>% factor(levels = 1:16, labels = IGBPnames_006[1:16])
 colnames(st)[3] <- "IGBP"
 
-dirs <- dir("V:/result/whit_lambda/v013", full.names = T) %>%
+dirs <- dir("I:/result/whit_lambda/v013", full.names = T) %>%
     set_names(gsub("whit2", "", basename(.)))
 
 ## 2. lambda info

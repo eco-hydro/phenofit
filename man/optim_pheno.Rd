@@ -4,8 +4,8 @@
 \alias{optim_pheno}
 \title{optim_pheno}
 \usage{
-optim_pheno(prior, sFUN, y, t, tout, I_optimFUN = I_optim, method, w,
-  nptperyear, ylu, iters = 2, wFUN = wTSM, verbose = FALSE, ...)
+optim_pheno(prior, sFUN, y, t, tout, method, w, nptperyear, ylu,
+  iters = 2, wFUN = wTSM, verbose = FALSE, ...)
 }
 \arguments{
 \item{prior}{A vector of initial values for the parameters for which optimal
@@ -21,10 +21,11 @@ values are to be found. \code{prior} is suggested giving a column name.}
 
 \item{tout}{Corresponding doy of prediction.}
 
-\item{I_optimFUN}{Interface of optimization function, can be one of
-\code{\link{I_optim}} and \code{\link{I_optimx}}.}
-
-\item{method}{The name of optimization method, passed to \code{I_optimFUN}.}
+\item{method}{The name of optimization method to solve fine fitting, passed 
+to \code{\link{I_optim}} or \code{\link{I_optimx}}. 
+\code{I_optim} supports \code{'BFGS','CG','Nelder-Mead',
+'L-BFGS-B', 'nlm', 'nlminb', 'ucminf'};
+\code{I_optimx} supports \code{'spg','Rcgmin','Rvmmin', 'newuoa','bobyqa','nmkb','hjkb'}.}
 
 \item{w}{(optional) Numeric vector, weights of \code{y}. If not specified, 
 weights of all \code{NA} values will be \code{wmin}, the others will be 1.0.}
@@ -43,7 +44,7 @@ range of \code{ylu}.}
 
 \item{verbose}{Whether to display intermediate variables?}
 
-\item{...}{other parameters passed to \code{I_optimFUN}}
+\item{...}{other parameters passed to \code{\link{I_optim}} or \code{\link{I_optimx}}.}
 }
 \value{
 fFIT object, see \code{\link{fFIT}} for details.

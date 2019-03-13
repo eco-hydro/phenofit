@@ -4,11 +4,12 @@
 \alias{getRealDate}
 \title{getRealDate}
 \usage{
-getRealDate(df)
+getRealDate(date, DayOfYear)
 }
 \arguments{
-\item{df}{A data.table, at least with columns of \code{date}, and
-\code{DayOfYear}.}
+\item{date}{Date vector, the first day of the 16-day composite period.}
+
+\item{DayOfYear}{Numeric vector, exact composite day of year.}
 }
 \value{
 A data.table with a new column \code{t}, which is the exact compositing date.
@@ -21,5 +22,5 @@ library(phenofit)
 data("MOD13A1")
 
 df  <- MOD13A1$dt
-df2 <- getRealDate(df)
+df$t <- getRealDate(df$date, df$DayOfYear)
 }

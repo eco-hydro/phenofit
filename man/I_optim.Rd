@@ -26,7 +26,7 @@ values are to be found. \code{prior} is suggested giving a column name.}
 For \code{I_optimx}, other methods are also supported,
 e.g. \code{'spg','Rcgmin','Rvmmin', 'newuoa','bobyqa','nmkb','hjkb'}.}
 
-\item{...}{other parameters passed to \code{I_optimFUN}}
+\item{...}{other parameters passed to \code{\link{I_optim}} or \code{\link{I_optimx}}.}
 
 \item{verbose}{If \code{TRUE}, all optimization methods in
 \code{\link[optimx]{optimx}} are used, and print optimization information

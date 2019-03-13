@@ -1,4 +1,4 @@
-source('test/stable/load_pkgs.R')
+source("test/load_pkgs.R")
 
 stat    <- load_data(indir = "Y:/Github/phenofit/result")
 stat_3y <- load_data(indir = "Y:/Github/phenofit/result/grp/")

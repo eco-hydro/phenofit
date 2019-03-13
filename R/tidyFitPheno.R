@@ -2,7 +2,7 @@
 #'
 #' Tidy for every method with multiple years phenology data
 #'
-#' @param pheno Phenology metrics extracted from \code{PhenoExtract}
+#' @param pheno Phenology metrics extracted from \code{get_pheno}
 #'
 #' @examples
 #' library(phenofit)
@@ -24,7 +24,7 @@
 #'
 #' # multiple years
 #' fits <- list(`2001` = fFITs, `2002` = fFITs)
-#' pheno <- PhenoExtract(fits, "AG", IsPlot=FALSE)
+#' pheno <- get_pheno(fits, "AG", IsPlot=FALSE)
 #'
 #' p <- tidyFitPheno(pheno)
 #' @export

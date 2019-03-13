@@ -55,7 +55,7 @@ whitsmw <- function (y, w, nptperyear, ylu, wFUN = wTSM, iters = 1, lambda = 100
 
         if (!validation){
             w <- wFUN(y, z, w, iters, nptperyear, ...)
-            z <- check_fit(z, ylu)
+            z <- check_ylu(z, ylu)
         }
         fits[[i]] <- z
     }

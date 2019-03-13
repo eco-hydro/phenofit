@@ -2,8 +2,8 @@
 # ---------------
 # This function is used to test the rough curve fitting methods, i.e. (wSG,
 # wHANTS, wWHd, wWH2) at 16000 points, sampled at global scale.
-source('test/stable/load_pkgs.R')
-source("R/season_3y.R")
+source("test/load_pkgs.R")
+source("R/season_mov.R")
 source("R/curvefits.R")
 source('R/smooth_wWHIT_lambda.R')
 source('test/07_whit/main_gee_Whittaker.R')

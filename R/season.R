@@ -1,12 +1,20 @@
-#' season
-#'
-#' First smooth VI timeseries by rought curve fitting function (\code{rFUN}), 
-#' then use \code{\link{findpeaks}} to get the local maximum and local minimum values.
-#' Two local minimum defined a growing season. If two local minimum(maximum)
-#' are too closed, then only the smaller(biger) is left.
-#'
-#' Then according to season pos, based to local maximum position divide yearly
-#' growing season. lambda need to set carefully.
+#' @title Growing season dividing
+#' @name season
+#' 
+#' @description
+#' Divide growing seasons according to rough fitting (\code{rFUN}) result .
+#' 
+#' For \code{season}, rough fitting is applied for whole.
+#' For \code{season_mov} rough fitting is applied in every year, during which 
+#' \code{maxExtendMonth} is extended.
+#' 
+#' @details
+#' Before dividing growing season, \code{INPUT} should be added a year in head 
+#' and tail first by \code{add_HeadTail}.
+#' 
+#' Finally, use \code{\link{findpeaks}} to get local maximum and local minimum values.
+#' Two local minimum define a growing season. 
+#' If two local minimum(maximum) are too closed, then only the smaller(biger) is left.
 #'
 #' @param INPUT A list object with the elements of \code{t}, \code{y}, \code{w}, 
 #' \code{Tn} (optional) and \code{ylu}, returned by \code{\link{check_input}}.
@@ -17,7 +25,7 @@
 #' @param iters How many times curve fitting is implemented.
 #' @param wmin Double, minimum weigth (i.e. weight of snow, ice and cloud).
 #' @param lambda The smoothing parameter of \code{\link{wWHIT}}. For 
-#' \code{\link{season_3y}}, if lambda is \code{NULL}, \code{\link{init_lambda}}
+#' \code{\link{season_mov}}, if lambda is \code{NULL}, \code{\link{init_lambda}}
 #' will be used. Generally, it was set as 10000, 15, and 5 for daily, 8-day 
 #' and 16-day inputs respectively.
 #' @param nf The parameter of \code{\link{wHANTS}}, number of frequencies to be
@@ -28,13 +36,13 @@
 #' \code{nptperyear/6}). The minimum distance of two peaks. If the distance of two
 #' maximum extreme value less than \code{minpeakdistance}, only the real maximum
 #' value will be left.
-#' @param threshold_min Threshold is defined as the difference of peak value with
+#' @param r_min Threshold is defined as the difference of peak value with
 #' trough value. There are two threshold (left and right). The minimum threshold
-#' should be greater than threshold_min.
-#' @param threshold_max Similar as \code{threshold_min}, The maximum threshold should
-#' be greater than \code{threshold_max}.
+#' should be greater than r_min.
+#' @param r_max Similar as \code{r_min}, The maximum threshold should
+#' be greater than \code{r_max}.
 #' @param ypeak_min ypeak >= ypeak_min
-#' @param rytrough_max \code{ytrough <= rytrough_max*A}, A is the amplitude of y.
+#' @param rtrough_max \code{ytrough <= rtrough_max*A}, A is the amplitude of y.
 #' @param MaxPeaksPerYear This parameter is used to adjust lambda in iterations.
 #' If PeaksPerYear > MaxPeaksPerYear, then lambda = lambda*2.
 #' @param MaxTroughsPerYear This parameter is used to adjust lambda in iterations.
@@ -47,17 +55,18 @@
 #' @param print Whether to print progress information
 #' @param adj.param Adjust rough curve fitting function parameters automatically, 
 #' if too many or to less peak and trough values.
-#' @param ... For \code{\link{season_3y}}, Other parameters passed to 
+#' @param ... For \code{\link{season_mov}}, Other parameters passed to 
 #' \code{\link{season}}; For \code{\link{season}}, other parameters passed to 
 #' \code{\link{findpeaks}}.
 #' 
-#' @export
-#' @return A list object with the elements of 'fit' and 'dt'.
-#' list(dt, di)
+#' @return 
+#' \describe{
+#' \item{whit}{Rough fitting result.}
+#' \item{dt}{Growing season dividing information.}
+#' }
 #' 
-#' @seealso \code{\link{season_3y}}, \code{\link{findpeaks}}.
-# 
-# @examples
+#' @seealso \code{\link{findpeaks}}.
+#' @export
 # $whit
 # # A tibble: 574 x 5
 #    t              y     w iter1 iter2
@@ -65,23 +74,15 @@
 #  1 2002-07-04  9.43 0.149 10.1  10.5
 #   $dt
 # # A tibble: 11 x 7
-# # Groups:   year [11]
 #    beg        peak       end        len     year season flag
 #    <date>     <date>     <date>     <time> <dbl>  <int> <chr>
 #  1 2003-01-09 2003-07-12 2004-02-18 406     2003      1 2003_1
-#   $di
-# # A tibble: 11 x 3
-#      beg  peak   end
-#    <dbl> <dbl> <dbl>
-#  1  25.0  48.0  76.0
-# if more than one continuous maximum(minimum) values, only kept the bigger
-# (smaller) one
 season <- function(INPUT,
                    rFUN = wWHIT, wFUN = wTSM, iters = 2, wmin = 0.1,
                    lambda, nf  = 3, frame = floor(INPUT$nptperyear/5)*2 + 1,
                    minpeakdistance,
-                   threshold_max = 0.2, threshold_min = 0.05,
-                   ypeak_min   = 0.1, rytrough_max = 0.6,
+                   r_max = 0.2, r_min = 0.05,
+                   ypeak_min   = 0.1, rtrough_max = 0.6,
                    MaxPeaksPerYear = 2, MaxTroughsPerYear = 3,
                    IsPlot  = FALSE, plotdat = INPUT, print = FALSE, 
                    adj.param = TRUE,
@@ -125,7 +126,7 @@ season <- function(INPUT,
         alpha <- 0.01
 
         # default is three year data input, median will be much better
-        # This module was primarily designed for `season_3y`. It also works for
+        # This module was primarily designed for `season_mov`. It also works for
         # group large than 3-year. 2-year median will be underestimated.
         if (nyear >= 2.5){ # considering NA values, nyear of 3-year will be smaller.
 
@@ -154,18 +155,18 @@ season <- function(INPUT,
         # }
         #
         # local minimum values
-        # peak values is small for minimum values, so can't use threshold_min here
+        # peak values is small for minimum values, so can't use r_min here
         peaks <- findpeaks(-ypred,
-                           threshold_max = threshold_max*A,
-                           threshold_min = threshold_min*0,
+                           r_max = r_max*A,
+                           r_min = r_min*0,
                            minpeakdistance = minpeakdistance, zero = "-", nups = 0)
         pos_min   <- peaks$X
         pos_min[, 1] %<>% multiply_by(-1)
         ntrough_PerYear <- length(peaks$gregexpr)/nyear#max peaks
         # local maximum values,
         peaks <- findpeaks(ypred, zero = "+",
-                           threshold_max = threshold_max*A,
-                           threshold_min = threshold_min*A, # A
+                           r_max = r_max*A,
+                           r_min = r_min*A, # A
                            minpeakdistance = minpeakdistance,
                            minpeakheight = 0.1*A + ylu[1], nups = 1) #, ypeak_min
         pos_max <- peaks$X
@@ -202,9 +203,9 @@ season <- function(INPUT,
     #  rough curve fitting time-series
     rfit = as.data.table(c(list(t = t, y = y), yfits$ws, yfits$zs))
 
-    # 1.1 the local minimum value should small than rytrough_max*A
+    # 1.1 the local minimum value should small than rtrough_max*A
     if (!is.null(pos_min)) {
-        pos_min <- pos_min[(val - ylu[1]) <= rytrough_max*A, ]
+        pos_min <- pos_min[(val - ylu[1]) <= rtrough_max*A, ]
         pos_min[, type := -1]
     }
     if (!is.null(pos_max)) pos_max[, type :=  1]
@@ -243,7 +244,7 @@ season <- function(INPUT,
         if (length(I_del) > 0) pos <- pos[-I_del, ]
         # 1.3 remove replicated
         pos$flag <- cumsum(c(1, diff(pos$type) != 0))
-        pos      <- ddply(pos, .(flag), rm_duplicate, y = ypred, threshold = threshold_min*A)[, 2:6]
+        pos      <- ddply(pos, .(flag), rm_duplicate, y = ypred, threshold = r_min*A)[, 2:6]
     }
 
     pos$t    <- t[pos$pos]

@@ -1,4 +1,4 @@
-source('test/stable/load_pkgs.R')
+source("test/load_pkgs.R")
 
 ## 1. GLOBAL parameters #######################################################
 # To compare with different sites, Roughtness is normalized by `Yobs`.

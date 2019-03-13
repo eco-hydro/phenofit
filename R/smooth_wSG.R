@@ -41,7 +41,7 @@ wSG <- function(y, w, nptperyear, ylu, wFUN = wTSM, iters = 2,
         z <- sgfitw_rcpp(yiter, w, S)[, 1]
         wnew <- wFUN(y, z, w, i, nptperyear, ...)
 
-        z <- check_fit(z, ylu)
+        z <- check_ylu(z, ylu)
         yiter[yiter < z] <- z[yiter < z] # upper envelope
         
         fits[[i]] <- z

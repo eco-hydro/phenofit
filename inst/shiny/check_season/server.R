@@ -22,9 +22,9 @@ server <- function(input, output, session) {
             frame          = input$frame,
             wFUN           = input$wFUN,
             maxExtendMonth = input$maxExtendMonth, 
-            rytrough_max   = input$rytrough_max,
-            threshold_max  = input$threshold_max, 
-            threshold_min  = input$threshold_min
+            rtrough_max   = input$rtrough_max,
+            r_max  = input$r_max, 
+            r_min  = input$r_min
         )
         # param <- lapply(varnames, function(var) input[[var]])
         param <- c(list(INPUT()), param)
@@ -37,9 +37,9 @@ server <- function(input, output, session) {
     # })
     # output$plot_GPPobs <- renderPlot({
     #     sitename <- input$site
-    #     # threshold_max <- input$threshold_max
-    #     # threshold_min <- input$threshold_min
-    #     # rytrough_max  <- input$rytrough_max
+    #     # r_max <- input$r_max
+    #     # r_min <- input$r_min
+    #     # rtrough_max  <- input$rtrough_max
     #     # iters  <- input$iters
     #     # lambda <- input$lambda
     #     # FUNname <- input$FUN

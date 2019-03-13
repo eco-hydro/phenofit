@@ -85,12 +85,12 @@ wHANTS <- function(y, t, w, nf = 3, ylu, periodlen = 365, nptperyear,
         z <- mat %*% b; z <- z[, 1]
         # w = wFUN(y, yr, w, 0.5, i, nptperyear) #%wfact = 0.5
         w <- wFUN(y, z, w, i, nptperyear, ...)
-        # \code{check_fit} has constrained ylu
+        # \code{check_ylu} has constrained ylu
         # print(unique(wnew - w))
         # w <- wnew
         # w[z < ylu[1] | z > ylu[2] ] <- wmin
 
-        z <- check_fit(z, ylu) # very necessary
+        z <- check_ylu(z, ylu) # very necessary
         fits[[i]] <- z
     }
 

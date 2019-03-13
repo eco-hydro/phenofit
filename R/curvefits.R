@@ -6,7 +6,7 @@
 #' @param INPUT A list object with the elements of 't', 'y', 'w', 'Tn' (option)
 #' and 'ylu', returned by \code{check_input}.
 #' @param brks A list object with the elements of 'fit' and 'dt', returned by
-#' \code{season} or \code{season_3y}, which contains the growing season
+#' \code{season} or \code{season_mov}, which contains the growing season
 #' dividing information.
 #' @param nextent Extend curve fitting window, until \code{nextent} good or
 #' marginal element are found in previous and subsequent growing season.
@@ -21,74 +21,35 @@
 #' Tn < minT is treated as ungrowing season.
 #' @param methods Fine curve fitting methods, can be one or more of
 #' \code{c('AG', 'Beck', 'Elmore', 'Gu', 'Klos', 'Zhang')}.
-#' @param QC_flag Factor (optional) returned by \code{qcFUN}, levels should be
-#' in the range of \code{c("snow", "cloud", "shadow", "aerosol", "marginal",
-#' "good")}, others will be categoried into \code{others}. \code{QC_flag} is
-#' used for visualization in \code{\link{PhenoExtract}} and
-#' \code{\link{plot_phenofit}}.
 #' @param minPercValid If the percentage of good and marginal quality points is
 #' less than \code{minPercValid}, curve fiting result is set to \code{NA}.
 #' @param print Whether to print progress information?
 #' @param ... Other parameters will be ignore.
 #'
 #' @return fits Multiple phenofit object.
-#'
-#' @examples
-#' library(phenofit)
-#' data("MOD13A1")
-#'
-#' dt <- tidy_MOD13.gee(MOD13A1$dt)
-#' st <- MOD13A1$st
-#'
-#' sitename <- dt$site[1]
-#' d     <- dt[site == sitename, ] # get the first site data
-#' sp    <- st[site == sitename, ] # station point
-#' # global parameter
-#' IsPlot = TRUE
-#' print  = FALSE
-#' nptperyear = 23
-#' ypeak_min  = 0.05
-#' wFUN = wTSM
-#'
-#' dnew     <- add_HeadTail(d, nptperyear = nptperyear) # add one year in head and tail
-#' INPUT    <- check_input(dnew$t, dnew$y, dnew$w, nptperyear,
-#'                         maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
-#'
-#' brks2 <- season_3y(INPUT,
-#'     rFUN = wWHIT, wFUN = wFUN,
-#'     plotdat = d, IsPlot = IsPlot, print = FALSE, IsOnlyPlotbad = FALSE)
-#'
-#' fit <- curvefits(
-#'     INPUT, brks2,
-#'     methods = c("AG", "Beck", "Elmore", "Zhang"), #,"klos", "Gu"
-#'     verbose = FALSE,
-#'     wFUN = wFUN,
-#'     nextent = 2, maxExtendMonth = 2, minExtendMonth = 1,
-#'     QC_flag = dnew$QC_flag, minPercValid = 0.2,
-#'     print = TRUE)
-#'
-#' df_fit <- get_fitting(fit)
-#' g <- plot_phenofit(df_fit, brks2)
-#' grid::grid.newpage(); grid::grid.draw(g)
+#' 
+#' @example inst/examples/ex-check_input.R
+#' @example inst/examples/ex-curvefits.R
+#' 
 #' @export
 curvefits <- function(INPUT, brks,
                       wFUN = wTSM, iters = 2, wmin = 0.2,
                       nextent = 2, maxExtendMonth = 3, minExtendMonth = 1,
                       minT = 0,
                       methods = c('AG', 'Beck', 'Elmore', 'Gu', 'Klos', 'Zhang'),
-                      QC_flag = NULL,
                       minPercValid = 0.2,
                       print = TRUE, ...)
 {
     if (all(is.na(INPUT$y))) return(NULL)
 
+    QC_flag    <- INPUT$QC_flag
     nptperyear <- INPUT$nptperyear
-    t     <- INPUT$t
+    t          <- INPUT$t
     years <- year(t)
     n     <- length(t)
 
     # doys  <- as.numeric(t) # days from origin
-    doys <- as.numeric(difftime(t, date.origin, units = "day") + 1)
+    doys <- as.numeric(difftime(t, date.origin, units = "day")) # + 1
 
     # Tn for background module
     w <- w0 <- INPUT$w
@@ -225,8 +186,8 @@ get_ylu <- function(y, years, w0, width, I, Imedian = TRUE, wmin = 0.2){
     I_end  <- last(I)
 
     # if less than 0.6*12 ≈ 8
-
     I_win  <- pmax(1, I_beg - width) : pmin(n, I_end + width)
+
     w0_win <- w0[I_win]
     I_win  <- I_win[which(w0_win > wmin)]
 

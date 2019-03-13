@@ -12,8 +12,8 @@
 ## 1. Bug found about Whittaker lambda formula
 # Parameter for Whittaker lambda was not updated according to the latest result.
 #
-# v013 : check_fit first, get statistics of this checked data
-# v014 : check_fit first, get statistics of original data
+# v013 : check_ylu first, get statistics of this checked data
+# v014 : check_ylu first, get statistics of original data
 # -----
 # v013 is more reasonable. Because, contaminated points are often negative bias.
 ## 2. HANTs weights updating not work
@@ -23,7 +23,7 @@
 # a <- rough_fitting(sitename, df, st, get(method))
 # a$whit[, .(w = witer1 - witer2, z = ziter1 - ziter2)] %>% unique
 
-source('test/stable/load_pkgs.R')
+source("test/load_pkgs.R")
 source('test/07_whit/main_gee_Whittaker.R')
 
 adj.param = TRUE
@@ -60,7 +60,7 @@ methods2 <- c("wHANTS", "wSG", "wWH", "wWH2")
 lst <- list()
 k = 4 # k = 4 is corresponding to `grp01_Extend`
 
-source("R/season_3y.R")
+source("R/season_mov.R")
 source("R/curvefits.R")
 
 # for (k in 4){ # 1:nrow(coefs)
@@ -99,7 +99,7 @@ for (i in 1:4){ # only wWH2 this time
                        return.res = F, Save = T, outdir = outdir, overwrite = T)
 
     if (IsPlot) dev.off()
-    # brks2 <- season_3y(INPUT, nptperyear, south = sp$lat[1] < 0, FUN =FUN,
+    # brks2 <- season_mov(INPUT, nptperyear, south = sp$lat[1] < 0, FUN =FUN,
     #                    nf = nf, frame = frame,
     #                    IsPlot = IsPlot, print = print, partial = F)
 }

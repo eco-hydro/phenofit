@@ -97,7 +97,7 @@ for (i in seq_along(sites)){
     #         axis.text.x  = element_blank()
     #     )
     # }
-    # temp <- PhenoExtract(fit$fits$ELMORE, IsPlot = T)
+    # temp <- get_pheno(fit$fits$ELMORE, IsPlot = T)
     ps[[i]] <- p
 }
 names(fits) <- sites
@@ -114,7 +114,7 @@ file.show(file)
 
 ratio = 1.15
 cairo_pdf("Figure5_Phenology_Extraction.pdf", 8*ratio, 6*ratio)
-temp <- PhenoExtract(fit$fits$ELMORE[1:6], IsPlot = T, TRS = 0.5)
+temp <- get_pheno(fit$fits$ELMORE[1:6], IsPlot = T, TRS = 0.5)
 dev.off()
 file.show("Figure5_Phenology_Extraction.pdf")
 # grid.arrange(n)

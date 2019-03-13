@@ -1,4 +1,4 @@
-source('test/stable/load_pkgs.R')
+source("test/load_pkgs.R")
 library(magrittr)
 library(magick)
 

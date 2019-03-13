@@ -7,7 +7,7 @@
 tidyFitPheno(pheno)
 }
 \arguments{
-\item{pheno}{Phenology metrics extracted from \code{PhenoExtract}}
+\item{pheno}{Phenology metrics extracted from \code{get_pheno}}
 }
 \description{
 Tidy for every method with multiple years phenology data
@@ -32,7 +32,7 @@ fFITs <- curvefit(y, t, tout, methods)
 
 # multiple years
 fits <- list(`2001` = fFITs, `2002` = fFITs)
-pheno <- PhenoExtract(fits, "AG", IsPlot=FALSE)
+pheno <- get_pheno(fits, "AG", IsPlot=FALSE)
 
 p <- tidyFitPheno(pheno)
 }

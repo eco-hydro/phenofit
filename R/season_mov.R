@@ -1,57 +1,27 @@
-#' Growing season dividing in the 3-year length moving window
-#'
-#' Before using `season_3y`, INPUT should be added a year in the head and tail
-#' first by \code{add_HeadTail}.
-#' @inheritParams season
+#' @title Growing season dividing
+#' @name season
+#' 
 #' @param IsOptim_lambda Whether to optimize Whittaker's parameter lambda by
 #' V-curve theory?
 #' @param maxExtendMonth Previous and subsequent `maxExtendMonth` data were added
-#' for every year curve fitting.
-#' subsequent `maxExtendMonth` period.
+#' for every year curve fitting. 
 #' @param titlestr string for title
 #' @param IsPlot.vc Whether to plot V-curve optimized time-series.
 #' @param IsPlot.OnlyBad If true, only plot partial figures whose NSE < 0.3.
 #'
-#' @rdname season
 #' @return List object, list(whit, dt)
 #'
-#' @examples
-#' library(phenofit)
-#' data("MOD13A1")
-#'
-#' dt <- tidy_MOD13.gee(MOD13A1$dt)
-#' st <- MOD13A1$st
-#'
-#' sitename <- dt$site[1]
-#' d     <- dt[site == sitename, ] # get the first site data
-#' sp    <- st[site == sitename, ] # station point
-#' # global parameter
-#' IsPlot = TRUE
-#' print  = FALSE
-#' nptperyear = 23
-#' ypeak_min  = 0.05
-#' wFUN = wTSM
-#'
-#' dnew     <- add_HeadTail(d, nptperyear = nptperyear) # add one year in head and tail
-#' INPUT    <- check_input(dnew$t, dnew$y, dnew$w, nptperyear,
-#'                         maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
-#'
-#' brks  <- season(INPUT,
-#'     rFUN = wWHIT, wFUN = wFUN,
-#'     lambda = 10,
-#'     plotdat = d, IsPlot = IsPlot, print = FALSE, IsPlot.OnlyBad = FALSE)
-#' brks2 <- season_3y(INPUT,
-#'     rFUN = wWHIT, wFUN = wFUN,
-#'     lambda = 10,
-#'     plotdat = d, IsPlot = IsPlot, print = FALSE, IsPlot.OnlyBad = FALSE)
+#' @example inst/examples/ex-check_input.R
+#' @example inst/examples/ex-season.R
+#' 
 #' @export
-season_3y <- function(INPUT,
+season_mov <- function(INPUT,
     rFUN = wWHIT, wFUN = wTSM, iters = 2, wmin = 0.1,
     IsOptim_lambda = FALSE,
     lambda = NULL, nf  = 3, frame = floor(INPUT$nptperyear/5)*2 + 1,
     maxExtendMonth = 12,
     ...,
-    IsPlot = TRUE, IsPlot.vc = FALSE, IsPlot.OnlyBad = TRUE,
+    IsPlot = TRUE, IsPlot.vc = FALSE, IsPlot.OnlyBad = FALSE,
     plotdat = INPUT, print = TRUE, titlestr = "")
 {
     nptperyear <- INPUT$nptperyear
@@ -67,14 +37,14 @@ season_3y <- function(INPUT,
         #.[2:(length(.)-1)] # rm head and tail filled years
     nyear     <- length(years)
 
-    I_beg <- first(which(date_year == years[2]))
-    I_end <- first(which(date_year == last(years))) - 1
-    I0    <- I_beg:I_end
+    # I_beg <- first(which(date_year == years[2]))
+    # I_end <- first(which(date_year == last(years))) - 1
+    # I0    <- I_beg:I_end
 
     ypeak_min <- 0.05
     width_ylu <- nptperyear*0 # already 3y group, moving window for ylu unnecessary
 
-    debug <- FALSE # IsPlot = debug
+    debug <- FALSE #FALSE # IsPlot = debug
     # debug <- TRUE
     # i = 1;
     params <- list(
@@ -88,15 +58,16 @@ season_3y <- function(INPUT,
 
     nextent   <- ceiling(maxExtendMonth/12*nptperyear)
     width_ylu <- nptperyear*2 # This is quite important, to make time-series continuous.
-    # If data is not continuous, `season_3y` will be error!
+    # If data is not continuous, `season_mov` will be error!
     # Fixed at 20180915
     for (i in 2:(nyear-1)){
-        if (print) runningId(i-1, prefix = '\t[season_3y] ')
+        if (print) runningId(i-1, prefix = '\t[season_mov] ')
 
         year_i <- years[i]
         # I <- which(date_year %in% years[(i-ny_extend):(i+ny_extend)]) # 3y index
         I   <- which(date_year %in% years[i]) # 3y index
         # `nextent` is not enough
+
         ylu <- get_ylu (INPUT$y, date_year, INPUT$w, width = width_ylu, I, Imedian = TRUE, wmin)
         ylu <- merge_ylu(INPUT$ylu, ylu) # curvefits.R
 
@@ -110,7 +81,7 @@ season_3y <- function(INPUT,
             if (IsOptim_lambda){
                 y <- input$y %>% rm_empty() # should be NA values now
 
-                # update 20181029, add v_curve lambda optimiazaiton in season_3y
+                # update 20181029, add v_curve lambda optimiazaiton in season_mov
                 vc <- v_curve(input, lg_lambdas = seq(-1, 2, by = 0.005), d = 2,
                                   wFUN = wFUN, iters = iters,
                         IsPlot = IsPlot.vc)
@@ -131,8 +102,8 @@ season_3y <- function(INPUT,
         }
 
         if (is.null(brk$dt) || nrow(brk$dt) == 0){
-            # if have no brks, try to decrease threshold_max
-            params_i$threshold_max <- max(params_i$threshold_max-0.1, 0.05)
+            # if have no brks, try to decrease r_max
+            params_i$r_max <- max(params_i$r_max-0.1, 0.05)
             brk <- do.call(season, params_i)
             # we need `rfit` time-series, so can't skip NULL brks.
             if (!is.null(brk$dt)){
@@ -183,6 +154,7 @@ season_3y <- function(INPUT,
 # }
 
 #' statistics
+#' @param brks A list object returned by \code{season} or \code{season_mov}.
 #' @rdname season
 stat_season <- function(INPUT, brks){
     d_org <- as.data.table(INPUT[c("t", "y", "w")])

@@ -1,4 +1,4 @@
-source('test/stable/load_pkgs.R')
+source("test/load_pkgs.R")
 
 # load("data_test/whit_lambda/MOD13A1_st_1e3_20180731.rda")
 # st$site %<>% as.character()

@@ -1,9 +1,9 @@
 #' getRealDate
 #'
 #' convert MODIS \code{DayOfYear} to the exact compositing date.
-#' @param df A data.table, at least with columns of \code{date}, and
-#' \code{DayOfYear}.
-#'
+#' @param date Date vector, the first day of the 16-day composite period.
+#' @param DayOfYear Numeric vector, exact composite day of year. 
+#' 
 #' @return
 #' A data.table with a new column \code{t}, which is the exact compositing date.
 #' 
@@ -12,17 +12,23 @@
 #' data("MOD13A1")
 #' 
 #' df  <- MOD13A1$dt
-#' df2 <- getRealDate(df)
+#' df$t <- getRealDate(df$date, df$DayOfYear)
 #' @export
-getRealDate <- function(df){
-    df[, `:=`(date = ymd(date))]
-    df[, `:=`(year = year(date), doy = as.integer(yday(date)))]
-    df[is.na(DayOfYear), DayOfYear := doy] # If DayOfYear is missing
+getRealDate <- function(date, DayOfYear){
+    year = year(date)
+    doy  = as.integer(yday(date))
+
+    I_na <- which(is.na(DayOfYear))
+    DayOfYear[I_na] <- doy[I_na] # If DayOfYear is missing
+
+    t  <- as.Date(sprintf("%d-%03d", year  , DayOfYear), "%Y-%j")
 
     # In case of last scene of a year, doy of last scene could in the next year
-    df[abs(DayOfYear - doy) >= 300, t := as.Date(sprintf("%d-%03d", year+1, DayOfYear), "%Y-%j")] # last scene
-    df[abs(DayOfYear - doy) <  300, t := as.Date(sprintf("%d-%03d", year  , DayOfYear), "%Y-%j")]
-    df
+    t_nextYear <- as.Date(sprintf("%d-%03d", year+1, DayOfYear), "%Y-%j")
+    I_nextYear <- abs(DayOfYear - doy) >= 300
+
+    t[I_nextYear] <- t_nextYear[I_nextYear]
+    return(t)
 }
 
 #' tidy_MOD13.gee
@@ -58,8 +64,10 @@ getRealDate <- function(df){
 tidy_MOD13.gee <- function(infile, outfile, wmin = 0.2){
     df <- infile
     if ("character" %in% class(infile) ) df <- fread(infile)
-    df %<>% getRealDate()
 
+    df$date %<>% ymd()
+    df$t <- getRealDate(df$date, df$DayOfYear)
+    
     # Initial weights
     df[, c("QC_flag", "w") := qc_summary(SummaryQA, wmin = 0.2)]
     # Remap SummaryQA factor level, plot_phenofit use this variable. For other

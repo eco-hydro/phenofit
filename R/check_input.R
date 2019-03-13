@@ -11,6 +11,11 @@
 #' @param y Numeric vector, vegetation index time-series
 #' @param w (optional) Numeric vector, weights of \code{y}. If not specified, 
 #' weights of all \code{NA} values will be \code{wmin}, the others will be 1.0.
+#' @param QC_flag Factor (optional) returned by \code{qcFUN}, levels should be
+#' in the range of \code{c("snow", "cloud", "shadow", "aerosol", "marginal",
+#' "good")}, others will be categoried into \code{others}. \code{QC_flag} is
+#' used for visualization in \code{\link{get_pheno}} and
+#' \code{\link{plot_phenofit}}.
 #' @param nptperyear Integer, number of images per year.
 #' @param south Boolean. In south hemisphere, growing year is 1 July to the
 #' following year 31 June; In north hemisphere, growing year is 1 Jan to 31 Dec.
@@ -50,29 +55,13 @@
 #' }
 #'
 #' @seealso \code{\link[phenofit]{backval}}
-#' @examples
-#' library(phenofit)
-#' data("MOD13A1")
-#' 
-#' dt <- tidy_MOD13.gee(MOD13A1$dt)
-#' st <- MOD13A1$st
-#' 
-#' sitename <- dt$site[1]
-#' d     <- dt[site == sitename, ] # get the first site data
-#' sp    <- st[site == sitename, ] # station point
-#' # global parameter
-#' IsPlot = TRUE
-#' print  = FALSE
-#' nptperyear = 23
-#' ypeak_min  = 0.05
-#' 
-#' dnew     <- add_HeadTail(d, nptperyear = nptperyear) # add one year in head and tail
-#' INPUT    <- check_input(dnew$t, dnew$y, dnew$w, nptperyear = nptperyear, 
-#'                         maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
+#' @example inst/examples/ex-check_input.R
 #' @export
-check_input <- function(t, y, w, nptperyear, south = FALSE, Tn = NULL,
-    wmin = 0.2, missval, maxgap, alpha = 0.01, ...)
+check_input <- function(t, y, w, QC_flag,
+    nptperyear, south = FALSE, Tn = NULL,
+    wmin = 0.2, missval, maxgap, alpha = 0.02, ...)
 {
+    if (missing(QC_flag)) QC_flag <- NULL
     if (missing(nptperyear)){
         nptperyear <- ceiling(365/as.numeric(difftime(t[2], t[1], units = "days")))
     }
@@ -96,7 +85,7 @@ check_input <- function(t, y, w, nptperyear, south = FALSE, Tn = NULL,
     y_good <- y[w >= w_critical] %>% rm_empty()
     ylu    <- c(pmax( quantile(y_good, alpha/2), 0),
                quantile(y_good, 1 - alpha/2))
-    # When check_fit, ylu_max is not used. ylu_max is only used for dividing
+    # When check_ylu, ylu_max is not used. ylu_max is only used for dividing
     # growing seasons.
 
     # adjust weights according to ylu
@@ -137,11 +126,11 @@ check_input <- function(t, y, w, nptperyear, south = FALSE, Tn = NULL,
     if (!is_empty(Tn)){
         Tn <- na.approx(Tn, maxgap = maxgap, na.rm = FALSE)
     }
-    list(t = t, y0 = y0, y = y, w = w, Tn = Tn, ylu = ylu, 
+    list(t = t, y0 = y0, y = y, w = w, QC_flag = QC_flag, Tn = Tn, ylu = ylu, 
         nptperyear = nptperyear, south = south)
 }
 
-#' check_fit
+#' check_ylu
 #'
 #' Curve fitting values are constrained in the range of \code{ylu}.
 #' Only constrain trough value for a stable background value. But not for peak
@@ -154,8 +143,8 @@ check_input <- function(t, y, w, nptperyear, south = FALSE, Tn = NULL,
 #' 
 #' @export
 #' @examples
-#' check_fit(1:10, c(2, 8))
-check_fit <- function(yfit, ylu){
+#' check_ylu(1:10, c(2, 8))
+check_ylu <- function(yfit, ylu){
     I_max <- yfit > ylu[2]
     I_min <- yfit < ylu[1]
     # yfit[I_max] <- ylu[2]
@@ -163,11 +152,11 @@ check_fit <- function(yfit, ylu){
     return(yfit)
 }
 
-# #' check_fit2
+# #' check_ylu2
 # #' 
 # #' values out of ylu, set to be na and interpolate it.
 # #' @export
-# check_fit2 <- function(y, ylu){
+# check_ylu2 <- function(y, ylu){
 #     I <- which(y < ylu[1] | y > ylu[2])
 #     if (length(I) > 0){
 #         n    <-length(y)
