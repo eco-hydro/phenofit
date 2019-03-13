@@ -13,7 +13,7 @@ wFUN = wTSM
 # #     rymin_less = 0.6, ypeak_min = ypeak_min,
 # #     max_MaxPeaksperyear =2.5, max_MinPeaksperyear = 3.5
 # # )
-brks2 <- season_3y(INPUT,
+brks2 <- season_mov(INPUT,
     rFUN = wWHIT, wFUN = wFUN,
     plotdat = d, IsPlot = IsPlot, print = F, IsOnlyPlotbad = F)
 

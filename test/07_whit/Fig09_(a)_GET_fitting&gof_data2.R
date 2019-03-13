@@ -1,4 +1,4 @@
-source('test/stable/load_pkgs.R')
+source("test/load_pkgs.R")
 source("test/07_whit/main_phenofit_test.R")
 
 version     = "v3"

@@ -19,32 +19,39 @@
 # }
 
 #' @name FitDL
-#' @title Fine curve fitting functions.
+#' @title Fine fitting
 #' 
-#' @description Fine curve fitting functions, e.g. double logistics, Asymmetric 
-#' Gaussian. They are used to fit vegetation time-series in every growing season.
+#' @description Fine curve fitting function is used to fit vegetation 
+#' time-series in every growing season.
 #'
 #' @param y input vegetation index time-series.
 #' @param t the corresponding doy(day of year) of y.
-#' @param tout the output curve fitting time-series time steps.
-#' @param optimFUN optimization function to solve curve fitting functions'
-#' parameters. It's should be `optimx_fun`, or `optim_p`.
+#' @param tout the time of output curve fitting time-series.
 #' @param method method passed to `optimx` or `optim` function.
 #' @param w weights
-#' @param ... other paraters passed to optimFUN, such as weights.
+#' @param ... other paraters passed to \code{\link{optim_pheno}}.
 #'
-#' @return list(pred, par, fun)
+#' @return
+#' \describe{
+#' \item{tout}{The time of output curve fitting time-series.}
+#' \item{zs}{Smoothed vegetation time-series of every iteration.}
+#' \item{ws}{Weights of every iteration.}
+#' \item{par}{Final optimized parameter of fine fitting.}
+#' \item{fun}{The name of fine fitting.}
+#' }
+#' 
 #' @references
 #' [1]. Beck, P.S.A., Atzberger, C., Hogda, K.A., Johansen, B., Skidmore, A.K.,
 #'      2006. Improved monitoring of vegetation dynamics at very high latitudes:
 #'      A new method using MODIS NDVI. Remote Sens. Environ.
 #'      https://doi.org/10.1016/j.rse.2005.10.021.
+#' @example inst/examples/ex-FitDL.R
 NULL
 
 #' @rdname FitDL
 #' @export
 FitDL.Zhang <- function(y, t = index(y), tout = t, 
-    optimFUN = I_optimx, method = 'nlm', w, ...)
+    method = 'nlm', w, ...)
 {
     if (missing(w)) w <- rep(1, length(y))
     e <- init_param(y, t, w)
@@ -63,13 +70,13 @@ FitDL.Zhang <- function(y, t = index(y), tout = t,
     # lower[["r"]] %>% multiply_by(1/3)
     # upper[["r"]] %>% multiply_by(3)
     # browser()
-    optim_pheno(prior, sFUN, y, t, tout, optimFUN, method, w, lower = lower, upper = upper, ...)
+    optim_pheno(prior, sFUN, y, t, tout, method, w, lower = lower, upper = upper, ...)
 }
 
 #' @rdname FitDL
 #' @export
 FitAG <- function(y, t = index(y), tout = t, 
-    optimFUN = I_optimx, method = 'nlminb', w, ...)
+    method = 'nlminb', w, ...)
 {
     if (missing(w)) w <- rep(1, length(y))
     e <- init_param(y, t, w)
@@ -85,13 +92,13 @@ FitAG <- function(y, t = index(y), tout = t,
     lower  <- with(e$lims, c(t0[1], mn[1], mx[1], 1/(1.4*e$half), 2, 1/(1.4*e$half), 2))
     upper  <- with(e$lims, c(t0[2], mn[2], mx[2], 1/(0.1*e$half), 6, 1/(0.1*e$half), 6))
 
-    optim_pheno(prior, sFUN, y, t, tout, optimFUN, method, w, lower = lower, upper = upper, ...)
+    optim_pheno(prior, sFUN, y, t, tout, method, w, lower = lower, upper = upper, ...)
 }
 
 #' @rdname FitDL
 #' @export
 FitDL.Beck <- function(y, t = index(y), tout = t, 
-    optimFUN = I_optimx, method = 'nlminb', w, ...)
+    method = 'nlminb', w, ...)
 {
     if (missing(w)) w <- rep(1, length(y))
     e <- init_param(y, t, w)
@@ -105,7 +112,7 @@ FitDL.Beck <- function(y, t = index(y), tout = t,
     lower  <- sapply(param_lims, `[`, 1)
     upper  <- sapply(param_lims, `[`, 2)
 
-    optim_pheno(prior, sFUN, y, t, tout, optimFUN, method, w, lower = lower, upper = upper, ...)
+    optim_pheno(prior, sFUN, y, t, tout, method, w, lower = lower, upper = upper, ...)
 }
 # mn + (mx - mn)*(1/(1 + exp(-rsp*(t - sos))) + 1/(1 + exp(rau*(t - eos))))
 # attr(doubleLog.Beck, 'par') <- c("mn", "mx", "sos", "rsp", "eos", "rau")
@@ -119,7 +126,7 @@ FitDL.Beck <- function(y, t = index(y), tout = t,
 #' @rdname FitDL
 #' @export
 FitDL.Elmore <- function(y, t = index(y), tout = t, 
-    optimFUN = I_optimx, method = 'nlminb', w, ...) 
+    method = 'nlminb', w, ...) 
 {
     e <- init_param(y, t, w)
 
@@ -135,7 +142,7 @@ FitDL.Elmore <- function(y, t = index(y), tout = t,
     lower  <- c(sapply(param_lims, `[`, 1), 0  )
     upper  <- c(sapply(param_lims, `[`, 2), Inf)
 
-    optim_pheno(prior, sFUN, y, t, tout, optimFUN, method, w, lower = lower, upper = upper, ...)
+    optim_pheno(prior, sFUN, y, t, tout, method, w, lower = lower, upper = upper, ...)
 }
 
 # c(mn, mx - mn, doy[2], half*0.1, doy[4], half*0.1, 0.002),
@@ -160,7 +167,7 @@ FitDL.Elmore <- function(y, t = index(y), tout = t,
 #' @rdname FitDL
 #' @export
 FitDL.Gu <- function(y, t = index(y), tout = t, 
-    optimFUN = I_optimx, method = "nlminb", w, ...)
+    method = "nlminb", w, ...)
 {
     if (missing(w)) w <- rep(1, length(y))
     e <- init_param(y, t, w)
@@ -184,13 +191,13 @@ FitDL.Gu <- function(y, t = index(y), tout = t,
     lower  <- c(sapply(param_lims, `[`, 1), 0  , 0)
     upper  <- c(sapply(param_lims, `[`, 2), Inf, Inf)
 
-    optim_pheno(prior, sFUN, y, t, tout, optimFUN, method, w, lower = lower, upper = upper, ...)
+    optim_pheno(prior, sFUN, y, t, tout, method, w, lower = lower, upper = upper, ...)
 }
 
 #' @rdname FitDL
 #' @export
 FitDL.Klos <- function(y, t = index(y), tout = t, 
-    optimFUN = I_optimx, method = 'BFGS', w, ...)
+    method = 'BFGS', w, ...)
 {
     if (missing(w)) w <- rep(1, length(y))
     e <- init_param(y, t, w)
@@ -224,6 +231,6 @@ FitDL.Klos <- function(y, t = index(y), tout = t,
     })
     
     sFUN <- "doubleLog.Klos"
-    optim_pheno(prior, sFUN, y, t, tout, optimFUN, method, w, ...)
+    optim_pheno(prior, sFUN, y, t, tout, method, w, ...)
 }
 

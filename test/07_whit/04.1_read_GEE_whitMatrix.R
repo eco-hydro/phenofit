@@ -2,7 +2,7 @@ library(jsonlite)
 library(grid)
 library(gridExtra)
 
-source('test/stable/load_pkgs.R')
+source("test/load_pkgs.R")
 
 dir_gdrive   <- "D:/Document/GoogleDrive/whit" #data/gee_phenofit/v2/
 

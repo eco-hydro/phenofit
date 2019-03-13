@@ -4,7 +4,7 @@ source('ui_tab_1_loading.R')
 
 ui <- navbarPage(
     "phenofit",
-    selected = "Load data",
+    selected = "Main", #"Load data",
     # tags$head(tags$style(HTML( "hr {border-top: 1px solid black;}" ))),
     tags$script(src = "selectInput.js"),
     tab_loading,
@@ -21,11 +21,11 @@ ui <- navbarPage(
                 selectInput("site", "Choose a site:",
                     choices = sites, selected = sites[1]
                 ),
-                numericInput("iters", "iters:", 2, 1, 3),
+                numericInput("iters", "iters of Rough fitting:", 2, 1, 4),
                 selectInput(
                     "FUN_season", "Choose a season dividing function (FUN_season):",
-                    choices = c('season', 'season_3y'),
-                    selected = "season_3y"
+                    choices = c('season', 'season_mov'),
+                    selected = "season_mov"
                 ),
                 selectInput(
                     "wFUN", "Choose a weights updating function for Rough Fitting (wFUN):",
@@ -49,23 +49,23 @@ ui <- navbarPage(
                     )
                 ),
                 conditionalPanel(condition = "input.rFUN == 'wHANTS'",
-                    numericInput("nf", "number of frequencies (nf):", 3, 1, 6)
+                    numericInput("nf", "number of frequencies (nf):", 2, 1, 6)
                 ),
                 conditionalPanel(
-                    condition = "input.FUN_season == 'season_3y'",
+                    condition = "input.FUN_season == 'season_mov'",
                     numericInput(
                         "maxExtendMonth",
-                        "Include n previous and subsequent month (maxExtendMonth):",
+                        "Include n previous and subsequent month in Rough fitting (maxExtendMonth):",
                         2, 0, 12
                     )
                 ),
-                sliderInput( "threshold_max", "r_max:",
+                sliderInput( "r_max", "r_max:",
                     min = 0,  max = 1, value = 0.2, param_step
                 ),
-                sliderInput( "threshold_min", "r_min:",
+                sliderInput( "r_min", "r_min:",
                     min = 0, max = 0.2, value = 0, 0.02
                 ),
-                sliderInput( "rytrough_max", "rytrough_max:",
+                sliderInput( "rtrough_max", "rtrough_max:",
                     min = 0, max = 1, value = 0.8, param_step
                 ),
                 hr(),
@@ -74,6 +74,7 @@ ui <- navbarPage(
                 ################################################################
                 ## curve fitting, select curve fitting methods
                 h3("2. Fine Curve fitting"),
+                numericInput("iters2", "iters of Fine fitting:", 2, 1, 4),
                 checkboxGroupInput("FUN", 
                     "Choose Fine fitting functions (fFUN):",
                     choiceNames  = list("Asymmetric Gaussian (AG)", 
@@ -88,6 +89,16 @@ ui <- navbarPage(
                     "wFUN2", "Choose a weights updating function for Fine Fitting (wFUN2):",
                     choices = c("wTSM", "wBisquare", "wChen"),
                     selected = "wBisquare"
+                ),
+                numericInput(
+                    "nextent2",
+                    "Extend curve fitting window, until n good or marginal elements are found in previous and subsequent growing season (nextent).",
+                    1, 0, 10
+                ),
+                numericInput(
+                    "maxExtendMonth2",
+                    "Max extend window size (month) in Fine fitting (maxExtendMonth):",
+                    2, 0, 12
                 ),
                 hr(),
                 br(),

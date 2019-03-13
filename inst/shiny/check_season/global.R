@@ -36,7 +36,7 @@ getINPUT_GPPobs <- function(df, st, sitename){
 }
 
 check_season <- function(INPUT,
-                         FUN_season = c("season", "season_3y"),
+                         FUN_season = c("season", "season_mov"),
                          rFUN = "wWHIT",
                          wFUN = "wTSM",
                          lambda = 1000,
@@ -83,6 +83,6 @@ param_step <- 0.1
 # sites_grp  <- list(sites_sg, sites_mg) %>%
 #     set_names(c("single season", "multiple season"))
 
-# threshold_max = 0.1,
-# threshold_min = 0,
-# rytrough_max = 0.6,
+# r_max = 0.1,
+# r_min = 0,
+# rtrough_max = 0.6,

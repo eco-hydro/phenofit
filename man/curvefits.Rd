@@ -7,14 +7,14 @@
 curvefits(INPUT, brks, wFUN = wTSM, iters = 2, wmin = 0.2,
   nextent = 2, maxExtendMonth = 3, minExtendMonth = 1, minT = 0,
   methods = c("AG", "Beck", "Elmore", "Gu", "Klos", "Zhang"),
-  QC_flag = NULL, minPercValid = 0.2, print = TRUE, ...)
+  minPercValid = 0.2, print = TRUE, ...)
 }
 \arguments{
 \item{INPUT}{A list object with the elements of 't', 'y', 'w', 'Tn' (option)
 and 'ylu', returned by \code{check_input}.}
 
 \item{brks}{A list object with the elements of 'fit' and 'dt', returned by
-\code{season} or \code{season_3y}, which contains the growing season
+\code{season} or \code{season_mov}, which contains the growing season
 dividing information.}
 
 \item{wFUN}{weights updating function, can be one of \code{\link{wTSM}}, 
@@ -42,12 +42,6 @@ Tn < minT is treated as ungrowing season.}
 \item{methods}{Fine curve fitting methods, can be one or more of
 \code{c('AG', 'Beck', 'Elmore', 'Gu', 'Klos', 'Zhang')}.}
 
-\item{QC_flag}{Factor (optional) returned by \code{qcFUN}, levels should be
-in the range of \code{c("snow", "cloud", "shadow", "aerosol", "marginal",
-"good")}, others will be categoried into \code{others}. \code{QC_flag} is
-used for visualization in \code{\link{PhenoExtract}} and
-\code{\link{plot_phenofit}}.}
-
 \item{minPercValid}{If the percentage of good and marginal quality points is
 less than \code{minPercValid}, curve fiting result is set to \code{NA}.}
 
@@ -65,37 +59,38 @@ Fine Curve fitting for INPUT time-series.
 library(phenofit)
 data("MOD13A1")
 
-dt <- tidy_MOD13.gee(MOD13A1$dt)
+df <- tidy_MOD13.gee(MOD13A1$dt)
 st <- MOD13A1$st
 
-sitename <- dt$site[1]
-d     <- dt[site == sitename, ] # get the first site data
-sp    <- st[site == sitename, ] # station point
+date_start <- as.Date('2013-01-01')
+date_end   <- as.Date('2016-12-31')
+
+sitename <- 'CA-NS6' # df$site[1]
+d     <- df[site == sitename & (date >= date_start & date <= date_end), ]
+sp    <- st[site == sitename, ]
+south <- sp$lat < 0
+nptperyear <- 23
+
 # global parameter
 IsPlot = TRUE
 print  = FALSE
-nptperyear = 23
 ypeak_min  = 0.05
 wFUN = wTSM
 
-dnew     <- add_HeadTail(d, nptperyear = nptperyear) # add one year in head and tail
-INPUT    <- check_input(dnew$t, dnew$y, dnew$w, nptperyear,
-                        maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
-
-brks2 <- season_3y(INPUT,
+# add one year in head and tail
+dnew     <- add_HeadTail(d, south = south, nptperyear = nptperyear) 
+INPUT    <- check_input(dnew$t, dnew$y, dnew$w, QC_flag = dnew$QC_flag,
+     nptperyear = nptperyear, south = south, 
+     maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
+# Rough fitting and growing season dividing
+brks2 <- season_mov(INPUT,
     rFUN = wWHIT, wFUN = wFUN,
-    plotdat = d, IsPlot = IsPlot, print = FALSE, IsOnlyPlotbad = FALSE)
-
+    plotdat = d, IsPlot = IsPlot, print = FALSE, IsPlot.OnlyBad = FALSE)
+# Fine fitting
 fit <- curvefits(
     INPUT, brks2,
     methods = c("AG", "Beck", "Elmore", "Zhang"), #,"klos", "Gu"
-    verbose = FALSE,
     wFUN = wFUN,
-    nextent = 2, maxExtendMonth = 2, minExtendMonth = 1,
-    QC_flag = dnew$QC_flag, minPercValid = 0.2,
-    print = TRUE)
-
-df_fit <- get_fitting(fit)
-g <- plot_phenofit(df_fit, brks2)
-grid::grid.newpage(); grid::grid.draw(g)
+    nextent = 2, maxExtendMonth = 2, minExtendMonth = 1, minPercValid = 0.2,
+    print = TRUE, verbose = FALSE)
 }

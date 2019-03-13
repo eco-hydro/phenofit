@@ -1,4 +1,4 @@
-source('test/stable/load_pkgs.R')
+source("test/load_pkgs.R")
 
 ## validation data for phenofit
 #  Dongdong Kong, 2018-07-05

@@ -1,4 +1,4 @@
-source('test/stable/load_pkgs.R')
+source("test/load_pkgs.R")
 source('test/07_whit/whit_lambda/smooth_whit_lambda.R')
 # source('R/smooth_whit_lambda.R')
 # source('test/07_whit/whit_lambda/02_whit_lambda_main.R')

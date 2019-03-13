@@ -1,5 +1,5 @@
 rm(list = ls())
-source('test/stable/load_pkgs.R')
+source("test/load_pkgs.R")
 source("test/07_whit/main_phenofit_test.R")
 source("test/07_whit/dat_flux&cam_phenofit.R")
 source('test/stable/ggplot/geom_boxplot_no_outlier.R')
@@ -126,13 +126,6 @@ table(info_flux$meth)
 info_cam  <- get_over_perform(2)
 
 
-
-
-
-
-
-
-
 info <- info_flux
 d <- dcast(info, site+ID+IGBPname~meth, value.var = "R")
 d <- d[IGBPname != "all"]
@@ -248,45 +241,15 @@ df_trim$SummaryQA %<>% factor(qc_levels)
 # res <- parLapplyLB(cl, sites, plot_whit,
 #                    df_trim, st, prefix_fig = paste0("whit_", prefix))
 
-plot_whits <- function(sites, df_trim, file, methods){
-    # methods <- c('WH_p2',  "WH_p15",'wWH_p2', "wWH_p15",'wWH') #'WH_p15', 'wWH_p15', 'wWH_v13'
-    if (missing(methods)) methods <- c("AG", "ZHANG", "wHANTS", "wSG", "whit_fluxcam_wWH") #"wWH2", "wWH",
-
-    # methods <- "wWH_v13"
-    nmeth   <- length(methods)
-    show.legend <- ifelse(nmeth == 1, FALSE, TRUE)
-    # Cairo::CairoPDF("gee_whit_flux166_all_meth_v2.pdf", 9, nmeth*1.8)
-
-    ps <- list()
-    for (i in seq_along(sites)){
-        runningId(i)
-        sitename <- sites[i]
-        # for single method, ggplot obj return
-        p <- plot_methods(sitename, df_trim, st, prefix_fig = paste0("whit_", prefix),
-                          methods = methods, show.legend = show.legend)
-        # print(p)
-        #
-        ps[[i]] <- p
-        # for all methods, grob obj return
-        # p <- plot_methods(sitename, df_trim, st, prefix_fig = paste0("whit_", prefix), methods)
-    }
-    # dev.off()
-    ylab_r  <- expression("GPP ( gC "*mm^-1*d^-1*" )")
-    # ylab_r  <- "VCI"
-    if (nmeth > 1){
-        FigsToPages(ps, lgd_gpp, ylab_r, file, width = 10)
-    }
-}
-
 ## 1. show all sites
-plot_whits(sites, df_trim, "gee_whit_flux166_v2.pdf") # all sites
+check_Whittaker(sites, df_trim, "gee_whit_flux166_v2.pdf") # all sites
 # merge_pdf('../whit_phenoflux166.pdf', indir = "./")
 # merge_pdf('whit_phenoflux166.pdf', indir = "Figure/")
 merge_pdf('whit_phenocam133.pdf', indir = "Figure", "whit_phenocam.*.pdf", del = F)
 merge_pdf('whit_phenoflux166.pdf', indir = "Figure", "whit_phenoflux.*.pdf", del = F)
 
 ## 2. select representative points for fluxnet
-plot_whits(sites_sel, df_trim, "gee_whit_flux11.pdf", "whit_fluxcam_wWH") # all sites
+check_Whittaker(sites_sel, df_trim, "gee_whit_flux11.pdf", "whit_fluxcam_wWH") # all sites
 
 
 

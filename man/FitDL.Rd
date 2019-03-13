@@ -8,48 +8,67 @@
 \alias{FitDL.Elmore}
 \alias{FitDL.Gu}
 \alias{FitDL.Klos}
-\title{Fine curve fitting functions.}
+\title{Fine fitting}
 \usage{
-FitDL.Zhang(y, t = index(y), tout = t, optimFUN = I_optimx,
-  method = "nlm", w, ...)
+FitDL.Zhang(y, t = index(y), tout = t, method = "nlm", w, ...)
 
-FitAG(y, t = index(y), tout = t, optimFUN = I_optimx,
-  method = "nlminb", w, ...)
+FitAG(y, t = index(y), tout = t, method = "nlminb", w, ...)
 
-FitDL.Beck(y, t = index(y), tout = t, optimFUN = I_optimx,
-  method = "nlminb", w, ...)
+FitDL.Beck(y, t = index(y), tout = t, method = "nlminb", w, ...)
 
-FitDL.Elmore(y, t = index(y), tout = t, optimFUN = I_optimx,
-  method = "nlminb", w, ...)
+FitDL.Elmore(y, t = index(y), tout = t, method = "nlminb", w, ...)
 
-FitDL.Gu(y, t = index(y), tout = t, optimFUN = I_optimx,
-  method = "nlminb", w, ...)
+FitDL.Gu(y, t = index(y), tout = t, method = "nlminb", w, ...)
 
-FitDL.Klos(y, t = index(y), tout = t, optimFUN = I_optimx,
-  method = "BFGS", w, ...)
+FitDL.Klos(y, t = index(y), tout = t, method = "BFGS", w, ...)
 }
 \arguments{
 \item{y}{input vegetation index time-series.}
 
 \item{t}{the corresponding doy(day of year) of y.}
 
-\item{tout}{the output curve fitting time-series time steps.}
-
-\item{optimFUN}{optimization function to solve curve fitting functions'
-parameters. It's should be `optimx_fun`, or `optim_p`.}
+\item{tout}{the time of output curve fitting time-series.}
 
 \item{method}{method passed to `optimx` or `optim` function.}
 
 \item{w}{weights}
 
-\item{...}{other paraters passed to optimFUN, such as weights.}
+\item{...}{other paraters passed to \code{\link{optim_pheno}}.}
 }
 \value{
-list(pred, par, fun)
+\describe{
+\item{tout}{The time of output curve fitting time-series.}
+\item{zs}{Smoothed vegetation time-series of every iteration.}
+\item{ws}{Weights of every iteration.}
+\item{par}{Final optimized parameter of fine fitting.}
+\item{fun}{The name of fine fitting.}
+}
 }
 \description{
-Fine curve fitting functions, e.g. double logistics, Asymmetric 
-Gaussian. They are used to fit vegetation time-series in every growing season.
+Fine curve fitting function is used to fit vegetation 
+time-series in every growing season.
+}
+\examples{
+library(phenofit)
+# simulate vegetation time-series
+fFUN = doubleLog.Beck
+par  = c(
+    mn  = 0.1,
+    mx  = 0.7,
+    sos = 50,
+    rsp = 0.1,
+    eos = 250,
+    rau = 0.1)
+t    <- seq(1, 365, 8)
+tout <- seq(1, 365, 1)
+y <- fFUN(par, t)
+methods <- c("AG", "Beck", "Elmore", "Gu", "Zhang")
+
+r <- FitAG(y, t, tout)
+plot(t, y)
+lines(tout, r$zs$iter2, col = "red")
+legend('topright', c('Original time-series', 'AG smoothed'), 
+    lty = c(0, 1), pch = c(16, NA), col = c("black", "red"))
 }
 \references{
 [1]. Beck, P.S.A., Atzberger, C., Hogda, K.A., Johansen, B., Skidmore, A.K.,

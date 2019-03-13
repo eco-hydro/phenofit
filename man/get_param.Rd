@@ -31,10 +31,13 @@ par  = c(
 t    <- seq(1, 365, 8)
 tout <- seq(1, 365, 1)
 y <- fFUN(par, t)
-
 methods <- c("AG", "Beck", "Elmore", "Gu", "Zhang") # "Klos" too slow
 fFITs <- curvefit(y, t, tout, methods)
+# multiple years
 fits  <- list(`2001` = fFITs, `2002` = fFITs)
 
-d_param <- get_param(fits)
+l_param   <- get_param(fits)
+d_GOF     <- get_GOF(fits)
+d_fitting <- get_fitting(fits)
+l_pheno   <- get_pheno(fits, "AG", IsPlot=TRUE)
 }

@@ -23,9 +23,9 @@ params <- list(
     frame          = input$frame,
     wFUN           = input$wFUN,
     maxExtendMonth = input$maxExtendMonth, 
-    rytrough_max   = input$rytrough_max,
-    threshold_max  = input$threshold_max, 
-    threshold_min  = input$threshold_min
+    rtrough_max   = input$rtrough_max,
+    r_max  = input$r_max, 
+    r_min  = input$r_min
 
     # 3 Fine curve fitting
     methods = input$FUN, #c("AG", "zhang", "beck", "elmore", 'Gu'), #,"klos",

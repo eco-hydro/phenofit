@@ -16,7 +16,7 @@ ui <- fluidPage(
             titlePanel("Phenofit: growing season dividing"),
             numericInput("iters", "iters:", 2, 1, 3),
             selectInput("FUN_season","Choose a season dividing function (FUN_season):",
-                        choices = c('season', 'season_3y'), selected = "season_3y"),
+                        choices = c('season', 'season_mov'), selected = "season_mov"),
             selectInput("wFUN","Choose a weights updating function (wFUN):",
                         choices = c("wTSM", "wBisquare", "wChen"), selected = "wBisquare"),
             selectInput("rFUN","Choose a Rough fitting function (FUN):",
@@ -39,16 +39,16 @@ ui <- fluidPage(
                 numericInput("nf", "number of frequencies (nf):", 3, 1, 6)
             ),
             conditionalPanel(
-                condition = "input.FUN_season == 'season_3y'",
+                condition = "input.FUN_season == 'season_mov'",
                 numericInput("maxExtendMonth", "Include n previous and subsequent month (maxExtendMonth):",
                     2, 0, 12)
             ),
             selectInput("site","Choose a site:", choices = sites, selected = "US-Me2"), #CH-Fru, FR-LBr
-            sliderInput("threshold_max", "threshold_max:",
+            sliderInput("r_max", "r_max:",
                 min = 0, max = 1, value = 0.2, param_step ),
-            sliderInput( "threshold_min", "threshold_min:",
+            sliderInput( "r_min", "r_min:",
                 min = 0, max = 0.2, value = 0, 0.02 ),
-            sliderInput( "rytrough_max", "rytrough_max:",
+            sliderInput( "rtrough_max", "rtrough_max:",
                 min = 0, max = 1, value = 0.8, param_step)
         ),
 

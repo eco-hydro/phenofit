@@ -1,11 +1,11 @@
-source('test/stable/load_pkgs.R')
+source("test/load_pkgs.R")
 source("test/07_whit/dat_flux&cam_phenofit.R")
 # source("R/plot_phenofit.R")
 
 ################################################################################
 # lambda     <- 5    # Whittaker parameter
 ypeak_min    <- 0.1  # the maximum ymax shoud be greater than `ymax_min`
-rytrough_max <- 0.8  # trough < ymin + A*rymin_less
+rtrough_max <- 0.8  # trough < ymin + A*rymin_less
 nptperyear   <- 23   # How many points for a single year
 wFUN         <- wTSM # Weights updating function, could be one of `wTSM`, 'wBisquare', `wChen` and `wSELF`.
 

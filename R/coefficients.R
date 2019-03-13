@@ -7,7 +7,7 @@
 #' before the computation proceeds.
 #' @param type an integer between 1 and 3 selecting one of the algorithms for
 #' computing skewness.
-#' 
+#'
 #' @examples
 #' x = rnorm(100)
 #' coef_kurtosis <- kurtosis(x)
@@ -73,7 +73,7 @@ skewness <- function (x, na.rm = FALSE, type = 3) {
 #' @param x Numeric vector
 #' @param w weights of different point
 #' @export
-#' 
+#'
 #' @return Named numeric vector, (mean, sd, cv).
 #' @examples
 #' library(phenofit)
@@ -97,71 +97,73 @@ cv_coef <- function(x, w){
 
 
 #' Critical value of determined correlation
-#' 
+#'
 #' @param n length of observation.
-#' @param NumberOfPredictor Number of predictor.
+#' @param NumberOfPredictor Number of predictor, including constant.
 #' @param alpha significant level.
-#' 
+#'
 #' @return \code{F} statistic and \code{R2} at significant level.
-#' 
+#'
+#' @references
+#' Chen Yanguang (2012), Geographical Data analysis with MATLAB.
 #' @examples
 #' R2_critical <- R2_sign(30, NumberOfPredictor = 2, alpha = 0.05)
 #' @export
 R2_sign <- function(n, NumberOfPredictor = 2, alpha = 0.05){
     freedom_r = NumberOfPredictor - 1 # regression
-    freedom_e = n - NumberOfPredictor # error 
+    freedom_e = n - NumberOfPredictor # error
 
     F  = qf(1 - alpha, freedom_r, freedom_e)
     R2 = 1 - 1/(1 + F*freedom_r/freedom_e)
-    
+
     # F = 485.1
     # F = R2/freedom_r/((1-R2)/freedom_e)
-    # Rc = sqrt(/(qf(1 - alpha, 1, freedom) + freedom)) %TRUE>% print  # 0.11215    
+    # Rc = sqrt(/(qf(1 - alpha, 1, freedom) + freedom)) %TRUE>% print  # 0.11215
     return(list(F = F, R2 = R2))
 }
 
-
 #' GOF
-#' 
+#'
 #' Good of fitting
 #'
 #' @param Y_obs Numeric vector, observations
 #' @param Y_sim Numeric vector, corresponding simulated values
-#' @param w Numeric vector, weights of every points. If w included, when 
+#' @param w Numeric vector, weights of every points. If w included, when
 #' calculating mean, Bias, MAE, RMSE and NSE, w will be taken into considered.
-#' @param include.cv If true, cv will be returned. 
+#' @param include.cv If true, cv will be included.
+#' @param include.r If true, r and R2 will be included.
 #' 
-#' @return 
+#' @return
 #' \itemize{
 #' \item \code{RMSE} root mean square error
 #' \item \code{NSE} NASH coefficient
-#' \item \code{R2} correlation of determination
-#' \item \code{MAE} mean absolute error 
-#' \item \code{AI} Agreement index (only good points (w == 1)) participate to 
+#' \item \code{MAE} mean absolute error
+#' \item \code{AI} Agreement index (only good points (w == 1)) participate to
 #' calculate. See details in Zhang et al., (2015).
 #' \item \code{Bias} bias
-#' \item \code{Bias_perc} bias percentage 
-#' \item \code{R} pearson correlation
-#' \item \code{pvalue} pvalue of \code{R}
+#' \item \code{Bias_perc} bias percentage
 #' \item \code{n_sim} number of valid obs
 #' \item \code{cv} Coefficient of variation
+#' \item \code{R2} correlation of determination
+#' \item \code{R} pearson correlation
+#' \item \code{pvalue} pvalue of \code{R}
 #' }
-#' 
+#'
 #' @references
 #' Zhang Xiaoyang (2015), http://dx.doi.org/10.1016/j.rse.2014.10.012
-#' 
+#'
 #' @examples
 #' Y_obs = rnorm(100)
 #' Y_sim = Y_obs + rnorm(100)/4
 #' GOF(Y_obs, Y_sim)
-#' 
+#'
 #' @export
-GOF <- function(Y_obs, Y_sim, w, include.cv = FALSE){
+GOF <- function(Y_obs, Y_sim, w, include.cv = FALSE, include.r = FALSE){
     if (missing(w)) w <- rep(1, length(Y_obs))
 
     # remove NA_real_ and Inf values in Y_sim, Y_obs and w
-    valid <- function(x) !is.na(x) & is.finite(x) 
-    
+    valid <- function(x) !is.na(x) & is.finite(x)
+
     I <- which(valid(Y_sim) & valid(Y_obs) & valid(w))
     # n_obs <- length(Y_obs)
     n_sim <- length(I)
@@ -172,14 +174,15 @@ GOF <- function(Y_obs, Y_sim, w, include.cv = FALSE){
 
     if (include.cv) {
         CV_obs <- cv_coef(Y_obs, w)
-        CV_sim <- cv_coef(Y_sim, w)   
+        CV_sim <- cv_coef(Y_sim, w)
     }
     if (is_empty(Y_obs)){
-        out <- c(RMSE = NA_real_, NSE = NA_real_, R2 = NA_real_, MAE = NA_real_, AI = NA_real_,
-            Bias = NA_real_, Bias_perc = NA_real_, 
-            R = NA_real_, pvalue = NA_real_, n_sim = NA_real_)
+        out <- c(RMSE = NA_real_, NSE = NA_real_, MAE = NA_real_, AI = NA_real_,
+            Bias = NA_real_, Bias_perc = NA_real_, n_sim = NA_real_)
+
+        if (include.r) out <- c(out, R2 = NA_real_, R = NA_real_, pvalue = NA_real_)
         if (include.cv) out <- c(out, obs = CV_obs, sim = CV_sim)
-        return(out) #R = R,
+        return(out)
     }
 
     # R2: the portion of regression explained variance, also known as
@@ -189,13 +192,13 @@ GOF <- function(Y_obs, Y_sim, w, include.cv = FALSE){
     # https://en.wikipedia.org/wiki/Explained_sum_of_squares
     y_mean <- sum(Y_obs * w) / sum(w)
 
-    SSR    <- sum( (Y_sim - y_mean)^2 * w) 
+    SSR    <- sum( (Y_sim - y_mean)^2 * w)
     SST    <- sum( (Y_obs - y_mean)^2 * w)
     # R2     <- SSR / SST
 
     RE     <- Y_sim - Y_obs
     Bias   <- sum ( w*RE)     /sum(w)                     # bias
-    Bias_perc <- Bias/y_mean                              # bias percentage        
+    Bias_perc <- Bias/y_mean                              # bias percentage
     MAE    <- sum ( w*abs(RE))/sum(w)                     # mean absolute error
     RMSE   <- sqrt( sum(w*(RE)^2)/sum(w) )                # root mean sqrt error
 
@@ -205,19 +208,24 @@ GOF <- function(Y_obs, Y_sim, w, include.cv = FALSE){
     # Observations number are not same, so comparing correlation coefficient
     # was meaningless.
     # In the current, I have no idea how to add weights `R`.
-    R      <- NA_real_
-    pvalue <- NA_real_
-    tryCatch({
-        cor.obj <- cor.test(Y_obs, Y_sim, use = "complete.obs")
-        R       <- cor.obj$estimate[[1]]
-        pvalue  <- cor.obj$p.value
-    }, error = function(e){
-        message(e$message)
-    })
     
+    
+    if (include.r){
+        R      <- NA_real_
+        pvalue <- NA_real_
+        
+        tryCatch({
+            cor.obj <- cor.test(Y_obs, Y_sim, use = "complete.obs")
+            R       <- cor.obj$estimate[[1]]
+            pvalue  <- cor.obj$p.value
+        }, error = function(e){
+            message(e$message)
+        })
+
+        R2 = R^2
+    }    
     # In Linear regression, R2 = R^2 (R is pearson cor)
     # R2     <- summary(lm(Y_sim ~ Y_obs))$r.squared # low efficient
-    R2 = R^2
 
     # AI: Agreement Index (only good values(w==1) calculate AI)
     AI <- NA_real_
@@ -226,12 +234,13 @@ GOF <- function(Y_obs, Y_sim, w, include.cv = FALSE){
         Y_obs = Y_obs[I2]
         Y_sim = Y_sim[I2]
         y_mean = mean(Y_obs)
-        AI = 1 - sum( (Y_sim - Y_obs)^2 ) / sum( (abs(Y_sim - y_mean) + abs(Y_obs - y_mean))^2 )        
+        AI = 1 - sum( (Y_sim - Y_obs)^2 ) / sum( (abs(Y_sim - y_mean) + abs(Y_obs - y_mean))^2 )
     }
 
-    out <- c(RMSE = RMSE, NSE = NSE, R2 = R2, MAE = MAE, AI = AI,  
-             Bias = Bias, Bias_perc = Bias_perc, 
-             R = R, pvalue = pvalue, n_sim = n_sim)
+    out <- c(RMSE = RMSE, NSE = NSE, MAE = MAE, AI = AI,
+             Bias = Bias, Bias_perc = Bias_perc, n_sim = n_sim)
+
+    if (include.r) out <- c(out, R2 = R2, R = R, pvalue = pvalue)
     if (include.cv) out <- c(out, obs = CV_obs, sim = CV_sim)
     return(out)
 }

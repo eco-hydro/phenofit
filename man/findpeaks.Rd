@@ -6,8 +6,7 @@
 \usage{
 findpeaks(x, IsDiff = TRUE, nups = 1, ndowns = nups, zero = "0",
   peakpat = NULL, minpeakheight = -Inf, minpeakdistance = 1,
-  threshold_min = 0, threshold_max = 0, npeaks = 0,
-  sortstr = FALSE, IsPlot = F)
+  r_min = 0, r_max = 0, npeaks = 0, sortstr = FALSE, IsPlot = F)
 }
 \arguments{
 \item{x}{Numeric vector.}
@@ -34,12 +33,12 @@ to be recognized as such}
 to be counted. If the distance of two maximum extreme value less than
 `minpeakdistance`, only the real maximum value will be left.}
 
-\item{threshold_min}{Threshold is defined as the difference of peak value with
+\item{r_min}{Threshold is defined as the difference of peak value with
 trough value. There are two threshold (left and right). The minimum threshold
-should be greater than threshold_min.}
+should be greater than r_min.}
 
-\item{threshold_max}{Similar as `threshold_min`, The maximum threshold should
-be greater than `threshold_max`.}
+\item{r_max}{Similar as `r_min`, The maximum threshold should
+be greater than `r_max`.}
 
 \item{npeaks}{the number of peaks to return. If \code{sortstr} = true, the 
 largest npeaks maximum values will be returned; If \code{sortstr} = false, 
@@ -65,7 +64,7 @@ for (i in seq(along=pos)) {
 }
 
 plot(pSignal, type="l", col="navy"); grid()
-x <- findpeaks(pSignal, npeaks=3, threshold_min=4, sortstr=TRUE)
+x <- findpeaks(pSignal, npeaks=3, r_min=4, sortstr=TRUE)
 points(val~pos, x$X, pch=20, col="maroon")
 
 }

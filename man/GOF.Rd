@@ -4,32 +4,34 @@
 \alias{GOF}
 \title{GOF}
 \usage{
-GOF(Y_obs, Y_sim, w, include.cv = FALSE)
+GOF(Y_obs, Y_sim, w, include.cv = FALSE, include.r = FALSE)
 }
 \arguments{
 \item{Y_obs}{Numeric vector, observations}
 
 \item{Y_sim}{Numeric vector, corresponding simulated values}
 
-\item{w}{Numeric vector, weights of every points. If w included, when 
+\item{w}{Numeric vector, weights of every points. If w included, when
 calculating mean, Bias, MAE, RMSE and NSE, w will be taken into considered.}
 
-\item{include.cv}{If true, cv will be returned.}
+\item{include.cv}{If true, cv will be included.}
+
+\item{include.r}{If true, r and R2 will be included.}
 }
 \value{
 \itemize{
 \item \code{RMSE} root mean square error
 \item \code{NSE} NASH coefficient
-\item \code{R2} correlation of determination
-\item \code{MAE} mean absolute error 
-\item \code{AI} Agreement index (only good points (w == 1)) participate to 
+\item \code{MAE} mean absolute error
+\item \code{AI} Agreement index (only good points (w == 1)) participate to
 calculate. See details in Zhang et al., (2015).
 \item \code{Bias} bias
-\item \code{Bias_perc} bias percentage 
-\item \code{R} pearson correlation
-\item \code{pvalue} pvalue of \code{R}
+\item \code{Bias_perc} bias percentage
 \item \code{n_sim} number of valid obs
 \item \code{cv} Coefficient of variation
+\item \code{R2} correlation of determination
+\item \code{R} pearson correlation
+\item \code{pvalue} pvalue of \code{R}
 }
 }
 \description{
