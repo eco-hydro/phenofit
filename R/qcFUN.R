@@ -8,6 +8,7 @@
 #'   \item{qc_5l}{Initial weights based on Quality control of five-level 
 #'      confidence score, suit for MCD15A3H(LAI, FparLai_QC), MOD17A2H(GPP, Psn_QC) 
 #'      and MOD16A2(ET, ET_QC).}
+#'   \item{qc_NDVI3g}{For NDVI3g}
 #'   \item{qc_NDVIv4}{For NDVIv4}
 #'   \item{qc_StateQA}{Initial weights based on `StateQA`, suit for MOD09A1, MYD09A1. }
 #' }
@@ -29,8 +30,9 @@
 #' 
 #' r1 <- qc_summary(QA, wmin = 0.2, wmid = 0.5, wmax = 1)
 #' r2 <- qc_StateQA(QA, wmin = 0.2, wmid = 0.5, wmax = 1)
-#' r3 <- qc_5l(QA, wmin = 0.2, wmid = 0.5, wmax = 1)
-#' r4 <- qc_NDVIv4(QA, wmin = 0.2, wmid = 0.5, wmax = 1)
+#' r_5l <- qc_5l(QA, wmin = 0.2, wmid = 0.5, wmax = 1)
+#' r_NDVI3g <- qc_NDVI3g(QA, wmin = 0.2, wmid = 0.5, wmax = 1)
+#' r_NDVIv4 <- qc_NDVIv4(QA, wmin = 0.2, wmid = 0.5, wmax = 1)
 #' @rdname qcFUN
 #' @export
 getBits <- function(x, start, end = start){
@@ -117,6 +119,21 @@ qc_5l <- function(QA, wmin = 0.2, wmid = 0.5, wmax = 1){
 
 #' @rdname qcFUN
 #' @export
+qc_NDVI3g <- function(QA, wmin = 0.2, wmid = 0.5, wmax = 1){
+    # bit1-2: cloudy, cloud shadow
+    
+    w  <- rep(NA, length(QA))
+    w[QA == 0] <- wmax   #clear, good
+    w[QA == 1] <- wmid #cloud shadow
+    w[QA == 2] <- wmin #cloud shadow
+
+    QC_flag <- factor(QA, 0:2, c("good", "marginal", "cloud"))
+    list(QC_flag = QC_flag, w = w) # quickly return
+}
+
+
+#' @rdname qcFUN
+#' @export
 qc_NDVIv4 <- function(QA, wmin = 0.2, wmid = 0.5, wmax = 1){
     # bit1-2: cloudy, cloud shadow
     QA <- bitwShiftR(bitwAnd(QA, 7), 1) 
@@ -126,6 +143,8 @@ qc_NDVIv4 <- function(QA, wmin = 0.2, wmid = 0.5, wmax = 1){
     w[QA == 2] <- 0.5 #cloud shadow
     return(w)
 }
+
+
 
 # source('R/GPP_Pheno/main_QC.R')
 # 

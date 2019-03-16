@@ -105,8 +105,7 @@ server <- function(input, output, session) {
     # Figure height of fine curve fitting
     heightSize <- reactive({
         n <- length(input$FUN)
-        height <- 150
-        ifelse(n == 1, height+50, height)*n
+        fig.height*n + lgd.height
     }) # number of fine curve fitting
 
     params_fineFitting <- reactive({

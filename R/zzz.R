@@ -15,7 +15,7 @@
 #' @importFrom lubridate ymd yday year month day dyears is.Date
 #' @importFrom stringr str_extract
 #' @importFrom utils object.size
-#' @importFrom grDevices dev.off cairo_pdf
+#' @importFrom grDevices dev.off cairo_pdf colorRampPalette
 #' @import stats graphics
 #' 
 #' @useDynLib phenofit, .registration = TRUE

@@ -1,7 +1,7 @@
 #' plot_season
-#' 
+#'
 #' Plot growing season divding result.
-#' 
+#'
 #' @inheritParams season
 #' @inheritParams wHANTS
 #' @param brks A list object returned by \code{season} or \code{season_mov}.
@@ -37,12 +37,13 @@ plot_season <- function(INPUT, brks, plotdat, ylu,
     par(mar = c(3.5, 3, 1, 1), mgp = c(1.2, 0.6, 0))
     plot_input(plotdat)
 
-    colors <- c("blue", "red", "green")
-    iters  <- ncol(zs)
-    if (iters < 3) colors <- c("blue", "red")
+    # colors <- c("blue", "red", "green")
+    NITER  <- ncol(zs)
+    # if (NITER < 3) colors <- c("blue", "red")
+    lines_colors <- iter_colors(NITER)
 
-    for (i in 1:iters){
-        lines(t, zs[[i]], col = colors[i], lwd = 2)
+    for (i in 1:NITER){
+        lines(t, zs[[i]], col = lines_colors[i], lwd = 2)
     }
 
     # 7.2 plot break points
@@ -54,8 +55,8 @@ plot_season <- function(INPUT, brks, plotdat, ylu,
     legend('topleft', stat_txt, adj = c(0.05, 0.8), bty='n', text.col = "red")
 
     if (show.legend){
+        lgd <- make_legend_nmax(paste0("iter", 1:NITER), lines_colors, plotdat$QC_flag)
         # fix in the futher
-        lgd <- make_legend(c("iter1", "iter2"), linecolor = c("blue", "red")) # , nmax_points = 4
         pos.y <- 0.04
         pushViewport(viewport(x = unit(0.5, "npc"), y = unit(pos.y, "npc"),
                               width = unit(0.8, "npc"), height = unit(pos.y*2, "npc")))

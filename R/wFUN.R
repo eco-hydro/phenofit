@@ -106,6 +106,29 @@ wChen <- function(y, yfit, w, ..., wmin = 0.2){
     return(wnew)
 }
 
+
+# ZhoueJie, 2016, RSE
+#' @rdname wFUN
+#' @export
+wKong <- function(y, yfit, w, ..., wmin = 0.2){
+    if (missing(w)) w  <- rep(1, length(y))
+    wnew <- w
+
+    re     <- yfit - y
+    # I_pos  <- re > 0
+    re_abs <- abs(re)
+    sc     <- 6 * median(re_abs, na.rm = TRUE)
+
+    d_max  <- max(re_abs, na.rm = TRUE) #6 * median(re, na.rm = TRUE)
+
+    wnew <- w - re/d_max
+    wnew[re > sc] <- wmin # remove positive bised outlier, negative will have a small weights
+
+    wnew <- pmax(wnew, wmin)
+    wnew <- pmin(wnew, 1)
+    return(wnew)
+}
+
 # ' #@export
 # ' @rdname wFUN
 # wBeck <- function(y, yfit, w, ...){

@@ -15,8 +15,8 @@ ui <- navbarPage(
                 width_sidebar,
                 h4("1. Growing season dividing"),
                 dateRangeInput("dateRange", "Date range:",
-                    start = "2001-01-01",
-                    end   = "2014-12-31",
+                    start = date_begin,
+                    end   = date_end,
                     startview = "decade"),
                 selectInput("site", "Choose a site:",
                     choices = sites, selected = sites[1]
@@ -29,7 +29,7 @@ ui <- navbarPage(
                 ),
                 selectInput(
                     "wFUN", "Choose a weights updating function for Rough Fitting (wFUN):",
-                    choices = c("wTSM", "wBisquare", "wChen"),
+                    choices = options_wFUN,
                     selected = "wBisquare"
                 ),
                 selectInput(
@@ -87,7 +87,7 @@ ui <- navbarPage(
                 ),
                 selectInput(
                     "wFUN2", "Choose a weights updating function for Fine Fitting (wFUN2):",
-                    choices = c("wTSM", "wBisquare", "wChen"),
+                    choices = options_wFUN,
                     selected = "wBisquare"
                 ),
                 numericInput(
@@ -123,7 +123,7 @@ ui <- navbarPage(
                 # tabsetPanel(type = "tabs",
                 # tabPanel("Plot",
                 h4("1.1 Rough Fitting"),
-                plotOutput("plot_gs", height = fig.height),
+                plotOutput("plot_gs", height = fig.height+lgd.height),
                 conditionalPanel(condition = "output.warnstat == TRUE",
                            verbatimTextOutput("warnmsg")),
 

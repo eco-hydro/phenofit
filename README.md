@@ -17,6 +17,17 @@ A state-of-the-art **remote sensing vegetation phenology** extraction package: `
 -   We add parameters boundary for every curve fitting methods according to their ecological meaning.
 -   `optimx` is used to select best optimization method for different curve fitting methods.
 
+
+***Task lists***
+
+- [ ] Improve computational efficiency of fine fitting;
+- [ ] Complete script automatic generating module of shinyapp;
+- [ ] Uncertainty analysis of curve fitting and phenological metrics;
+- [ ] Support spatial analysis;
+- [ ] Support annual season in curve fitting;
+- [ ] flexible fine fitting input ( original time-series or smoothed time-series by rough fitting).
+
+
 ![title](man/Figure/Figure1_phenofit_flowchart.svg)   
 *<u>Figure 1. The flowchart of phenology extraction in `phenofit`.</u>*
 
@@ -37,9 +48,6 @@ shiny::runGitHub("phenofit", "kongdd", subdir = "inst/shiny/phenofit")
 # Or run local installed
 shiny::runApp(system.file("shiny/phenofit", package = "phenofit"))
 ```
-
-![](man/Figure/phenofit_shiny.png)
-*<u>Figure 2. Shiny interface of `phenofit`.</u>*
 
 R code Example
 ==============

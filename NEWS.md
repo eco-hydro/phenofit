@@ -1,3 +1,10 @@
+# phenofit 0.2.2
+
+* fix visualization (plot and legend) of multiple iteration 
+* improve shinyapp
+* add weights updating function: `wKong`
+* add function `phenofit_shiny`
+
 # phenofit 0.2.1 (2019-03-11)    
 
 * fix point shape error of `plot_input`
@@ -5,7 +12,7 @@
 * wWHIT only adjusts time series of growing season. 
 
 
-# phenofit 0.2.1 (2019-02-18)    
+# phenofit 0.2.0 (2019-02-18)    
 
 * release in CRAN
 
