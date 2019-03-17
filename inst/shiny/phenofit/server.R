@@ -19,7 +19,7 @@ server <- function(input, output, session) {
     observeEvent(input$nptperyear, {
         nptperyear <<- input$nptperyear
 
-        fprintf('running here: nptperyear = %d', nptperyear);
+        fprintf('running here: nptperyear = %d\n', nptperyear);
 
         # Update wSG parameter
         updateNumericInput(session,
@@ -116,13 +116,26 @@ server <- function(input, output, session) {
             methods = input$FUN_fine, #c("AG", "zhang", "beck", "elmore", 'Gu'), #,"klos",
             verbose = FALSE,
             wFUN = get(input$wFUN_fine),
-            nextent = input$nextent_fine,
+            nextend = input$nextend_fine,
             maxExtendMonth = input$max_extend_month_fine,
             minExtendMonth = 1,
             minPercValid = 0.2,
             print = TRUE,
             use.rough = input$use.rough
         )
+    })
+
+    # add option to write setting
+    options_phenofit <- reactive({
+        # browser()
+        setting.get(input)
+    })
+
+    observeEvent(options_phenofit(), {
+        timestr <- Sys.time() %>% format("%Y%m%d_%H%M%S")
+        sprintf('[s] write setting %s ... \n', timestr) %>% cat()
+        outfile <- sprintf("phenofit_setting_%s.json", timestr)
+        setting.write(options_phenofit(), outfile)
     })
 
     # Fine Curve Fitting

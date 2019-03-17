@@ -22,7 +22,7 @@ param <- list(
     methods = c("AG", "Beck", "Elmore", "Gu", "Zhang"), #,"klos",
     debug = F,
     wFUN = wFUN,
-    nextent = 2, maxExtendMonth = 3, minExtendMonth = 1,
+    nextend = 2, maxExtendMonth = 3, minExtendMonth = 1,
     qc = dnew$QC_flag, minPercValid = 0.2,
     print = FALSE, 
     use.rough = TRUE

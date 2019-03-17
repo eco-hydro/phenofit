@@ -78,7 +78,7 @@ ui <- navbarPage(
                 checkboxInput("use.rough", "Use rough fitting smoothed series?", FALSE),
                 numericInput("iters_fine", "iters of Fine fitting:", 2, 1, 6),
                 checkboxGroupInput("FUN_fine", 
-                    "Choose Fine fitting functions (fFUN):",
+                    "Choose Fine fitting functions (FUN_fine):",
                     choiceNames  = list("Asymmetric Gaussian (AG)", 
                         "Beck logistic (Beck)", 
                         "Elmore logistic (Elmore)", 
@@ -93,8 +93,8 @@ ui <- navbarPage(
                     selected = "wBisquare"
                 ),
                 numericInput(
-                    "nextent_fine",
-                    "Extend curve fitting window, until n good or marginal elements are found in previous and subsequent growing season (nextent).",
+                    "nextend_fine",
+                    "Extend curve fitting window, until n good or marginal elements are found in previous and subsequent growing season (nextend_fine).",
                     1, 0, 10
                 ),
                 numericInput(

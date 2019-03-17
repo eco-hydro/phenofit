@@ -5,7 +5,7 @@
 \title{Fine Curve fitting}
 \usage{
 curvefits(INPUT, brks, wFUN = wTSM, iters = 2, wmin = 0.2,
-  nextent = 2, maxExtendMonth = 3, minExtendMonth = 1, minT = 0,
+  nextend = 2, maxExtendMonth = 3, minExtendMonth = 1, minT = 0,
   methods = c("AG", "Beck", "Elmore", "Gu", "Klos", "Zhang"),
   minPercValid = 0.2, print = TRUE, use.rough = FALSE, ...)
 }
@@ -24,13 +24,13 @@ dividing information.}
 
 \item{wmin}{Double, minimum weigth (i.e. weight of snow, ice and cloud).}
 
-\item{nextent}{Extend curve fitting window, until \code{nextent} good or
+\item{nextend}{Extend curve fitting window, until \code{nextend} good or
 marginal element are found in previous and subsequent growing season.}
 
 \item{maxExtendMonth}{Search good or marginal good values in previous and
 subsequent `maxExtendMonth` period.}
 
-\item{minExtendMonth}{Extending perid defined by \code{nextent} and
+\item{minExtendMonth}{Extending perid defined by \code{nextend} and
 \code{maxExtendMonth} should be no shorter than \code{minExtendMonth}.
 When all points of the input time-series are good value, then the extending
 period will be too short. In that situation, we can't make sure the connection
@@ -93,6 +93,6 @@ fit <- curvefits(
     INPUT, brks2,
     methods = c("AG", "Beck", "Elmore", "Zhang"), #,"klos", "Gu"
     wFUN = wFUN,
-    nextent = 2, maxExtendMonth = 2, minExtendMonth = 1, minPercValid = 0.2,
+    nextend = 2, maxExtendMonth = 2, minExtendMonth = 1, minPercValid = 0.2,
     print = TRUE, verbose = FALSE)
 }

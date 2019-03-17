@@ -8,11 +8,11 @@
 #' @param brks A list object with the elements of 'fit' and 'dt', returned by
 #' \code{season} or \code{season_mov}, which contains the growing season
 #' dividing information.
-#' @param nextent Extend curve fitting window, until \code{nextent} good or
+#' @param nextend Extend curve fitting window, until \code{nextend} good or
 #' marginal element are found in previous and subsequent growing season.
 #' @param maxExtendMonth Search good or marginal good values in previous and
 #' subsequent `maxExtendMonth` period.
-#' @param minExtendMonth Extending perid defined by \code{nextent} and
+#' @param minExtendMonth Extending perid defined by \code{nextend} and
 #' \code{maxExtendMonth} should be no shorter than \code{minExtendMonth}.
 #' When all points of the input time-series are good value, then the extending
 #' period will be too short. In that situation, we can't make sure the connection
@@ -35,7 +35,7 @@
 #' @export
 curvefits <- function(INPUT, brks,
                       wFUN = wTSM, iters = 2, wmin = 0.2,
-                      nextent = 2, maxExtendMonth = 3, minExtendMonth = 1,
+                      nextend = 2, maxExtendMonth = 3, minExtendMonth = 1,
                       minT = 0,
                       methods = c('AG', 'Beck', 'Elmore', 'Gu', 'Klos', 'Zhang'),
                       minPercValid = 0.2,
@@ -97,7 +97,7 @@ curvefits <- function(INPUT, brks,
         I_beg <- di$beg[i]
         I_end <- di$end[i]
 
-        I_extend <- get_extentI(w0, MaxExtendWidth, MinExtendWidth, I_beg, I_end, nextent, wmin)
+        I_extend <- get_extentI(w0, MaxExtendWidth, MinExtendWidth, I_beg, I_end, nextend, wmin)
 
         ## 2. input data
         ti   <- doys[I_extend]
@@ -152,19 +152,19 @@ curvefits <- function(INPUT, brks,
 ############################## END OF CURVEFITS ################################
 # HIDING FUNCTIONS
 # extend curve fitting period
-get_extentI <- function(w0, MaxExtendWidth, MinExtendWidth, I_beg, I_end, nextent = 1, wmin = 0.2){
+get_extentI <- function(w0, MaxExtendWidth, MinExtendWidth, I_beg, I_end, nextend = 1, wmin = 0.2){
     n <- length(w0)
 
     I_beg2  <- I_end2 <- NA
     # period <- floor(nptperyear/12*extend_month)
-    if (!is.null(nextent)){
+    if (!is.null(nextend)){
         I_beg_raw <- seq(max(1, I_beg-1), max(1, I_beg-MaxExtendWidth))
         I_end_raw <- seq(min(n, I_end+1), min(n, I_end+MaxExtendWidth))
 
-        # at least `nextent` marginal point in previous and following season
+        # at least `nextend` marginal point in previous and following season
         # I_beg2 and I_end2 have been constrained in the range of [1, n]
-        I_beg2 <- I_beg_raw[ which(w0[I_beg_raw] > wmin)[nextent] ]
-        I_end2 <- I_end_raw[ which(w0[I_end_raw] > wmin)[nextent] ]
+        I_beg2 <- I_beg_raw[ which(w0[I_beg_raw] > wmin)[nextend] ]
+        I_end2 <- I_end_raw[ which(w0[I_end_raw] > wmin)[nextend] ]
     }
 
     # in case of previous and subsequent season good values too closed

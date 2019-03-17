@@ -2,6 +2,37 @@
 #' @title setting
 NULL
 
+# phenofit parameters
+options.phenofit <- list(
+    file_site              = "", 
+    file_veg_text          = "",
+    file_veg_rda           = "",
+    nptperyear             = NA_real_,
+
+    # growing season dividing parameters
+    calendarYear           = FALSE, 
+    FUN_season             = "season_mov", 
+    FUN_rough              = "wWHIT", 
+    wFUN_rough             = "wKong", 
+    iters_rough            = 4, 
+    max_extend_month_rough = 2, 
+    r_max                  = 0.2, 
+    r_min                  = 0.0, 
+    rtrough_max            = 0.6, 
+
+    # fine fitting parameters
+    FUN_fine               = "Beck", 
+    wFUN_fine              = "wKong", 
+    iters_fine             = 2, 
+    max_extend_month_fine  = 2, 
+    nextend_fine           = 2, 
+    use.rough              = FALSE,
+
+    # phenology extraction
+    meths_pheno            = ""   
+)
+
+
 #' get parameters of phenofit shinyapp
 #' 
 #' @importFrom jsonlite write_json read_json
@@ -22,15 +53,15 @@ setting.get <- function(input){
         nptperyear             = input$nptperyear,
 
         # growing season dividing parameters
-        wFUN_rough             = input$wFUN_rough, 
-        iters_rough            = input$iters_rough, 
-        max_extend_month_rough = input$max_extend_month_rough, 
         calendarYear           = input$calendarYear, 
         FUN_season             = input$FUN_season, 
         FUN_rough              = input$FUN_rough, 
+        wFUN_rough             = input$wFUN_rough, 
+        iters_rough            = input$iters_rough, 
+        max_extend_month_rough = input$max_extend_month_rough, 
         r_max                  = input$r_max, 
         r_min                  = input$r_min, 
-        rtrough_min            = input$rtrough_min, 
+        rtrough_max            = input$rtrough_max, 
 
         # fine fitting parameters
         FUN_fine               = input$FUN_fine, 
@@ -49,12 +80,12 @@ setting.get <- function(input){
 
 #' @export
 #' @rdname setting
-setting.read <- function(file){
+setting.read <- function(file = "phenofit_setting.json"){
     read_json(file)
 }
 
 #' @export
 #' @rdname setting
-setting.write <- function(pars, file){
-    write_json(setting, "phenofit_setting.json", pretty = TRUE)
+setting.write <- function(pars, file = "phenofit_setting.json"){
+    write_json(pars, file, pretty = TRUE)
 }

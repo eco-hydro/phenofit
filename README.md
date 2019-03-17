@@ -221,7 +221,7 @@ brks2 <- season_mov(INPUT,
 fit  <- curvefits(INPUT, brks2,
                   methods = c("AG", "Zhang", "Beck", "Elmore"), #,"klos",, 'Gu'
                   wFUN = wFUN,
-                  nextent = 2, maxExtendMonth = 3, minExtendMonth = 1, minPercValid = 0.2,
+                  nextend = 2, maxExtendMonth = 3, minExtendMonth = 1, minPercValid = 0.2,
                   print = print, verbose = FALSE)
 #   [curvefits]  running 1 ...
 #   [curvefits]  running 2 ...

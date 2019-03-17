@@ -9,9 +9,9 @@
 \usage{
 setting.get(input)
 
-setting.read(file)
+setting.read(file = "phenofit_setting.json")
 
-setting.write(pars, file)
+setting.write(pars, file = "phenofit_setting.json")
 }
 \description{
 setting

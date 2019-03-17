@@ -58,7 +58,7 @@ season_mov <- function(INPUT,
     brks  <- list()
     vcs   <- vector("list", nyear-2) %>% set_names(years[2:(nyear-1)])
 
-    nextent   <- ceiling(maxExtendMonth/12*nptperyear)
+    nextend   <- ceiling(maxExtendMonth/12*nptperyear)
     width_ylu <- nptperyear*2 # This is quite important, to make time-series continuous.
     # If data is not continuous, `season_mov` will be error!
     # Fixed at 20180915
@@ -68,13 +68,13 @@ season_mov <- function(INPUT,
         year_i <- years[i]
         # I <- which(date_year %in% years[(i-ny_extend):(i+ny_extend)]) # 3y index
         I   <- which(date_year %in% years[i]) # 3y index
-        # `nextent` is not enough
+        # `nextend` is not enough
 
         ylu <- get_ylu (INPUT$y, date_year, INPUT$w, width = width_ylu, I, Imedian = TRUE, wmin)
         ylu <- merge_ylu(INPUT$ylu, ylu) # curvefits.R
 
         # extend curve fitting period, for continuity.
-        I <- seq( max(1, first(I) - nextent), min(last(I) + nextent, nlen) )
+        I <- seq( max(1, first(I) - nextend), min(last(I) + nextend, nlen) )
 
         input <- lapply(INPUT[c("t", "y", "w")], `[`, I) # y, t, w
         input <- c(input, list(ylu = ylu, nptperyear=nptperyear, south=south))
@@ -160,9 +160,9 @@ season_calendar <- function(years, south = FALSE){
 # # Not perfect at all for regions with multiple growing season.
 # # No one method can cope with all the situation.
 # {
-#     nextent <- length(I)
-#     I_beg <- max(1, first(I) - nextent)
-#     I_end <- min(last(I) + nextent, nlen)
+#     nextend <- length(I)
+#     I_beg <- max(1, first(I) - nextend)
+#     I_end <- min(last(I) + nextend, nlen)
 
 #     yi <- INPUT$y[I]
 #     yhead <- I_beg:(first(I) - 1) %>% { . - .[1] + 1} %>% yi[.]

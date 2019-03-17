@@ -14,7 +14,7 @@ param <- list(
     methods = c("AG", "Zhang", "Beck", "Elmore", 'Gu'), #,"klos",
     verbose = F,
     wFUN = wFUN,
-    nextent = 2, maxExtendMonth = 2, minExtendMonth = 1,
+    nextend = 2, maxExtendMonth = 2, minExtendMonth = 1,
     minPercValid = 0.2,
     print = FALSE
 )

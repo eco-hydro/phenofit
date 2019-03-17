@@ -32,7 +32,7 @@ Imports: Rcpp,
     optimx, ucminf,
     numDeriv, 
     grDevices, utils, stats,
-    shiny, DT
+    shiny, jsonlite, DT
 Suggests: knitr,
     rmarkdown,
     testthat
