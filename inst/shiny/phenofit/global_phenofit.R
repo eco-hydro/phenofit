@@ -86,13 +86,13 @@ getINPUT.site <- function(df, st, sitename, dateRange){
 cal_season <- function(input, INPUT){
     param <- list(
         FUN_season     = input$FUN_season,
-        rFUN           = input$rFUN,
-        iters          = input$iters,
+        rFUN           = input$FUN_rough,
+        iters          = input$iters_rough,
         lambda         = input$lambda,
         nf             = input$nf,
         frame          = input$frame,
-        wFUN           = input$wFUN,
-        maxExtendMonth = input$maxExtendMonth,
+        wFUN           = input$wFUN_rough,
+        maxExtendMonth = input$max_extend_month_rough,
         rtrough_max    = input$rtrough_max,
         r_max          = input$r_max,
         r_min          = input$r_min, 
@@ -148,9 +148,9 @@ phenofit_all <- function(input, progress = NULL){
 
     # parameters for Fine Fitting
     params_fineFitting <- list(
-        methods        = input$FUN, #c("AG", "zhang", "beck", "elmore", 'Gu'), #,"klos",
+        methods        = input$FUN_fine, #c("AG", "zhang", "beck", "elmore", 'Gu'), #,"klos",
         # debug        = FALSE,
-        wFUN           = get(input$wFUN2),
+        wFUN           = get(input$wFUN_fine),
         nextent        = 2,
         maxExtendMonth = 3,
         minExtendMonth = 1,

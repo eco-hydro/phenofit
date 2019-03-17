@@ -21,7 +21,7 @@ ui <- navbarPage(
                 selectInput("site", "Choose a site:",
                     choices = sites, selected = sites[1]
                 ),
-                numericInput("iters", "iters of Rough fitting:", 2, 1, 6),
+                numericInput("iters_rough", "iters of Rough fitting:", 2, 1, 6),
                 checkboxInput("calendarYear", "calendarYear", FALSE),
                 selectInput(
                     "FUN_season", "Choose a season dividing function (FUN_season):",
@@ -29,18 +29,18 @@ ui <- navbarPage(
                     selected = "season_mov"
                 ),
                 selectInput(
-                    "wFUN", "Choose a weights updating function for Rough Fitting (wFUN):",
-                    choices = options_wFUN,
-                    selected = "wBisquare"
-                ),
-                selectInput(
-                    "rFUN", "Choose a Rough fitting function (rFUN):",
+                    "FUN_rough", "Choose a Rough fitting function (FUN_rough):",
                     choices = c('wWHIT', 'wSG', 'wHANTS'),
                     selected = "wHANTS"
                 ),
-                conditionalPanel(condition = "input.rFUN == 'wWHIT'",
+                selectInput(
+                    "wFUN_rough", "Choose a weights updating function for Rough Fitting (wFUN_rough):",
+                    choices = options_wFUN,
+                    selected = "wBisquare"
+                ),
+                conditionalPanel(condition = "input.FUN_rough == 'wWHIT'",
                                  numericInput("lambda", "lambda:", 1e4, 2, 1e4)),
-                conditionalPanel(condition = "input.rFUN == 'wSG'",
+                conditionalPanel(condition = "input.FUN_rough == 'wSG'",
                     numericInput(
                         "frame", "moving window size (frame):",
                         floor(nptperyear / 5 * 2 + 1),
@@ -49,14 +49,14 @@ ui <- navbarPage(
                         floor(nptperyear / 12)
                     )
                 ),
-                conditionalPanel(condition = "input.rFUN == 'wHANTS'",
+                conditionalPanel(condition = "input.FUN_rough == 'wHANTS'",
                     numericInput("nf", "number of frequencies (nf):", 2, 1, 6)
                 ),
                 conditionalPanel(
                     condition = "input.FUN_season == 'season_mov'",
                     numericInput(
-                        "maxExtendMonth",
-                        "Include n previous and subsequent month in Rough fitting (maxExtendMonth):",
+                        "max_extend_month_rough",
+                        "Include n previous and subsequent month in Rough fitting (max_extend_month_rough):",
                         2, 0, 12
                     )
                 ),
@@ -75,9 +75,9 @@ ui <- navbarPage(
                 ################################################################
                 ## curve fitting, select curve fitting methods
                 h3("2. Fine Curve fitting"),
-                checkboxInput("use.rough", "use.rough", FALSE),
-                numericInput("iters2", "iters of Fine fitting:", 2, 1, 6),
-                checkboxGroupInput("FUN", 
+                checkboxInput("use.rough", "Use rough fitting smoothed series?", FALSE),
+                numericInput("iters_fine", "iters of Fine fitting:", 2, 1, 6),
+                checkboxGroupInput("FUN_fine", 
                     "Choose Fine fitting functions (fFUN):",
                     choiceNames  = list("Asymmetric Gaussian (AG)", 
                         "Beck logistic (Beck)", 
@@ -88,18 +88,18 @@ ui <- navbarPage(
                     selected = list("Elmore")
                 ),
                 selectInput(
-                    "wFUN2", "Choose a weights updating function for Fine Fitting (wFUN2):",
+                    "wFUN_fine", "Choose a weights updating function for Fine Fitting (wFUN_fine):",
                     choices = options_wFUN,
                     selected = "wBisquare"
                 ),
                 numericInput(
-                    "nextent2",
+                    "nextent_fine",
                     "Extend curve fitting window, until n good or marginal elements are found in previous and subsequent growing season (nextent).",
                     1, 0, 10
                 ),
                 numericInput(
-                    "maxExtendMonth2",
-                    "Max extend window size (month) in Fine fitting (maxExtendMonth):",
+                    "max_extend_month_fine",
+                    "Max extend window size (month) in Fine fitting (max_extend_month_fine):",
                     2, 0, 12
                 ),
                 hr(),
@@ -107,7 +107,7 @@ ui <- navbarPage(
                 
                 ################################################################
                 h3("3. Phenology extraction"),
-                checkboxGroupInput("pheno_methods", 
+                checkboxGroupInput("meths_pheno", 
                     "Choose Phenology Extraction methods:",
                     choiceNames  = list(
                         "Threshold (TRS)", 

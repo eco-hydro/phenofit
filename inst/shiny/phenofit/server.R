@@ -43,13 +43,13 @@ server <- function(input, output, session) {
         updateNumericInput(session, "lambda", value = lambda)
     })
 
-    # file_veg changed
-    observeEvent(input$file_veg, {
-        file_veg  <- input$file_veg$datapath
+    # file_veg_text changed
+    observeEvent(input$file_veg_text, {
+        file_veg_text  <- input$file_veg_text$datapath
         file_site <- input$file_site$datapath
 
-        if (check_file(file_veg)) {
-            df    <<- fread(file_veg) %>% check_datestr()
+        if (check_file(file_veg_text)) {
+            df    <<- fread(file_veg_text) %>% check_datestr()
             sites <<- unique(df$site) %>% sort()
 
             if (!check_file(file_site)){
@@ -63,10 +63,10 @@ server <- function(input, output, session) {
     })
 
     observeEvent(input$file_site, {
-        file_veg  <- input$file_veg$datapath
+        file_veg_text  <- input$file_veg_text$datapath
         file_site <- input$file_site$datapath
 
-        if (check_file(file_veg)) {
+        if (check_file(file_veg_text)) {
             if (check_file(file_site)){
                 st <<- fread(file_site)
                 rv$st <- st
@@ -74,18 +74,18 @@ server <- function(input, output, session) {
         }
     })
 
-    observeEvent(input$file_rda, {
-        file_veg  <- input$file_rda$datapath
-        if (check_file(file_veg)) {
-            load(file_veg)
+    observeEvent(input$file_veg_rda, {
+        file_veg_text  <- input$file_veg_rda$datapath
+        if (check_file(file_veg_text)) {
+            load(file_veg_text)
             df <<- df %>% check_datestr()
             sites <<- unique(df$site) %>% sort()
             st <<- st
-            
+
             rv$df <- df
-            rv$st <- st    
+            rv$st <- st
             rv$sites <- sites
-            
+
             updateInput_phenofit(session, rv)
         }
     })
@@ -104,22 +104,23 @@ server <- function(input, output, session) {
 
     # Figure height of fine curve fitting
     heightSize <- reactive({
-        n <- length(input$FUN)
+        n <- length(input$FUN_fine)
+        if (n == 1) n <- 1.2 # increase height for single plot
         fig.height*n + lgd.height
     }) # number of fine curve fitting
 
     params_fineFitting <- reactive({
         list(
             INPUT(), brks(),
-            iters = input$iters2,
-            methods = input$FUN, #c("AG", "zhang", "beck", "elmore", 'Gu'), #,"klos",
-            verbose = F,
-            wFUN = get(input$wFUN2),
-            nextent = input$nextent2, 
-            maxExtendMonth = input$maxExtendMonth2, 
+            iters = input$iters_fine,
+            methods = input$FUN_fine, #c("AG", "zhang", "beck", "elmore", 'Gu'), #,"klos",
+            verbose = FALSE,
+            wFUN = get(input$wFUN_fine),
+            nextent = input$nextent_fine,
+            maxExtendMonth = input$max_extend_month_fine,
             minExtendMonth = 1,
             minPercValid = 0.2,
-            print = TRUE, 
+            print = TRUE,
             use.rough = input$use.rough
         )
     })
@@ -131,13 +132,13 @@ server <- function(input, output, session) {
         fit  <- do.call(curvefits, params_fineFitting())
         # params_fineFitting <- getparam(fit)
 
-        stat <- get_GOF(fit)                       # Goodness-Of-Fit
+        stat  <- get_GOF(fit)                       # Goodness-Of-Fit
         pheno <- get_pheno(fit, IsPlot=FALSE)   # Phenological metrics
 
         list(fit = fit, INPUT = INPUT(), seasons = brks(), stat = stat, pheno = pheno)
     })
 
-    lst_metrics <- reactive({        
+    lst_metrics <- reactive({
         fineFitting()$pheno %>% map(function(lst){
             d <- melt_list(lst, "meth") %>% reorder_name(c("site", "meth", "flag", "origin"))
             colnames(d) %<>% gsub("GU.|ZHANG.", "", .)

@@ -67,18 +67,18 @@ check_datestr <- function(df){
 updateINPUT <- function(input){
     status <- FALSE
     if (input$file_type == '.rda | .RData') {
-        file_rda  <- input$file_rda$datapath
-        if (check_file(file_rda)) {
-            load(file_rda)
+        file_veg_rda  <- input$file_veg_rda$datapath
+        if (check_file(file_veg_rda)) {
+            load(file_veg_rda)
             check_datestr(df)
             status <- TRUE
         }
     } else if (input$file_type == 'text'){
         file_site <- input$file_site$datapath
-        file_veg  <- input$file_veg$datapath
+        file_veg_text  <- input$file_veg_text$datapath
 
-        if (check_file(file_veg)) {
-            df    <<- fread(file_veg)
+        if (check_file(file_veg_text)) {
+            df    <<- fread(file_veg_text)
             check_datestr(df)
             sites <<- unique(df$site) %>% sort()
 
