@@ -45,6 +45,7 @@ server <- function(input, output, session) {
 
     # file_veg_text changed
     observeEvent(input$file_veg_text, {
+        # browser()
         file_veg_text  <- input$file_veg_text$datapath
         file_site <- input$file_site$datapath
 
@@ -134,7 +135,7 @@ server <- function(input, output, session) {
     observeEvent(options_phenofit(), {
         timestr <- Sys.time() %>% format("%Y%m%d_%H%M%S")
         sprintf('[s] write setting %s ... \n', timestr) %>% cat()
-        outfile <- sprintf("phenofit_setting_%s.json", timestr)
+        outfile <- sprintf("perference/phenofit_setting_%s.json", timestr)
         setting.write(options_phenofit(), outfile)
     })
 

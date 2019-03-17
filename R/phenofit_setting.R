@@ -86,6 +86,14 @@ setting.read <- function(file = "phenofit_setting.json"){
 
 #' @export
 #' @rdname setting
-setting.write <- function(pars, file = "phenofit_setting.json"){
-    write_json(pars, file, pretty = TRUE)
+setting.write <- function(options, file = "phenofit_setting.json"){
+    write_json(options, file, pretty = TRUE)
+}
+
+#' @export
+#' @rdname setting
+setting.update <- function(options){
+    I <- match(names(options), names(options.phenofit))
+    options.phenofit[I] <- options
+    return(options.phenofit)
 }

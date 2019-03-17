@@ -1,6 +1,8 @@
 # shiny::runApp("inst/shiny/phenofit/")
-source('global_shiny.R')
+source('src_load_input.R')
 source('global_phenofit.R')
+# library(future)
+# plan(multisession)
 
 
 # initial date_range
@@ -8,26 +10,34 @@ date_begin <- "2010-01-01"
 date_end   <- "2014-12-31"
 
 options_wFUN <- c("wTSM", "wBisquare", "wChen", "wKong")
+options_phenofit <- list(
+    nptperyear = 365
+) %>% setting.update()
 
-# library(future)
-# plan(multisession)
+
+file_rda <- 'data/flux115_GPP.rda' %>% normalizePath()
+nptperyear = 365
+
+load(file_rda)
+df$y <- df$GPP
 ################################################################################
 ## global parameters for check_season
-load('data/flux115_GPP.rda')
-df$y <- df$GPP
 
-nptperyear <- 365
 # tidy_fluxGPP() # tidy df_GPP
 
-setting    <- list(mar = c(2, 3, 1, 1), mgp = c(1.2, 0.6, 0))
+# setting    <- list(mar = c(2, 3, 1, 1), mgp = c(1.2, 0.6, 0))
+# par(setting)
+
+## global parameter for UI
 fig.height <- 200 # pixel
 lgd.height <- 20
 
-par(setting)
+param_step <- 0.1 # for r_max and rtrough_max
 
-param_step <- 0.1
+load_data <- function(){
+    file_veg_rda  <- options$file_rda
+    file_veg_text <- options$file_veg_text
+    file_site <- options$file_site
 
-#' select_var_VI
-select_var_VI <- function(df){
-	vars_select(colnames(df), -tidyselect::matches("id|ID|site|scale|date|t|year|doy|DayOfYear|QA|QC|qa|qc|w"))
+    # if (is.null(file_))
 }

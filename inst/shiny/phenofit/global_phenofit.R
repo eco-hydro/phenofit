@@ -1,4 +1,10 @@
 ################################################################################
+
+#' select_var_VI
+select_var_VI <- function(df){
+    vars_select(colnames(df), -tidyselect::matches("id|ID|site|scale|date|t|year|doy|DayOfYear|QA|QC|qa|qc|w"))
+}
+
 #' updateInput_phenofit
 #'
 #' Update shiny components when input changes.

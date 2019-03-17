@@ -5,13 +5,16 @@
 \alias{setting.get}
 \alias{setting.read}
 \alias{setting.write}
+\alias{setting.update}
 \title{setting}
 \usage{
 setting.get(input)
 
 setting.read(file = "phenofit_setting.json")
 
-setting.write(pars, file = "phenofit_setting.json")
+setting.write(options, file = "phenofit_setting.json")
+
+setting.update(options)
 }
 \description{
 setting

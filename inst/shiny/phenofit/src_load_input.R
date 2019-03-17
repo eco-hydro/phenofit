@@ -38,6 +38,17 @@ DT_datatable <- function(
     ))
 }
 
+#' Make sure date character in \code{df} has been converted to \code{Date} object.
+check_datestr <- function(df){
+    var_times <-  intersect(c("t", "date"), colnames(df))
+    for (i in seq_along(var_times)){
+        varname <- var_times[i]
+        df[[varname]] %<>% lubridate::ymd()
+    }
+    df
+}
+
+
 #' check_file
 #' Check file whether exist. If not, then give a notification.
 check_file <- function(file, duration = 10){
@@ -53,17 +64,10 @@ check_file <- function(file, duration = 10){
     }
 }
 
-#' Make sure date character in \code{df} has been converted to \code{Date} object.
-check_datestr <- function(df){
-    var_times <-  intersect(c("t", "date"), colnames(df))
-    for (i in seq_along(var_times)){
-        varname <- var_times[i]
-        df[[varname]] %<>% lubridate::ymd()
-    }
-    df
-}
-
 #' update all INPUT data according to \code{input} file.
+#' 
+#' assign following variables to parent:
+#' df, st, sites
 updateINPUT <- function(input){
     status <- FALSE
     if (input$file_type == '.rda | .RData') {
@@ -74,6 +78,8 @@ updateINPUT <- function(input){
             status <- TRUE
         }
     } else if (input$file_type == 'text'){
+        browser()
+        
         file_site <- input$file_site$datapath
         file_veg_text  <- input$file_veg_text$datapath
 
