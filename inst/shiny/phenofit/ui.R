@@ -21,7 +21,8 @@ ui <- navbarPage(
                 selectInput("site", "Choose a site:",
                     choices = sites, selected = sites[1]
                 ),
-                numericInput("iters", "iters of Rough fitting:", 2, 1, 4),
+                numericInput("iters", "iters of Rough fitting:", 2, 1, 6),
+                checkboxInput("calendarYear", "calendarYear", FALSE),
                 selectInput(
                     "FUN_season", "Choose a season dividing function (FUN_season):",
                     choices = c('season', 'season_mov'),
@@ -74,7 +75,8 @@ ui <- navbarPage(
                 ################################################################
                 ## curve fitting, select curve fitting methods
                 h3("2. Fine Curve fitting"),
-                numericInput("iters2", "iters of Fine fitting:", 2, 1, 4),
+                checkboxInput("use.rough", "use.rough", FALSE),
+                numericInput("iters2", "iters of Fine fitting:", 2, 1, 6),
                 checkboxGroupInput("FUN", 
                     "Choose Fine fitting functions (fFUN):",
                     choiceNames  = list("Asymmetric Gaussian (AG)", 

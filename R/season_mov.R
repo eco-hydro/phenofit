@@ -1,10 +1,10 @@
 #' @title Growing season dividing
 #' @name season
-#' 
+#'
 #' @param IsOptim_lambda Whether to optimize Whittaker's parameter lambda by
 #' V-curve theory?
 #' @param maxExtendMonth Previous and subsequent `maxExtendMonth` data were added
-#' for every year curve fitting. 
+#' for every year curve fitting.
 #' @param titlestr string for title
 #' @param IsPlot.vc Whether to plot V-curve optimized time-series.
 #' @param IsPlot.OnlyBad If true, only plot partial figures whose NSE < 0.3.
@@ -13,13 +13,15 @@
 #'
 #' @example inst/examples/ex-check_input.R
 #' @example inst/examples/ex-season.R
-#' 
+#'
+#' @importFrom lubridate leap_year
 #' @export
 season_mov <- function(INPUT,
     rFUN = wWHIT, wFUN = wTSM, iters = 2, wmin = 0.1,
     IsOptim_lambda = FALSE,
     lambda = NULL, nf  = 3, frame = floor(INPUT$nptperyear/5)*2 + 1,
     maxExtendMonth = 12,
+    calendarYear = FALSE,
     ...,
     IsPlot = TRUE, IsPlot.vc = FALSE, IsPlot.OnlyBad = FALSE,
     plotdat = INPUT, print = TRUE, titlestr = "")
@@ -27,11 +29,11 @@ season_mov <- function(INPUT,
     nptperyear <- INPUT$nptperyear
     south      <- INPUT$south
     t          <- INPUT$t
+    
+    nlen       <- length(t)
 
-    nlen      <- length(t)
+    # 1. How many years data
     date_year <- year(t) + ((month(t) >= 7)-1)*south
-
-    # yearly data count info
     info  <- table(date_year) # rm years with so limited obs
     years <- info[info > nptperyear*0.2] %>% {as.numeric(names(.))}
         #.[2:(length(.)-1)] # rm head and tail filled years
@@ -124,17 +126,34 @@ season_mov <- function(INPUT,
         return(NULL)
     }
 
-    dt <- dt[dt$len > 45 & dt$len < 650, ] # mask too long and short gs
-    # phenofit:::fix_dt(dt) # c++ address operation, fix growing season overlap
-    fix_dt(dt) # c++ address operation, fix growing season overlap
-    # after fix_dt, growing season length will become shorter
-    dt <- dt[dt$len > 45 & dt$len < 650, ] # mask too long and short gs
-    brks$dt <- dt
+    # browser()
+    # using calendarYear as growing season
+    if (calendarYear) {
+        # need to remove incomplete year
+        dt <- season_calendar(dt$year, south)
+    } else {
+        dt <- dt[dt$len > 45 & dt$len < 650, ] # mask too long and short gs
+        # phenofit:::fix_dt(dt) # c++ address operation, fix growing season overlap
+        fix_dt(dt) # c++ address operation, fix growing season overlap
+        # after fix_dt, growing season length will become shorter
+        dt <- dt[dt$len > 45 & dt$len < 650, ] # mask too long and short gs   
+    }
 
+    brks$dt <- dt
     ## VISUALIZATION
     if (IsPlot) plot_season(INPUT, brks, plotdat, ylu = INPUT$ylu, IsPlot.OnlyBad)
     if (IsOptim_lambda) brks$optim <- vcs
     return(brks)
+}
+
+season_calendar <- function(years, south = FALSE){
+    date_begin <- ifelse(south, "0701", "0101") %>% paste0(years, .) %>% ymd()
+    date_end   <- {if (south) paste0(years+1, "0630") else paste0(years, "1231") } %>% ymd()
+
+    dt <- data.table(beg = date_begin, end = date_end, year = years,
+        len = as.numeric(difftime(date_end, date_begin, units = "days")) + 1) %>% 
+        cbind(season = 1, flag = sprintf("%d_1", years))
+    return(dt)
 }
 
 # # triplicate HANTS test, 2018-09-19

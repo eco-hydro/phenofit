@@ -42,17 +42,20 @@ arma::colvec sgfitw_rcpp(const arma::colvec y, const arma::colvec w, const arma:
 
     B = sgolayB(S, w.subvec(0, frame-1)) ;
     arma::colvec y_head = B.rows(0, halfwin) * y.subvec(0, frame-1);
-    arma::colvec y_mid = arma::Col<double>(n-frame) ;
-    for (int i=0; i<=n-frame-1; i++) {
+
+    arma::colvec y_mid = arma::Col<double>(n-frame-1) ;
+    for (int i=1; i<=n-frame-1; i++) {
         B = sgolayB(S, w.subvec(i, i+frame-1)) ;
-        y_mid(i) = as_scalar( B.row(halfwin) * y.subvec(i, i+frame-1) );
+        y_mid(i-1) = as_scalar( B.row(halfwin) * y.subvec(i, i+frame-1) );
     }
 
     B = sgolayB(S, w.subvec(n-frame, n-1)) ;
-    arma::colvec y_tail = B.rows(halfwin+1, frame-1) * y.subvec(n-frame, n-1);
+    arma::colvec y_tail = B.rows(halfwin, frame-1) * y.subvec(n-frame, n-1);
+    
     arma::colvec yfit  = join_vert(y_head, y_mid);
     yfit = join_vert(yfit, y_tail);
 
+    // Rcpp::Rcout << yfit << std::endl;
     // NumericVector y2 = as<NumericVector>(wrap(yfit));
     // NumericVector(a.begin(),a.end())
     return yfit;

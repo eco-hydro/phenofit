@@ -24,6 +24,7 @@
 #' @param minPercValid If the percentage of good and marginal quality points is
 #' less than \code{minPercValid}, curve fiting result is set to \code{NA}.
 #' @param print Whether to print progress information?
+#' @param use.rough Whether to use rough fitting smoothed time-series as input?
 #' @param ... Other parameters will be ignore.
 #'
 #' @return fits Multiple phenofit object.
@@ -38,7 +39,8 @@ curvefits <- function(INPUT, brks,
                       minT = 0,
                       methods = c('AG', 'Beck', 'Elmore', 'Gu', 'Klos', 'Zhang'),
                       minPercValid = 0.2,
-                      print = TRUE, ...)
+                      print = TRUE, 
+                      use.rough = FALSE, ...)
 {
     if (all(is.na(INPUT$y))) return(NULL)
 
@@ -60,10 +62,17 @@ curvefits <- function(INPUT, brks,
     # possible snow or cloud, replaced with Whittaker smoothing.
     I_w <- match(brks$whit$t, t) %>% rm_empty()
 
-    I_fix <- which(w[I_w] == wmin)
-    I_y   <- I_w[I_fix]
-    INPUT$y[I_y] <- dplyr::last(brks$whit)[I_fix]
+    if (use.rough) {
+        # if the range of t is smaller than `whit$t` 
+        INPUT$y[I_w] <- dplyr::last(brks$whit)
+    } else {
+        I_fix <- which(w[I_w] == wmin)
+        I_y   <- I_w[I_fix]
+        INPUT$y[I_y] <- dplyr::last(brks$whit)[I_fix]
+    }
+    # use the weights of last iteration of rough fitting
     w[I_w] <- brks$whit %>% {.[, contain(., "witer"), with = F]} %>% last()
+
     # w[I_fix] <- wmin + 0.1 # exert the function of whitaker smoother
 
     # growing season dividing

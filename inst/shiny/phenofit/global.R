@@ -20,8 +20,8 @@ nptperyear <- 365
 # tidy_fluxGPP() # tidy df_GPP
 
 setting    <- list(mar = c(2, 3, 1, 1), mgp = c(1.2, 0.6, 0))
-fig.height <- 275 # pixel
-lgd.height <- 25
+fig.height <- 200 # pixel
+lgd.height <- 20
 
 par(setting)
 

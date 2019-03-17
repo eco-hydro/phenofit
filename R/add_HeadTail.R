@@ -30,15 +30,21 @@
 #'
 #' @export
 add_HeadTail <- function(d, south = FALSE, nptperyear, trs = 0.45){
+    ## check dateband first
+    # date : image date
+    # t    : compositing date
+    bandname <- intersect(c("t", "date"), colnames(d))[1]
+    if (!is.Date(d[[bandname]])) {
+        d[[bandname]] %<>% as.Date()
+    }
+    dates    <- d[[bandname]]
+
     if (missing(nptperyear)){
         nptperyear <- ceiling(365/as.numeric(difftime(d[[bandname]][2], d[[bandname]][1], units = "days")))
     }
     ntrs  <- nptperyear*trs
 
-    # date : image date
-    # t    : compositing date
-    bandname <- intersect(c("t", "date"), colnames(d))[1]
-    dates    <- d[[bandname]]
+
 
     ## can coop with years not continuous now
     ntime    <- nrow(d)

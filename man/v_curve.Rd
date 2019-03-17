@@ -8,7 +8,7 @@ v_curve(INPUT, lg_lambdas, d = 2, IsPlot = FALSE, wFUN = wTSM,
   iters = 2)
 }
 \arguments{
-\item{INPUT}{A list object with the elements of \code{t}, \code{y}, \code{w}, 
+\item{INPUT}{A list object with the elements of \code{t}, \code{y}, \code{w},
 \code{Tn} (optional) and \code{ylu}, returned by \code{\link{check_input}}.}
 
 \item{lg_lambdas}{\code{lg} lambda vectors of Whittaker parameter.}
@@ -17,7 +17,7 @@ v_curve(INPUT, lg_lambdas, d = 2, IsPlot = FALSE, wFUN = wTSM,
 
 \item{IsPlot}{Boolean. Whether to plot figure?}
 
-\item{wFUN}{weights updating function, can be one of \code{\link{wTSM}}, 
+\item{wFUN}{weights updating function, can be one of \code{\link{wTSM}},
 \code{\link{wChen}}, \code{\link{wBisquare}} and \code{\link{wSELF}}.}
 
 \item{iters}{How many times curve fitting is implemented.}

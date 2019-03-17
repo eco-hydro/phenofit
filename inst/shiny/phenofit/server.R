@@ -119,7 +119,8 @@ server <- function(input, output, session) {
             maxExtendMonth = input$maxExtendMonth2, 
             minExtendMonth = 1,
             minPercValid = 0.2,
-            print = TRUE
+            print = TRUE, 
+            use.rough = input$use.rough
         )
     })
 

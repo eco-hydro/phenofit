@@ -7,7 +7,7 @@
 curvefits(INPUT, brks, wFUN = wTSM, iters = 2, wmin = 0.2,
   nextent = 2, maxExtendMonth = 3, minExtendMonth = 1, minT = 0,
   methods = c("AG", "Beck", "Elmore", "Gu", "Klos", "Zhang"),
-  minPercValid = 0.2, print = TRUE, ...)
+  minPercValid = 0.2, print = TRUE, use.rough = FALSE, ...)
 }
 \arguments{
 \item{INPUT}{A list object with the elements of 't', 'y', 'w', 'Tn' (option)
@@ -17,7 +17,7 @@ and 'ylu', returned by \code{check_input}.}
 \code{season} or \code{season_mov}, which contains the growing season
 dividing information.}
 
-\item{wFUN}{weights updating function, can be one of \code{\link{wTSM}}, 
+\item{wFUN}{weights updating function, can be one of \code{\link{wTSM}},
 \code{\link{wChen}}, \code{\link{wBisquare}} and \code{\link{wSELF}}.}
 
 \item{iters}{How many times curve fitting is implemented.}
@@ -46,6 +46,8 @@ Tn < minT is treated as ungrowing season.}
 less than \code{minPercValid}, curve fiting result is set to \code{NA}.}
 
 \item{print}{Whether to print progress information?}
+
+\item{use.rough}{Whether to use rough fitting smoothed time-series as input?}
 
 \item{...}{Other parameters will be ignore.}
 }

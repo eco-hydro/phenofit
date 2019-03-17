@@ -33,8 +33,7 @@ updateInput_phenofit <- function(session, rv) {
         sel_qc <- varQCs[1]
     }
 
-    # Do not update values when varQC changes. Because, it also rely on
-    # qcFUN
+    # Do not update values when varQC changes. Because, it also rely on qcFUN
     updateSelectInput(session, "txt_varQC", sel_qc_title,
         choices = varQCs, varQCs[1])
 
@@ -94,9 +93,10 @@ cal_season <- function(input, INPUT){
         frame          = input$frame,
         wFUN           = input$wFUN,
         maxExtendMonth = input$maxExtendMonth,
-        rtrough_max   = input$rtrough_max,
-        r_max  = input$r_max,
-        r_min  = input$r_min
+        rtrough_max    = input$rtrough_max,
+        r_max          = input$r_max,
+        r_min          = input$r_min, 
+        calendarYear   = input$calendarYear
     )
 
     print(str(param, 1))
@@ -148,15 +148,16 @@ phenofit_all <- function(input, progress = NULL){
 
     # parameters for Fine Fitting
     params_fineFitting <- list(
-        methods      = input$FUN, #c("AG", "zhang", "beck", "elmore", 'Gu'), #,"klos",
+        methods        = input$FUN, #c("AG", "zhang", "beck", "elmore", 'Gu'), #,"klos",
         # debug        = FALSE,
-        wFUN         = get(input$wFUN2),
-        nextent      = 2,
+        wFUN           = get(input$wFUN2),
+        nextent        = 2,
         maxExtendMonth = 3,
         minExtendMonth = 1,
         QC_flag        = NULL,
-        minPercValid = 0.2,
-        print        = TRUE
+        minPercValid   = 0.2,
+        print          = TRUE, 
+        use.rough      = input$use.rough
     )
 
     showProgress <- !is.null(progress)

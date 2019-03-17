@@ -37,7 +37,9 @@ A state-of-the-art **remote sensing vegetation phenology** extraction package: `
 - [ ] Uncertainty analysis of curve fitting and phenological metrics;
 - [ ] Support spatial analysis;
 - [ ] Support annual season in curve fitting;
-- [ ] flexible fine fitting input ( original time-series or smoothed time-series by rough fitting).
+- [x] flexible fine fitting input ( original time-series or smoothed time-series by rough fitting).
+- [ ] growing season dividing error in `season_mov`
+
 
 ![title](man/Figure/Figure1_phenofit_flowchart.svg)   
 *<u>Figure 1. The flowchart of phenology extraction in `phenofit`.</u>*

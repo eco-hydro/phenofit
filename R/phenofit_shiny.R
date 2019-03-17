@@ -4,6 +4,8 @@
 #' phenological metrics.
 #' 
 #' @keywords GUI, front end, interactive
+#' 
+#' @importFrom shiny runApp
 #' @export
 #' 
 #' @examples
@@ -20,6 +22,6 @@ phenofit_shiny = function(){
     #         call. = FALSE)
     # }
     appDir = sprintf("%s/shiny/phenofit", path.package("phenofit"))
-    suppressWarnings(shiny::runApp(appDir,
+    suppressWarnings(runApp(appDir,
         display.mode = "normal", launch.browser = TRUE))
 }
