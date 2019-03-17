@@ -23,6 +23,111 @@ options(
     shiny.maxRequestSize=30*1024^2
 )
 
+# convert shinypath to normal path
+tidy_shiny_filepath <- function(path){
+    if (is.list(path)) {
+        path$datapath
+    } else if (is.character(path)) {
+        path 
+    } else {
+        ""
+    }
+}
+
+#' check_file
+#' Check file whether exist. If not, then give a notification.
+check_file <- function(file, duration = 10){
+    filename <- deparse(substitute(file))
+    if (is.null(file)) file <- "NULL"
+
+    if (file.exists(file)) {
+        return(TRUE)
+    } else {
+        showNotification(sprintf("invalid %s: %s", filename, file), 
+            duration = duration, type = "warning")
+        return(FALSE)
+    }
+}
+
+#' Make sure date character in \code{df} has been converted to \code{Date} object.
+check_datestr <- function(df){
+    var_times <-  intersect(c("t", "date"), colnames(df))
+    for (i in seq_along(var_times)){
+        varname <- var_times[i]
+        df[[varname]] %<>% lubridate::ymd()
+    }
+    df
+}
+
+
+#' update all INPUT data according to \code{input} file.
+#' 
+#' @param input should has children of \code{file_site}, and one of 
+#' \code{file_veg_rda} or \code{file_veg_text}.
+#' 
+#' assign following variables to parent:
+#' df, st, sites
+load_input <- function(input){
+    status <- FALSE
+    if (input$file_type == '.rda | .RData') {
+        file_veg_rda  <- input$file_veg_rda$datapath
+        if (check_file(file_veg_rda)) {
+            load(file_veg_rda)
+            check_datestr(df)
+            status <- TRUE
+        }
+    } else if (input$file_type == 'text'){
+        file_site <- input$file_site$datapath
+        file_veg_text  <- input$file_veg_text$datapath
+
+        if (check_file(file_veg_text)) {
+            df    <- fread(file_veg_text)
+            check_datestr(df)
+            sites <- unique(df$site) %>% sort()
+
+            if (check_file(file_site)){
+                st <- fread(file_site)
+            } else {
+                st <- data.table(ID = seq_along(sites), site = sites, lat = 30)
+            }
+            status <- TRUE
+        }
+    }
+    
+    list2env(listk(df, st, sites), env = parent.frame()) # to calling env
+    # list(df = df, st = st, sites = sites)
+    return(status)
+}
+
+
+#' update vegetation index variable Y in df
+#'
+#' @param rv reactiveValues.
+#' @param varname variable name of vegetation index.
+update_VI <- function(rv, varname){
+    # varname <- input$txt_varVI
+    print('\t update_VI ...')
+    if (!is.null(varname) && !(varname %in% c("", "y"))) {
+        eval(parse(text = sprintf('rv$df$y <- rv$df$%s', varname)))
+    }
+}
+
+#' convert_QC2weight
+convert_QC2weight <- function(input, rv){
+    qcFUN <- input$qcFUN
+    varQC <- input$txt_varQC
+
+    if (!(varQC %in% colnames(rv$df))){
+        warning(sprintf("No QC variable %s in df! ", varQC))
+    }
+
+    if (input$check_QC2weight && varQC %in% colnames(rv$df)){
+        eval(parse(text = sprintf('rv$df[, c("w", "QC_flag") := %s(%s, wmin = 0.2)]',
+            qcFUN, varQC)))
+    }
+}
+
+
 #' Generate DT::datatable
 DT_datatable <- function(
     df,
@@ -38,94 +143,30 @@ DT_datatable <- function(
     ))
 }
 
-#' Make sure date character in \code{df} has been converted to \code{Date} object.
-check_datestr <- function(df){
-    var_times <-  intersect(c("t", "date"), colnames(df))
-    for (i in seq_along(var_times)){
-        varname <- var_times[i]
-        df[[varname]] %<>% lubridate::ymd()
-    }
-    df
-}
+## initial parameters ----------------------------------------------------------
+initparam_FUN_rough <- function(nptperyear, session) {
+    frame <- nptperyear / 5 * 2 + 1
 
-
-#' check_file
-#' Check file whether exist. If not, then give a notification.
-check_file <- function(file, duration = 10){
-    filename <- deparse(substitute(file))
-    if (is.null(file)) file <- "NULL"
-
-    if (file.exists(file)) {
-        TRUE
+    if (nptperyear >= 300) {
+        lambda <- 1e4
+    } else if (nptperyear >= 40){
+        lambda <- 15
+    } else if (nptperyear >= 20){
+        lambda <- 5
     } else {
-        showNotification(sprintf("invalid %s: %s", filename, file),
-                         duration = duration, type = "warning")
-        FALSE
-    }
-}
-
-#' update all INPUT data according to \code{input} file.
-#' 
-#' assign following variables to parent:
-#' df, st, sites
-updateINPUT <- function(input){
-    status <- FALSE
-    if (input$file_type == '.rda | .RData') {
-        file_veg_rda  <- input$file_veg_rda$datapath
-        if (check_file(file_veg_rda)) {
-            load(file_veg_rda)
-            check_datestr(df)
-            status <- TRUE
-        }
-    } else if (input$file_type == 'text'){
-        browser()
-        
-        file_site <- input$file_site$datapath
-        file_veg_text  <- input$file_veg_text$datapath
-
-        if (check_file(file_veg_text)) {
-            df    <<- fread(file_veg_text)
-            check_datestr(df)
-            sites <<- unique(df$site) %>% sort()
-
-            if (check_file(file_site)){
-                st <<- fread(file_site)
-            } else {
-                st <<- data.table(ID = seq_along(sites), site = sites, lat = 30)
-            }
-            status <- TRUE
-        }
-    }
-    # list(df = df, st = st, sites = sites)
-    return(status)
-}
-
-#' update vegetation index variable Y in df
-#'
-#' @param rv reactiveValues.
-#' @param varname variable name of vegetation index.
-update_VI <- function(rv, varname){
-    # varname <- input$txt_varVI
-
-    print('\t update_VI ...')
-    if (!is.null(varname) && !(varname %in% c("", "y"))) {
-        eval(parse(text = sprintf('rv$df$y <- rv$df$%s', varname)))
-        df <<- rv$df
-    }
-}
-
-#' convert_QC2weight
-convert_QC2weight <- function(input){
-    qcFUN <- input$qcFUN
-    varQC <- input$txt_varQC
-
-    if (!(varQC %in% colnames(df))){
-        warning(sprintf("No QC variable %s in df! ", varQC))
+        lambda <- 2
     }
 
-    if (input$check_QC2weight && varQC %in% colnames(df)){
-        eval(parse(text = sprintf('df[, c("w", "QC_flag") := %s(%s, wmin = 0.2)]',
-            qcFUN, varQC)))
-        df <<- df
+    if (!missing(session)) {
+        # Update wSG parameter
+        updateNumericInput(session,
+            "frame", "moving window size (frame):",
+            floor(nptperyear / 5 * 2 + 1),
+            floor(nptperyear / 12),
+            floor(nptperyear / 2),
+            floor(nptperyear / 12)
+        )        
+        # Update Whittaker parameter
+        updateNumericInput(session, "lambda", value = lambda)
     }
 }

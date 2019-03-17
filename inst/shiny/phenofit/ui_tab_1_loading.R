@@ -11,22 +11,14 @@ tab_loading <- tabPanel("Load data",
                 choices = c("text", ".rda | .RData"), 
                 selected = "text"),
             conditionalPanel(condition = "input.file_type == 'text'",
-                fileInput("file_veg_text", "File of vegetation time-series (file_veg_text):",
-                    multiple = FALSE,
-                    accept = c("text/csv",
-                             "text/comma-separated-values,text/plain",
-                             ".csv")),
-                fileInput("file_site", "File of site information (file_site):",
-                    multiple = FALSE,
-                    accept = c("text/csv",
-                             "text/comma-separated-values,text/plain",
-                             ".csv"))
+                shinyFilesButton('file_veg_text', label='File select', 
+                    "File of vegetation time-series (file_veg_text):", multiple=FALSE),
+                shinyFilesButton('file_site', label='File select', 
+                    "File of site information (file_site):",, multiple=FALSE)
             ),
             conditionalPanel(condition = "input.file_type == '.rda | .RData'",
-                fileInput("file_veg_rda", 
-                    "RData of vegetation time-series and site information (file_veg_rda):",
-                    multiple = FALSE,
-                    accept = c(".rda", ".RData"))
+                shinyFilesButton('file_veg_rda', label='File select', 
+                    "RData of vegetation time-series and site information (file_veg_rda):",, multiple=FALSE)
             ),
             numericInput("nptperyear", "nptperyear:", 365, 12, 366, 1),
 

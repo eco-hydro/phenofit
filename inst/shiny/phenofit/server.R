@@ -1,60 +1,63 @@
 # shiny::runApp('inst/shiny/phenofit')
+volumes <- c('pwd' = '.', Home = "~", getVolumes()())
 
 # Define server logic required to draw a histogram
 server <- function(input, output, session) {
+    ## file select  ------------------------------------------------------------
+    shinyFileChoose(input, 'file_veg_text', roots=volumes,
+        # defaultPath='', defaultRoot='wd'
+        filetypes=c('', 'txt', 'csv'))
+    shinyFileChoose(input, 'file_site', roots=volumes,
+        # defaultPath='', defaultRoot='wd'
+        filetypes=c('', 'txt', 'csv'))
+    shinyFileChoose(input, 'file_veg_rda', roots=volumes,
+        # defaultPath='', defaultRoot='wd'
+        filetypes=c('', 'RData', 'rda'))
+
     ## define reactiveValues
     rv <- reactiveValues(df = df, st = st, sites = sites)
     # df_rv    <- reactive(rv$df)
     # sites_rv <- reactive(rv$sites)
 
+    # Figure height of fine curve fitting
+    heightSize <- reactive({
+        n <- length(input$FUN_fine)
+        if (n == 1) n <- 1.2 # increase height for single plot
+        fig.height*n + lgd.height
+    }) # number of fine curve fitting
+
     ############################################################################
-    ################################ observeEvent ##############################
+    ## observeEvent ------------------------------------------------------------
     observeEvent(input$txt_varVI , {
         update_VI(rv, input$txt_varVI)
     })
 
-    observeEvent(input$qcFUN     , convert_QC2weight(input))
-    observeEvent(input$txt_varQC , convert_QC2weight(input))
+    observeEvent(input$qcFUN     , convert_QC2weight(input, rv))
+    observeEvent(input$txt_varQC , convert_QC2weight(input, rv))
 
+    # nptperyear
     observeEvent(input$nptperyear, {
         nptperyear <<- input$nptperyear
+        fprintf('running here: nptperyear = %d\n', nptperyear)
+        # browser(), will be update automatically
+        # options_phenofit()$nptperyear <- nptperyear
 
-        fprintf('running here: nptperyear = %d\n', nptperyear);
-
-        # Update wSG parameter
-        updateNumericInput(session,
-            "frame", "moving window size (frame):",
-            floor(nptperyear / 5 * 2 + 1),
-            floor(nptperyear / 12),
-            floor(nptperyear / 2),
-            floor(nptperyear / 12)
-        )
-
-        # Update Whittaker parameter
-        if (nptperyear >= 300) {
-            lambda <- 1e4
-        } else if (nptperyear >= 40){
-            lambda <- 15
-        } else if (nptperyear >= 20){
-            lambda <- 5
-        } else {
-            lambda <- 2
-        }
-        updateNumericInput(session, "lambda", value = lambda)
+        initparam_FUN_rough(nptperyear, session)
     })
 
     # file_veg_text changed
     observeEvent(input$file_veg_text, {
-        # browser()
-        file_veg_text  <- input$file_veg_text$datapath
-        file_site <- input$file_site$datapath
+        file_veg_text  <- input$file_veg_text
+        file_site <- input$file_site
+        browser()
 
         if (check_file(file_veg_text)) {
-            df    <<- fread(file_veg_text) %>% check_datestr()
-            sites <<- unique(df$site) %>% sort()
+            options_phenofit$file_veg_text <- file_veg_text
+            df    <- fread(file_veg_text) %>% check_datestr()
+            sites <- unique(df$site) %>% sort()
 
             if (!check_file(file_site)){
-                st <<- data.table(ID = seq_along(sites), site = sites, lat = 30)
+                st <- data.table(ID = seq_along(sites), site = sites, lat = 30)
                 rv$st <- st
             }
             rv$df <- df
@@ -69,24 +72,26 @@ server <- function(input, output, session) {
 
         if (check_file(file_veg_text)) {
             if (check_file(file_site)){
-                st <<- fread(file_site)
+                options_phenofit$file_site <- file_site
+                st <- fread(file_site)
                 rv$st <- st
             }
         }
     })
 
     observeEvent(input$file_veg_rda, {
-        file_veg_text  <- input$file_veg_rda$datapath
-        if (check_file(file_veg_text)) {
-            load(file_veg_text)
-            df <<- df %>% check_datestr()
-            sites <<- unique(df$site) %>% sort()
-            st <<- st
+        file_veg_rda  <- input$file_veg_rda$datapath
+        if (check_file(file_veg_rda)) {
+            options_phenofit$file_veg_rda <- file_veg_rda
+
+            load(file_veg_rda)
+            df <- df %>% check_datestr()
+            sites <- unique(df$site) %>% sort()
+            st <- st
 
             rv$df <- df
             rv$st <- st
             rv$sites <- sites
-
             updateInput_phenofit(session, rv)
         }
     })
@@ -103,29 +108,23 @@ server <- function(input, output, session) {
         cal_season(input, INPUT())
     })
 
-    # Figure height of fine curve fitting
-    heightSize <- reactive({
-        n <- length(input$FUN_fine)
-        if (n == 1) n <- 1.2 # increase height for single plot
-        fig.height*n + lgd.height
-    }) # number of fine curve fitting
-
     params_fineFitting <- reactive({
         list(
             INPUT(), brks(),
-            iters = input$iters_fine,
-            methods = input$FUN_fine, #c("AG", "zhang", "beck", "elmore", 'Gu'), #,"klos",
-            verbose = FALSE,
-            wFUN = get(input$wFUN_fine),
-            nextend = input$nextend_fine,
+            iters          = input$iters_fine,
+            methods        = input$FUN_fine, #c("AG", "zhang", "beck", "elmore", 'Gu'), #,"klos",
+            verbose        = FALSE,
+            wFUN           = get(input$wFUN_fine),
+            nextend        = input$nextend_fine,
             maxExtendMonth = input$max_extend_month_fine,
             minExtendMonth = 1,
-            minPercValid = 0.2,
-            print = TRUE,
-            use.rough = input$use.rough
+            minPercValid   = 0.2,
+            print          = TRUE,
+            use.rough      = input$use.rough
         )
     })
 
+    ## WRITE options to json ---------------------------------------------------
     # add option to write setting
     options_phenofit <- reactive({
         # browser()
@@ -133,13 +132,14 @@ server <- function(input, output, session) {
     })
 
     observeEvent(options_phenofit(), {
-        timestr <- Sys.time() %>% format("%Y%m%d_%H%M%S")
-        sprintf('[s] write setting %s ... \n', timestr) %>% cat()
+        timestr <- Sys.time() %>% format("%Y%m%d_%H0000")
         outfile <- sprintf("perference/phenofit_setting_%s.json", timestr)
+
+        sprintf('[s] write setting %s ... \n', basename(outfile)) %>% cat()
         setting.write(options_phenofit(), outfile)
     })
 
-    # Fine Curve Fitting
+    ## Fine Curve Fitting ------------------------------------------------------
     fineFitting <- reactive({
         # params <- params_fineFitting()
         # print(str(params))
@@ -159,6 +159,8 @@ server <- function(input, output, session) {
             d
         })
     })
+
+    ###################### END OF REACTIVE VALUES ##############################
     ############################################################################
     # output$txt_title <- renderText({ INPUT()$titlestr })
 

@@ -130,7 +130,7 @@ season_mov <- function(INPUT,
     # using calendarYear as growing season
     if (calendarYear) {
         # need to remove incomplete year
-        dt <- season_calendar(dt$year, south)
+        dt <- season_calendar(years[2:(nyear-1)], south)
     } else {
         dt <- dt[dt$len > 45 & dt$len < 650, ] # mask too long and short gs
         # phenofit:::fix_dt(dt) # c++ address operation, fix growing season overlap

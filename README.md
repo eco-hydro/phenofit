@@ -2,20 +2,23 @@
 phenofit
 ========
 
+# phenofit  
 [![Travis Build Status](https://travis-ci.org/kongdd/phenofit.svg?branch=master)](https://travis-ci.org/kongdd/phenofit)
 [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/kongdd/phenofit?branch=master&svg=true)](https://ci.appveyor.com/project/kongdd/phenofit)
 [![codecov](https://codecov.io/gh/kongdd/phenofit/branch/master/graph/badge.svg)](https://codecov.io/gh/kongdd/phenofit)
 [![License](http://img.shields.io/badge/license-GPL%20%28%3E=%202%29-brightgreen.svg?style=flat)](http://www.gnu.org/licenses/gpl-2.0.html)
 [![CRAN](http://www.r-pkg.org/badges/version/phenofit)](https://cran.r-project.org/package=phenofit)
+[![CRAN\_Download\_Badge](http://cranlogs.r-pkg.org/badges/phenofit)](https://CRAN.R-project.org/package=phenofit)
 
 A state-of-the-art **remote sensing vegetation phenology** extraction package: `phenofit`
 
--   `phenofit` combine merits of TIMESAT and phenopix
--   A simple and stable growing season dividing methods was proposed
--   Provide a practical snow elimination method, based on Whittaker
--   7 curve fitting methods and 4 phenology extraction methods
--   We add parameters boundary for every curve fitting methods according to their ecological meaning.
--   `optimx` is used to select best optimization method for different curve fitting methods.
+ - `phenofit` combine merits of TIMESAT and phenopix
+ - A simple and stable growing season dividing methods was proposed
+ - Provide a practical snow elimination method, based on Whittaker
+ - 7 curve fitting methods and 4 phenology extraction methods
+ - We add parameters boundary for every curve fitting methods according to their ecological meaning.
+ - `optimx` is used to select best optimization method for different curve fitting methods.
+
 
 
 ***Task lists***
@@ -24,9 +27,10 @@ A state-of-the-art **remote sensing vegetation phenology** extraction package: `
 - [ ] Complete script automatic generating module of shinyapp;
 - [ ] Uncertainty analysis of curve fitting and phenological metrics;
 - [ ] Support spatial analysis;
-- [ ] Support annual season in curve fitting;
-- [ ] flexible fine fitting input ( original time-series or smoothed time-series by rough fitting).
-
+- [x] Support annual season in curve fitting;
+- [x] flexible fine fitting input ( original time-series or smoothed time-series by rough fitting).
+- [ ] growing season dividing error in `season_mov`
+- [ ] Asymmetric of Threshold method 
 
 ![title](man/Figure/Figure1_phenofit_flowchart.svg)   
 *<u>Figure 1. The flowchart of phenology extraction in `phenofit`.</u>*

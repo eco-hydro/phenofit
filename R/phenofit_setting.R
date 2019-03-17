@@ -9,10 +9,17 @@ options.phenofit <- list(
     file_veg_rda           = "",
     nptperyear             = NA_real_,
 
+    var_y                  = "y", 
+    var_qc                 = "",  # SummaryQA
+    qcFUN                  = "",  # qc_summary
+
     # growing season dividing parameters
     calendarYear           = FALSE, 
     FUN_season             = "season_mov", 
     FUN_rough              = "wWHIT", 
+    frame                  = NA_real_, 
+    lambda                 = NA_real_,
+    nf                     = 3,
     wFUN_rough             = "wKong", 
     iters_rough            = 4, 
     max_extend_month_rough = 2, 
@@ -52,10 +59,18 @@ setting.get <- function(input){
         file_veg_rda           = input$file_veg_rda,
         nptperyear             = input$nptperyear,
 
+        var_y                  = input$var_y, 
+        var_qc                 = input$var_qc,  # SummaryQA
+        qcFUN                  = input$qcFUN,   # qc_summary
+
         # growing season dividing parameters
         calendarYear           = input$calendarYear, 
         FUN_season             = input$FUN_season, 
         FUN_rough              = input$FUN_rough, 
+        frame                  = input$frame, 
+        lambda                 = input$lambda,
+        nf                     = input$nf,
+        
         wFUN_rough             = input$wFUN_rough, 
         iters_rough            = input$iters_rough, 
         max_extend_month_rough = input$max_extend_month_rough, 

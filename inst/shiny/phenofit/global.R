@@ -1,6 +1,7 @@
 # shiny::runApp("inst/shiny/phenofit/")
 source('src_load_input.R')
 source('global_phenofit.R')
+library(shinyFiles)
 # library(future)
 # plan(multisession)
 
@@ -34,10 +35,12 @@ lgd.height <- 20
 
 param_step <- 0.1 # for r_max and rtrough_max
 
-load_data <- function(){
+load_data <- function(options){
     file_veg_rda  <- options$file_rda
     file_veg_text <- options$file_veg_text
     file_site <- options$file_site
 
+
     # if (is.null(file_))
 }
+
