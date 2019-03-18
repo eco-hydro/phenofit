@@ -2,7 +2,8 @@
 
 #' select_var_VI
 select_var_VI <- function(df){
-    vars_select(colnames(df), -tidyselect::matches("id|ID|site|scale|date|t|year|doy|DayOfYear|QA|QC|qa|qc|w"))
+    tidyselect::vars_select(colnames(df),
+        -tidyselect::matches("id|ID|site|scale|date|t|year|doy|DayOfYear|QA|QC|qa|qc|w"))
 }
 
 #' updateInput_phenofit
@@ -11,25 +12,20 @@ select_var_VI <- function(df){
 #' @param session shiny session
 #' @param rv reactiveValues defined in the server, has variables of
 #' 'df', 'st' and 'sites'
-updateInput_phenofit <- function(session, rv) {
+updateInput_phenofit <- function(session, rv, init = FALSE) {
     ## update `nptperyear`
-    var_time   <-  intersect(c("date", "t"), colnames(rv$df))[1]
-    deltaT     <-  as.numeric(diff(rv$df[[var_time]][c(1, 2)]))
+    colnames <- colnames(rv$df)
+    sites <- rv$sites
+
+    var_time   <-  intersect(c("date", "t"), colnames)[1]
+    deltaT     <-  isolate( as.numeric(diff(rv$df[[var_time]][c(1, 2)])) )
     nptperyear <<- ceiling(365/deltaT)
 
-    updateNumericInput(session, 'nptperyear', value = nptperyear)
-
-    ## update `var_VI``
-    updateSelectInput(session, "txt_varVI",
-        choices = select_var_VI(rv$df),
-        selected = select_var_VI(rv$df)[1])
-
-    # print("here")
     # browser()
     # update_VI(rv, input$txt_varVI) # update_VI right now.
 
     ## update `var_QC`
-    varQCs <- colnames(rv$df) %>% .[grep("QA|QC|qa|qc", .)]
+    varQCs <- colnames %>% .[grep("QA|QC|qa|qc", .)]
     if (length(varQCs) == 0){
         sel_qc_title <- paste0("vairable of QC: ",
             "No QC variables!")
@@ -39,13 +35,13 @@ updateInput_phenofit <- function(session, rv) {
         sel_qc <- varQCs[1]
     }
 
+    # updateNumericInput(session, 'nptperyear', value = nptperyear)
     # Do not update values when varQC changes. Because, it also rely on qcFUN
-    updateSelectInput(session, "txt_varQC", sel_qc_title,
-        choices = varQCs, varQCs[1])
-
-    ## Update `site` in main panel
+    updateSelectInput(session, "var_qc", sel_qc_title,
+        choices = varQCs, selected = varQCs[1])
     updateSelectInput(session, "site",
-                      choices = rv$sites, rv$sites[1])
+                      choices = sites, selected = sites[1])
+    NULL
 }
 
 #' getDf.site
@@ -67,7 +63,7 @@ getDf.site  <- function(df, sitename, dateRange){
     #%T>% plot_input(365)
 }
 
-getINPUT.site <- function(df, st, sitename, dateRange){
+getINPUT.site <- function(df, st, sitename, nptperyear, dateRange){
     sp       <- st[site == sitename]
     south    <- sp$lat < 0
     IGBP     <- sp$IGBP %>% {ifelse(is.null(.), "", .)}
@@ -101,7 +97,7 @@ cal_season <- function(input, INPUT){
         maxExtendMonth = input$max_extend_month_rough,
         rtrough_max    = input$rtrough_max,
         r_max          = input$r_max,
-        r_min          = input$r_min, 
+        r_min          = input$r_min,
         calendarYear   = input$calendarYear
     )
 
@@ -162,7 +158,7 @@ phenofit_all <- function(input, progress = NULL){
         minExtendMonth = 1,
         QC_flag        = NULL,
         minPercValid   = 0.2,
-        print          = TRUE, 
+        print          = TRUE,
         use.rough      = input$use.rough
     )
 

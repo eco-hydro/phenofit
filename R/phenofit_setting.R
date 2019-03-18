@@ -7,6 +7,7 @@ options.phenofit <- list(
     file_site              = "", 
     file_veg_text          = "",
     file_veg_rda           = "",
+    file_type              = "RData",
     nptperyear             = NA_real_,
 
     var_y                  = "y", 
@@ -42,57 +43,71 @@ options.phenofit <- list(
 
 #' get parameters of phenofit shinyapp
 #' 
+#' @param options options of phenofit needed to export.
+#' @param others options in others will override \code{options}. 
+#' 
 #' @importFrom jsonlite write_json read_json
 #' @export
 #' @rdname setting
 #' 
 #' @examples
 #' \dontrun{
-#' pars = get_setting(input)
+#' pars = get_setting(options)
 #' print(str(pars))
 #' write_json(setting, "phenofit_setting.json", pretty = TRUE)
 #' }
-setting.get <- function(input){
-    list(
-        file_site              = input$file_site,
-        file_veg_text          = input$file_veg_text,
-        file_veg_rda           = input$file_veg_rda,
-        nptperyear             = input$nptperyear,
+setting.get <- function(options, others = NULL, ...){
+    options <- list(
+        file_site              = options$file_site,
+        file_veg_text          = options$file_veg_text,
+        file_veg_rda           = options$file_veg_rda,
+        file_type              = options$file_type,
+        nptperyear             = options$nptperyear,
 
-        var_y                  = input$var_y, 
-        var_qc                 = input$var_qc,  # SummaryQA
-        qcFUN                  = input$qcFUN,   # qc_summary
+        var_y                  = options$var_y, 
+        var_qc                 = options$var_qc,  # SummaryQA
+        qcFUN                  = options$qcFUN,   # qc_summary
 
         # growing season dividing parameters
-        calendarYear           = input$calendarYear, 
-        FUN_season             = input$FUN_season, 
-        FUN_rough              = input$FUN_rough, 
-        frame                  = input$frame, 
-        lambda                 = input$lambda,
-        nf                     = input$nf,
+        calendarYear           = options$calendarYear, 
+        FUN_season             = options$FUN_season, 
+        FUN_rough              = options$FUN_rough, 
+        frame                  = options$frame, 
+        lambda                 = options$lambda,
+        nf                     = options$nf,
         
-        wFUN_rough             = input$wFUN_rough, 
-        iters_rough            = input$iters_rough, 
-        max_extend_month_rough = input$max_extend_month_rough, 
-        r_max                  = input$r_max, 
-        r_min                  = input$r_min, 
-        rtrough_max            = input$rtrough_max, 
+        wFUN_rough             = options$wFUN_rough, 
+        iters_rough            = options$iters_rough, 
+        max_extend_month_rough = options$max_extend_month_rough, 
+        r_max                  = options$r_max, 
+        r_min                  = options$r_min, 
+        rtrough_max            = options$rtrough_max, 
 
         # fine fitting parameters
-        FUN_fine               = input$FUN_fine, 
-        wFUN_fine              = input$wFUN_fine, 
-        iters_fine             = input$iters_fine, 
-        max_extend_month_fine  = input$max_extend_month_fine, 
-        nextend_fine           = input$nextend_fine, 
-        use.rough              = input$use.rough,
+        FUN_fine               = options$FUN_fine, 
+        wFUN_fine              = options$wFUN_fine, 
+        iters_fine             = options$iters_fine, 
+        max_extend_month_fine  = options$max_extend_month_fine, 
+        nextend_fine           = options$nextend_fine, 
+        use.rough              = options$use.rough,
 
         # phenology extraction
-        meths_pheno            = input$meths_pheno
+        meths_pheno            = options$meths_pheno
     )
+
+    # inorder to replace variables in shinyFiles
+    names  <- names(others)
+    I_raw  <- match(names(others), names(options))
+    I_nona <- which(!is.na(I_raw))
+
+    options[I_raw[I_nona]] <- others[I_nona]
+    return(options)
     # TRS_sos
     # TRS_eos
 }
 
+#' @param file file path of phenofit setting file (json).
+#'  
 #' @export
 #' @rdname setting
 setting.read <- function(file = "phenofit_setting.json"){

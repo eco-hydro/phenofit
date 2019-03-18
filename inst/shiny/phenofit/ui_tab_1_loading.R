@@ -8,35 +8,39 @@ tab_loading <- tabPanel("Load data",
         column(width_sidebar + 2, 
             h3('1.1 load data'),         
             radioButtons("file_type", "file type:", 
-                choices = c("text", ".rda | .RData"), 
+                choices = c("text", "RData"), 
                 selected = "text"),
             conditionalPanel(condition = "input.file_type == 'text'",
-                shinyFilesButton('file_veg_text', label='File select', 
+                shinyFilesButton('file_veg_text', 
+                    label='File of vegetation time-series (file_veg_text):', 
                     "File of vegetation time-series (file_veg_text):", multiple=FALSE),
-                shinyFilesButton('file_site', label='File select', 
+                br(),
+                shinyFilesButton('file_site', 
+                    label='File of site information (file_site):', 
                     "File of site information (file_site):",, multiple=FALSE)
             ),
-            conditionalPanel(condition = "input.file_type == '.rda | .RData'",
+            conditionalPanel(condition = "input.file_type == 'RData'",
                 shinyFilesButton('file_veg_rda', label='File select', 
                     "RData of vegetation time-series and site information (file_veg_rda):",, multiple=FALSE)
             ),
-            numericInput("nptperyear", "nptperyear:", 365, 12, 366, 1),
+            numericInput("nptperyear", "nptperyear:", options$nptperyear, 12, 366, 1),
+            actionButton('load_data', 'Load Data'),
 
             ## 1.2 check_input
             h3('1.2 check_input'),
-            selectInput("txt_varVI", "vairable of vegetation index", 
-                choices = select_var_VI(df), 
-                selected = select_var_VI(df)[1]),
-
+            selectInput("var_y", "vairable of vegetation index", 
+                choices = options$var_y), #select_var_VI(df), 
+                # selected = select_var_VI(df)[1]),
             checkboxInput("check_QC2weight", "Convert QC to weight?", FALSE),
             conditionalPanel(condition = "input.check_QC2weight", 
-                textInput("txt_varQC", "vairable of QC:", ""),
+                textInput("var_qc", "vairable of QC:", options$var_qc),
                 selectInput(
                     "qcFUN", "function of initializing weights according to QC (qcFUN):",
                     choices = c("qc_summary", "qc_5l", "qc_StateQA", "qc_NDVIv4"),
                     selected = "qc_summary"
                 )
-            )
+            ), 
+            actionButton('pre_process', 'Pre-process')
         ),
         column(6, 
             # verbatimTextOutput("console_phenoMetrics", "help info")

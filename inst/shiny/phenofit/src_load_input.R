@@ -28,7 +28,7 @@ tidy_shiny_filepath <- function(path){
     if (is.list(path)) {
         path$datapath
     } else if (is.character(path)) {
-        path 
+        path
     } else {
         ""
     }
@@ -38,13 +38,16 @@ tidy_shiny_filepath <- function(path){
 #' Check file whether exist. If not, then give a notification.
 check_file <- function(file, duration = 10){
     filename <- deparse(substitute(file))
-    if (is.null(file)) file <- "NULL"
 
-    if (file.exists(file)) {
+    if (length(file) == 0 || !is.character(file)) {
+        return (FALSE)
+    } else if (file.exists(file)) {
         return(TRUE)
     } else {
-        showNotification(sprintf("invalid %s: %s", filename, file), 
-            duration = duration, type = "warning")
+        if (duration != NULL){
+            showNotification(sprintf("invalid %s: %s", filename, as.character(file)),
+                duration = duration, type = "warning")
+        }
         return(FALSE)
     }
 }
@@ -61,10 +64,10 @@ check_datestr <- function(df){
 
 
 #' update all INPUT data according to \code{input} file.
-#' 
-#' @param input should has children of \code{file_site}, and one of 
+#'
+#' @param input should has children of \code{file_site}, and one of
 #' \code{file_veg_rda} or \code{file_veg_text}.
-#' 
+#'
 #' assign following variables to parent:
 #' df, st, sites
 load_input <- function(input){
@@ -93,7 +96,7 @@ load_input <- function(input){
             status <- TRUE
         }
     }
-    
+
     list2env(listk(df, st, sites), env = parent.frame()) # to calling env
     # list(df = df, st = st, sites = sites)
     return(status)
@@ -115,14 +118,14 @@ update_VI <- function(rv, varname){
 #' convert_QC2weight
 convert_QC2weight <- function(input, rv){
     qcFUN <- input$qcFUN
-    varQC <- input$txt_varQC
+    varQC <- input$var_qc
 
     if (!(varQC %in% colnames(rv$df))){
         warning(sprintf("No QC variable %s in df! ", varQC))
     }
 
     if (input$check_QC2weight && varQC %in% colnames(rv$df)){
-        eval(parse(text = sprintf('rv$df[, c("w", "QC_flag") := %s(%s, wmin = 0.2)]',
+        eval(parse(text = sprintf('rv$df[, c("QC_flag", "w") := %s(%s, wmin = 0.2)]',
             qcFUN, varQC)))
     }
 }
@@ -165,8 +168,64 @@ initparam_FUN_rough <- function(nptperyear, session) {
             floor(nptperyear / 12),
             floor(nptperyear / 2),
             floor(nptperyear / 12)
-        )        
+        )
         # Update Whittaker parameter
         updateNumericInput(session, "lambda", value = lambda)
     }
+}
+
+#' @examples
+#' init_options(options, rv, input, session)
+load_data <- function(options, ...){
+    file_type <- options$file_type
+    file_veg_rda  <- options$file_rda
+    file_veg_text <- options$file_veg_text
+    file_site <- options$file_site
+
+    if (file_type == "text") {
+        if (check_file(file_veg_text)) {
+            df    <- fread(file_veg_text) %>% check_datestr()
+            sites <- unique(df$site) %>% sort()
+
+            if (check_file(file_site)) {
+                st <- fread(file_site)
+            } else {
+                st <- data.table(ID = seq_along(sites), site = sites, lat = 30)
+            }
+        }
+    } else {
+        if (check_file(file_veg_rda)) {
+            # options$file_veg_rda <- file_veg_rda
+            load(file_veg_rda)
+            df <- df %>% check_datestr()
+            sites <- unique(df$site) %>% sort()
+            # rv$st <- st
+        }
+    }
+    
+    varname <- options$var_y
+    varQC <- options$var_qc
+    qcFUN <- options$qcFUN
+
+    if (!is.null(varname) && !(varname %in% c("", "y"))) {
+        eval(parse(text = sprintf('df$y <- df$%s', varname)))
+    }
+
+    if (!(varQC %in% colnames(df))){
+        warning(sprintf("No QC variable %s in df! ", varQC))
+    }
+
+    if (varQC %in% colnames(df)){
+        eval(parse(text = sprintf('df[, c("QC_flag", "w") := %s(%s, wmin = 0.2)]',
+            qcFUN, varQC)))
+    }
+
+    # isolate({
+    #     rv$st <- st    
+    #     rv$sites <- sites
+    #     rv$df <- df
+    # })
+    nptperyear <- options$nptperyear
+
+    listk(df, st, sites, nptperyear)
 }

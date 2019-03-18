@@ -1,23 +1,34 @@
 # shiny::runApp('inst/shiny/phenofit')
-volumes <- c('pwd' = '.', Home = "~", getVolumes()())
+roots <- c('wd' = getwd(), Home = "~", getVolumes()())
+nrun  <- 0
+
+#' tidy_shinyFiles
+tidy_shinyFiles <- function(selection) {
+    paths <- parseFilePaths(roots, selection)$datapath
+    # update working dir
+    wd <- dirname(paths[1])
+
+    if (dir.exists(wd)) {
+        roots['wd'] <<- wd
+    }
+    return(paths)
+}
 
 # Define server logic required to draw a histogram
 server <- function(input, output, session) {
     ## file select  ------------------------------------------------------------
-    shinyFileChoose(input, 'file_veg_text', roots=volumes,
-        # defaultPath='', defaultRoot='wd'
+    shinyFileChoose(input, 'file_veg_text', roots=roots,
+        # defaultPath='',
+        defaultRoot='wd',
         filetypes=c('', 'txt', 'csv'))
-    shinyFileChoose(input, 'file_site', roots=volumes,
-        # defaultPath='', defaultRoot='wd'
+    shinyFileChoose(input, 'file_site', roots=roots,
+        # defaultPath='',
+        defaultRoot='wd',
         filetypes=c('', 'txt', 'csv'))
-    shinyFileChoose(input, 'file_veg_rda', roots=volumes,
-        # defaultPath='', defaultRoot='wd'
+    shinyFileChoose(input, 'file_veg_rda', roots=roots,
+        # defaultPath='',
+        defaultRoot='wd',
         filetypes=c('', 'RData', 'rda'))
-
-    ## define reactiveValues
-    rv <- reactiveValues(df = df, st = st, sites = sites)
-    # df_rv    <- reactive(rv$df)
-    # sites_rv <- reactive(rv$sites)
 
     # Figure height of fine curve fitting
     heightSize <- reactive({
@@ -26,76 +37,47 @@ server <- function(input, output, session) {
         fig.height*n + lgd.height
     }) # number of fine curve fitting
 
+    ## define reactiveValues
+    # rv    <- reactiveValues(df = df, st = st, sites = sites)
+    rv    <- reactiveValues(df = dataIN$df, st = dataIN$st, sites = dataIN$sites,
+        nptperyear = dataIN$nptperyear,
+        filepaths = options[c("file_veg_text", "file_veg_rda", "file_site", "file_type", "nptperyear")],
+        nrun = 0)
+
+    observeEvent(rv$sites, {
+    #     browser()
+        updateSelectInput(session, "site",
+                      choices = rv$sites, selected = rv$sites[1])
+    })
     ############################################################################
     ## observeEvent ------------------------------------------------------------
-    observeEvent(input$txt_varVI , {
-        update_VI(rv, input$txt_varVI)
+
+    # observe({
+    #     load_data(options, rv, input)
+    #     # load_data(filepaths, rv)
+    #     convert_QC2weight(input, rv)
+    #     updateSelectInput(session, "site",
+    #                   choices = rv$sites, rv$sites[1])
+    #     # updateInput_phenofit(session, rv, init = TRUE)
+    # })
+
+    observeEvent(input$load_data, {
+        rv$filepaths <-
+            list(file_veg_text = input$file_veg_text %>% tidy_shinyFiles(),
+                file_veg_rda   = input$file_veg_rda %>% tidy_shinyFiles(),
+                file_site      = input$file_site %>% tidy_shinyFiles(),
+                file_type      = input$file_type,
+                nptperyear     = input$nptperyear)
+
+        load_data(rv$filepaths, rv)
     })
 
-    observeEvent(input$qcFUN     , convert_QC2weight(input, rv))
-    observeEvent(input$txt_varQC , convert_QC2weight(input, rv))
-
-    # nptperyear
-    observeEvent(input$nptperyear, {
-        nptperyear <<- input$nptperyear
-        fprintf('running here: nptperyear = %d\n', nptperyear)
-        # browser(), will be update automatically
-        # options_phenofit()$nptperyear <- nptperyear
-
-        initparam_FUN_rough(nptperyear, session)
+    observeEvent(input$pre_process, {
+        convert_QC2weight(input, rv)
+        update_VI(rv, input$var_y)
     })
 
-    # file_veg_text changed
-    observeEvent(input$file_veg_text, {
-        file_veg_text  <- input$file_veg_text
-        file_site <- input$file_site
-        browser()
-
-        if (check_file(file_veg_text)) {
-            options_phenofit$file_veg_text <- file_veg_text
-            df    <- fread(file_veg_text) %>% check_datestr()
-            sites <- unique(df$site) %>% sort()
-
-            if (!check_file(file_site)){
-                st <- data.table(ID = seq_along(sites), site = sites, lat = 30)
-                rv$st <- st
-            }
-            rv$df <- df
-            rv$site <- sites
-            updateInput_phenofit(session, rv)
-        }
-    })
-
-    observeEvent(input$file_site, {
-        file_veg_text  <- input$file_veg_text$datapath
-        file_site <- input$file_site$datapath
-
-        if (check_file(file_veg_text)) {
-            if (check_file(file_site)){
-                options_phenofit$file_site <- file_site
-                st <- fread(file_site)
-                rv$st <- st
-            }
-        }
-    })
-
-    observeEvent(input$file_veg_rda, {
-        file_veg_rda  <- input$file_veg_rda$datapath
-        if (check_file(file_veg_rda)) {
-            options_phenofit$file_veg_rda <- file_veg_rda
-
-            load(file_veg_rda)
-            df <- df %>% check_datestr()
-            sites <- unique(df$site) %>% sort()
-            st <- st
-
-            rv$df <- df
-            rv$st <- st
-            rv$sites <- sites
-            updateInput_phenofit(session, rv)
-        }
-    })
-
+    ## INPUT -------------------------------------------------------------------
     ############################################################################
     output$t_input_veg  <- DT::renderDataTable( DT_datatable(rv$df, scrollX = TRUE) )
     output$t_input_site <- DT::renderDataTable( DT_datatable(rv$st))
@@ -103,10 +85,9 @@ server <- function(input, output, session) {
     d          <- reactive({ getDf.site(rv$df, input$site, input$dateRange) })
     date_range <- reactive({ range(d()$t) })
 
-    INPUT <- reactive({ getINPUT.site(rv$df, rv$st, input$site, input$dateRange) })
-    brks  <- reactive({
-        cal_season(input, INPUT())
-    })
+    INPUT <- reactive({ getINPUT.site(rv$df, rv$st, input$site, rv$nptperyear,
+        input$dateRange) })
+    brks  <- reactive({ cal_season(input, INPUT()) })
 
     params_fineFitting <- reactive({
         list(
@@ -128,15 +109,21 @@ server <- function(input, output, session) {
     # add option to write setting
     options_phenofit <- reactive({
         # browser()
-        setting.get(input)
+        # nrun <- isolate(rv$nrun)
+        # print(filepaths() %>% str()) # who induced?
+        # print(rv$filepaths)
+        setting.get(input, rv$filepaths)
     })
 
     observeEvent(options_phenofit(), {
-        timestr <- Sys.time() %>% format("%Y%m%d_%H0000")
-        outfile <- sprintf("perference/phenofit_setting_%s.json", timestr)
+        if (rv$nrun >= 1) {
+            timestr <- Sys.time() %>% format("%Y%m%d_%H0000")
+            outfile <- sprintf("perference/phenofit_setting.json")
+            # outfile <- sprintf("perference/phenofit_setting_%s.json", timestr)
 
-        sprintf('[s] write setting %s ... \n', basename(outfile)) %>% cat()
-        setting.write(options_phenofit(), outfile)
+            sprintf('[s] write setting %s ... \n', basename(outfile)) %>% cat()
+            setting.write(options_phenofit(), outfile)
+        }
     })
 
     ## Fine Curve Fitting ------------------------------------------------------
@@ -153,6 +140,11 @@ server <- function(input, output, session) {
     })
 
     lst_metrics <- reactive({
+        isolate({
+            rv$nrun <- rv$nrun + 1 # increase running times
+        })
+        nrun <<- nrun + 1
+
         fineFitting()$pheno %>% map(function(lst){
             d <- melt_list(lst, "meth") %>% reorder_name(c("site", "meth", "flag", "origin"))
             colnames(d) %<>% gsub("GU.|ZHANG.", "", .)
@@ -167,7 +159,7 @@ server <- function(input, output, session) {
     ## Rough fitting and growing season dividing
     output$plot_gs <- renderPlot({
         sitename <- input$site
-        par(setting)
+        par(par_setting)
 
         plot_season(INPUT(), brks(), d(), INPUT()$ylu)
         abline(h = 1, col = "red")
