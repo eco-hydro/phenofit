@@ -7,11 +7,13 @@ library(shinyFiles)
 
 
 check_setting <- function(){
-    json <- "perference/phenofit_setting2.json"
+    file_json <- "perference/phenofit_setting.json"
     # print(file.exists(json))
+    if (!dir.exists(dirname(file_json)))
+        dir.create(dirname(file_json), recursive = TRUE)
 
-    if (file.exists(json)) {
-        options <- read_json(json) %>% map(unlist)
+    if (file.exists(file_json)) {
+        options <- read_json(file_json) %>% map(unlist)
     } else {
         options <- setting.get()
     }
@@ -49,5 +51,5 @@ lgd.height <- 20
 param_step <- 0.1 # for r_max and rtrough_max
 
 options <- check_setting()
-dataIN <- load_data(options)
+dataIN <- phenofit_loaddata(options)
 sites <- dataIN$sites

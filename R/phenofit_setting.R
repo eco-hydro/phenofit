@@ -11,9 +11,10 @@ options.phenofit <- list(
     nptperyear             = NA_real_,
 
     var_y                  = "y", 
+    is_QC2w                = FALSE,
     var_qc                 = "",  # SummaryQA
     qcFUN                  = "",  # qc_summary
-
+    site                   = "",
     # growing season dividing parameters
     calendarYear           = FALSE, 
     FUN_season             = "season_mov", 
@@ -65,8 +66,10 @@ setting.get <- function(options, others = NULL, ...){
         nptperyear             = options$nptperyear,
 
         var_y                  = options$var_y, 
+        is_QC2w                = options$is_QC2w,
         var_qc                 = options$var_qc,  # SummaryQA
         qcFUN                  = options$qcFUN,   # qc_summary
+        site                   = options$site,
 
         # growing season dividing parameters
         calendarYear           = options$calendarYear, 
@@ -111,7 +114,11 @@ setting.get <- function(options, others = NULL, ...){
 #' @export
 #' @rdname setting
 setting.read <- function(file = "phenofit_setting.json"){
-    read_json(file)
+    if (file.exists(file_json)) {
+        read_json(file) %>% map(unlist)
+    } else {
+        warning(sprintf('[w] setting file: %s not exist!', file_json))
+    }
 }
 
 #' @export

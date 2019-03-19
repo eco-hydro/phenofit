@@ -11,6 +11,10 @@
 #' @export
 plot_season <- function(INPUT, brks, plotdat, ylu,
                         IsPlot.OnlyBad = FALSE, show.legend = TRUE){
+    if (missing(plotdat)) {
+        plotdat <- INPUT
+    }
+    
     stat <- stat_season(INPUT, brks)
     stat_txt  <- stat[c("R2", "NSE", "sim.cv", "obs.cv")] %>% unlist() %>%
         set_names(c("R2", "NSE", "CV_sim", "CV_obs")) %>%

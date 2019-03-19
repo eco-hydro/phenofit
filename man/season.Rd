@@ -74,7 +74,7 @@ returned.}
 
 \item{IsPlot}{Boolean}
 
-\item{plotdat}{A list or data.table, with \code{t}, \code{y} and \code{w}.
+\item{plotdat}{(optional) A list or data.table, with \code{t}, \code{y} and \code{w}.
 Only if \code{IsPlot=TRUE}, \code{\link{plot_input}} will be used to plot.
 Known that y and w in \code{INPUT} have been changed, we suggest using the
 original data.table.}

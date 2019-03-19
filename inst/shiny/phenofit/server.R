@@ -45,7 +45,6 @@ server <- function(input, output, session) {
         nrun = 0)
 
     observeEvent(rv$sites, {
-    #     browser()
         updateSelectInput(session, "site",
                       choices = rv$sites, selected = rv$sites[1])
     })
@@ -82,69 +81,44 @@ server <- function(input, output, session) {
     output$t_input_veg  <- DT::renderDataTable( DT_datatable(rv$df, scrollX = TRUE) )
     output$t_input_site <- DT::renderDataTable( DT_datatable(rv$st))
 
-    d          <- reactive({ getDf.site(rv$df, input$site, input$dateRange) })
+    d          <- reactive({ getsite_data(rv$df, input$site, input$dateRange) })
     date_range <- reactive({ range(d()$t) })
 
-    INPUT <- reactive({ getINPUT.site(rv$df, rv$st, input$site, rv$nptperyear,
+    INPUT <- reactive({ getsite_INPUT(rv$df, rv$st, input$site, rv$nptperyear,
         input$dateRange) })
-    brks  <- reactive({ cal_season(input, INPUT()) })
-
-    params_fineFitting <- reactive({
-        list(
-            INPUT(), brks(),
-            iters          = input$iters_fine,
-            methods        = input$FUN_fine, #c("AG", "zhang", "beck", "elmore", 'Gu'), #,"klos",
-            verbose        = FALSE,
-            wFUN           = get(input$wFUN_fine),
-            nextend        = input$nextend_fine,
-            maxExtendMonth = input$max_extend_month_fine,
-            minExtendMonth = 1,
-            minPercValid   = 0.2,
-            print          = TRUE,
-            use.rough      = input$use.rough
-        )
-    })
+    brks  <- reactive({ phenofit_season(INPUT(), input) })
 
     ## WRITE options to json ---------------------------------------------------
     # add option to write setting
     options_phenofit <- reactive({
-        # browser()
         # nrun <- isolate(rv$nrun)
         # print(filepaths() %>% str()) # who induced?
-        # print(rv$filepaths)
         setting.get(input, rv$filepaths)
     })
 
     observeEvent(options_phenofit(), {
-        if (rv$nrun >= 1) {
+        # if (rv$nrun >= 1) {
+        fprintf('nrun = %d\n', nrun)
+        if (nrun >= 1) {
             timestr <- Sys.time() %>% format("%Y%m%d_%H0000")
-            outfile <- sprintf("perference/phenofit_setting.json")
+            file_json <- sprintf("perference/phenofit_setting.json")
             # outfile <- sprintf("perference/phenofit_setting_%s.json", timestr)
+            if (!dir.exists(dirname(file_json)))
+                dir.create(dirname(file_json), recursive = TRUE)
 
-            sprintf('[s] write setting %s ... \n', basename(outfile)) %>% cat()
-            setting.write(options_phenofit(), outfile)
+            sprintf('[s] write setting %s ... \n', basename(file_json)) %>% cat()
+            setting.write(options_phenofit(), file_json)
         }
     })
 
     ## Fine Curve Fitting ------------------------------------------------------
     fineFitting <- reactive({
-        # params <- params_fineFitting()
-        # print(str(params))
-        fit  <- do.call(curvefits, params_fineFitting())
-        # params_fineFitting <- getparam(fit)
-
-        stat  <- get_GOF(fit)                       # Goodness-Of-Fit
-        pheno <- get_pheno(fit, IsPlot=FALSE)   # Phenological metrics
-
-        list(fit = fit, INPUT = INPUT(), seasons = brks(), stat = stat, pheno = pheno)
+        phenofit_finefit(INPUT(), brks(), input)
     })
 
     lst_metrics <- reactive({
-        isolate({
-            rv$nrun <- rv$nrun + 1 # increase running times
-        })
+        # isolate({ rv$nrun <- rv$nrun + 1 }) # increase running times
         nrun <<- nrun + 1
-
         fineFitting()$pheno %>% map(function(lst){
             d <- melt_list(lst, "meth") %>% reorder_name(c("site", "meth", "flag", "origin"))
             colnames(d) %<>% gsub("GU.|ZHANG.", "", .)
@@ -154,7 +128,6 @@ server <- function(input, output, session) {
 
     ###################### END OF REACTIVE VALUES ##############################
     ############################################################################
-    # output$txt_title <- renderText({ INPUT()$titlestr })
 
     ## Rough fitting and growing season dividing
     output$plot_gs <- renderPlot({
@@ -164,7 +137,6 @@ server <- function(input, output, session) {
         plot_season(INPUT(), brks(), d(), INPUT()$ylu)
         abline(h = 1, col = "red")
         title(INPUT()$titlestr)
-        # rv$brks = do.call(check_season, param)
     })
 
     output$t_gs <- DT::renderDataTable({
@@ -216,9 +188,7 @@ server <- function(input, output, session) {
     # output$console_phenoMetrics <- renderPrint({ lst_metrics })
 
     output$download_allsites <- downloadHandler(
-        filename = function() {
-            paste('data-', Sys.Date(), '.RData', sep='')
-        },
+        filename = function() { paste('data-', Sys.Date(), '.RData', sep='') },
         content = function(file) {
             fprintf("debug | n = %d\n", length(sites))
             progress <- shiny::Progress$new(min = 0, max = length(sites))

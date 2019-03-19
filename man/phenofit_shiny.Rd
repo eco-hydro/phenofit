@@ -2,7 +2,7 @@
 % Please edit documentation in R/phenofit_shiny.R
 \name{phenofit_shiny}
 \alias{phenofit_shiny}
-\title{Starts the phenofit shiny interface}
+\title{phenofit shiny app}
 \usage{
 phenofit_shiny()
 }
