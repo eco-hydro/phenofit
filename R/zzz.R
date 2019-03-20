@@ -16,6 +16,7 @@
 #' @importFrom stringr str_extract
 #' @importFrom utils object.size
 #' @importFrom grDevices dev.off cairo_pdf colorRampPalette
+#' @importFrom jsonlite read_json write_json
 #' @import stats graphics
 #' 
 #' @useDynLib phenofit, .registration = TRUE

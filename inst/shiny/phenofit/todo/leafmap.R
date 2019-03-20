@@ -1,10 +1,12 @@
 library(leaflet)
 library(Ipaper)
+library(raster)
+library(shiny)
 
 # SpatialObjects
 range <- c(25, 40, 73, 105) # Tibetan Plateau
 grid  <- get_grid(range, cellsize = 2, midgrid = TRUE) %>% raster()
-poly  <- as(grid, "SpatialPolygonsDataFrame")
+poly_grid  <- as(grid, "SpatialPolygonsDataFrame")
 coord <- coordinates(poly)
 
 # leaflet map for TP pheonlogy research
@@ -23,7 +25,7 @@ lc_names_006  = c('UNC', 'ENF', 'EBF', 'DNF', 'DBF', 'MF',
     'CRO', 'URB', 'CNV', 'SNOW', 'BSV', 'WATER')
 
 
-basemap <- function(){
+basemap <- function(grid, poly_grid, poly){
     leaflet() %>% 
     addTiles(
         "http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}.jpg",
@@ -47,11 +49,11 @@ basemap <- function(){
         group = "Open Topo Map"
     ) %>% 
     addLayersControl(
-        baseGroups = c("World Imagery", "MODIS Land Cover", "Open Topo Map"),
+        baseGroups = c("World Imagery", "Open Topo Map"),
         overlayGroups = c("Markers", "Polygons", "MODIS Land Cover")
     ) %>% 
     addScaleBar(position = "bottomright", options = scaleBarOptions(imperial = FALSE)) %>% 
-    addPolygons(data = poly, group = "Polygons",
+    addPolygons(data = poly_grid, group = "Polygons",
                 color = "#444444",
                 fillColor = "transparent",
                 weight = 1, smoothFactor = 0.5,
@@ -61,5 +63,11 @@ basemap <- function(){
                 labelOptions = labelOptions(textsize = "15px"),
                 highlightOptions = highlightOptions(color = "white", weight = 2,
                                                     bringToFront = TRUE),
-                label = ~paste0(": ", formatC(id, big.mark = ","))) 
+                label = ~paste0(": ", formatC(id, big.mark = ","))) %>% 
+    addPolygons(data = poly, group = "Polygons",
+                color = "#444444",
+                fillColor = "transparent",
+                weight = 2, smoothFactor = 0.5,
+                # stroke = FALSE,
+                opacity = 1, fillOpacity = 0.5)
 }

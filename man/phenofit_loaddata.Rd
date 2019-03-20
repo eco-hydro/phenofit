@@ -4,11 +4,15 @@
 \alias{phenofit_loaddata}
 \title{update all INPUT data according to \code{input} file.}
 \usage{
-phenofit_loaddata(options, ...)
+phenofit_loaddata(options, rv, ...)
 }
 \arguments{
 \item{options}{should has children of \code{file_site}, and one of
 \code{file_veg_rda} or \code{file_veg_text}.}
+
+\item{rv}{return values to reactiveValues object.}
+
+\item{...}{ignored.}
 }
 \description{
 update all INPUT data according to \code{input} file.

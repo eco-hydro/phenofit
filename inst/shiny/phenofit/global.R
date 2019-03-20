@@ -1,10 +1,10 @@
 # shiny::runApp("inst/shiny/phenofit/")
 source('src_load_input.R')
-source('global_phenofit.R')
 library(shinyFiles)
+library(jsonlite)
+
 # library(future)
 # plan(multisession)
-
 
 check_setting <- function(){
     file_json <- "perference/phenofit_setting.json"

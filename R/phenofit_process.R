@@ -134,7 +134,7 @@ phenofit_finefit <- function(INPUT, brks, options, ...){
 
 #' @param dateRange Date vector, filter input in the \code{dateRange}
 #' @param nsite the max number of sites to process. \code{-1} means all sites.
-#' 
+#'
 #' @rdname phenofit_process
 #' @export
 #'
@@ -142,12 +142,12 @@ phenofit_finefit <- function(INPUT, brks, options, ...){
 #' \dontrun{
 #' file_json <- system.file('shiny/phenofit/perference/phenofit_setting.json', package = "phenofit")
 #' options <- setting.read(file_json)
-#' phenofit_process(options)
+#' r <- phenofit_process(options, nsite=2)
 #' }
 phenofit_process <- function(
-    options, 
-    dateRange = c(as.Date('2010-01-01'), as.Date('2014-12-31')), 
-    nsite = -1, 
+    options,
+    dateRange = c(as.Date('2010-01-01'), as.Date('2014-12-31')),
+    nsite = -1,
     progress = NULL, ...)
 {
     showProgress <- !is.null(progress)
@@ -173,24 +173,24 @@ phenofit_process <- function(
         }
         fprintf("phenofit (n = %d) | running %03d ... \n", i, n)
 
-        res[[i]] <- tryCatch({
+        # res[[i]] <- tryCatch({
             INPUT <- with(rv, getsite_INPUT(df, st, sitename, nptperyear, dateRange))
             brks  <- phenofit_season(INPUT, options, IsPlot = FALSE)
             fits  <- phenofit_finefit(INPUT, brks, options) # multiple methods
-            fits
-        }, error = function(e){
-            message(sprintf('[e] phenofit_process, site=%s: %s', sitename, e$message))
-        })
+        #     fits
+        # }, error = function(e){
+        #     message(sprintf('[e] phenofit_process, site=%s: %s', sitename, e$message))
+        # })
         ############################# CALCULATION FINISHED #####################
     }
     set_names(res, sites[1:n])
 }
 
 #' phenofit_plot
-#' 
+#'
 #' @param obj \code{fFIT}
 #' @param type one of c("season", "fitting", "pheno", "all")
-#' 
+#'
 #' @export
 phenofit_plot <- function(obj, type = "all", methods){
     if (missing(methods)) {

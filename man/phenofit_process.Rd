@@ -47,6 +47,6 @@ same object returned by \code{\link{season_mov}} and \code{\link{season}}
 \dontrun{
 file_json <- system.file('shiny/phenofit/perference/phenofit_setting.json', package = "phenofit")
 options <- setting.read(file_json)
-phenofit_process(options)
+r <- phenofit_process(options, nsite=2)
 }
 }

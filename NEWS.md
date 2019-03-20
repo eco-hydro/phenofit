@@ -1,9 +1,12 @@
-# phenofit 0.2.2
+# phenofit 0.2.2 (2019-03-19)
 
 * fix visualization (plot and legend) of multiple iteration 
-* improve shinyapp
+* shinyapp works like TIEMSAT now, `phenofit_process`
+* fix shift error of `wSG`
 * add weights updating function: `wKong`
 * add function `phenofit_shiny`
+* support asymmetric background values in spring and autumn season.
+
 
 # phenofit 0.2.1 (2019-03-11)    
 

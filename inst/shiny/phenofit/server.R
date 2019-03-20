@@ -51,24 +51,15 @@ server <- function(input, output, session) {
     ############################################################################
     ## observeEvent ------------------------------------------------------------
 
-    # observe({
-    #     load_data(options, rv, input)
-    #     # load_data(filepaths, rv)
-    #     convert_QC2weight(input, rv)
-    #     updateSelectInput(session, "site",
-    #                   choices = rv$sites, rv$sites[1])
-    #     # updateInput_phenofit(session, rv, init = TRUE)
-    # })
-
     observeEvent(input$load_data, {
-        rv$filepaths <-
+        filepaths <-
             list(file_veg_text = input$file_veg_text %>% tidy_shinyFiles(),
                 file_veg_rda   = input$file_veg_rda %>% tidy_shinyFiles(),
                 file_site      = input$file_site %>% tidy_shinyFiles(),
                 file_type      = input$file_type,
                 nptperyear     = input$nptperyear)
 
-        load_data(rv$filepaths, rv)
+        phenofit_loaddata(filepaths, rv)
     })
 
     observeEvent(input$pre_process, {

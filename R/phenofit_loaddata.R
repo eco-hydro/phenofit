@@ -32,12 +32,14 @@ check_file <- function(file, duration = 10){
 #'
 #' @param options should has children of \code{file_site}, and one of
 #' \code{file_veg_rda} or \code{file_veg_text}.
-#'
+#' @param rv return values to reactiveValues object.
+#' @param ... ignored.
+#' 
 #' @export
 #' 
 #' @examples
 #' init_options(options, rv, input, session)
-phenofit_loaddata <- function(options, ...){
+phenofit_loaddata <- function(options, rv, ...){
     file_type     <- options$file_type
     file_veg_rda  <- options$file_rda
     file_veg_text <- options$file_veg_text
@@ -90,8 +92,13 @@ phenofit_loaddata <- function(options, ...){
         } else {
             warnings(sprintf('qcFUN: %s does not exist!', qcFUN))
         }
-    
     }
     
+    if (!missing(rv)) {
+        rv$df <- df
+        rv$st <- st
+        rv$sites <- sites
+        rv$nptperyear <- nptperyear
+    }
     listk(df, st, sites, nptperyear)
 }

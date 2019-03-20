@@ -45,9 +45,13 @@ NULL
 #' \item \code{PhenoKl} Inflection method
 #' }
 #'
+#' @param asymmetric If true, background value in spring season and autumn season
+#' is regarded as different.
+#' 
 #' @rdname PhenoExtractMeth
 #' @export
 PhenoTrs <- function(fFIT, approach = c("White", "Trs"), trs = 0.5, #, min.mean = 0.1
+    asymmetric = TRUE, 
     IsPlot = TRUE, ...)
 {
     metrics <- c(sos = NA, eos = NA)
@@ -57,7 +61,7 @@ PhenoTrs <- function(fFIT, approach = c("White", "Trs"), trs = 0.5, #, min.mean 
     n      <- length(t)
 
     # get peak of season position
-    half.season <- median(which.max(values)) # + 20, half season + 20 was unreasonable
+    half.season <- median(which.max(values)) %>% round() # + 20, half season + 20 was unreasonable
     pop <- t[half.season]
 
     if (all(is.na(values))) return(metrics)
@@ -66,10 +70,20 @@ PhenoTrs <- function(fFIT, approach = c("White", "Trs"), trs = 0.5, #, min.mean 
     # get statistical values
     # n    <- t[length(t)]
     # avg  <- mean(x, na.rm = TRUE)
-    x2   <- na.omit(values)
+
     # avg2 <- mean(x2[x2 > min.mean], na.rm = TRUE)
-    peak <- max(x2)
-    mn   <- min(x2)
+    peak <- max(values, na.rm = TRUE)
+    
+    if (asymmetric) {
+        mn_a <- min(values[1:half.season], na.rm = T)
+        mn_b <- min(values[-(1:half.season)], na.rm = T) 
+
+        mn <- c(rep(mn_a, half.season), 
+            rep(mn_b, n - half.season))
+    } else {
+        mn   <- min(values, na.rm = TRUE)    
+    }
+        
     ampl <- peak - mn
 
     # select (or scale) values and thresholds for different methods
