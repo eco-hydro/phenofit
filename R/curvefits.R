@@ -28,10 +28,10 @@
 #' @param ... Other parameters will be ignore.
 #'
 #' @return fits Multiple phenofit object.
-#' 
+#'
 #' @example inst/examples/ex-check_input.R
 #' @example inst/examples/ex-curvefits.R
-#' 
+#'
 #' @export
 curvefits <- function(INPUT, brks,
                       wFUN = wTSM, iters = 2, wmin = 0.2,
@@ -39,7 +39,7 @@ curvefits <- function(INPUT, brks,
                       minT = 0,
                       methods = c('AG', 'Beck', 'Elmore', 'Gu', 'Klos', 'Zhang'),
                       minPercValid = 0.2,
-                      print = TRUE, 
+                      print = TRUE,
                       use.rough = FALSE, ...)
 {
     if (all(is.na(INPUT$y))) return(NULL)
@@ -60,36 +60,31 @@ curvefits <- function(INPUT, brks,
     has_Tn <- ifelse(is_empty(Tn), F, TRUE)
 
     # possible snow or cloud, replaced with Whittaker smoothing.
-    I_w <- match(brks$whit$t, t) %>% rm_empty()
+    I_all <- match(brks$whit$t, t) %>% rm_empty()
 
     if (use.rough) {
-        # if the range of t is smaller than `whit$t` 
-        INPUT$y[I_w] <- dplyr::last(brks$whit)
+        # if the range of t is smaller than `whit$t`
+        INPUT$y[I_all] <- dplyr::last(brks$whit)
     } else {
-        I_fix <- which(w[I_w] == wmin)
-        I_y   <- I_w[I_fix]
+        I_fix <- which(w[I_all] == wmin)
+        I_y   <- I_all[I_fix]
         INPUT$y[I_y] <- dplyr::last(brks$whit)[I_fix]
     }
     # use the weights of last iteration of rough fitting
-    w[I_w] <- brks$whit %>% {.[, contain(., "witer"), with = F]} %>% last()
-
+    w[I_all] <- brks$whit %>% {.[, contain(., "witer"), with = F]} %>% last()
     # w[I_fix] <- wmin + 0.1 # exert the function of whitaker smoother
 
     # growing season dividing
-    getDateId <- function(dates) match(dates, t) #%>% rm_empty()
-    getDateId_before <- function(dates) sapply(dates, function(date) last(which(t <= date)))
-    getDateId_after  <- function(dates) sapply(dates, function(date) first(which(t >= date)))
-
-    di <- data.table( beg  = getDateId_before(brks$dt$beg),
-                      peak = getDateId_before(brks$dt$peak),
-                      end  = getDateId_after(brks$dt$end)) %>% na.omit()
+    di <- data.table( beg  = getDateId_before(brks$dt$beg, t),
+                      peak = getDateId_before(brks$dt$peak, t),
+                      end  = getDateId_after(brks$dt$end, t)) #%>% na.omit()
 
     MaxExtendWidth = ceiling(nptperyear/12*maxExtendMonth)
     MinExtendWidth = ceiling(nptperyear/12*minExtendMonth)
     width_ylu      = nptperyear*2
 
     y    <- INPUT$y
-    fits <- list()
+    fits <- vector(nrow(di), mode = "list")
     for (i in 1:nrow(di)){
         if (print) runningId(i, prefix = '\t[curvefits] ')
 
@@ -148,6 +143,25 @@ curvefits <- function(INPUT, brks,
     #             fits = fits))
 }
 
+getDateId <- function(dates, t){
+    match(dates, t) #%>% rm_empty()
+}
+getDateId_before <- function(dates, t) {
+    sapply(dates, function(date) {
+        ans <- last(which(t <= date))
+        if (is.na(ans))
+            ans <- first(which(t >= date))
+        ans
+    })
+}
+getDateId_after  <- function(dates, t) {
+    sapply(dates, function(date) {
+        ans <- first(which(t >= date))
+        if (is.na(ans))
+            ans <- last(which(t <= date))
+        ans
+    })
+}
 
 ############################## END OF CURVEFITS ################################
 # HIDING FUNCTIONS
@@ -195,21 +209,21 @@ get_ylu <- function(y, years, w0, width, I, Imedian = TRUE, wmin = 0.2){
     I_end  <- last(I)
 
     # if less than 0.6*12 ≈ 8
-    I_win  <- pmax(1, I_beg - width) : pmin(n, I_end + width)
+    I_allin  <- pmax(1, I_beg - width) : pmin(n, I_end + width)
 
-    w0_win <- w0[I_win]
-    I_win  <- I_win[which(w0_win > wmin)]
+    w0_win <- w0[I_allin]
+    I_allin  <- I_allin[which(w0_win > wmin)]
 
-    if (is_empty(I_win)){
+    if (is_empty(I_allin)){
         ylu_max <- ylu_min <- NA
     } else{
-        y_win  <- y[I_win]
+        y_win  <- y[I_allin]
 
         ylu_min <- min(y_win)
         ylu_max <- max(y_win)
 
         if (Imedian){
-            year_win  <- years[I_win]
+            year_win  <- years[I_allin]
             # Assume peak in the middle of growing season, a few steps will be
             # ylu_min; while a long way to ylu_max; 20180918
             # length(I) reflects nptperyear

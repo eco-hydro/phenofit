@@ -69,7 +69,7 @@ If PeaksPerYear > MaxPeaksPerYear, then lambda = lambda*2.}
 \item{MaxTroughsPerYear}{This parameter is used to adjust lambda in iterations.
 If TroughsPerYear > MaxTroughsPerYear, then lambda = lambda*2.}
 
-\item{calendarYear}{If true, only one static calendar growing season will be 
+\item{calendarYear}{If true, only one static calendar growing season will be
 returned.}
 
 \item{IsPlot}{Boolean}

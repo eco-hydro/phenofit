@@ -2,6 +2,14 @@
 roots <- c('wd' = getwd(), Home = "~", getVolumes()())
 nrun  <- 0
 
+if(.Platform$OS.type == "windows") {
+    windowsFonts(
+      # lishu = windowsFont(family = "LiSu"),           # 隶书
+      yahei = windowsFont(family = "Microsoft YaHei") # 微软雅黑
+    )
+}
+
+
 #' tidy_shinyFiles
 tidy_shinyFiles <- function(selection) {
     paths <- parseFilePaths(roots, selection)$datapath
@@ -75,8 +83,9 @@ server <- function(input, output, session) {
     d          <- reactive({ getsite_data(rv$df, input$site, input$dateRange) })
     date_range <- reactive({ range(d()$t) })
 
-    INPUT <- reactive({ getsite_INPUT(rv$df, rv$st, input$site, rv$nptperyear,
-        input$dateRange) })
+    INPUT <- reactive({
+        getsite_INPUT(rv$df, rv$st, input$site, rv$nptperyear, input$dateRange)
+    })
     brks  <- reactive({ phenofit_season(INPUT(), input) })
 
     ## WRITE options to json ---------------------------------------------------
@@ -127,7 +136,7 @@ server <- function(input, output, session) {
 
         plot_season(INPUT(), brks(), d(), INPUT()$ylu)
         abline(h = 1, col = "red")
-        title(INPUT()$titlestr)
+        title(INPUT()$titlestr, family = "yahei")
     })
 
     output$t_gs <- DT::renderDataTable({
@@ -152,20 +161,22 @@ server <- function(input, output, session) {
     output$t_fineFitting <- DT::renderDataTable({
         # d_fineParams <- getparam(fineFitting()) %>% melt_list("method")
         d <- fineFitting()$stat
-        DT_datatable(d) %>% DT::formatRound(c(3:6), 3) #%>%
+        d <- dcast(d, flag~meth, value.var = "NSE")
+        # browser()
+        DT_datatable(d) %>% DT::formatRound(c(2:ncol(d)), 3) #%>%
             # DT::formatStyle(columns = c(3:6), 'text-align' = 'center')
     })
 
-    output$t_phenoMetrics_date <- DT::renderDataTable({
-        d <- lst_metrics()$date
-        d <- d[, 3:ncol(d)] %>% lapply(., format.Date, "%Y/%m/%d") %>%
-            as.data.frame() %>%
-            cbind(d[, 1:2], .)
+    # output$t_phenoMetrics_date <- DT::renderDataTable({
+    #     d <- lst_metrics()$date
+    #     d <- d[, 3:ncol(d)] %>% lapply(., format.Date, "%Y/%m/%d") %>%
+    #         as.data.frame() %>%
+    #         cbind(d[, 1:2], .)
 
-        DT_datatable(d,
-            columnDefs = list(list(width = '20px', targets = 3:ncol(d) )),
-            info = FALSE)
-    })
+    #     DT_datatable(d,
+    #         columnDefs = list(list(width = '20px', targets = 3:ncol(d) )),
+    #         info = FALSE)
+    # })
 
     output$t_phenoMetrics_doy <- DT::renderDataTable({
         d <- lst_metrics()$doy

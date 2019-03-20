@@ -52,4 +52,8 @@ param_step <- 0.1 # for r_max and rtrough_max
 
 options <- check_setting()
 dataIN <- phenofit_loaddata(options)
+
 sites <- dataIN$sites
+if (!(options$site %in% sites)){
+    options$site <- sites[1]
+}

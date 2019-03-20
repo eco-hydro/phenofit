@@ -20,10 +20,10 @@ ui <- navbarPage(
                     startview = "decade"),
                 selectInput("site", "Choose a site:",
                     # choices = ""
-                    choices = sites, selected = sites[1]
+                    choices = sites, selected = options$site
                 ),
                 numericInput("iters_rough", "iters of Rough fitting:", 2, 1, 6),
-                checkboxInput("calendarYear", "calendarYear", FALSE),
+                checkboxInput("calendarYear", "calendarYear", options$calendarYear),
                 selectInput(
                     "FUN_season", "Choose a season dividing function (FUN_season):",
                     choices = c('season', 'season_mov'),
@@ -136,7 +136,7 @@ ui <- navbarPage(
             
                 h4("2.1 Fine Fitting:"),     
                 uiOutput("sized_plot_fineFitting"),
-                h4("2.2 Good of fitting:"),     
+                h4("2.2 Good of fitting (NSE):"),     
                 DT::dataTableOutput("t_fineFitting", width = "40%"),
                
                 h4("3 Phenological metrics (date & doy):"),
@@ -148,7 +148,7 @@ ui <- navbarPage(
                 # ),
                 # verbatimTextOutput("console_phenoMetrics")
                 column(12,
-                    DT::dataTableOutput("t_phenoMetrics_date"),
+                    # DT::dataTableOutput("t_phenoMetrics_date"),
                     DT::dataTableOutput("t_phenoMetrics_doy"),
                     style = "overflow-x: scroll")
             )

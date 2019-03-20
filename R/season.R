@@ -47,7 +47,7 @@
 #' If PeaksPerYear > MaxPeaksPerYear, then lambda = lambda*2.
 #' @param MaxTroughsPerYear This parameter is used to adjust lambda in iterations.
 #' If TroughsPerYear > MaxTroughsPerYear, then lambda = lambda*2.
-#' @param calendarYear If true, only one static calendar growing season will be 
+#' @param calendarYear If true, only one static calendar growing season will be
 #' returned.
 #' @param IsPlot Boolean
 #' @param plotdat (optional) A list or data.table, with \code{t}, \code{y} and \code{w}.
@@ -225,7 +225,7 @@ season <- function(INPUT,
     if (!is.null(pos)) pos <- pos[order(pos), ] #c("val", "pos", "left", "right", "type")
 
     dt  <- di <- NULL
-    res <- list(whit = rfit, pos = pos, dt = dt, di = di)
+    res <- list(whit = rfit, dt = dt) # , pos = pos, di = di
 
     if (is.null(pos_max) || is.null(pos_min)){
         warning("Can't find a complete growing season before trim!")
@@ -266,7 +266,6 @@ season <- function(INPUT,
         warning("Can't find a complete growing season before!")
         return(res)
     }
-# browser()
 
     ############################################################################
     ## 5. check head and tail break point, and reform breaks
@@ -306,21 +305,33 @@ season <- function(INPUT,
                   y_end  = ypred[di$end],
                   len    = as.integer(difftime(end, beg, units = "days") + 1),
                   year   = year(peak) )]
-    # get the growing season year, not only the calendar year
-    if (south) dt[, year := year + as.integer(peak >= ymd(sprintf('%d0701', year))) - 1L]
-    dt[, `:=`(season = 1:.N, flag   = sprintf("%d_%d", year, 1:.N)), .(year)]
 
     # update 20180913
     # solve the problem of growing season too long, (e.g. US-Cop).
     I <- which(dt$y_peak >= ypeak_min)
     dt <- dt[I, ]
-    di <- di[I, ]
+    # di <- di[I, ]
+    # res$di <- di
 
-    res$di <- di
-    res$dt <- dt
+    # remove di and add fix_dt
+    if (calendarYear) {
+        # need to remove incomplete year
+        dt <- season_calendar(years, south) # [2:(nyear-1)]
+    } else {
+        dt <- dt[dt$len > 45 & dt$len < 650, ] # mask too long and short gs
+        # phenofit:::fix_dt(dt) # c++ address operation, fix growing season overlap
+        fix_dt(dt) # c++ address operation, fix growing season overlap
+        # after fix_dt, growing season length will become shorter
+        dt <- dt[dt$len > 45 & dt$len < 650, ] # mask too long and short gs
+    }
+     # get the growing season year, not only the calendar year
+    if (south) dt[, year := year + as.integer(peak >= ymd(sprintf('%d0701', year))) - 1L]
+
+    dt[, `:=`(season = as.numeric(1:.N), flag = sprintf("%d_%d", year, 1:.N)), .(year)]
+    res <- list(whit = rfit, dt = dt)
+
     ## 7. plot
     if (IsPlot) plot_season(INPUT, res, plotdat, INPUT$ylu)
-
     return(res)
 }
 

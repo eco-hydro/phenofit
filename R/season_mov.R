@@ -29,7 +29,7 @@ season_mov <- function(INPUT,
     nptperyear <- INPUT$nptperyear
     south      <- INPUT$south
     t          <- INPUT$t
-    
+
     nlen       <- length(t)
 
     # 1. How many years data
@@ -136,7 +136,7 @@ season_mov <- function(INPUT,
         # phenofit:::fix_dt(dt) # c++ address operation, fix growing season overlap
         fix_dt(dt) # c++ address operation, fix growing season overlap
         # after fix_dt, growing season length will become shorter
-        dt <- dt[dt$len > 45 & dt$len < 650, ] # mask too long and short gs   
+        dt <- dt[dt$len > 45 & dt$len < 650, ] # mask too long and short gs
     }
 
     brks$dt <- dt
@@ -151,7 +151,7 @@ season_calendar <- function(years, south = FALSE){
     date_end   <- {if (south) paste0(years+1, "0630") else paste0(years, "1231") } %>% ymd()
 
     dt <- data.table(beg = date_begin, end = date_end, year = years,
-        len = as.numeric(difftime(date_end, date_begin, units = "days")) + 1) %>% 
+        len = as.numeric(difftime(date_end, date_begin, units = "days")) + 1) %>%
         cbind(season = 1, flag = sprintf("%d_1", years))
     return(dt)
 }
@@ -178,6 +178,7 @@ season_calendar <- function(years, south = FALSE){
 stat_season <- function(INPUT, brks){
     d_org <- as.data.table(INPUT[c("t", "y", "w")])
     d_fit <- brks$whit %>% .[,.SD,.SDcols=c(1, ncol(.))] %>% set_colnames(c("t", "ypred"))
+
     d <- merge(d_org, d_fit, by = "t")
 
     stat <- with(d, GOF(y, ypred, w, include.cv = TRUE))# %>% as.list()

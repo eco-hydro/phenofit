@@ -34,9 +34,9 @@ check_file <- function(file, duration = 10){
 #' \code{file_veg_rda} or \code{file_veg_text}.
 #' @param rv return values to reactiveValues object.
 #' @param ... ignored.
-#' 
+#'
 #' @export
-#' 
+#'
 #' @examples
 #' init_options(options, rv, input, session)
 phenofit_loaddata <- function(options, rv, ...){
@@ -58,7 +58,7 @@ phenofit_loaddata <- function(options, rv, ...){
             sites <- unique(df$site) %>% sort()
 
             if (check_file(file_site)) {
-                st <- fread(file_site)
+                st <- fread(file_site, encoding = "UTF-8")
             } else {
                 st <- data.table(ID = seq_along(sites), site = sites, lat = 30)
             }
@@ -72,7 +72,7 @@ phenofit_loaddata <- function(options, rv, ...){
             # rv$st <- st
         }
     }
-    
+
     if (!is.null(varname) && !(varname %in% c("", "y"))) {
         I <- match(varname, colnames(df))
         colnames(df)[I] <- "y"
@@ -80,20 +80,20 @@ phenofit_loaddata <- function(options, rv, ...){
 
     if (!is.null(is_QC2w) && is_QC2w) {
         if (length(find(qcFUN, mode = "function")) > 0) {
-        # if (is.function(qcFUN)) 
+        # if (is.function(qcFUN))
         if (is.character(varQC) && length(varQC) > 0) {
             if (!(varQC %in% colnames(df))){
                 warning(sprintf("No QC variable %s in df! ", varQC))
             } else {
                 eval(parse(text = sprintf('df[, c("QC_flag", "w") := %s(%s, wmin = %f)]',
                     qcFUN, varQC, wmin)))
-            }    
-        }    
+            }
+        }
         } else {
             warnings(sprintf('qcFUN: %s does not exist!', qcFUN))
         }
     }
-    
+
     if (!missing(rv)) {
         rv$df <- df
         rv$st <- st

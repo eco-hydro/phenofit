@@ -59,7 +59,7 @@ init_param <- function(y, t, w){
         t0  = c(doy.mx - deltaT, doy.mx + deltaT),
         mn  = c(mn - deltaY    , mn + deltaY),
         mx  = c(mx - deltaY*2  , mx + deltaY*2),
-        r   = c(k/3, k*3),
+        r   = c(k/1.2, k*3),
         sos = c(min(t)         , doy.mx + deltaT),
         eos = c(doy.mx - deltaT, max(t))
     )

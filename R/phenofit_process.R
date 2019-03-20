@@ -23,11 +23,12 @@ getsite_data  <- function(df, sitename, dateRange = NULL){
 #' @rdname phenofit_process
 #' @export
 getsite_INPUT <- function(df, st, sitename, nptperyear, dateRange = NULL){
-    sp       <- st[site == sitename]
-    south    <- sp$lat < 0
-    IGBP     <- sp$IGBP %>% {ifelse(is.null(.), "", .)}
+    sp_point <- st[site == sitename, ]
+    south    <- sp_point$lat < 0
+    name     <- sp_point$name %>% {ifelse(is.null(.), "", paste0(", ", .))}
+    IGBP     <- sp_point$IGBP %>% {ifelse(is.null(.), "", paste0(., ", "))}
 
-    titlestr <- sprintf("[%s] IGBP=%s, lat = %.2f", sp$site, IGBP, sp$lat)
+    titlestr <- sprintf("[%s%s] %s lat = %.2f", sitename, name, IGBP, sp_point$lat)
     d <- getsite_data(df, sitename, dateRange)
 
     dnew     <- add_HeadTail(d, south = south, nptperyear = nptperyear)
