@@ -4,7 +4,8 @@
 \alias{plot_phenofit}
 \title{plot_phenofit}
 \usage{
-plot_phenofit(d_fit, seasons, title = NULL, font.size = 14,
+plot_phenofit(d_fit, seasons, title = NULL,
+  title.ylab = "Vegetation Index", font.size = 14,
   show.legend = TRUE)
 }
 \arguments{

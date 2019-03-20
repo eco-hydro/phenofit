@@ -261,7 +261,7 @@ f_goal <- function(
     }
     SSE  <- sum((y - pred)^2 * w)
     RMSE <- sqrt(SSE/length(y))
-    NSE  <- sum((y - pred)^2 * w)/sum((y - mean(pred))^2)
+    # NSE  <- SSE/sum((y - mean(pred))^2)
 
     # 1. better handle low and high values simulation
     # xpred_2 <- sqrt(xpred_2)

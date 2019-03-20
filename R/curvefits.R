@@ -129,7 +129,7 @@ curvefits <- function(INPUT, brks,
 
         # if too much missing values
         if (sum(wi > pmax(wmin+0.1, 0.2))/length(wi) < minPercValid){
-            fFITs %<>% map(function(x){
+            fFITs$fFIT %<>% map(function(x){
                 x$zs %<>% map(~.x*NA) # list()
                 return(x)
             })

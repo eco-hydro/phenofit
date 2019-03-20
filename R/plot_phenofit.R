@@ -18,6 +18,7 @@
 plot_phenofit <- function(d_fit,
                           seasons,
                           title = NULL,
+                          title.ylab = "Vegetation Index",
                           font.size = 14,
                           show.legend = TRUE)
 {
@@ -34,7 +35,7 @@ plot_phenofit <- function(d_fit,
 
     # browser()
     nyear <- diff(range(year(d_obs$t), na.rm = TRUE)) + 1
-    nyear_lean <- 7 # more than `nyear_lean`, then lean axis.text.x 30deg 
+    nyear_lean <- 7 # more than `nyear_lean`, then lean axis.text.x 30deg
 
     # pdat    <- get_fitting(fit)
     p <- ggplot(d_fit, aes_string("t", "y", color = "iters")) +
@@ -51,7 +52,7 @@ plot_phenofit <- function(d_fit,
         theme(axis.title = element_text(size = font.size),
             # axis.text.x = element_text(angle = 30, hjust = 1, vjust = 1),
             axis.text = element_text(size = font.size - 2)) +
-        labs(x = 'Time', y = 'Vegetation Index')
+        labs(x = 'Time', y = title.ylab)
 
     if (nyear >= nyear_lean) {
         p <- p + theme(axis.text.x = element_text(angle = 30, hjust = 1, vjust = 1))

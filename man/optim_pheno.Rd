@@ -21,8 +21,8 @@ values are to be found. \code{prior} is suggested giving a column name.}
 
 \item{tout}{Corresponding doy of prediction.}
 
-\item{method}{The name of optimization method to solve fine fitting, passed 
-to \code{\link{I_optim}} or \code{\link{I_optimx}}. 
+\item{method}{The name of optimization method to solve fine fitting, passed
+to \code{\link{I_optim}} or \code{\link{I_optimx}}.
 \code{I_optim} supports \code{'BFGS','CG','Nelder-Mead',
 'L-BFGS-B', 'nlm', 'nlminb', 'ucminf'};
 \code{I_optimx} supports \code{'spg','Rcgmin','Rvmmin', 'newuoa','bobyqa','nmkb','hjkb'}.}

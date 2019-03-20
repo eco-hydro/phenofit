@@ -15,12 +15,12 @@
 #' @param ylu \code{ymin, ymax}, which is used to force \code{ypred} in the
 #' range of \code{ylu}.
 #' @param tout Corresponding doy of prediction.
-#' @param method The name of optimization method to solve fine fitting, passed 
-#' to \code{\link{I_optim}} or \code{\link{I_optimx}}. 
+#' @param method The name of optimization method to solve fine fitting, passed
+#' to \code{\link{I_optim}} or \code{\link{I_optimx}}.
 #' \code{I_optim} supports \code{'BFGS','CG','Nelder-Mead',
 #' 'L-BFGS-B', 'nlm', 'nlminb', 'ucminf'};
 #' \code{I_optimx} supports \code{'spg','Rcgmin','Rvmmin', 'newuoa','bobyqa','nmkb','hjkb'}.
-#' 
+#'
 #' @param verbose Whether to display intermediate variables?
 #' @param ... other parameters passed to \code{\link{I_optim}} or \code{\link{I_optimx}}.
 #'
@@ -34,7 +34,7 @@ optim_pheno <- function(
     w, nptperyear, ylu,
     iters = 2, wFUN = wTSM,
     verbose = FALSE, ...)
-{   
+{
     methods_optim  <- c('BFGS','CG','Nelder-Mead', 'L-BFGS-B', 'nlm', 'nlminb', 'ucminf')
     methods_optimx <- c('spg','Rcgmin','Rvmmin', 'newuoa','bobyqa','nmkb','hjkb')
 

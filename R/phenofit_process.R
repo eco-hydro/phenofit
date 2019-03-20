@@ -55,7 +55,7 @@ getsite_INPUT <- function(df, st, sitename, nptperyear, dateRange = NULL){
 #'
 #' @rdname phenofit_process
 #' @export
-phenofit_season <- function(INPUT, options, IsPlot = FALSE, ...)
+phenofit_season <- function(INPUT, options, IsPlot = FALSE, verbose = TRUE, ...)
 {
     param <- list(
         FUN_season     = options$FUN_season,
@@ -77,13 +77,16 @@ phenofit_season <- function(INPUT, options, IsPlot = FALSE, ...)
         IsPlot            = FALSE,
         IsPlot.OnlyBad    = FALSE,
         ypeak_min         = 0.1,
+        print             = FALSE, 
         ...
     )
 
-    fprintf("----------------------------------\n")
-    fprintf("Growing season dividing parameters:\n")
-    fprintf("----------------------------------\n")
-    print(str(param, 1))
+    if (verbose){
+        fprintf("----------------------------------\n")
+        fprintf("Growing season dividing parameters:\n")
+        fprintf("----------------------------------\n")
+        print(str(param, 1))
+    }
 
     FUN_season <- get(param$FUN_season)
     param <- param[-1]
@@ -104,10 +107,13 @@ phenofit_season <- function(INPUT, options, IsPlot = FALSE, ...)
 }
 
 #' @param brks object returned by \code{\link{season_mov}} and \code{\link{season}}
+#' @inheritParams get_pheno
 #'
 #' @rdname phenofit_process
 #' @export
-phenofit_finefit <- function(INPUT, brks, options, ...){
+phenofit_finefit <- function(INPUT, brks, options,
+    TRS = c(0.2, 0.5, 0.6), ...)
+{
     param <- list(
         INPUT, brks,
         iters          = options$iters_fine,
@@ -118,7 +124,7 @@ phenofit_finefit <- function(INPUT, brks, options, ...){
         maxExtendMonth = options$max_extend_month_fine,
         minExtendMonth = 1,
         minPercValid   = 0.2,
-        print          = TRUE,
+        print          = FALSE,
         use.rough      = options$use.rough
     )
     if (!is.function(param$wFUN)) param$wFUN %<>% get()
@@ -127,7 +133,7 @@ phenofit_finefit <- function(INPUT, brks, options, ...){
 
     params <- get_param(fit)
     stat   <- get_GOF(fit)                   # Goodness-Of-Fit
-    pheno  <- get_pheno(fit, IsPlot=FALSE)   # Phenological metrics
+    pheno  <- get_pheno(fit, TRS = TRS, IsPlot=FALSE)   # Phenological metrics
 
     list(fit = fit, INPUT = INPUT, seasons = brks,
         param = params, stat = stat, pheno = pheno)
@@ -149,12 +155,13 @@ phenofit_process <- function(
     options,
     dateRange = c(as.Date('2010-01-01'), as.Date('2014-12-31')),
     nsite = -1,
-    progress = NULL, ...)
+    .progress = NULL, .parallel = FALSE,
+    ...)
 {
-    showProgress <- !is.null(progress)
+    showProgress <- !is.null(.progress) # this for shinyapp progress
     if (showProgress){
-        on.exit(progress$close())
-        progress$set(message = sprintf("phenofit (n=%d) | running ", n), value = 0)
+        on.exit(.progress$close())
+        .progress$set(message = sprintf("phenofit (n=%d) | running ", n), value = 0)
     }
 
     rv    <- phenofit_loaddata(options, ...)
@@ -163,54 +170,167 @@ phenofit_process <- function(
     n     <- length(sites)
     if (nsite > 0) n <- pmin(n, nsite)
 
-    res <- vector(n, mode ="list")
-    # print('debug 1 ...')
-    # browser()
-    for (i in 1:n){
-        sitename <- rv$sites[i]
-
+    FUN <- ifelse(.parallel, `%dopar%`, `%do%`)
+    res <- FUN(foreach(i = 1:n, sitename = sites), {
+        # sitename <- rv$sites[i]
         if (showProgress){
             progress$set(i, detail = paste("Doing part", i))
         }
         fprintf("phenofit (n = %d) | running %03d ... \n", i, n)
 
-        # res[[i]] <- tryCatch({
+        tryCatch({
             INPUT <- with(rv, getsite_INPUT(df, st, sitename, nptperyear, dateRange))
             brks  <- phenofit_season(INPUT, options, IsPlot = FALSE)
             fits  <- phenofit_finefit(INPUT, brks, options) # multiple methods
-        #     fits
-        # }, error = function(e){
-        #     message(sprintf('[e] phenofit_process, site=%s: %s', sitename, e$message))
-        # })
-        ############################# CALCULATION FINISHED #####################
-    }
+            fits
+        }, error = function(e){
+            message(sprintf('[e] phenofit_process, site=%s: %s', sitename, e$message))
+        }, warning = function(w){
+            message(sprintf('[w] phenofit_process, site=%s: %s', sitename, w$message))
+        })
+    })
+
+    ############################# CALCULATION FINISHED #####################
     set_names(res, sites[1:n])
+}
+
+#' get_date_AVHRR
+#'
+#' @export
+#'
+#' @examples
+#' date_AVHRR <- get_date_AVHRR()
+get_date_AVHRR <- function(year_begin = 1982, year_end = 2015){
+    dates <- seq(ymd(year_begin*1e4 + 0101), ymd(year_end*1e4 + 1231), "month")
+    days  <- dates %>% days_in_month()
+
+    dates_a <- dates + ddays(floor(days/4))
+    dates_b <- dates + ddays(floor(days/4*3))
+    dates <- c(dates_a, dates_b) %>% sort()
+
+    d_dates <- data.table(I = seq_along(dates),
+        date = dates, month = month(dates), dom = day(dates), doy = yday(dates))
+    d_dates
+}
+
+#' @export
+phenofit_TSM.avhrr <- function(
+    options,
+    dateRange = c(as.Date('2010-01-01'), as.Date('2014-12-31')),
+    nsite = -1,
+    outdir = ".", 
+    .progress = NULL, .parallel = FALSE,
+    ...)
+{
+    file_y  <- options$file_veg_text
+    file_qc <- options$file_qc
+    nptperyear <- options$nptperyear
+
+    d_date <- get_date_AVHRR()
+    t <- d_date$date
+
+    if (!is.null(dateRange)) {
+        I_date <- which(t >= dateRange[1] & t <= dateRange[2])
+    } else {
+        I_date <- seq_along(t)
+    }
+
+    mat_y  <- fread(file_y, skip = 1) %>% as.matrix()
+    mat_qc <- fread(file_qc, skip = 1) %>% as.matrix()
+
+    showProgress <- !is.null(.progress) # this for shinyapp progress
+    if (showProgress){
+        on.exit(.progress$close())
+        .progress$set(message = sprintf("phenofit (n=%d) | running ", n), value = 0)
+    }
+
+    # rv    <- phenofit_loaddata(options, ...)
+    # sites <- rv$sites
+    # n     <- length(sites)
+
+    n <- nrow(mat_y)
+    if (nsite > 0) n <- pmin(n, nsite)
+    sites <- seq_len(n) %>% as.character()
+
+    FUN <- ifelse(.parallel, `%dopar%`, `%do%`)
+    res <- FUN(foreach(
+        y = iter(mat_y, by='row'),
+        qc = iter(mat_qc, by='row'),
+        i = icount(n),
+        sitename = sites,
+        .packages = c("phenofit")), {
+
+        outfile <- sprintf("%s/phenofit_%05d.RDS", outdir, i)
+        if (!file.exists(outfile)) {
+            # sitename <- rv$sites[i]
+            if (showProgress){
+                progress$set(i, detail = paste("Doing part", i))
+            }
+            fprintf("phenofit (n = %d) | running %03d ... \n", n, i)
+                
+            tryCatch({
+                l_w <- qc_summary(qc[I_date])
+                INPUT <- check_input(t[I_date], y[I_date], w = l_w$w, QC_flag = l_w$QC_flag,
+                    nptperyear = nptperyear, south = FALSE)
+                # INPUT <- with(rv, getsite_INPUT(df, st, sitename, nptperyear, dateRange))
+                brks  <- phenofit_season(INPUT, options, IsPlot = FALSE, verbose = FALSE)
+                fits  <- phenofit_finefit(INPUT, brks, options) # multiple methods
+                # fits
+                saveRDS(fits, outfile)
+            # }, warning = function(w){
+            #     message(sprintf('[w] phenofit_process, site=%s: %s', sitename, w$message))
+            }, error = function(e){
+                message(sprintf('[e] phenofit_process, site=%s: %s', sitename, e$message))
+            })    
+
+        } else {
+            fprintf("[file exist] : %s\n", basename(outfile))
+        }
+    })
+    fprintf('Success finished!')
+    ############################# CALCULATION FINISHED #####################
+    # set_names(res, sites[1:n])
 }
 
 #' phenofit_plot
 #'
 #' @param obj \code{fFIT}
 #' @param type one of c("season", "fitting", "pheno", "all")
+#' @inheritParams plot_phenofit
+#' @param show.legend If now show legend, ggplot object will be returned, else
+#' grid object will be returned.
 #'
 #' @export
-phenofit_plot <- function(obj, type = "all", methods){
-    if (missing(methods)) {
+phenofit_plot <- function(obj, type = "all", methods,
+    title = NULL, title.ylab = "Vegetation Index",
+    Isplot = TRUE, show.legend = TRUE, newpage = TRUE){
+    if (missing(methods) || is.null(methods)) {
         methods <- names(obj$fit[[1]]$fFIT)
     }
 
-    if (type == "fitting") {
+    g <- NULL
+    plot_fitting <- function(){
         df_fit <- get_fitting(obj$fit)
-        g <- plot_phenofit(df_fit, obj$seasons)
-        grid::grid.newpage(); grid::grid.draw(g)
+        df_fit <- df_fit[meth %in% methods]
+
+        g <- plot_phenofit(df_fit, obj$seasons, title, title.ylab, show.legend = show.legend)
+
+        if (Isplot) {
+            if (newpage) grid::grid.newpage()
+            grid::grid.draw(g)
+        }
+        return(g)
+    }
+
+    if (type == "fitting") {
+        g <- plot_fitting()
     } else if (type == "season") {
         plot_season(obj$INPUT, obj$seasons)
     } else if (type == "pheno") {
-        l_pheno <- get_pheno(fit, methods, IsPlot = T)
+        l_pheno <- get_pheno(obj$fit, methods, IsPlot = T)
     } else if (type == "all") {
         # fitting
-        df_fit <- get_fitting(obj$fit)
-        g <- plot_phenofit(df_fit, obj$seasons)
-        grid::grid.newpage(); grid::grid.draw(g)
+        g <- plot_fitting()
         # season
         plot_season(obj$INPUT, obj$seasons)
         # pheno
@@ -218,4 +338,5 @@ phenofit_plot <- function(obj, type = "all", methods){
     } else {
         stop(sprintf("[e] wrong type: %sn", type))
     }
+    return(g)
 }

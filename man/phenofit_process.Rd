@@ -12,12 +12,13 @@ getsite_data(df, sitename, dateRange = NULL)
 
 getsite_INPUT(df, st, sitename, nptperyear, dateRange = NULL)
 
-phenofit_season(INPUT, options, IsPlot = FALSE, ...)
+phenofit_season(INPUT, options, IsPlot = FALSE, verbose = TRUE, ...)
 
-phenofit_finefit(INPUT, brks, options, ...)
+phenofit_finefit(INPUT, brks, options, TRS = c(0.2, 0.5, 0.6), ...)
 
 phenofit_process(options, dateRange = c(as.Date("2010-01-01"),
-  as.Date("2014-12-31")), nsite = -1, progress = NULL, ...)
+  as.Date("2014-12-31")), nsite = -1, .progress = NULL,
+  .parallel = FALSE, ...)
 }
 \arguments{
 \item{dateRange}{Date vector, filter input in the \code{dateRange}}
@@ -31,6 +32,8 @@ phenofit_process(options, dateRange = c(as.Date("2010-01-01"),
 \item{...}{other parameters to \code{\link{season_mov}} or \code{\link{season}}}
 
 \item{brks}{object returned by \code{\link{season_mov}} and \code{\link{season}}}
+
+\item{TRS}{Threshold for \code{PhenoTrs}.}
 
 \item{nsite}{the max number of sites to process. \code{-1} means all sites.}
 }

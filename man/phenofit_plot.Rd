@@ -4,12 +4,19 @@
 \alias{phenofit_plot}
 \title{phenofit_plot}
 \usage{
-phenofit_plot(obj, type = "all", methods)
+phenofit_plot(obj, type = "all", methods, title = NULL,
+  title.ylab = "Vegetation Index", Isplot = TRUE, show.legend = TRUE,
+  newpage = TRUE)
 }
 \arguments{
 \item{obj}{\code{fFIT}}
 
 \item{type}{one of c("season", "fitting", "pheno", "all")}
+
+\item{title}{String, title of figure.}
+
+\item{show.legend}{If now show legend, ggplot object will be returned, else
+grid object will be returned.}
 }
 \description{
 phenofit_plot
