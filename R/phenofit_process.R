@@ -196,8 +196,9 @@ phenofit_process <- function(
 
 #' get_date_AVHRR
 #'
+#' @importFrom lubridate days_in_month
 #' @export
-#'
+#' 
 #' @examples
 #' date_AVHRR <- get_date_AVHRR()
 get_date_AVHRR <- function(year_begin = 1982, year_end = 2015){
@@ -213,18 +214,26 @@ get_date_AVHRR <- function(year_begin = 1982, year_end = 2015){
     d_dates
 }
 
+#' phenofit_TSM.avhrr
+#' 
+#' @param exportType could be one of \code{"all", "pheno"}. If "all" used, all 
+#' also will be exported. Note that exported fitting series is daily scale, which 
+#' is quite large.
+#' 
 #' @export
-phenofit_TSM.avhrr <- function(
+phenofit_TS.avhrr <- function(
     options,
     dateRange = c(as.Date('2010-01-01'), as.Date('2014-12-31')),
     nsite = -1,
     outdir = ".", 
-    .progress = NULL, .parallel = FALSE,
+    exportType = "all", 
+    .progress = NULL, .parallel = FALSE, 
     ...)
 {
     file_y  <- options$file_veg_text
     file_qc <- options$file_qc
     nptperyear <- options$nptperyear
+    ymin       <- options$ymin 
 
     d_date <- get_date_AVHRR()
     t <- d_date$date
@@ -271,10 +280,11 @@ phenofit_TSM.avhrr <- function(
             tryCatch({
                 l_w <- qc_summary(qc[I_date])
                 INPUT <- check_input(t[I_date], y[I_date], w = l_w$w, QC_flag = l_w$QC_flag,
-                    nptperyear = nptperyear, south = FALSE)
+                    nptperyear = nptperyear, south = FALSE, ymin = ymin)
                 # INPUT <- with(rv, getsite_INPUT(df, st, sitename, nptperyear, dateRange))
                 brks  <- phenofit_season(INPUT, options, IsPlot = FALSE, verbose = FALSE)
                 fits  <- phenofit_finefit(INPUT, brks, options) # multiple methods
+                if (exportType == "pheno") { fits <- fits[-(1:3)] }
                 # fits
                 saveRDS(fits, outfile)
             # }, warning = function(w){

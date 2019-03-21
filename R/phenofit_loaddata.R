@@ -36,9 +36,6 @@ check_file <- function(file, duration = 10){
 #' @param ... ignored.
 #'
 #' @export
-#'
-#' @examples
-#' init_options(options, rv, input, session)
 phenofit_loaddata <- function(options, rv, ...){
     file_type     <- options$file_type
     file_veg_rda  <- options$file_rda

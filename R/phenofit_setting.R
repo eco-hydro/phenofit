@@ -9,7 +9,7 @@ options.phenofit <- list(
     file_veg_rda           = "",
     file_type              = "RData",
     nptperyear             = NA_real_,
-
+    ymin                   = 0, 
     var_y                  = "y", 
     is_QC2w                = FALSE,
     var_qc                 = "",  # SummaryQA
@@ -38,7 +38,7 @@ options.phenofit <- list(
     use.rough              = FALSE,
 
     # phenology extraction
-    meths_pheno            = ""   
+    meths_pheno            = ""
 )
 
 
@@ -64,6 +64,7 @@ setting.get <- function(options, others = NULL, ...){
         file_veg_rda           = options$file_veg_rda,
         file_type              = options$file_type,
         nptperyear             = options$nptperyear,
+        ymin                   = options$ymin,
 
         var_y                  = options$var_y, 
         is_QC2w                = options$is_QC2w,

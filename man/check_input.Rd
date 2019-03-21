@@ -5,7 +5,7 @@
 \title{check_input}
 \usage{
 check_input(t, y, w, QC_flag, nptperyear, south = FALSE, Tn = NULL,
-  wmin = 0.2, missval, maxgap, alpha = 0.02, ...)
+  wmin = 0.2, ymin, missval, maxgap, alpha = 0.02, ...)
 }
 \arguments{
 \item{t}{Numeric vector, \code{Date} variable}
@@ -31,6 +31,11 @@ Tn is used to help divide ungrowing period, and then get background value in
 ungrowing season (see details in \code{\link[phenofit]{backval}}).}
 
 \item{wmin}{Double, minimum weigth (i.e. weight of snow, ice and cloud).}
+
+\item{ymin}{If specified, \code{ylu[1]} is constrained greater than ymin. This 
+value is critical for bare, snow/ice land, where vegetation amplitude is quite
+small. Generally, you can set ymin=0.08 for NDVI, ymin=0.05 for EVI, 
+ymin=0.5 gC m-2 s-1 for GPP.}
 
 \item{missval}{Double, which is used to replace NA values in y. If missing,
 the default vlaue is \code{ylu[1]}.}

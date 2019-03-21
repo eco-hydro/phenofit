@@ -79,9 +79,9 @@ IGBPnames_005 <- c("water", "ENF", "EBF", "DNF", "DBF", "MF" , "CSH",
 
 
 metric_spring <- c('TRS1.sos', 'TRS2.sos', 'TRS5.sos', 'TRS6.sos', 'DER.sos',
-                   'GU.UD', 'GU.SD', 'ZHANG.Greenup', 'ZHANG.Maturity')
+                   'UD', 'SD', 'Greenup', 'Maturity')
 metric_autumn <- c('DER.eos', 'TRS6.eos', 'TRS5.eos', 'TRS2.eos', 'TRS1.eos',
-                   'GU.DD', 'GU.RD', 'ZHANG.Senescence', 'ZHANG.Dormancy')
+                   'DD', 'RD', 'Senescence', 'Dormancy')
 metrics <- c(metric_spring, "DER.pop", metric_autumn)
 #' phase: 'spring', 'pop', 'autumn'
 metric_phase <- function(metric){
@@ -435,12 +435,12 @@ get_phenofit <- function(sitename, df, st, prefix_fig = 'phenofit_v0.1.6', IsPlo
 # rename phenofit phenology metrics names
 fix_level <- function(x){
     phenophase <- c(
-        'TRS1.sos', 'TRS2.sos', 'ZHANG.Greenup', 'GU.UD',
+        'TRS1.sos', 'TRS2.sos', 'Greenup', 'UD',
         'TRS5.sos', 'TRS6.sos', 'DER.sos',
-        'ZHANG.Maturity','GU.SD', 'DER.pop',
-        'ZHANG.Senescence', 'GU.DD',
+        'Maturity','SD', 'DER.pop',
+        'Senescence', 'DD',
         'TRS5.eos', 'TRS6.eos','DER.eos',
-        rev(c('TRS1.eos', 'TRS2.eos', 'ZHANG.Dormancy', 'GU.RD')))
+        rev(c('TRS1.eos', 'TRS2.eos', 'Dormancy', 'RD')))
     phenophase_spl <- c(
         'TRS1.SOS', 'TRS2.SOS', 'Greenup', 'UD',
         'TRS5.SOS', 'TRS6.SOS', 'DER.SOS',

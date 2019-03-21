@@ -4,35 +4,24 @@ library(Cairo)
 # setwd("..")
 source("test/load_pkgs.R")
 
-# 1. rep26
-# file_json <- "test/setting_AVHRR_TP_rep26.json"
-# options   <- setting.read(file_json)
-#
-# InitCluster(6)
-# system.time(r <- phenofit_process(options, nsite=-1, .parallel = TRUE))
-# save(r, file = "phenofit_AVHRR_rep26.rda")
+# 1. rep26 ----------------------------------------------------------------
 
-# 2. TP TSF
-{
-    killCluster()
-
-    file_json <- "test/setting_AVHRR_TP_TSF.json"
+s1_rep26 = FALSE
+s1_rep26 = TRUE
+if (s1_rep26) {
+    file_json <- "test/setting_AVHRR_TP_rep26.json"
     options   <- setting.read(file_json)
 
-    InitCluster(8)
-    system.time(r <- phenofit_TSM.avhrr(options, nsite=-1, outdir = "test/AVHRR_TP/",
-                                        .parallel = TRUE, dateRange = NULL))
-    save(r, file = "phenofit_AVHRR_TP.rda")
+    InitCluster(6)
+    system.time(r <- phenofit_process(options, nsite=-1, .parallel = TRUE))
+    save(r, file = "phenofit_AVHRR_rep26.rda")
 }
-
-# foreach(x = 1:8, .packages = "phenofit") %dopar% {
-#     phenofit_finefit
-# }
 
 # load("phenofit_AVHRR_rep26.rda")
 Fig1_rep = FALSE
+Fig1_rep = TRUE
 if (Fig1_rep) {
-    title.ylab <- "NDVI"
+    title.ylab <- NULL #"NDVI"
     NITER <- r[[1]]$fit[[1]]$fFIT[[1]]$zs %>% length()
     lines_colors <- iter_colors(NITER)
     lgd <- make_legend(paste0("iter", 1:NITER), lines_colors, nmax_points = 4)
@@ -56,5 +45,37 @@ if (Fig1_rep) {
         phenofit_plot(p, "fitting", methods, title = name, title.ylab,
                       Isplot = FALSE, show.legend = FALSE, newpage = newpage)
     }
-    FigsToPages(ps, lgd, "NDVI", file = "b.pdf", width = 10, nrow=6)
+    FigsToPages(ps, lgd, "NDVI", file = "phenofit_TP_rep26.pdf", width = 10, nrow=6)
 }
+
+
+# 2. TP phenology ---------------------------------------------------------
+{
+    killCluster()
+
+    outdir <- "F:/phenology/AVHRR_TP_v0.1.2/"
+    if (!dir.exists(outdir)) { dir.create(outdir, recursive = TRUE) }
+
+    file_json <- "test/setting_AVHRR_TP_TSF.json"
+    options   <- setting.read(file_json)
+
+    InitCluster(4)
+    system.time(r <- phenofit_TS.avhrr(options, nsite=16,
+                                       outdir = outdir, type = "pheno",
+                                       .parallel = TRUE, dateRange = NULL))
+    # save(r, file = "phenofit_AVHRR_TP.rda")
+}
+
+
+## post-process
+pheno_mean <- function(file){
+    x <- read_rds(file)
+    # get the mean value of those values
+    d <- x$pheno$doy %>% melt_list("meth")
+    d[, lapply(.SD, sd, na.rm = TRUE), .(meth), .SDcols = colnames(d)[-c(1:2, ncol(d))]]
+}
+
+r <- microbenchmark::microbenchmark(
+    pheno_mean(file), times = 1000
+)
+file <- "D:/Documents/OneDrive - mail2.sysu.edu.cn/phenofit_20267.RDS"

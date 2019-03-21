@@ -17,6 +17,3 @@ phenofit_loaddata(options, rv, ...)
 \description{
 update all INPUT data according to \code{input} file.
 }
-\examples{
-init_options(options, rv, input, session)
-}

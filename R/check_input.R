@@ -25,6 +25,10 @@
 #' @param wmin Double, minimum weigth (i.e. weight of snow, ice and cloud).
 #' @param missval Double, which is used to replace NA values in y. If missing,
 #' the default vlaue is \code{ylu[1]}.
+#' @param ymin If specified, \code{ylu[1]} is constrained greater than ymin. This 
+#' value is critical for bare, snow/ice land, where vegetation amplitude is quite
+#' small. Generally, you can set ymin=0.08 for NDVI, ymin=0.05 for EVI, 
+#' ymin=0.5 gC m-2 s-1 for GPP.  
 #' @param maxgap Integer, nptperyear/4 will be a suitable value. If continuous
 #' missing value numbers less than maxgap, then interpolate those NA values by
 #' zoo::na.approx; If false, then replace those NA values with a constant value
@@ -59,7 +63,9 @@
 #' @export
 check_input <- function(t, y, w, QC_flag,
     nptperyear, south = FALSE, Tn = NULL,
-    wmin = 0.2, missval, maxgap, alpha = 0.02, ...)
+    wmin = 0.2, 
+    ymin, missval, 
+    maxgap, alpha = 0.02, ...)
 {
     if (missing(QC_flag)) QC_flag <- NULL
     if (missing(nptperyear)){
@@ -85,6 +91,11 @@ check_input <- function(t, y, w, QC_flag,
     y_good <- y[w >= w_critical] %>% rm_empty()
     ylu    <- c(pmax( quantile(y_good, alpha/2), 0),
                quantile(y_good, 1 - alpha/2))
+    
+    if (!missing(ymin) && !is.na(ymin)){
+        # constrain back ground value
+        ylu[1] <- pmax(ylu[1], ymin)
+    }
     # When check_ylu, ylu_max is not used. ylu_max is only used for dividing
     # growing seasons.
 
