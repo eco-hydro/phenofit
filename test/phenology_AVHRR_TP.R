@@ -3,7 +3,7 @@ library(iterators)
 library(Cairo)
 # setwd("..")
 source("test/load_pkgs.R")
-load("../phenology_TP/data/00basement_TP.rda")
+load("D:/Documents/OneDrive - mail2.sysu.edu.cn/phenology/data/00basement_TP.rda")
 
 
 # 2. TP phenology ---------------------------------------------------------
@@ -17,10 +17,10 @@ load("../phenology_TP/data/00basement_TP.rda")
     file_json <- "test/setting_AVHRR_TP_nosnow.json"
     options   <- setting.read(file_json)
 
-    InitCluster(8)
-    I_all <- chunk(1:ngrid, 2)
+    InitCluster(7)
+    I_all <- chunk(seq_along(gridclip), 2)
     I_part <- I_all[[2]] %>% rev()
-    system.time(r <- phenofit_TS.avhrr(options, 
+    system.time(r <- phenofit_TS.avhrr(options,
         I_part = I_part,
         dateRange = NULL,
         outdir = outdir,

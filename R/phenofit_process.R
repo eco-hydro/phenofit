@@ -248,6 +248,7 @@ phenofit_TS.avhrr <- function(
 
     mat_y  <- fread(file_y, skip = 1) %>% as.matrix()
     mat_qc <- fread(file_qc, skip = 1) %>% as.matrix()
+    n <- nrow(mat_y)
 
     if (is.null(I_part) || is.na(I_part)) {
         I_part <- 1:nrow(mat_qc)
@@ -265,9 +266,8 @@ phenofit_TS.avhrr <- function(
     # sites <- rv$sites
     # n     <- length(sites)
 
-    n <- nrow(mat_y)
-    if (nsite > 0) n <- pmin(n, nsite)
-    sites <- seq_len(n) %>% as.character()
+    # if (nsite > 0) n <- pmin(n, nsite)
+    # sites <- seq_len(n) %>% as.character()
 
     FUN <- ifelse(.parallel, `%dopar%`, `%do%`)
     res <- FUN(foreach(
