@@ -5,7 +5,7 @@
 \title{phenofit_TSM.avhrr}
 \usage{
 phenofit_TS.avhrr(options, dateRange = c(as.Date("2010-01-01"),
-  as.Date("2014-12-31")), nsite = -1, outdir = ".",
+  as.Date("2014-12-31")), I_part = NULL, outdir = ".",
   exportType = "all", overwrite = FALSE, .progress = NULL,
   .parallel = FALSE, ...)
 }

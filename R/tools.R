@@ -127,3 +127,6 @@ merge_pdf <- function(outfile = "RPlot.pdf", indir = 'Figure', pattern = "*.pdf"
 obj.size <- function(obj, unit = "Mb"){
     cat(format(object.size(obj), unit), "\n")
 }
+
+#' @export
+chunk <- function(x,n) split(x, cut(seq_along(x), n, labels = FALSE))

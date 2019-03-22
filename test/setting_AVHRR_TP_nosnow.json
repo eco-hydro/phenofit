@@ -1,7 +1,7 @@
 {
   "file_site": {},
-  "file_qc": ["G:/Github/phenology/phenology/phenology_TP/TSF/TP_NDVI_AVHRR_qc_nosnow.txt"], 
-  "file_veg_text": ["G:/Github/phenology/phenology/phenology_TP/TSF/TP_NDVI_AVHRR_y_nosnow.txt"],
+  "file_qc"      : ["D:/Documents/OneDrive - mail2.sysu.edu.cn/phenology/TP_NDVI_AVHRR_qc_nosnow.txt"], 
+  "file_veg_text": ["D:/Documents/OneDrive - mail2.sysu.edu.cn/phenology/TP_NDVI_AVHRR_y_nosnow.txt"],
   "file_veg_rda": {},
   "file_type": ["text"],
   "nptperyear": [24],

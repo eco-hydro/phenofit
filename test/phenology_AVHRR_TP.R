@@ -4,16 +4,43 @@ library(Cairo)
 # setwd("..")
 source("test/load_pkgs.R")
 load("../phenology_TP/data/00basement_TP.rda")
+
+
+# 2. TP phenology ---------------------------------------------------------
+{
+    killCluster()
+
+    outdir <- "D:/Documents/OneDrive - mail2.sysu.edu.cn/phenology/AVHRR_TP_v0.1.2/"
+    # outdir <- "F:/phenology/AVHRR_TP_v0.1.2/"
+    if (!dir.exists(outdir)) { dir.create(outdir, recursive = TRUE) }
+
+    file_json <- "test/setting_AVHRR_TP_nosnow.json"
+    options   <- setting.read(file_json)
+
+    InitCluster(8)
+    I_all <- chunk(1:ngrid, 2)
+    I_part <- I_all[[2]] %>% rev()
+    system.time(r <- phenofit_TS.avhrr(options, 
+        I_part = I_part,
+        dateRange = NULL,
+        outdir = outdir,
+        exportType = "pheno",
+        overwrite = TRUE,
+       .parallel = TRUE))
+    # save(r, file = "phenofit_AVHRR_TP.rda")
+}
+
+## post-process
+# pheno_mean <- function(file){
+#     x <- read_rds(file)
+#     # get the mean value of those values
+#     d <- x$pheno$doy %>% melt_list("meth")
+#     d[, lapply(.SD, sd, na.rm = TRUE), .(meth), .SDcols = colnames(d)[-c(1:2, ncol(d))]]
+# }
+
 # 1. rep26 ----------------------------------------------------------------
-
-poly <- matrix(c(1,1,1,2,2,2,2,1,1,1),ncol=2, byrow=TRUE) %>%
-    list() %>%
-    st_polygon()
-p1 = st_sample(poly, 6)
-st_crs(4326)
-
 s1_rep26 = FALSE
-s1_rep26 = TRUE
+# s1_rep26 = TRUE
 if (s1_rep26) {
     file_json <- "test/setting_AVHRR_TP_rep26.json"
     options   <- setting.read(file_json)
@@ -25,7 +52,7 @@ if (s1_rep26) {
 
 # load("phenofit_AVHRR_rep26.rda")
 Fig1_rep = FALSE
-Fig1_rep = TRUE
+# Fig1_rep = TRUE
 if (Fig1_rep) {
     title.ylab <- NULL #"NDVI"
     NITER <- r[[1]]$fit[[1]]$fFIT[[1]]$zs %>% length()
@@ -53,45 +80,3 @@ if (Fig1_rep) {
     }
     FigsToPages(ps, lgd, "NDVI", file = "phenofit_TP_rep26.pdf", width = 10, nrow=6)
 }
-
-
-# 2. TP phenology ---------------------------------------------------------
-{
-    killCluster()
-
-    outdir <- "F:/phenology/AVHRR_TP_v0.1.2/"
-    if (!dir.exists(outdir)) { dir.create(outdir, recursive = TRUE) }
-
-    file_json <- "test/setting_AVHRR_TP_nosnow.json"
-    options   <- setting.read(file_json)
-
-    InitCluster(8)
-    system.time(r <- phenofit_TS.avhrr(options, nsite=-1,
-                                       dateRange = NULL,
-                                       outdir = outdir,
-                                       exportType = "pheno",
-                                       overwrite = TRUE,
-                                       .parallel = TRUE))
-    # save(r, file = "phenofit_AVHRR_TP.rda")
-}
-
-
-## post-process
-pheno_mean <- function(file){
-    x <- read_rds(file)
-    # get the mean value of those values
-    d <- x$pheno$doy %>% melt_list("meth")
-    d[, lapply(.SD, sd, na.rm = TRUE), .(meth), .SDcols = colnames(d)[-c(1:2, ncol(d))]]
-}
-
-r <- microbenchmark::microbenchmark(
-    pheno_mean(file), times = 1000
-)
-file <- "D:/Documents/OneDrive - mail2.sysu.edu.cn/phenofit_20267.RDS"
-
-
-
-files <- dir("G:/Github/phenology/China_Phenology/data/txt", full.names = T)[-4]
-llply(files, function(file){
-     fwrite(fread(file), file)
-})
