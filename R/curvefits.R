@@ -71,7 +71,7 @@ curvefits <- function(INPUT, brks,
         INPUT$y[I_y] <- dplyr::last(brks$whit)[I_fix]
     }
     # use the weights of last iteration of rough fitting
-    w[I_all] <- brks$whit %>% {.[, contain(., "witer"), with = F]} %>% last()
+    # w[I_all] <- brks$whit %>% {.[, contain(., "witer"), with = F]} %>% last()
     # w[I_fix] <- wmin + 0.1 # exert the function of whitaker smoother
 
     # growing season dividing

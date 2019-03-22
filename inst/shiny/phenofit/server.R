@@ -68,6 +68,7 @@ server <- function(input, output, session) {
                 nptperyear     = input$nptperyear)
 
         phenofit_loaddata(filepaths, rv)
+        rv$filepaths <- filepaths
     })
 
     observeEvent(input$pre_process, {

@@ -3,8 +3,14 @@ library(iterators)
 library(Cairo)
 # setwd("..")
 source("test/load_pkgs.R")
-
+load("../phenology_TP/data/00basement_TP.rda")
 # 1. rep26 ----------------------------------------------------------------
+
+poly <- matrix(c(1,1,1,2,2,2,2,1,1,1),ncol=2, byrow=TRUE) %>%
+    list() %>%
+    st_polygon()
+p1 = st_sample(poly, 6)
+st_crs(4326)
 
 s1_rep26 = FALSE
 s1_rep26 = TRUE
@@ -56,13 +62,16 @@ if (Fig1_rep) {
     outdir <- "F:/phenology/AVHRR_TP_v0.1.2/"
     if (!dir.exists(outdir)) { dir.create(outdir, recursive = TRUE) }
 
-    file_json <- "test/setting_AVHRR_TP_TSF.json"
+    file_json <- "test/setting_AVHRR_TP_nosnow.json"
     options   <- setting.read(file_json)
 
-    InitCluster(4)
-    system.time(r <- phenofit_TS.avhrr(options, nsite=16,
-                                       outdir = outdir, type = "pheno",
-                                       .parallel = TRUE, dateRange = NULL))
+    InitCluster(8)
+    system.time(r <- phenofit_TS.avhrr(options, nsite=-1,
+                                       dateRange = NULL,
+                                       outdir = outdir,
+                                       exportType = "pheno",
+                                       overwrite = TRUE,
+                                       .parallel = TRUE))
     # save(r, file = "phenofit_AVHRR_TP.rda")
 }
 
@@ -79,3 +88,10 @@ r <- microbenchmark::microbenchmark(
     pheno_mean(file), times = 1000
 )
 file <- "D:/Documents/OneDrive - mail2.sysu.edu.cn/phenofit_20267.RDS"
+
+
+
+files <- dir("G:/Github/phenology/China_Phenology/data/txt", full.names = T)[-4]
+llply(files, function(file){
+     fwrite(fread(file), file)
+})

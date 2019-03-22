@@ -6,11 +6,12 @@
 \usage{
 phenofit_TS.avhrr(options, dateRange = c(as.Date("2010-01-01"),
   as.Date("2014-12-31")), nsite = -1, outdir = ".",
-  exportType = "all", .progress = NULL, .parallel = FALSE, ...)
+  exportType = "all", overwrite = FALSE, .progress = NULL,
+  .parallel = FALSE, ...)
 }
 \arguments{
-\item{exportType}{could be one of \code{"all", "pheno"}. If "all" used, all 
-also will be exported. Note that exported fitting series is daily scale, which 
+\item{exportType}{could be one of \code{"all", "pheno"}. If "all" used, all
+also will be exported. Note that exported fitting series is daily scale, which
 is quite large.}
 }
 \description{

@@ -7,6 +7,10 @@
 * add function `phenofit_shiny`
 * support asymmetric background values in spring and autumn season.
 
+## major updates   
+* weights of rough fitting not passed to curve fitting now
+* growing season dividing is not used.
+
 
 # phenofit 0.2.1 (2019-03-11)    
 

@@ -34,7 +34,8 @@ getsite_INPUT <- function(df, st, sitename, nptperyear, dateRange = NULL){
     dnew     <- add_HeadTail(d, south = south, nptperyear = nptperyear)
     INPUT    <- check_input(dnew$t, dnew$y, dnew$w, QC_flag = dnew$QC_flag,
         nptperyear = nptperyear, south = south,
-        maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
+        maxgap = nptperyear/4, alpha = 0.02,
+        wmin = 0.6, ymin = 0.1)
 
     INPUT$titlestr <- titlestr
     INPUT
@@ -77,7 +78,7 @@ phenofit_season <- function(INPUT, options, IsPlot = FALSE, verbose = TRUE, ...)
         IsPlot            = FALSE,
         IsPlot.OnlyBad    = FALSE,
         ypeak_min         = 0.1,
-        print             = FALSE, 
+        print             = FALSE,
         ...
     )
 
@@ -198,7 +199,7 @@ phenofit_process <- function(
 #'
 #' @importFrom lubridate days_in_month
 #' @export
-#' 
+#'
 #' @examples
 #' date_AVHRR <- get_date_AVHRR()
 get_date_AVHRR <- function(year_begin = 1982, year_end = 2015){
@@ -215,25 +216,26 @@ get_date_AVHRR <- function(year_begin = 1982, year_end = 2015){
 }
 
 #' phenofit_TSM.avhrr
-#' 
-#' @param exportType could be one of \code{"all", "pheno"}. If "all" used, all 
-#' also will be exported. Note that exported fitting series is daily scale, which 
+#'
+#' @param exportType could be one of \code{"all", "pheno"}. If "all" used, all
+#' also will be exported. Note that exported fitting series is daily scale, which
 #' is quite large.
 #' 
+#' @importFrom readr read_rds write_rds
 #' @export
 phenofit_TS.avhrr <- function(
     options,
     dateRange = c(as.Date('2010-01-01'), as.Date('2014-12-31')),
     nsite = -1,
-    outdir = ".", 
-    exportType = "all", 
-    .progress = NULL, .parallel = FALSE, 
+    outdir = ".",
+    exportType = "all", overwrite = FALSE, 
+    .progress = NULL, .parallel = FALSE,
     ...)
 {
     file_y  <- options$file_veg_text
     file_qc <- options$file_qc
     nptperyear <- options$nptperyear
-    ymin       <- options$ymin 
+    ymin       <- options$ymin
 
     d_date <- get_date_AVHRR()
     t <- d_date$date
@@ -270,28 +272,29 @@ phenofit_TS.avhrr <- function(
         .packages = c("phenofit")), {
 
         outfile <- sprintf("%s/phenofit_%05d.RDS", outdir, i)
-        if (!file.exists(outfile)) {
+        if (!file.exists(outfile) || overwrite) {
             # sitename <- rv$sites[i]
             if (showProgress){
                 progress$set(i, detail = paste("Doing part", i))
             }
             fprintf("phenofit (n = %d) | running %03d ... \n", n, i)
-                
+
             tryCatch({
-                l_w <- qc_summary(qc[I_date])
+                wmin <- 0.4
+                l_w <- qc_summary(qc[I_date], wmin = wmin, wmid = 0.5, wmax = 0.8)
                 INPUT <- check_input(t[I_date], y[I_date], w = l_w$w, QC_flag = l_w$QC_flag,
-                    nptperyear = nptperyear, south = FALSE, ymin = ymin)
+                    nptperyear = nptperyear, south = FALSE, ymin = ymin, wmin = wmin)
                 # INPUT <- with(rv, getsite_INPUT(df, st, sitename, nptperyear, dateRange))
                 brks  <- phenofit_season(INPUT, options, IsPlot = FALSE, verbose = FALSE)
                 fits  <- phenofit_finefit(INPUT, brks, options) # multiple methods
                 if (exportType == "pheno") { fits <- fits[-(1:3)] }
                 # fits
-                saveRDS(fits, outfile)
+                write_rds(fits, outfile)
             # }, warning = function(w){
             #     message(sprintf('[w] phenofit_process, site=%s: %s', sitename, w$message))
             }, error = function(e){
                 message(sprintf('[e] phenofit_process, site=%s: %s', sitename, e$message))
-            })    
+            })
 
         } else {
             fprintf("[file exist] : %s\n", basename(outfile))
