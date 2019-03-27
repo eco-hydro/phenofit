@@ -29,6 +29,7 @@ sgolayS <- function(frame, d){
 wSG <- function(y, w, nptperyear, ylu, wFUN = wTSM, iters = 2,
                    frame = floor(nptperyear/7)*2 + 1, d=2, ...){
     if (all(is.na(y))) return(y)
+    if (missing(w)) w <- rep(1, length(y))
 
     S <- sgolayS(frame, d)
     
@@ -39,9 +40,16 @@ wSG <- function(y, w, nptperyear, ylu, wFUN = wTSM, iters = 2,
     for (i in 1:iters){
         ws[[i]] <- w
         z <- sgfitw_rcpp(yiter, w, S)[, 1]
-        wnew <- wFUN(y, z, w, i, nptperyear, ...)
 
-        z <- check_ylu(z, ylu)
+        if (is.null(wFUN)){
+            wnew <- w
+        } else {
+            wnew <- wFUN(y, z, w, i, nptperyear, ...)
+        }
+
+        if (!missing(ylu)) {
+            z <- check_ylu(z, ylu)        
+        }
         yiter[yiter < z] <- z[yiter < z] # upper envelope
         
         fits[[i]] <- z

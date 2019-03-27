@@ -17,15 +17,16 @@ load("D:/Documents/OneDrive - mail2.sysu.edu.cn/phenology/data/00basement_TP.rda
     file_json <- "test/setting_AVHRR_TP_nosnow.json"
     options   <- setting.read(file_json)
 
-    InitCluster(7)
-    I_all <- chunk(seq_along(gridclip), 2)
-    I_part <- I_all[[2]] %>% rev()
+    InitCluster(8)
+    I_all <- seq_along(gridclip)
+    I_lst <- chunk(I_all, 2)
+    I_part <- I_lst[[1]] #%>% rev()
     system.time(r <- phenofit_TS.avhrr(options,
-        I_part = I_part,
+        I_part = I_all,
         dateRange = NULL,
         outdir = outdir,
         exportType = "pheno",
-        overwrite = TRUE,
+        overwrite = FALSE,
        .parallel = TRUE))
     # save(r, file = "phenofit_AVHRR_TP.rda")
 }
