@@ -119,13 +119,6 @@ clamp <- function(x, lims = c(0, 1)){
     x
 }
 
-g_legend<-function(a.gplot){
-    tmp <- ggplot_gtable(ggplot_build(a.gplot))
-    leg <- which(sapply(tmp$grobs, function(x) x$name) == "guide-box")
-    legend <- tmp$grobs[[leg]]
-    return(legend)
-}
-
 
 readRDS_tidy <- function(file){
     file <- gsub("file:///", "", file)
@@ -203,29 +196,6 @@ GOF_extra2 <- function(Y_obs, Y_pred){
 
     res <- c(gof_1, gof_2)
     res
-}
-
-# function to separate data to steps of x, obtain 95 quantile value for smooth
-upper_envelope <- function(x, y, step = 0.2, alpha = 0.95){
-    xrange <- range(x, na.rm = T)
-
-    brks <- seq(xrange[1], xrange[2], by = step)
-    n    <- length(brks)
-    xmid <- (brks[-n] + brks[-1])/2
-
-    brks[n] <- Inf
-
-    res <- numeric(n-1)*NA_real_
-
-    for (i in 1:(n-1)){
-        val_min <- brks[i]
-        val_max <- brks[i+1]
-
-        I <- x >= val_min & x < val_max
-        res[i] <- quantile(y[I], alpha, na.rm = T)
-    }
-
-    data.table(x = xmid, y = res)
 }
 
 siteorder <- function(sites){ factor(sites) %>% as.numeric() }
@@ -379,12 +349,12 @@ get_phenofit <- function(sitename, df, st, prefix_fig = 'phenofit_v0.1.6', IsPlo
 # rename phenofit phenology metrics names
 fix_level <- function(x){
     phenophase <- c(
-        'TRS1.sos', 'TRS2.sos', 'Greenup', 'UD',
+        'TRS1.sos', 'TRS2.sos', 'ZHANG.Greenup', 'GU.UD',
         'TRS5.sos', 'TRS6.sos', 'DER.sos',
-        'Maturity','SD', 'DER.pop',
-        'Senescence', 'DD',
+        'ZHANG.Maturity','GU.SD', 'DER.pop',
+        'ZHANG.Senescence', 'GU.DD',
         'TRS5.eos', 'TRS6.eos','DER.eos',
-        rev(c('TRS1.eos', 'TRS2.eos', 'Dormancy', 'RD')))
+        rev(c('TRS1.eos', 'TRS2.eos', 'ZHANG.Dormancy', 'GU.RD')))
     phenophase_spl <- c(
         'TRS1.SOS', 'TRS2.SOS', 'Greenup', 'UD',
         'TRS5.SOS', 'TRS6.SOS', 'DER.SOS',
@@ -500,35 +470,7 @@ select_valid <- function(df, noise_perc = 0.3, group = F){
 }
 
 # nptperyear = 46
-# # df <- fread("data/lc006/PMLv2_flux112_sgfitw&TSM.csv")
-# df <- fread("PMLv2_flux112_CV.csv")
-# df$date %<>% ymd
-# df <- df[order(site, date), ]
-#
-# # For each site, remove na values at head and tail
-# df <- ddply(df, .(site), function(x){
-#     if (all(is.na(x$GPPobs))) return(NULL)
-#     I <- which(!is.na(x$GPPobs)) %>% {first(.):last(.)}
-#     x[I, ]
-# }) %>% as.data.table()
-# df$YYYY <- df$year
-# df[lat < 0, YYYY := year + as.integer(date > ymd(sprintf("%d0701", year))) - 1L];
-#
-# sites_rm1 <- df[lat < 0, unique(lat<0), .(site)]$site
-# sites_rm2 <- c("GF-Guy", "BR-Sa3", "US-Whs")
-# sites_rm  <- union(sites_rm1, sites_rm2)
-## df <- df[!(site %in% sites_rm), ]
-#
 # save(df, file = "phenofit_flux90_INPUTS.rda")
-
-# tidy_pheno <- function(RES){
-#     id.vars <- colnames(RES[[1]]$pheno$doy$AG)
-#     df <- map(rm_empty(RES), ~.x$pheno$doy) %>%
-#         rm_empty() %>%
-#         melt(id.vars = id.vars) %>%
-#         set_names(c(id.vars, "meth", "site")) %>% as.data.table()
-#     return(df)
-# }
 
 # # re-calculate phenology of every site
 # recal_pheno.site <- function(fit){

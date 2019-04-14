@@ -25,7 +25,7 @@ in the range of \code{ylu}.}
 
 \item{frame}{Savitzky-Golay windows size}
 
-\item{d}{polynomial of degree}
+\item{d}{polynomial of degree. When d = 1, it becomes moving average.}
 
 \item{...}{Additional parameters are passed to \code{wFUN}.}
 }

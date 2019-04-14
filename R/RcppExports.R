@@ -5,12 +5,42 @@ fix_dt <- function(d) {
     invisible(.Call(`_phenofit_fix_dt`, d))
 }
 
-sgolayB <- function(S, w) {
-    .Call(`_phenofit_sgolayB`, S, w)
+sgmat_S <- function(halfwin = 5L, d = 2L) {
+    .Call(`_phenofit_sgmat_S`, halfwin, d)
 }
 
-sgfitw_rcpp <- function(y, w, S) {
-    .Call(`_phenofit_sgfitw_rcpp`, y, w, S)
+sgmat_B <- function(S) {
+    .Call(`_phenofit_sgmat_B`, S)
+}
+
+sgmat_wB <- function(S, w) {
+    .Call(`_phenofit_sgmat_wB`, S, w)
+}
+
+#' Weighted Savitzky-Golay
+#'
+#' @param y colvec
+#' @param w colvec of weight
+#' @param halfwin halfwin of Savitzky-Golay
+#' @param d polynomial of degree. When d = 0, it becomes moving average.
+#'
+#' @examples
+#' y <- 1:15
+#' w <- seq_along(y)/length(y)
+#'
+#' frame = 5
+#' d = 2
+#' s1 <- smooth_wSG(y, w, frame, d)
+#' s2 <- smooth_SG(y, frame, d)
+#' @export
+smooth_wSG <- function(y, w, halfwin, d = 2L) {
+    .Call(`_phenofit_smooth_wSG`, y, w, halfwin, d)
+}
+
+#' @rdname smooth_wSG
+#' @export
+smooth_SG <- function(y, halfwin, d = 2L) {
+    .Call(`_phenofit_smooth_SG`, y, halfwin, d)
 }
 
 wTSM_cpp <- function(y, yfit, w, iter, nptperyear, wfact) {

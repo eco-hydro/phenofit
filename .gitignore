@@ -72,5 +72,5 @@ notebook
 
 # TIMESAT file
 *.set
-*.json
 *.rda
+inst/shiny/

@@ -24,13 +24,12 @@ A state-of-the-art **remote sensing vegetation phenology** extraction package: `
 ***Task lists***
 
 - [ ] Improve computational efficiency of fine fitting;
-- [ ] Complete script automatic generating module of shinyapp;
+- [x] Complete script automatic generating module of shinyapp;
 - [ ] Uncertainty analysis of curve fitting and phenological metrics;
 - [ ] Support spatial analysis;
 - [x] Support annual season in curve fitting;
 - [x] flexible fine fitting input ( original time-series or smoothed time-series by rough fitting).
-- [ ] growing season dividing error in `season_mov`
-- [ ] Asymmetric of Threshold method 
+- [x] Asymmetric of Threshold method 
 
 ![title](man/Figure/Figure1_phenofit_flowchart.svg)   
 *<u>Figure 1. The flowchart of phenology extraction in `phenofit`.</u>*

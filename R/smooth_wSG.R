@@ -6,7 +6,7 @@ sgolayS <- function(frame, d){
 #' 
 #' @inheritParams wHANTS
 #' @param frame Savitzky-Golay windows size
-#' @param d polynomial of degree
+#' @param d polynomial of degree. When d = 1, it becomes moving average.
 #' 
 #' @inherit wHANTS return
 #' 
@@ -31,7 +31,7 @@ wSG <- function(y, w, nptperyear, ylu, wFUN = wTSM, iters = 2,
     if (all(is.na(y))) return(y)
     if (missing(w)) w <- rep(1, length(y))
 
-    S <- sgolayS(frame, d)
+    halfwin <- floor((frame-1)/2)
     
     yiter <- y
     fits  <- list()
@@ -39,7 +39,7 @@ wSG <- function(y, w, nptperyear, ylu, wFUN = wTSM, iters = 2,
 
     for (i in 1:iters){
         ws[[i]] <- w
-        z <- sgfitw_rcpp(yiter, w, S)[, 1]
+        z <- smooth_wSG(yiter, w, halfwin, d)
 
         if (is.null(wFUN)){
             wnew <- w
