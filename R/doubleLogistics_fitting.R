@@ -60,7 +60,7 @@ FitDL.Zhang <- function(y, t = index(y), tout = t,
     prior  <- with(e, rbind(
         c(doy.mx   , mn, mx, doy[1]   , k  , doy[2]   , k  ),
         c(doy.mx   , mn, mx, doy[1]+t1, k*2, doy[2]-t1, k*2),
-        c(doy.mx   , mn, mx, doy[1]-t1, k/2, doy[2]+t2, k/2)))
+        c(doy.mx   , mn, mx, doy[1]-t1, k  , doy[2]+t2, k)))
 
     param_lims <- e$lims[c('t0', 'mn', 'mx', 'sos', 'r', 'eos', 'r')]
     # param_lims$r[2] %<>% multiply_by(2)
@@ -135,8 +135,8 @@ FitDL.Elmore <- function(y, t = index(y), tout = t,
     prior <- with(e, rbind(
         c(mn, mx - mn, doy[1]+t1, k*2.5  , doy[2]-t2, k*2.5  , 0.002),
         c(mn, mx - mn, doy[1]   , k*1.25 , doy[2]   , k*1.25 , 0.002),
-        c(mn, mx - mn, doy[1]   , k*0.5  , doy[2]   , k*0.5  , 0.05),
-        c(mn, mx - mn, doy[1]-t1, k*0.25 , doy[2]+t2, k*0.25, 0.1)))
+        c(mn, mx - mn, doy[1]   , k*1  , doy[2]   , k*0.5  , 0.05),
+        c(mn, mx - mn, doy[1]-t1, k*1 , doy[2]+t2, k*0.25, 0.1)))
     # xpred <- m1 + (m2 - m7*t)*((1/(1 + exp((m3l - t)/m4l))) - (1/(1 + exp((m5l - t)/m6l))))
     param_lims <- e$lims[c('mn', 'mx', 'sos', 'r', 'eos', 'r')]
     lower  <- c(sapply(param_lims, `[`, 1), 0  )
@@ -180,7 +180,7 @@ FitDL.Gu <- function(y, t = index(y), tout = t,
 
     sFUN  <- "doubleLog.Gu"
     prior <- with(e, rbind(
-        c(mn, a, a, doy[1]-t1, k/2 , doy[2]+t2, k/2, 1  , 1),
+        # c(mn, a, a, doy[1]-t1, k/2 , doy[2]+t2, k/2, 1  , 1),
         c(mn, a, a, doy[1]   , k   , doy[2]   , k  , 2  , 2),
         c(mn, a, a, doy[1]   , k*2 , doy[2]   , k*2, 3  , 3),
         c(mn, a, a, doy[1]+t1, k*2 , doy[2]-t2, k*2, 0.5, 0.5),

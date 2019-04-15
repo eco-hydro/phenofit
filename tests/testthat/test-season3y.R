@@ -22,7 +22,13 @@ param = listk(
 param$rFUN <- wSG
 # brks <- do.call(season_mov, param)
 
+test_that("`season` with wWHIT and calendarYear", {
+    param$calendarYear <- TRUE
+    expect_silent(brks <- do.call(season_mov, param))
+})
+
 test_that("`season_mov` with wWHIT", {
+    param$calendarYear <- FALSE
     expect_silent(brks <- do.call(season_mov, param))
 })
 

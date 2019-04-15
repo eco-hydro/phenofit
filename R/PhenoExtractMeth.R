@@ -2,7 +2,7 @@
 #' @title Phenology Extraction methods
 #'
 #' @inheritParams D
-#' 
+#'
 #' @param fFIT \code{fFIT} object returned by \code{\link{optim_pheno}}.
 #' @param approach to be used to calculate phenology metrics.
 #' 'White' (White et al. 1997) or 'Trs' for simple threshold.
@@ -45,9 +45,13 @@ NULL
 #' \item \code{PhenoKl} Inflection method
 #' }
 #'
+#' @param asymmetric If true, background value in spring season and autumn season
+#' is regarded as different.
+#'
 #' @rdname PhenoExtractMeth
 #' @export
 PhenoTrs <- function(fFIT, approach = c("White", "Trs"), trs = 0.5, #, min.mean = 0.1
+    asymmetric = TRUE,
     IsPlot = TRUE, ...)
 {
     metrics <- c(sos = NA, eos = NA)
@@ -57,7 +61,7 @@ PhenoTrs <- function(fFIT, approach = c("White", "Trs"), trs = 0.5, #, min.mean 
     n      <- length(t)
 
     # get peak of season position
-    half.season <- median(which.max(values)) # + 20, half season + 20 was unreasonable
+    half.season <- median(which.max(values)) %>% round() # + 20, half season + 20 was unreasonable
     pop <- t[half.season]
 
     if (all(is.na(values))) return(metrics)
@@ -66,10 +70,20 @@ PhenoTrs <- function(fFIT, approach = c("White", "Trs"), trs = 0.5, #, min.mean 
     # get statistical values
     # n    <- t[length(t)]
     # avg  <- mean(x, na.rm = TRUE)
-    x2   <- na.omit(values)
+
     # avg2 <- mean(x2[x2 > min.mean], na.rm = TRUE)
-    peak <- max(x2)
-    mn   <- min(x2)
+    peak <- max(values, na.rm = TRUE)
+
+    if (asymmetric) {
+        mn_a <- min(values[1:half.season], na.rm = T)
+        mn_b <- min(values[-(1:half.season)], na.rm = T)
+
+        mn <- c(rep(mn_a, half.season),
+            rep(mn_b, n - half.season))
+    } else {
+        mn   <- min(values, na.rm = TRUE)
+    }
+
     ampl <- peak - mn
 
     # select (or scale) values and thresholds for different methods
@@ -124,11 +138,13 @@ PhenoTrs <- function(fFIT, approach = c("White", "Trs"), trs = 0.5, #, min.mean 
         main   <- ifelse(all(par("mar") == 0), "", sprintf("TRS%d", trs*10))
         PhenoPlot(t, values, main = main, ...)
 
-        abline(h = trs*ampl + mn, lwd = linewidth)
-        abline(h = c(trs.low, trs.up)*ampl + mn, lty = 2, lwd = linewidth)
+        lines(t, trs*ampl + mn, lwd = linewidth)
+        lines(t, trs.low*ampl + mn, lty = 2, lwd = linewidth)
+        lines(t, trs.up*ampl + mn, lty = 2, lwd = linewidth)
+
         abline(v = metrics, col = colors[c(1, 4)], lwd = linewidth)
-        text(metrics[1] - 5, min(trs + 0.15, 1)*ampl + mn, "SOS", col = colors[1], adj = c(1, 0))
-        text(metrics[2] + 5, min(trs + 0.15, 1)*ampl + mn, "EOS", col = colors[4], adj = c(0, 0))
+        text(metrics[1] - 5, min(trs + 0.15, 1)*ampl[1] + mn[1], "SOS", col = colors[1], adj = c(1, 0))
+        text(metrics[2] + 5, min(trs + 0.15, 1)*last(ampl) + last(mn), "EOS", col = colors[4], adj = c(0, 0))
     }
     return(metrics)
     ### The function returns a vector with SOS, EOS, LOS, POP, MGS, rsp, rau, PEAK, MSP and MAU. }
@@ -363,14 +379,18 @@ PhenoKl <- function(fFIT,
         # der.k  <- c(NA, diff(k))
         # der.k2 <- c(NA, NA, diff(k, differences = 2))
         ## find maxima of derivative of k ## split season
-        asc.k   <- try(der.k[1:(half.season-5)]) # k   of first half year
-        asc.k.d <- try(t[1:(half.season-5)])
+        dist_fromPeak <- 0 # days
+        asc.k   <- try(der.k[1:(half.season - dist_fromPeak)]) # k   of first half year
+        asc.k.d <- try(t[1:(half.season - dist_fromPeak)])
         # doy of first half year
-        des.k   <- try(der.k[(half.season+5):length(k)])
-        des.k.d <- try(t[(half.season+5):length(k)])
+        des.k   <- try(der.k[(half.season + dist_fromPeak):length(k)])
+        des.k.d <- try(t[(half.season + dist_fromPeak):length(k)])
 
-        # first half minimum local values of k'
-        pos <- findpeaks(-asc.k, minpeakdistance = 15, npeaks = 2, sortstr = TRUE)$X$pos
+        A <- range(der.k, na.rm = TRUE) %>% diff()
+        minpeakheight = A*0.025
+
+        # first half maximum local values of k'
+        pos <- findpeaks(asc.k, minpeakdistance = 15, npeaks = 2, ndowns = 0, sortstr = TRUE, minpeakheight)$X$pos
         pos <- sort(pos)
         pos <- c(rep(NA, 2 - length(pos)), pos) #at least two values
         I_asc <- asc.k.d[pos]
@@ -380,8 +400,8 @@ PhenoKl <- function(fFIT,
             I_asc <- asc.k.d[pos]
         }
 
-        # second half maximum local values of k'
-        pos <- findpeaks(des.k, minpeakdistance = 15, npeaks = 2, sortstr = TRUE)$X$pos
+        # second half minimum local values of k'
+        pos <- findpeaks(-des.k, minpeakdistance = 15, npeaks = 2, sortstr = TRUE, minpeakheight)$X$pos
         pos <- sort(pos);
         pos <- c(pos, rep(NA, 2 - length(pos)))
         if (all(is.na(pos))){

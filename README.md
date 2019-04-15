@@ -7,6 +7,7 @@ phenofit
 [![codecov](https://codecov.io/gh/kongdd/phenofit/branch/master/graph/badge.svg)](https://codecov.io/gh/kongdd/phenofit)
 [![License](http://img.shields.io/badge/license-GPL%20%28%3E=%202%29-brightgreen.svg?style=flat)](http://www.gnu.org/licenses/gpl-2.0.html)
 [![CRAN](http://www.r-pkg.org/badges/version/phenofit)](https://cran.r-project.org/package=phenofit)
+[![CRAN\_Download\_Badge](http://cranlogs.r-pkg.org/badges/phenofit)](https://CRAN.R-project.org/package=phenofit)
 
 A state-of-the-art **remote sensing vegetation phenology** extraction package: `phenofit`
 
@@ -17,7 +18,18 @@ A state-of-the-art **remote sensing vegetation phenology** extraction package: `
 -   We add parameters boundary for every curve fitting methods according to their ecological meaning.
 -   `optimx` is used to select best optimization method for different curve fitting methods.
 
+***Task lists***
+
+-   \[ \] Improve computational efficiency of fine fitting;
+-   \[x\] Complete script automatic generating module of shinyapp;
+-   \[ \] Uncertainty analysis of curve fitting and phenological metrics;
+-   \[ \] Support spatial analysis;
+-   \[x\] Support annual season in curve fitting;
+-   \[x\] flexible fine fitting input ( original time-series or smoothed time-series by rough fitting).
+-   \[x\] Asymmetric of Threshold method
+
 ![title](man/Figure/Figure1_phenofit_flowchart.svg)   
+
 *<u>Figure 1. The flowchart of phenology extraction in `phenofit`.</u>*
 
 Installation
@@ -38,9 +50,9 @@ shiny::runGitHub("phenofit", "kongdd", subdir = "inst/shiny/phenofit")
 shiny::runApp(system.file("shiny/phenofit", package = "phenofit"))
 ```
 
-![](man/Figure/phenofit_shiny.png)
+<!-- ![](man/Figure/phenofit_shiny.png)
 *<u>Figure 2. Shiny interface of `phenofit`.</u>*
-
+ -->
 R code Example
 ==============
 
@@ -184,24 +196,24 @@ brks2 <- season_mov(INPUT,
                    FUN = wWHIT, wFUN = wFUN,
                    maxExtendMonth = 6, r_min = 0.1,
                    IsPlot = IsPlot, IsPlot.OnlyBad = FALSE, print = print)
-#   [season_mov]  running 1 ...
-#   [season_mov]  running 2 ...
-#   [season_mov]  running 3 ...
-#   [season_mov]  running 4 ...
-#   [season_mov]  running 5 ...
-#   [season_mov]  running 6 ...
-#   [season_mov]  running 7 ...
-#   [season_mov]  running 8 ...
-#   [season_mov]  running 9 ...
-#   [season_mov]  running 10 ...
-#   [season_mov]  running 11 ...
-#   [season_mov]  running 12 ...
-#   [season_mov]  running 13 ...
-#   [season_mov]  running 14 ...
-#   [season_mov]  running 15 ...
-#   [season_mov]  running 16 ...
-#   [season_mov]  running 17 ...
-#   [season_mov]  running 18 ...
+#   [season_mov] running 1 ...
+#   [season_mov] running 2 ...
+#   [season_mov] running 3 ...
+#   [season_mov] running 4 ...
+#   [season_mov] running 5 ...
+#   [season_mov] running 6 ...
+#   [season_mov] running 7 ...
+#   [season_mov] running 8 ...
+#   [season_mov] running 9 ...
+#   [season_mov] running 10 ...
+#   [season_mov] running 11 ...
+#   [season_mov] running 12 ...
+#   [season_mov] running 13 ...
+#   [season_mov] running 14 ...
+#   [season_mov] running 15 ...
+#   [season_mov] running 16 ...
+#   [season_mov] running 17 ...
+#   [season_mov] running 18 ...
 ```
 
 <img src="man/Figure/divide growing season-1.svg" style="display: block; margin: auto;" />
@@ -213,58 +225,58 @@ brks2 <- season_mov(INPUT,
 fit  <- curvefits(INPUT, brks2,
                   methods = c("AG", "Zhang", "Beck", "Elmore"), #,"klos",, 'Gu'
                   wFUN = wFUN,
-                  nextent = 2, maxExtendMonth = 3, minExtendMonth = 1, minPercValid = 0.2,
+                  nextend = 2, maxExtendMonth = 3, minExtendMonth = 1, minPercValid = 0.2,
                   print = print, verbose = FALSE)
-#   [curvefits]  running 1 ...
-#   [curvefits]  running 2 ...
-#   [curvefits]  running 3 ...
-#   [curvefits]  running 4 ...
-#   [curvefits]  running 5 ...
-#   [curvefits]  running 6 ...
-#   [curvefits]  running 7 ...
-#   [curvefits]  running 8 ...
-#   [curvefits]  running 9 ...
-#   [curvefits]  running 10 ...
-#   [curvefits]  running 11 ...
-#   [curvefits]  running 12 ...
-#   [curvefits]  running 13 ...
-#   [curvefits]  running 14 ...
-#   [curvefits]  running 15 ...
-#   [curvefits]  running 16 ...
-#   [curvefits]  running 17 ...
-#   [curvefits]  running 18 ...
+#   [curvefits] running 1 ...
+#   [curvefits] running 2 ...
+#   [curvefits] running 3 ...
+#   [curvefits] running 4 ...
+#   [curvefits] running 5 ...
+#   [curvefits] running 6 ...
+#   [curvefits] running 7 ...
+#   [curvefits] running 8 ...
+#   [curvefits] running 9 ...
+#   [curvefits] running 10 ...
+#   [curvefits] running 11 ...
+#   [curvefits] running 12 ...
+#   [curvefits] running 13 ...
+#   [curvefits] running 14 ...
+#   [curvefits] running 15 ...
+#   [curvefits] running 16 ...
+#   [curvefits] running 17 ...
+#   [curvefits] running 18 ...
 
 ## check the curve fitting parameters
 l_param <- get_param(fit)
 print(str(l_param, 1))
 # List of 4
 #  $ AG    :Classes 'tbl_df', 'tbl' and 'data.frame':   18 obs. of  8 variables:
-#  $ BECK  :Classes 'tbl_df', 'tbl' and 'data.frame':   18 obs. of  7 variables:
-#  $ ELMORE:Classes 'tbl_df', 'tbl' and 'data.frame':   18 obs. of  8 variables:
-#  $ ZHANG :Classes 'tbl_df', 'tbl' and 'data.frame':   18 obs. of  8 variables:
+#  $ Beck  :Classes 'tbl_df', 'tbl' and 'data.frame':   18 obs. of  7 variables:
+#  $ Elmore:Classes 'tbl_df', 'tbl' and 'data.frame':   18 obs. of  8 variables:
+#  $ Zhang :Classes 'tbl_df', 'tbl' and 'data.frame':   18 obs. of  8 variables:
 # NULL
 print(l_param$AG)
 # # A tibble: 18 x 8
 #    flag      t0    mn    mx    rsp    a3    rau    a5
 #    <fct>  <dbl> <dbl> <dbl>  <dbl> <dbl>  <dbl> <dbl>
-#  1 2000_1  201. 0.168 0.407 0.0348  3.38 0.0148  6   
-#  2 2001_1  564. 0.174 0.405 0.0215  4.48 0.0168  6   
-#  3 2002_1  938. 0.189 0.494 0.0310  2.25 0.0178  3.57
-#  4 2003_1 1276. 0.168 0.432 0.0263  2    0.0124  3.71
-#  5 2004_1 1660. 0.181 0.449 0.0395  2    0.0181  4.79
-#  6 2005_1 2054. 0.180 0.462 0.0132  6    0.0332  2   
-#  7 2006_1 2383. 0.175 0.436 0.0195  2.12 0.0136  3.74
-#  8 2007_1 2753. 0.166 0.483 0.0207  2    0.0151  2.89
-#  9 2008_1 3118. 0.175 0.501 0.0265  2    0.0152  3.90
-# 10 2009_1 3526. 0.174 0.485 0.0135  5.25 0.0319  2   
-# 11 2010_1 3841. 0.190 0.492 0.0248  2.01 0.0150  2.09
-# 12 2011_1 4208. 0.184 0.465 0.0308  2    0.0127  4.77
-# 13 2012_1 4564. 0.170 0.511 0.0391  2.57 0.0115  6   
-# 14 2013_1 4956. 0.171 0.489 0.0165  6    0.0153  2.20
-# 15 2014_1 5305. 0.201 0.500 0.0342  2    0.0137  3.57
-# 16 2015_1 5678. 0.217 0.504 0.0244  4.14 0.0201  6   
-# 17 2016_1 6024. 0.195 0.485 0.0407  2    0.0126  4.76
-# 18 2017_1 6405. 0.175 0.445 0.0210  6    0.0126  3.70
+#  1 2000_1  201. 0.168 0.407 0.0323  3.53 0.0151  5.83
+#  2 2001_1  561. 0.173 0.407 0.0225  4.06 0.0162  6   
+#  3 2002_1  931. 0.188 0.511 0.0383  2    0.0169  4.21
+#  4 2003_1 1275. 0.167 0.434 0.0268  2    0.0122  3.37
+#  5 2004_1 1660. 0.175 0.451 0.0363  2    0.0179  4.46
+#  6 2005_1 2052. 0.180 0.466 0.0141  6    0.0314  2   
+#  7 2006_1 2379. 0.174 0.436 0.0226  2.51 0.0131  3.26
+#  8 2007_1 2752. 0.165 0.483 0.0208  2    0.0150  2.88
+#  9 2008_1 3134. 0.177 0.492 0.0180  3.50 0.0199  6   
+# 10 2009_1 3525. 0.172 0.480 0.0133  5.40 0.0313  2   
+# 11 2010_1 3838. 0.194 0.487 0.0269  2    0.0146  2.39
+# 12 2011_1 4206. 0.189 0.464 0.0327  2    0.0135  6   
+# 13 2012_1 4558. 0.166 0.512 0.0473  2    0.0109  3.56
+# 14 2013_1 4966. 0.168 0.484 0.0140  6    0.0190  2   
+# 15 2014_1 5350. 0.204 0.479 0.0127  6    0.0376  6   
+# 16 2015_1 5690. 0.215 0.494 0.0182  6    0.0275  4.81
+# 17 2016_1 6023. 0.193 0.484 0.0428  2    0.0126  4.93
+# 18 2017_1 6405. 0.171 0.447 0.0204  6    0.0129  3.65
 
 d_fit <- get_fitting(fit)
 ## Get GOF information
@@ -272,28 +284,25 @@ d_gof <- get_GOF(fit)
 # fit$stat <- stat
 print(head(d_gof))
 #      flag   meth       RMSE       NSE         R       pvalue  n
-# 1: 2000_1     AG 0.10118189 0.5059248 0.8993144 5.417640e-09 23
-# 2: 2000_1   BECK 0.10123009 0.5054540 0.9041806 3.292129e-09 23
-# 3: 2000_1 ELMORE 0.10123255 0.5054300 0.9048602 3.064459e-09 23
-# 4: 2000_1  ZHANG 0.10122847 0.5054698 0.9042313 3.274661e-09 23
-# 5: 2001_1     AG 0.08849003 0.5841794 0.9040939 3.322259e-09 23
-# 6: 2001_1   BECK 0.08833724 0.5856141 0.9069664 2.445684e-09 23
+# 1: 2000_1     AG 0.10058989 0.4952465 0.9016506 1.809700e-09 24
+# 2: 2000_1   Beck 0.10059953 0.4951497 0.9036266 1.461349e-09 24
+# 3: 2000_1 Elmore 0.10060466 0.4950983 0.9021757 1.710497e-09 24
+# 4: 2000_1  Zhang 0.10059866 0.4951585 0.9036627 1.455586e-09 24
+# 5: 2001_1     AG 0.08808864 0.5879431 0.9037624 3.439665e-09 23
+# 6: 2001_1   Beck 0.08817911 0.5870963 0.9047721 3.093163e-09 23
 
 # print(fit$fits$AG$`2002_1`$ws)
 print(fit$`2002_1`$fFIT$AG$ws)
 # $iter1
-#  [1] 0.2000000 0.2000000 0.2000000 0.2000000 0.2000000 0.2000000 0.2000000
-#  [8] 0.2000000 0.2000000 0.5000000 1.0000000 0.9507082 0.9452160 0.1000000
-# [15] 0.5000000 0.6913968 1.0000000 1.0000000 0.1000000 0.2000000 0.1000000
-# [22] 0.2000000 0.2000000 0.2000000 0.2000000 0.2000000 0.2000000 0.2000000
-# [29] 0.2000000 0.2000000 0.2000000 1.0000000 0.8705899
+#  [1] 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.5 1.0 1.0 1.0 1.0 0.5 1.0 1.0
+# [18] 1.0 1.0 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 1.0 1.0
 # 
 # $iter2
 #  [1] 0.2000000 0.2000000 0.2000000 0.2000000 0.2000000 0.2000000 0.2000000
-#  [8] 0.2000000 0.2000000 0.5000000 1.0000000 0.9507082 0.9149648 0.2000000
-# [15] 0.5000000 0.6790401 1.0000000 0.9928448 0.2000000 0.2000000 0.2000000
+#  [8] 0.2000000 0.2000000 0.5000000 1.0000000 1.0000000 0.7893075 1.0000000
+# [15] 0.4984446 0.8873205 1.0000000 1.0000000 1.0000000 0.2000000 0.2000000
 # [22] 0.2000000 0.2000000 0.2000000 0.2000000 0.2000000 0.2000000 0.2000000
-# [29] 0.2000000 0.2000000 0.2000000 1.0000000 0.8705899
+# [29] 0.2000000 0.2000000 0.2000000 1.0000000 1.0000000
 ## visualization
 # svg("Figure1_phenofit_curve_fitting.svg", 11, 7)
 # Cairo::CairoPDF(file_pdf, 11, 6) #
@@ -319,27 +328,26 @@ l_pheno <- get_pheno(fit, IsPlot = F) #%>% map(~melt_list(., "meth"))
 # file.show(file)
 
 ## check the extracted phenology
-pheno <- get_pheno(fit[1:6], "ELMORE", IsPlot = T)
+pheno <- get_pheno(fit[1:6], "Elmore", IsPlot = T)
 ```
 
 <img src="man/Figure/Extract phenology-1.svg" style="display: block; margin: auto;" />
 
 ``` r
-
 # print(str(pheno, 1))
 head(l_pheno$doy$AG)
 #      flag     origin TRS2.sos TRS2.eos TRS5.sos TRS5.eos DER.sos DER.pop
-# 1: 2000_1 2000-01-01      169      275      176      265     176     202
-# 2: 2001_1 2001-01-01      147      263      156      255     155     199
-# 3: 2002_1 2002-01-01      168      272      180      258     183     208
-# 4: 2003_1 2003-01-01      134      271      150      253     154     182
-# 5: 2004_1 2004-01-01      168      262      179      252     183     201
-# 6: 2005_1 2005-01-01      146      266      157      254     155     228
+# 1: 2000_1 2000-01-01      167      273      175      264     174     203
+# 2: 2001_1 2001-01-01      145      263      155      254     154     196
+# 3: 2002_1 2002-01-01      168      268      179      256     183     202
+# 4: 2003_1 2003-01-01      133      273      149      253     153     180
+# 5: 2004_1 2004-01-01      166      262      178      251     181     201
+# 6: 2005_1 2005-01-01      150      266      159      252     157     225
 #    DER.eos  UD  SD  DD  RD Greenup Maturity Senescence Dormancy
-# 1:     267 165 187 250 281     138      175        269      309
-# 2:     257 142 170 241 269     114      154        258      295
-# 3:     259 163 198 239 279      72      186        260      326
-# 4:     255 128 172 228 281      NA      163        257      354
-# 5:     253 165 194 237 268      76      186        254      297
-# 6:     250 140 174 235 272     109      153        245       NA
+# 1:     266 164 186 249 280     157      193        243      287
+# 2:     256 141 170 240 268     133      177        234      275
+# 3:     257 164 195 238 274     157      201        223      282
+# 4:     254 128 170 225 283     118      179        196      298
+# 5:     253 162 193 236 268     154      200        226      276
+# 6:     248 143 175 233 272     136      181        279       NA
 ```

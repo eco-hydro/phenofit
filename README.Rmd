@@ -18,6 +18,7 @@ knitr::opts_chunk$set(
 [![codecov](https://codecov.io/gh/kongdd/phenofit/branch/master/graph/badge.svg)](https://codecov.io/gh/kongdd/phenofit)
 [![License](http://img.shields.io/badge/license-GPL%20%28%3E=%202%29-brightgreen.svg?style=flat)](http://www.gnu.org/licenses/gpl-2.0.html)
 [![CRAN](http://www.r-pkg.org/badges/version/phenofit)](https://cran.r-project.org/package=phenofit)
+[![CRAN\_Download\_Badge](http://cranlogs.r-pkg.org/badges/phenofit)](https://CRAN.R-project.org/package=phenofit)
 
 A state-of-the-art **remote sensing vegetation phenology** extraction package: `phenofit`
 
@@ -28,7 +29,20 @@ A state-of-the-art **remote sensing vegetation phenology** extraction package: `
  - We add parameters boundary for every curve fitting methods according to their ecological meaning.
  - `optimx` is used to select best optimization method for different curve fitting methods.
 
+
+
+***Task lists***
+
+- [ ] Improve computational efficiency of fine fitting;
+- [x] Complete script automatic generating module of shinyapp;
+- [ ] Uncertainty analysis of curve fitting and phenological metrics;
+- [ ] Support spatial analysis;
+- [x] Support annual season in curve fitting;
+- [x] flexible fine fitting input ( original time-series or smoothed time-series by rough fitting).
+- [x] Asymmetric of Threshold method 
+
 ![title](man/Figure/Figure1_phenofit_flowchart.svg)   
+
 *<u>Figure 1. The flowchart of phenology extraction in `phenofit`.</u>*
 
 # Installation
@@ -47,8 +61,9 @@ shiny::runGitHub("phenofit", "kongdd", subdir = "inst/shiny/phenofit")
 shiny::runApp(system.file("shiny/phenofit", package = "phenofit"))
 ```
 
-![](man/Figure/phenofit_shiny.png)   
+<!-- ![](man/Figure/phenofit_shiny.png)
 *<u>Figure 2. Shiny interface of `phenofit`.</u>*
+ -->
 
 # R code Example
 
@@ -196,7 +211,7 @@ brks2 <- season_mov(INPUT,
 fit  <- curvefits(INPUT, brks2,
                   methods = c("AG", "Zhang", "Beck", "Elmore"), #,"klos",, 'Gu'
                   wFUN = wFUN,
-                  nextent = 2, maxExtendMonth = 3, minExtendMonth = 1, minPercValid = 0.2,
+                  nextend = 2, maxExtendMonth = 3, minExtendMonth = 1, minPercValid = 0.2,
                   print = print, verbose = FALSE)
 
 ## check the curve fitting parameters
@@ -233,8 +248,7 @@ l_pheno <- get_pheno(fit, IsPlot = F) #%>% map(~melt_list(., "meth"))
 # file.show(file)
 
 ## check the extracted phenology
-pheno <- get_pheno(fit[1:6], "ELMORE", IsPlot = T)
-
+pheno <- get_pheno(fit[1:6], "Elmore", IsPlot = T)
 # print(str(pheno, 1))
 head(l_pheno$doy$AG)
 ```

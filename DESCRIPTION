@@ -1,7 +1,7 @@
 Package: phenofit
 Type: Package
 Title: Extract Remote Sensing Vegetation Phenology 
-Version: 0.2.1
+Version: 0.2.2
 Authors@R: c(
     person("Dongdong", "Kong", role = c("aut", "cre"), email = "kongdd.sysu@gmail.com"),
     person("Mingzhong", "Xiao", role = c("aut"), email = "xmingzh@mail2.sysu.edu.cn"),
@@ -29,10 +29,11 @@ Imports: Rcpp,
     spam, 
     grid, gridExtra, 
     magrittr, plyr, reshape2, zoo, 
+    readr, 
     optimx, ucminf,
     numDeriv, 
     grDevices, utils, stats,
-    DT
+    shiny, jsonlite, DT
 Suggests: knitr,
     rmarkdown,
     testthat

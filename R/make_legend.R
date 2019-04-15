@@ -30,5 +30,19 @@ make_legend <- function(
     return(lgd)
 }
 
+
+# legend of MOD13A1 or MOD09A1
+# make sure QC_flag is factor
+make_legend_nmax <- function(linename, linecolor, QC_flag, ...){
+    nmax_points <- 4
+    if (!is.null(QC_flag)) {
+        nmax_points <- factor(QC_flag) %>% as.numeric() %>% max(na.rm = T)
+        nmax_points <- ifelse(nmax_points <= 4, 4, 6)
+    } 
+
+    make_legend(linename , linecolor, nmax_points = nmax_points, ...)
+}
+
+
 lgd <- make_legend()
 lgd_short <- make_legend(nmax_points = 4)

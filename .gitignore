@@ -45,7 +45,6 @@ tmp
 *.mp4
 
 
-*.json
 result
 log
 *.RDS
@@ -62,7 +61,7 @@ src-i386/
 src-x64/
 inst/doc
 temp/
-test/
+# test/
 
 # Office document
 notebook
@@ -73,3 +72,5 @@ notebook
 
 # TIMESAT file
 *.set
+*.rda
+inst/shiny/

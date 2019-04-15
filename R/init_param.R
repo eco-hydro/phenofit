@@ -46,9 +46,9 @@ init_param <- function(y, t, w){
     # if (doy[2] <= doy.mx) doy[2] <- (last(t) - doy.mx) /2 + doy.mx
     ampl   <- mx - mn
     deltaY <- ampl*0.1
-    deltaT <- (max(t) - min(t))/4
     half   <- (max(t) - min(t))/2
-
+    deltaT <- half/4
+    
     k      <- 4/half*2.67 #approximate value
     # k limits: about 0.004 - 0.2
     # kmin <- 4 / (half * 5), half = 200, k = 0.004
@@ -59,7 +59,7 @@ init_param <- function(y, t, w){
         t0  = c(doy.mx - deltaT, doy.mx + deltaT),
         mn  = c(mn - deltaY    , mn + deltaY),
         mx  = c(mx - deltaY*2  , mx + deltaY*2),
-        r   = c(k/3, k*3),
+        r   = c(k/1.2, k*5),
         sos = c(min(t)         , doy.mx + deltaT),
         eos = c(doy.mx - deltaT, max(t))
     )

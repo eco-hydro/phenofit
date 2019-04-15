@@ -25,11 +25,13 @@
 #' plot_input(INPUT)
 #' @export
 plot_input <- function(INPUT, wmin = 0.2, ...){
-    y <- INPUT$y
+    y  <- INPUT$y
+    y0 <- INPUT$y0
     t <- INPUT$t
     w <- INPUT$w
     n <- length(y)
 
+    if (!is.null(y0)) y <- y0
     if (is.null(t)) {
         t <- 1:n
         years <- NULL

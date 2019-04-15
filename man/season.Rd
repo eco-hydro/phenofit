@@ -10,34 +10,35 @@ season(INPUT, rFUN = wWHIT, wFUN = wTSM, iters = 2, wmin = 0.1,
   lambda, nf = 3, frame = floor(INPUT$nptperyear/5) * 2 + 1,
   minpeakdistance, r_max = 0.2, r_min = 0.05, ypeak_min = 0.1,
   rtrough_max = 0.6, MaxPeaksPerYear = 2, MaxTroughsPerYear = 3,
-  IsPlot = FALSE, plotdat = INPUT, print = FALSE, adj.param = TRUE,
-  ...)
+  calendarYear = FALSE, IsPlot = FALSE, plotdat = INPUT,
+  print = FALSE, adj.param = TRUE, ...)
 
 season_mov(INPUT, rFUN = wWHIT, wFUN = wTSM, iters = 2, wmin = 0.1,
   IsOptim_lambda = FALSE, lambda = NULL, nf = 3,
-  frame = floor(INPUT$nptperyear/5) * 2 + 1, maxExtendMonth = 12, ...,
-  IsPlot = TRUE, IsPlot.vc = FALSE, IsPlot.OnlyBad = FALSE,
-  plotdat = INPUT, print = TRUE, titlestr = "")
+  frame = floor(INPUT$nptperyear/5) * 2 + 1, maxExtendMonth = 12,
+  calendarYear = FALSE, ..., IsPlot = TRUE, IsPlot.vc = FALSE,
+  IsPlot.OnlyBad = FALSE, plotdat = INPUT, print = TRUE,
+  titlestr = "")
 
 stat_season(INPUT, brks)
 }
 \arguments{
-\item{INPUT}{A list object with the elements of \code{t}, \code{y}, \code{w}, 
+\item{INPUT}{A list object with the elements of \code{t}, \code{y}, \code{w},
 \code{Tn} (optional) and \code{ylu}, returned by \code{\link{check_input}}.}
 
-\item{rFUN}{Rough curve fitting function, can be one of \code{\link{wSG}}, 
+\item{rFUN}{Rough curve fitting function, can be one of \code{\link{wSG}},
 \code{\link{wWHIT}} and \code{\link{wHANTS}}.}
 
-\item{wFUN}{weights updating function, can be one of \code{\link{wTSM}}, 
+\item{wFUN}{weights updating function, can be one of \code{\link{wTSM}},
 \code{\link{wChen}}, \code{\link{wBisquare}} and \code{\link{wSELF}}.}
 
 \item{iters}{How many times curve fitting is implemented.}
 
 \item{wmin}{Double, minimum weigth (i.e. weight of snow, ice and cloud).}
 
-\item{lambda}{The smoothing parameter of \code{\link{wWHIT}}. For 
+\item{lambda}{The smoothing parameter of \code{\link{wWHIT}}. For
 \code{\link{season_mov}}, if lambda is \code{NULL}, \code{\link{init_lambda}}
-will be used. Generally, it was set as 10000, 15, and 5 for daily, 8-day 
+will be used. Generally, it was set as 10000, 15, and 5 for daily, 8-day
 and 16-day inputs respectively.}
 
 \item{nf}{The parameter of \code{\link{wHANTS}}, number of frequencies to be
@@ -46,7 +47,7 @@ considered above the zero frequency.}
 \item{frame}{The parameter of \code{\link{wSG}}, moving window size. Suggested by
 TIMESAT, default \code{frame = floor(nptperyear/7)*2 + 1}.}
 
-\item{minpeakdistance}{Numberic, in the unit of points (default as 
+\item{minpeakdistance}{Numberic, in the unit of points (default as
 \code{nptperyear/6}). The minimum distance of two peaks. If the distance of two
 maximum extreme value less than \code{minpeakdistance}, only the real maximum
 value will be left.}
@@ -68,20 +69,23 @@ If PeaksPerYear > MaxPeaksPerYear, then lambda = lambda*2.}
 \item{MaxTroughsPerYear}{This parameter is used to adjust lambda in iterations.
 If TroughsPerYear > MaxTroughsPerYear, then lambda = lambda*2.}
 
+\item{calendarYear}{If true, only one static calendar growing season will be
+returned.}
+
 \item{IsPlot}{Boolean}
 
-\item{plotdat}{A list or data.table, with \code{t}, \code{y} and \code{w}. 
-Only if \code{IsPlot=TRUE}, \code{\link{plot_input}} will be used to plot. 
-Known that y and w in \code{INPUT} have been changed, we suggest using the 
+\item{plotdat}{(optional) A list or data.table, with \code{t}, \code{y} and \code{w}.
+Only if \code{IsPlot=TRUE}, \code{\link{plot_input}} will be used to plot.
+Known that y and w in \code{INPUT} have been changed, we suggest using the
 original data.table.}
 
 \item{print}{Whether to print progress information}
 
-\item{adj.param}{Adjust rough curve fitting function parameters automatically, 
+\item{adj.param}{Adjust rough curve fitting function parameters automatically,
 if too many or to less peak and trough values.}
 
-\item{...}{For \code{\link{season_mov}}, Other parameters passed to 
-\code{\link{season}}; For \code{\link{season}}, other parameters passed to 
+\item{...}{For \code{\link{season_mov}}, Other parameters passed to
+\code{\link{season}}; For \code{\link{season}}, other parameters passed to
 \code{\link{findpeaks}}.}
 
 \item{IsOptim_lambda}{Whether to optimize Whittaker's parameter lambda by
@@ -110,15 +114,15 @@ List object, list(whit, dt)
 Divide growing seasons according to rough fitting (\code{rFUN}) result .
 
 For \code{season}, rough fitting is applied for whole.
-For \code{season_mov} rough fitting is applied in every year, during which 
+For \code{season_mov} rough fitting is applied in every year, during which
 \code{maxExtendMonth} is extended.
 }
 \details{
-Before dividing growing season, \code{INPUT} should be added a year in head 
+Before dividing growing season, \code{INPUT} should be added a year in head
 and tail first by \code{add_HeadTail}.
 
 Finally, use \code{\link{findpeaks}} to get local maximum and local minimum values.
-Two local minimum define a growing season. 
+Two local minimum define a growing season.
 If two local minimum(maximum) are too closed, then only the smaller(biger) is left.
 }
 \examples{

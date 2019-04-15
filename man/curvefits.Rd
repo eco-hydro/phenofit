@@ -5,9 +5,9 @@
 \title{Fine Curve fitting}
 \usage{
 curvefits(INPUT, brks, wFUN = wTSM, iters = 2, wmin = 0.2,
-  nextent = 2, maxExtendMonth = 3, minExtendMonth = 1, minT = 0,
+  nextend = 2, maxExtendMonth = 3, minExtendMonth = 1, minT = 0,
   methods = c("AG", "Beck", "Elmore", "Gu", "Klos", "Zhang"),
-  minPercValid = 0.2, print = TRUE, ...)
+  minPercValid = 0.2, print = TRUE, use.rough = FALSE, ...)
 }
 \arguments{
 \item{INPUT}{A list object with the elements of 't', 'y', 'w', 'Tn' (option)
@@ -17,20 +17,20 @@ and 'ylu', returned by \code{check_input}.}
 \code{season} or \code{season_mov}, which contains the growing season
 dividing information.}
 
-\item{wFUN}{weights updating function, can be one of \code{\link{wTSM}}, 
+\item{wFUN}{weights updating function, can be one of \code{\link{wTSM}},
 \code{\link{wChen}}, \code{\link{wBisquare}} and \code{\link{wSELF}}.}
 
 \item{iters}{How many times curve fitting is implemented.}
 
 \item{wmin}{Double, minimum weigth (i.e. weight of snow, ice and cloud).}
 
-\item{nextent}{Extend curve fitting window, until \code{nextent} good or
+\item{nextend}{Extend curve fitting window, until \code{nextend} good or
 marginal element are found in previous and subsequent growing season.}
 
 \item{maxExtendMonth}{Search good or marginal good values in previous and
 subsequent `maxExtendMonth` period.}
 
-\item{minExtendMonth}{Extending perid defined by \code{nextent} and
+\item{minExtendMonth}{Extending perid defined by \code{nextend} and
 \code{maxExtendMonth} should be no shorter than \code{minExtendMonth}.
 When all points of the input time-series are good value, then the extending
 period will be too short. In that situation, we can't make sure the connection
@@ -46,6 +46,8 @@ Tn < minT is treated as ungrowing season.}
 less than \code{minPercValid}, curve fiting result is set to \code{NA}.}
 
 \item{print}{Whether to print progress information?}
+
+\item{use.rough}{Whether to use rough fitting smoothed time-series as input?}
 
 \item{...}{Other parameters will be ignore.}
 }
@@ -91,6 +93,6 @@ fit <- curvefits(
     INPUT, brks2,
     methods = c("AG", "Beck", "Elmore", "Zhang"), #,"klos", "Gu"
     wFUN = wFUN,
-    nextent = 2, maxExtendMonth = 2, minExtendMonth = 1, minPercValid = 0.2,
+    nextend = 2, maxExtendMonth = 2, minExtendMonth = 1, minPercValid = 0.2,
     print = TRUE, verbose = FALSE)
 }

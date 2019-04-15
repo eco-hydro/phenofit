@@ -22,8 +22,8 @@ fprintf <- function(fmt, ...) cat(sprintf(fmt, ...))
 #' @rdname fprintf
 #' @export
 runningId <- function(i, step = 1, N, prefix = "") {
-    perc <- ifelse(missing(N), "", sprintf("%.1f%%", i/N*100))
-    if (mod(i, step) == 0) cat(sprintf("%s running %s, %d ...\n", prefix, perc, i))    
+    perc <- ifelse(missing(N), "", sprintf(", %.1f%% ", i/N*100))
+    if (mod(i, step) == 0) cat(sprintf("%srunning%s %d ...\n", prefix, perc, i))    
 }
 
 
@@ -127,3 +127,6 @@ merge_pdf <- function(outfile = "RPlot.pdf", indir = 'Figure', pattern = "*.pdf"
 obj.size <- function(obj, unit = "Mb"){
     cat(format(object.size(obj), unit), "\n")
 }
+
+#' @export
+chunk <- function(x,n) split(x, cut(seq_along(x), n, labels = FALSE))

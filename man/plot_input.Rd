@@ -7,7 +7,7 @@
 plot_input(INPUT, wmin = 0.2, ...)
 }
 \arguments{
-\item{INPUT}{A list object with the elements of \code{t}, \code{y}, \code{w}, 
+\item{INPUT}{A list object with the elements of \code{t}, \code{y}, \code{w},
 \code{Tn} (optional) and \code{ylu}, returned by \code{\link{check_input}}.}
 
 \item{wmin}{Double, minimum weigth (i.e. weight of snow, ice and cloud).}

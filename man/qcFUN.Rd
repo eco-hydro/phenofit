@@ -5,6 +5,7 @@
 \alias{qc_summary}
 \alias{qc_StateQA}
 \alias{qc_5l}
+\alias{qc_NDVI3g}
 \alias{qc_NDVIv4}
 \title{Initial weights according to qc}
 \usage{
@@ -15,6 +16,8 @@ qc_summary(QA, wmin = 0.2, wmid = 0.5, wmax = 1)
 qc_StateQA(QA, wmin = 0.2, wmid = 0.5, wmax = 1)
 
 qc_5l(QA, wmin = 0.2, wmid = 0.5, wmax = 1)
+
+qc_NDVI3g(QA, wmin = 0.2, wmid = 0.5, wmax = 1)
 
 qc_NDVIv4(QA, wmin = 0.2, wmid = 0.5, wmax = 1)
 }
@@ -47,6 +50,7 @@ A list object with
   \item{qc_5l}{Initial weights based on Quality control of five-level 
      confidence score, suit for MCD15A3H(LAI, FparLai_QC), MOD17A2H(GPP, Psn_QC) 
      and MOD16A2(ET, ET_QC).}
+  \item{qc_NDVI3g}{For NDVI3g}
   \item{qc_NDVIv4}{For NDVIv4}
   \item{qc_StateQA}{Initial weights based on `StateQA`, suit for MOD09A1, MYD09A1. }
 }
@@ -57,6 +61,7 @@ QA <- as.integer(runif(100, 0, 2^7))
 
 r1 <- qc_summary(QA, wmin = 0.2, wmid = 0.5, wmax = 1)
 r2 <- qc_StateQA(QA, wmin = 0.2, wmid = 0.5, wmax = 1)
-r3 <- qc_5l(QA, wmin = 0.2, wmid = 0.5, wmax = 1)
-r4 <- qc_NDVIv4(QA, wmin = 0.2, wmid = 0.5, wmax = 1)
+r_5l <- qc_5l(QA, wmin = 0.2, wmid = 0.5, wmax = 1)
+r_NDVI3g <- qc_NDVI3g(QA, wmin = 0.2, wmid = 0.5, wmax = 1)
+r_NDVIv4 <- qc_NDVIv4(QA, wmin = 0.2, wmid = 0.5, wmax = 1)
 }

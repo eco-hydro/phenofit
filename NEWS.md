@@ -1,3 +1,16 @@
+# phenofit 0.2.2 (2019-03-19)
+
+* fix visualization (plot and legend) of multiple iteration 
+* shinyapp works like TIMESAT now, `phenofit_process` and `phenofit_shiny`
+* fix shift error of `wSG`, and add `smooth_SG` and `smooth_wSG`
+* add weights updating function: `wKong`
+* support asymmetric background values in spring and autumn season.
+
+## major updates   
+* weights of rough fitting not passed to curve fitting now
+* growing season dividing is not used.
+
+
 # phenofit 0.2.1 (2019-03-11)    
 
 * fix point shape error of `plot_input`
@@ -5,7 +18,7 @@
 * wWHIT only adjusts time series of growing season. 
 
 
-# phenofit 0.2.1 (2019-02-18)    
+# phenofit 0.2.0 (2019-02-18)    
 
 * release in CRAN
 

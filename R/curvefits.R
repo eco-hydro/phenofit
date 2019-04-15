@@ -8,11 +8,11 @@
 #' @param brks A list object with the elements of 'fit' and 'dt', returned by
 #' \code{season} or \code{season_mov}, which contains the growing season
 #' dividing information.
-#' @param nextent Extend curve fitting window, until \code{nextent} good or
+#' @param nextend Extend curve fitting window, until \code{nextend} good or
 #' marginal element are found in previous and subsequent growing season.
 #' @param maxExtendMonth Search good or marginal good values in previous and
 #' subsequent `maxExtendMonth` period.
-#' @param minExtendMonth Extending perid defined by \code{nextent} and
+#' @param minExtendMonth Extending perid defined by \code{nextend} and
 #' \code{maxExtendMonth} should be no shorter than \code{minExtendMonth}.
 #' When all points of the input time-series are good value, then the extending
 #' period will be too short. In that situation, we can't make sure the connection
@@ -24,21 +24,23 @@
 #' @param minPercValid If the percentage of good and marginal quality points is
 #' less than \code{minPercValid}, curve fiting result is set to \code{NA}.
 #' @param print Whether to print progress information?
+#' @param use.rough Whether to use rough fitting smoothed time-series as input?
 #' @param ... Other parameters will be ignore.
 #'
 #' @return fits Multiple phenofit object.
-#' 
+#'
 #' @example inst/examples/ex-check_input.R
 #' @example inst/examples/ex-curvefits.R
-#' 
+#'
 #' @export
 curvefits <- function(INPUT, brks,
                       wFUN = wTSM, iters = 2, wmin = 0.2,
-                      nextent = 2, maxExtendMonth = 3, minExtendMonth = 1,
+                      nextend = 2, maxExtendMonth = 3, minExtendMonth = 1,
                       minT = 0,
                       methods = c('AG', 'Beck', 'Elmore', 'Gu', 'Klos', 'Zhang'),
                       minPercValid = 0.2,
-                      print = TRUE, ...)
+                      print = TRUE,
+                      use.rough = FALSE, ...)
 {
     if (all(is.na(INPUT$y))) return(NULL)
 
@@ -58,29 +60,31 @@ curvefits <- function(INPUT, brks,
     has_Tn <- ifelse(is_empty(Tn), F, TRUE)
 
     # possible snow or cloud, replaced with Whittaker smoothing.
-    I_w <- match(brks$whit$t, t) %>% rm_empty()
+    I_all <- match(brks$whit$t, t) %>% rm_empty()
 
-    I_fix <- which(w[I_w] == wmin)
-    I_y   <- I_w[I_fix]
-    INPUT$y[I_y] <- dplyr::last(brks$whit)[I_fix]
-    w[I_w] <- brks$whit %>% {.[, contain(., "witer"), with = F]} %>% last()
+    if (use.rough) {
+        # if the range of t is smaller than `whit$t`
+        INPUT$y[I_all] <- dplyr::last(brks$whit)
+    } else {
+        I_fix <- which(w[I_all] == wmin)
+        I_y   <- I_all[I_fix]
+        INPUT$y[I_y] <- dplyr::last(brks$whit)[I_fix]
+    }
+    # use the weights of last iteration of rough fitting
+    # w[I_all] <- brks$whit %>% {.[, contain(., "witer"), with = F]} %>% last()
     # w[I_fix] <- wmin + 0.1 # exert the function of whitaker smoother
 
     # growing season dividing
-    getDateId <- function(dates) match(dates, t) #%>% rm_empty()
-    getDateId_before <- function(dates) sapply(dates, function(date) last(which(t <= date)))
-    getDateId_after  <- function(dates) sapply(dates, function(date) first(which(t >= date)))
-
-    di <- data.table( beg  = getDateId_before(brks$dt$beg),
-                      peak = getDateId_before(brks$dt$peak),
-                      end  = getDateId_after(brks$dt$end)) %>% na.omit()
+    di <- data.table( beg  = getDateId_before(brks$dt$beg, t),
+                      peak = getDateId_before(brks$dt$peak, t),
+                      end  = getDateId_after(brks$dt$end, t)) #%>% na.omit()
 
     MaxExtendWidth = ceiling(nptperyear/12*maxExtendMonth)
     MinExtendWidth = ceiling(nptperyear/12*minExtendMonth)
     width_ylu      = nptperyear*2
 
     y    <- INPUT$y
-    fits <- list()
+    fits <- vector(nrow(di), mode = "list")
     for (i in 1:nrow(di)){
         if (print) runningId(i, prefix = '\t[curvefits] ')
 
@@ -88,7 +92,7 @@ curvefits <- function(INPUT, brks,
         I_beg <- di$beg[i]
         I_end <- di$end[i]
 
-        I_extend <- get_extentI(w0, MaxExtendWidth, MinExtendWidth, I_beg, I_end, nextent, wmin)
+        I_extend <- get_extentI(w0, MaxExtendWidth, MinExtendWidth, I_beg, I_end, nextend, wmin)
 
         ## 2. input data
         ti   <- doys[I_extend]
@@ -125,7 +129,7 @@ curvefits <- function(INPUT, brks,
 
         # if too much missing values
         if (sum(wi > pmax(wmin+0.1, 0.2))/length(wi) < minPercValid){
-            fFITs %<>% map(function(x){
+            fFITs$fFIT %<>% map(function(x){
                 x$zs %<>% map(~.x*NA) # list()
                 return(x)
             })
@@ -139,23 +143,42 @@ curvefits <- function(INPUT, brks,
     #             fits = fits))
 }
 
+getDateId <- function(dates, t){
+    match(dates, t) #%>% rm_empty()
+}
+getDateId_before <- function(dates, t) {
+    sapply(dates, function(date) {
+        ans <- last(which(t <= date))
+        if (is.na(ans))
+            ans <- first(which(t >= date))
+        ans
+    })
+}
+getDateId_after  <- function(dates, t) {
+    sapply(dates, function(date) {
+        ans <- first(which(t >= date))
+        if (is.na(ans))
+            ans <- last(which(t <= date))
+        ans
+    })
+}
 
 ############################## END OF CURVEFITS ################################
 # HIDING FUNCTIONS
 # extend curve fitting period
-get_extentI <- function(w0, MaxExtendWidth, MinExtendWidth, I_beg, I_end, nextent = 1, wmin = 0.2){
+get_extentI <- function(w0, MaxExtendWidth, MinExtendWidth, I_beg, I_end, nextend = 1, wmin = 0.2){
     n <- length(w0)
 
     I_beg2  <- I_end2 <- NA
     # period <- floor(nptperyear/12*extend_month)
-    if (!is.null(nextent)){
+    if (!is.null(nextend)){
         I_beg_raw <- seq(max(1, I_beg-1), max(1, I_beg-MaxExtendWidth))
         I_end_raw <- seq(min(n, I_end+1), min(n, I_end+MaxExtendWidth))
 
-        # at least `nextent` marginal point in previous and following season
+        # at least `nextend` marginal point in previous and following season
         # I_beg2 and I_end2 have been constrained in the range of [1, n]
-        I_beg2 <- I_beg_raw[ which(w0[I_beg_raw] > wmin)[nextent] ]
-        I_end2 <- I_end_raw[ which(w0[I_end_raw] > wmin)[nextent] ]
+        I_beg2 <- I_beg_raw[ which(w0[I_beg_raw] > wmin)[nextend] ]
+        I_end2 <- I_end_raw[ which(w0[I_end_raw] > wmin)[nextend] ]
     }
 
     # in case of previous and subsequent season good values too closed
@@ -186,21 +209,21 @@ get_ylu <- function(y, years, w0, width, I, Imedian = TRUE, wmin = 0.2){
     I_end  <- last(I)
 
     # if less than 0.6*12 ≈ 8
-    I_win  <- pmax(1, I_beg - width) : pmin(n, I_end + width)
+    I_allin  <- pmax(1, I_beg - width) : pmin(n, I_end + width)
 
-    w0_win <- w0[I_win]
-    I_win  <- I_win[which(w0_win > wmin)]
+    w0_win <- w0[I_allin]
+    I_allin  <- I_allin[which(w0_win > wmin)]
 
-    if (is_empty(I_win)){
+    if (is_empty(I_allin)){
         ylu_max <- ylu_min <- NA
     } else{
-        y_win  <- y[I_win]
+        y_win  <- y[I_allin]
 
         ylu_min <- min(y_win)
         ylu_max <- max(y_win)
 
         if (Imedian){
-            year_win  <- years[I_win]
+            year_win  <- years[I_allin]
             # Assume peak in the middle of growing season, a few steps will be
             # ylu_min; while a long way to ylu_max; 20180918
             # length(I) reflects nptperyear

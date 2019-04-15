@@ -16,28 +16,79 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
-// sgolayB
-arma::mat sgolayB(const arma::mat S, const arma::colvec w);
-RcppExport SEXP _phenofit_sgolayB(SEXP SSEXP, SEXP wSEXP) {
+// sgmat_S
+arma::mat sgmat_S(int halfwin, int d);
+RcppExport SEXP _phenofit_sgmat_S(SEXP halfwinSEXP, SEXP dSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type halfwin(halfwinSEXP);
+    Rcpp::traits::input_parameter< int >::type d(dSEXP);
+    rcpp_result_gen = Rcpp::wrap(sgmat_S(halfwin, d));
+    return rcpp_result_gen;
+END_RCPP
+}
+// sgmat_B
+arma::mat sgmat_B(const arma::mat S);
+RcppExport SEXP _phenofit_sgmat_B(SEXP SSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::mat >::type S(SSEXP);
+    rcpp_result_gen = Rcpp::wrap(sgmat_B(S));
+    return rcpp_result_gen;
+END_RCPP
+}
+// sgmat_wB
+arma::mat sgmat_wB(const arma::mat S, const arma::colvec w);
+RcppExport SEXP _phenofit_sgmat_wB(SEXP SSEXP, SEXP wSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const arma::mat >::type S(SSEXP);
     Rcpp::traits::input_parameter< const arma::colvec >::type w(wSEXP);
-    rcpp_result_gen = Rcpp::wrap(sgolayB(S, w));
+    rcpp_result_gen = Rcpp::wrap(sgmat_wB(S, w));
     return rcpp_result_gen;
 END_RCPP
 }
-// sgfitw_rcpp
-arma::colvec sgfitw_rcpp(const arma::colvec y, const arma::colvec w, const arma::mat S);
-RcppExport SEXP _phenofit_sgfitw_rcpp(SEXP ySEXP, SEXP wSEXP, SEXP SSEXP) {
+// smooth_wSG
+NumericVector smooth_wSG(const arma::colvec y, int halfwin, int d, Nullable<NumericVector> w);
+RcppExport SEXP _phenofit_smooth_wSG(SEXP ySEXP, SEXP halfwinSEXP, SEXP dSEXP, SEXP wSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const arma::colvec >::type y(ySEXP);
-    Rcpp::traits::input_parameter< const arma::colvec >::type w(wSEXP);
-    Rcpp::traits::input_parameter< const arma::mat >::type S(SSEXP);
-    rcpp_result_gen = Rcpp::wrap(sgfitw_rcpp(y, w, S));
+    Rcpp::traits::input_parameter< int >::type halfwin(halfwinSEXP);
+    Rcpp::traits::input_parameter< int >::type d(dSEXP);
+    Rcpp::traits::input_parameter< Nullable<NumericVector> >::type w(wSEXP);
+    rcpp_result_gen = Rcpp::wrap(smooth_wSG(y, halfwin, d, w));
+    return rcpp_result_gen;
+END_RCPP
+}
+// smooth_SG
+Rcpp::NumericVector smooth_SG(const arma::colvec y, const int halfwin, const int d);
+RcppExport SEXP _phenofit_smooth_SG(SEXP ySEXP, SEXP halfwinSEXP, SEXP dSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::colvec >::type y(ySEXP);
+    Rcpp::traits::input_parameter< const int >::type halfwin(halfwinSEXP);
+    Rcpp::traits::input_parameter< const int >::type d(dSEXP);
+    rcpp_result_gen = Rcpp::wrap(smooth_SG(y, halfwin, d));
+    return rcpp_result_gen;
+END_RCPP
+}
+// movmean
+NumericVector movmean(const arma::colvec y, int halfwin, bool SG_style, Nullable<NumericVector> w);
+RcppExport SEXP _phenofit_movmean(SEXP ySEXP, SEXP halfwinSEXP, SEXP SG_styleSEXP, SEXP wSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::colvec >::type y(ySEXP);
+    Rcpp::traits::input_parameter< int >::type halfwin(halfwinSEXP);
+    Rcpp::traits::input_parameter< bool >::type SG_style(SG_styleSEXP);
+    Rcpp::traits::input_parameter< Nullable<NumericVector> >::type w(wSEXP);
+    rcpp_result_gen = Rcpp::wrap(movmean(y, halfwin, SG_style, w));
     return rcpp_result_gen;
 END_RCPP
 }
