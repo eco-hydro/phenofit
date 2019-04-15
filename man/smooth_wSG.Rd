@@ -5,21 +5,21 @@
 \alias{smooth_SG}
 \title{Weighted Savitzky-Golay}
 \usage{
-smooth_wSG(y, w, halfwin, d = 2L)
+smooth_wSG(y, halfwin = 1L, d = 1L, w = NULL)
 
 smooth_SG(y, halfwin, d = 2L)
 }
 \arguments{
 \item{y}{colvec}
 
-\item{w}{colvec of weight}
-
 \item{halfwin}{halfwin of Savitzky-Golay}
 
-\item{d}{polynomial of degree. When d = 0, it becomes moving average.}
+\item{d}{polynomial of degree. When d = 1, it becomes moving average.}
+
+\item{w}{colvec of weight}
 }
 \description{
-Weighted Savitzky-Golay
+NA and Inf values in the yy has been ignored automatically.
 }
 \examples{
 y <- 1:15
@@ -27,6 +27,6 @@ w <- seq_along(y)/length(y)
 
 frame = 5
 d = 2
-s1 <- smooth_wSG(y, w, frame, d)
+s1 <- smooth_wSG(y, frame, d, w)
 s2 <- smooth_SG(y, frame, d)
 }

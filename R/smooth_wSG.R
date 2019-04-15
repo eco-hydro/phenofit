@@ -39,7 +39,7 @@ wSG <- function(y, w, nptperyear, ylu, wFUN = wTSM, iters = 2,
 
     for (i in 1:iters){
         ws[[i]] <- w
-        z <- smooth_wSG(yiter, w, halfwin, d)
+        z <- smooth_wSG(yiter, halfwin, d, w)
 
         if (is.null(wFUN)){
             wnew <- w

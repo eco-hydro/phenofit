@@ -68,10 +68,12 @@ arma::mat sgmat_wB(const arma::mat S, const arma::colvec w) {
 
 //' Weighted Savitzky-Golay
 //'
+//' NA and Inf values in the yy has been ignored automatically.
+//'
 //' @param y colvec
 //' @param w colvec of weight
 //' @param halfwin halfwin of Savitzky-Golay
-//' @param d polynomial of degree. When d = 0, it becomes moving average.
+//' @param d polynomial of degree. When d = 1, it becomes moving average.
 //'
 //' @examples
 //' y <- 1:15
@@ -79,32 +81,52 @@ arma::mat sgmat_wB(const arma::mat S, const arma::colvec w) {
 //'
 //' frame = 5
 //' d = 2
-//' s1 <- smooth_wSG(y, w, frame, d)
+//' s1 <- smooth_wSG(y, frame, d, w)
 //' s2 <- smooth_SG(y, frame, d)
 //' @export
 // [[Rcpp::export]]
-NumericVector smooth_wSG(const arma::colvec y, const arma::colvec w, const int halfwin, const int d=2){
-    int n       = y.n_rows;
-    int frame   = halfwin*2 + 1;
+NumericVector smooth_wSG(
+    const arma::colvec y,
+    int halfwin=1, int d=1,
+    Nullable<NumericVector> w = R_NilValue)
+{
+    int n = y.size();
+    arma::colvec yy(y);
+    arma::colvec ww;
+
+    if (w.isNotNull()) {
+        ww = as<arma::colvec>(w);
+    } else {
+        ww = arma::ones<arma::colvec>(n);
+    }
+    // check Inf and NA
+    for (int i = 0; i < n; i++ ) {
+        if (!Rcpp::traits::is_finite<REALSXP>(yy[i])){
+            ww[i] = 0;
+            yy[i] = 0.0; // missing value as zero
+        }
+    }
+
+    int frame    = halfwin*2 + 1;
+    bool is_full = sum(ww) == n;  // no missing value?
 
     arma::mat S = sgmat_S(halfwin, d);
-    arma::mat B = sgmat_wB(S, w.subvec(0, frame-1));
-    // Rcpp::Rcout << B << y << std::endl;
-    arma::colvec y_head = B.rows(0, halfwin) * y.subvec(0, frame-1);
+    arma::mat B = sgmat_wB(S, ww.subvec(0, frame-1));
+    arma::colvec y_head = B.rows(0, halfwin) * yy.subvec(0, frame-1);
 
     arma::colvec y_mid = arma::Col<double>(n-frame-1) ;
     for (int i=1; i<=n-frame-1; i++) {
-        B = sgmat_wB(S, w.subvec(i, i+frame-1));
-        y_mid(i-1) = as_scalar( B.row(halfwin) * y.subvec(i, i+frame-1) );
+        if (!is_full) B = sgmat_wB(S, ww.subvec(i, i+frame-1));
+        y_mid(i-1) = as_scalar( B.row(halfwin) * yy.subvec(i, i+frame-1) );
     }
 
-    B = sgmat_wB(S, w.subvec(n-frame, n-1));
-    arma::colvec y_tail = B.rows(halfwin, frame-1) * y.subvec(n-frame, n-1);
+    if (!is_full) B = sgmat_wB(S, ww.subvec(n-frame, n-1));
+    arma::colvec y_tail = B.rows(halfwin, frame-1) * yy.subvec(n-frame, n-1);
 
     arma::colvec yfit  = join_vert(y_head, y_mid);
     yfit = join_vert(yfit, y_tail);
 
-    // Rcpp::Rcout << yfit << std::endl;
+    // Rcpp::Rcout << y_head << y_mid << y_tail << std::endl;
     // NumericVector y2 = as<NumericVector>(wrap(yfit));
     // NumericVector(a.begin(),a.end())
     return Rcpp::NumericVector(yfit.begin(), yfit.end());
@@ -135,15 +157,124 @@ Rcpp::NumericVector smooth_SG(const arma::colvec y, const int halfwin, const int
     return Rcpp::NumericVector(yfit.begin(), yfit.end());
 }
 
+//' movmean
+//'
+//' NA and Inf values in the yy will be ignored automatically.
+//'
+//' @param y A numeric vector.
+//' @param haflwin Integer, half of moving window size
+//' @param w Corresponding weights of yy, same long as yy.
+//' @param SG_style If true, head and tail values will be in the style of SG
+//' (more weights on the center point), else traditional moving mean style.
+//' 
+//' @examples
+//' x <- 1:100
+//' x[50] <- NA; x[80] <- Inf
+//' s1 <- movmean(x, 2, SG_style = TRUE)
+//' s2 <- movmean(x, 2, SG_style = FALSE)
+//' @export
+// [[Rcpp::export]]
+NumericVector movmean(
+    const arma::colvec y,
+    int halfwin = 1,
+    Nullable<NumericVector> w = R_NilValue,
+    bool SG_style = true) 
+{
+    int n = y.size();
+    arma::colvec yy(y);
+
+    int frame = halfwin*2 + 1;
+    int d = 1;
+    // Create vector filled with NA(R version)
+    arma::colvec ma = yy * NA_REAL; //ma: moving average
+    arma::colvec ww = arma::ones<arma::colvec>(n); // weights
+    if (w.isNotNull()) {
+        ww = as<arma::colvec>(w);
+    }
+    // check Inf and NA
+    for (int i = 0; i < n; i++ ) {
+        if (!Rcpp::traits::is_finite<REALSXP>(yy[i])){
+            ww[i] = 0;
+            yy[i] = 0.0; // missing value as zero
+        }
+    }
+
+    // main script of moving average
+    int i_begin, i_end, n_i;
+    double sum, sum_w;
+    for (int i = 0; i < n; i++){
+        if (i < halfwin) {
+            i_begin = 0;
+            i_end = i + halfwin;
+        } else if (i >= n - halfwin - 1) {
+            i_begin = i - halfwin;
+            i_end = n-1;
+        } else {
+            i_begin = i - halfwin;
+            i_end = i + halfwin;
+        }
+
+        n_i   = 0; // number
+        sum   = 0.0; // sum of values in window
+        sum_w = 0.0; // sum of weights in window
+
+        for (int j = i_begin; j <= i_end; j++) {
+            if (Rcpp::traits::is_finite<REALSXP>(yy[j])) {
+                n_i++;
+                sum += yy[j];
+                sum_w += ww[j];
+                // sum += ww[k] * yy[j];
+                // sum_wtNA += ww[k];
+            }
+        }
+        ma[i] = sum/sum_w;
+    }
+
+    if (SG_style) {
+        arma::mat S = sgmat_S(halfwin, d);
+        arma::mat B = sgmat_wB(S, ww.subvec(0, frame-1));
+        // Rcpp::Rcout << B << y << std::endl;
+        arma::colvec y_head = B.rows(0, halfwin-1) * yy.subvec(0, frame-1);
+        // tail
+        B = sgmat_wB(S, ww.subvec(n-frame, n-1));
+        arma::colvec y_tail = B.rows(halfwin+1, frame-1) * yy.subvec(n-frame, n-1);
+
+        // Rcout << y_head << y_tail << std::endl;
+        for (int i = 0; i < halfwin; i++) {
+            ma[i] = y_head[i];
+            ma[n - halfwin + i] = y_tail[i];
+        }
+    }
+    return Rcpp::NumericVector(ma.begin(), ma.end());
+}
+
 /*** R
 #' @param frame Odd integer
 
-S <- sgmat_S(7, 2)
+S <- sgmat_S(3, 2)
 y <- 1:15
-w <- seq_along(y)/length(y)
+# w <- seq_along(y)/length(y)
 
 frame = 5
 d = 2
-smooth_wSG(y, w, frame, d)
-smooth_SG(y, frame, d)
+# smooth_wSG(y, w, frame, d)
+# smooth_SG(y, frame, d)
+
+check_perform = FALSE
+if (check_perform) {
+    x <- 1:100
+    x[50] <- NA
+    x[80] <- Inf
+    halfwin <- 10
+
+    movmean(x, halfwin)
+
+    w <- is.finite(x) %>% as.numeric()
+
+    microbenchmark::microbenchmark(
+        movmean(x, halfwin),
+        smooth_SG(x, halfwin, 1),
+        smooth_wSG(x, halfwin, 1, w)
+    )
+}
 */

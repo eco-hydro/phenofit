@@ -19,10 +19,12 @@ sgmat_wB <- function(S, w) {
 
 #' Weighted Savitzky-Golay
 #'
+#' NA and Inf values in the yy has been ignored automatically.
+#'
 #' @param y colvec
 #' @param w colvec of weight
 #' @param halfwin halfwin of Savitzky-Golay
-#' @param d polynomial of degree. When d = 0, it becomes moving average.
+#' @param d polynomial of degree. When d = 1, it becomes moving average.
 #'
 #' @examples
 #' y <- 1:15
@@ -30,17 +32,37 @@ sgmat_wB <- function(S, w) {
 #'
 #' frame = 5
 #' d = 2
-#' s1 <- smooth_wSG(y, w, frame, d)
+#' s1 <- smooth_wSG(y, frame, d, w)
 #' s2 <- smooth_SG(y, frame, d)
 #' @export
-smooth_wSG <- function(y, w, halfwin, d = 2L) {
-    .Call(`_phenofit_smooth_wSG`, y, w, halfwin, d)
+smooth_wSG <- function(y, halfwin = 1L, d = 1L, w = NULL) {
+    .Call(`_phenofit_smooth_wSG`, y, halfwin, d, w)
 }
 
 #' @rdname smooth_wSG
 #' @export
 smooth_SG <- function(y, halfwin, d = 2L) {
     .Call(`_phenofit_smooth_SG`, y, halfwin, d)
+}
+
+#' movmean
+#'
+#' NA and Inf values in the yy will be ignored automatically.
+#'
+#' @param y A numeric vector.
+#' @param haflwin Integer, half of moving window size
+#' @param w Corresponding weights of yy, same long as yy.
+#' @param SG_style If true, head and tail values will be in the style of SG
+#' (more weights on the center point), else traditional moving mean style.
+#' 
+#' @examples
+#' x <- 1:100
+#' x[50] <- NA; x[80] <- Inf
+#' s1 <- movmean(x, 2, SG_style = TRUE)
+#' s2 <- movmean(x, 2, SG_style = FALSE)
+#' @export
+movmean <- function(y, halfwin = 1L, w = NULL, SG_style = TRUE) {
+    .Call(`_phenofit_movmean`, y, halfwin, w, SG_style)
 }
 
 wTSM_cpp <- function(y, yfit, w, iter, nptperyear, wfact) {

@@ -52,16 +52,16 @@ BEGIN_RCPP
 END_RCPP
 }
 // smooth_wSG
-NumericVector smooth_wSG(const arma::colvec y, const arma::colvec w, const int halfwin, const int d);
-RcppExport SEXP _phenofit_smooth_wSG(SEXP ySEXP, SEXP wSEXP, SEXP halfwinSEXP, SEXP dSEXP) {
+NumericVector smooth_wSG(const arma::colvec y, int halfwin, int d, Nullable<NumericVector> w);
+RcppExport SEXP _phenofit_smooth_wSG(SEXP ySEXP, SEXP halfwinSEXP, SEXP dSEXP, SEXP wSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const arma::colvec >::type y(ySEXP);
-    Rcpp::traits::input_parameter< const arma::colvec >::type w(wSEXP);
-    Rcpp::traits::input_parameter< const int >::type halfwin(halfwinSEXP);
-    Rcpp::traits::input_parameter< const int >::type d(dSEXP);
-    rcpp_result_gen = Rcpp::wrap(smooth_wSG(y, w, halfwin, d));
+    Rcpp::traits::input_parameter< int >::type halfwin(halfwinSEXP);
+    Rcpp::traits::input_parameter< int >::type d(dSEXP);
+    Rcpp::traits::input_parameter< Nullable<NumericVector> >::type w(wSEXP);
+    rcpp_result_gen = Rcpp::wrap(smooth_wSG(y, halfwin, d, w));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -75,6 +75,20 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const int >::type halfwin(halfwinSEXP);
     Rcpp::traits::input_parameter< const int >::type d(dSEXP);
     rcpp_result_gen = Rcpp::wrap(smooth_SG(y, halfwin, d));
+    return rcpp_result_gen;
+END_RCPP
+}
+// movmean
+NumericVector movmean(const arma::colvec y, int halfwin, Nullable<NumericVector> w, bool SG_style);
+RcppExport SEXP _phenofit_movmean(SEXP ySEXP, SEXP halfwinSEXP, SEXP wSEXP, SEXP SG_styleSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::colvec >::type y(ySEXP);
+    Rcpp::traits::input_parameter< int >::type halfwin(halfwinSEXP);
+    Rcpp::traits::input_parameter< Nullable<NumericVector> >::type w(wSEXP);
+    Rcpp::traits::input_parameter< bool >::type SG_style(SG_styleSEXP);
+    rcpp_result_gen = Rcpp::wrap(movmean(y, halfwin, w, SG_style));
     return rcpp_result_gen;
 END_RCPP
 }
