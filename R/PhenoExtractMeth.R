@@ -345,7 +345,7 @@ PhenoGu <- function(fFIT,
 #' @rdname PhenoExtractMeth
 #' @export
 PhenoKl <- function(fFIT,
-    analytical = TRUE, smoothed.spline = FALSE, 
+    analytical = TRUE, smoothed.spline = FALSE,
     IsPlot = TRUE, show.lgd = TRUE, ...)
 {
     PhenoNames <- c("Greenup", "Maturity", "Senescence", "Dormancy")
@@ -379,15 +379,18 @@ PhenoKl <- function(fFIT,
         # der.k  <- c(NA, diff(k))
         # der.k2 <- c(NA, NA, diff(k, differences = 2))
         ## find maxima of derivative of k ## split season
-        dist_fromPeak <- 1 # days
+        dist_fromPeak <- 0 # days
         asc.k   <- try(der.k[1:(half.season - dist_fromPeak)]) # k   of first half year
         asc.k.d <- try(t[1:(half.season - dist_fromPeak)])
         # doy of first half year
         des.k   <- try(der.k[(half.season + dist_fromPeak):length(k)])
         des.k.d <- try(t[(half.season + dist_fromPeak):length(k)])
 
+        A <- range(der.k, na.rm = TRUE) %>% diff()
+        minpeakheight = A*0.025
+
         # first half maximum local values of k'
-        pos <- findpeaks(asc.k, minpeakdistance = 15, npeaks = 2, sortstr = TRUE)$X$pos
+        pos <- findpeaks(asc.k, minpeakdistance = 15, npeaks = 2, ndowns = 0, sortstr = TRUE, minpeakheight)$X$pos
         pos <- sort(pos)
         pos <- c(rep(NA, 2 - length(pos)), pos) #at least two values
         I_asc <- asc.k.d[pos]
@@ -398,7 +401,7 @@ PhenoKl <- function(fFIT,
         }
 
         # second half minimum local values of k'
-        pos <- findpeaks(-des.k, minpeakdistance = 15, npeaks = 2, sortstr = TRUE)$X$pos
+        pos <- findpeaks(-des.k, minpeakdistance = 15, npeaks = 2, sortstr = TRUE, minpeakheight)$X$pos
         pos <- sort(pos);
         pos <- c(pos, rep(NA, 2 - length(pos)))
         if (all(is.na(pos))){

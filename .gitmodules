@@ -1,3 +1,0 @@
-[submodule "test/phenology_async"]
-	path = test/phenology_async
-	url = https://github.com/kongdd/phenology_async
