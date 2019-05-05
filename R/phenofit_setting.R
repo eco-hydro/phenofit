@@ -115,10 +115,10 @@ setting.get <- function(options, others = NULL, ...){
 #' @export
 #' @rdname setting
 setting.read <- function(file = "phenofit_setting.json"){
-    if (file.exists(file_json)) {
+    if (file.exists(file)) {
         read_json(file) %>% map(unlist)
     } else {
-        warning(sprintf('[w] setting file: %s not exist!', file_json))
+        warning(sprintf('[w] setting file: %s not exist!', file))
     }
 }
 

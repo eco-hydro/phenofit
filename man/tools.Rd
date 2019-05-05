@@ -3,26 +3,19 @@
 \name{reorder_name}
 \alias{reorder_name}
 \alias{rm_empty}
-\alias{contain}
 \title{reorder_name}
 \usage{
 reorder_name(d, headvars = c("site", "date", "year", "doy", "d8", "d16"),
   tailvars = "")
 
 rm_empty(x)
-
-contain(d, pattern = "NDVI|EVI")
 }
 \arguments{
-\item{d}{A data.frame vector, or list}
-
 \item{headvars}{headvars will be in the head columns.}
 
 \item{tailvars}{tailvars will be in the tail columns.}
 
 \item{x}{A vector or list}
-
-\item{pattern}{string used to match \code{names(d)}}
 }
 \description{
 reorder the name of data.frame, date.table or list.
@@ -44,6 +37,4 @@ rm_empty(x)
 # list
 l <- list(1:5, NULL, NA)
 rm_empty(l)
-df <- data.frame(year = 2010, day = 1:3, month = 1, site = "A")
-contain(df, "year|month|day")
 }

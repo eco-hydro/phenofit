@@ -79,6 +79,7 @@ D1 <- function(fit, analytical = TRUE, smoothed.spline = FALSE, ...) UseMethod('
 #' @export
 D2 <- function(fit, analytical = TRUE, smoothed.spline = FALSE, ...) UseMethod('D2', fit)
 
+#' @rdname D
 #' @export
 D1.fFIT <- function(fit, analytical = TRUE, smoothed.spline = FALSE, ...){
     pred <- last(fit$zs)
@@ -111,6 +112,7 @@ D1.fFIT <- function(fit, analytical = TRUE, smoothed.spline = FALSE, ...){
     return(der1)
 }
 
+#' @rdname D
 #' @export
 D2.fFIT <- function(fit, analytical = TRUE, smoothed.spline = FALSE, ...){
     pred <- last(fit$zs)
@@ -150,6 +152,7 @@ D2.fFIT <- function(fit, analytical = TRUE, smoothed.spline = FALSE, ...){
 #' @export
 curvature <- function(fit, analytical = TRUE, smoothed.spline = FALSE, ...) UseMethod('curvature', fit)
 
+#' @rdname D
 #' @export
 curvature.fFIT <- function(fit, analytical = TRUE, smoothed.spline = FALSE, ...){
     derivs <- D2.fFIT(fit, analytical, smoothed.spline)

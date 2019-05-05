@@ -343,7 +343,7 @@ rm_duplicate <- function(d, y, threshold){
         # if range amplitude less than TRS, get median
         if (diff(range(d$val)) < threshold){
             I <- floor(median(d$pos))
-            data_frame(val = y[I], pos = I,
+            tibble(val = y[I], pos = I,
                        left = min(d$left),
                        right = max(d$right), type = type)
         }else{

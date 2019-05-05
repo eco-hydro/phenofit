@@ -4,6 +4,7 @@ source('helper_MOD13A1.R')
 # source('tests/testthat/helper_MOD13A1.R')
 lambda   <- init_lambda(INPUT$y) # lambda for whittaker
 
+# `season` produce a pdf file here
 param = listk(
     INPUT,
     rFUN = wWHIT, wFUN = wBisquare, iters = 2,
