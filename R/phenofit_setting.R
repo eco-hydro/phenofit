@@ -45,7 +45,8 @@ options.phenofit <- list(
 #' get parameters of phenofit shinyapp
 #' 
 #' @param options options of phenofit needed to export.
-#' @param others options in others will override \code{options}. 
+#' @param others options in others will override `options`. 
+#' @param ... ignored.
 #' 
 #' @importFrom jsonlite write_json read_json
 #' @export

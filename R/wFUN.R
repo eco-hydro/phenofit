@@ -1,42 +1,41 @@
 #' Weight updating functions
 #'
-#' \itemize{
-#'    \item \code{wSELF} weigth are not changed and return the original.
-#'    \item \code{wTSM} weight updating method in TIMESAT.
-#'    \item \code{wBisquare} Bisquare weight update method. wBisquare has been
+#' * `wSELF` weigth are not changed and return the original.
+#' * `wTSM` weight updating method in TIMESAT.
+#' * `wBisquare` Bisquare weight update method. wBisquare has been
 #' modified to emphasis on upper envelope.
-#'    \item \code{wChen} Chen et al., (2004) weight updating method.
-#'    \item \code{wBeck} Beck et al., (2006) weigth updating method. wBeck need
+#' * `wChen` Chen et al., (2004) weight updating method.
+#' * `wBeck` Beck et al., (2006) weigth updating method. wBeck need
 #' sos and eos input. The function parameter is different from others. It is
 #' still not finished.
-#' }
 #'
-#' @inheritParams wHANTS
+#' @inheritParams wWHIT
 #' @param yfit Numeric vector curve fitting values.
 #' @param iter iteration of curve fitting.
 #' @param wfact weight adaptation factor (0-1), equal to the reciprocal of
 #' 'Adaptation strength' in TIMESAT.
 #' @param ... other parameters are ignored.
-#'
+#' @inheritParams check_input
+#' 
 #' @return wnew Numeric Vector, adjusted weights.
 #'
 #' @references
-#' [1]. Per J\"onsson, P., Eklundh, L., 2004. TIMESAT - A program for analyzing
+#' 1. Per J\"onsson, P., Eklundh, L., 2004. TIMESAT - A program for analyzing
 #'     time-series of satellite sensor data. Comput. Geosci. 30, 833-845.
 #'     https://doi.org/10.1016/j.cageo.2004.05.006. \cr
-#' [2]. https://au.mathworks.com/help/curvefit/smoothing-data.html#bq_6ys3-3 \cr
-#' [3]. Garcia, D., 2010. Robust smoothing of gridded data in one and higher
+#' 2. https://au.mathworks.com/help/curvefit/smoothing-data.html#bq_6ys3-3 \cr
+#' 3. Garcia, D., 2010. Robust smoothing of gridded data in one and higher
 #' dimensions with missing values. Computational statistics & data analysis,
 #' 54(4), pp.1167-1178. \cr
-#' [4]. Chen, J., J\"onsson, P., Tamura, M., Gu, Z., Matsushita, B., Eklundh, L.,
+#' 4. Chen, J., J\"onsson, P., Tamura, M., Gu, Z., Matsushita, B., Eklundh, L.,
 #'      2004. A simple method for reconstructing a high-quality NDVI time-series
 #'      data set based on the Savitzky-Golay filter. Remote Sens. Environ. 91,
 #'      332-344. https://doi.org/10.1016/j.rse.2004.03.014. \cr
-#' [5]. Beck, P.S.A., Atzberger, C., Hogda, K.A., Johansen, B., Skidmore, A.K.,
+#' 5. Beck, P.S.A., Atzberger, C., Hogda, K.A., Johansen, B., Skidmore, A.K.,
 #'      2006. Improved monitoring of vegetation dynamics at very high latitudes:
 #'      A new method using MODIS NDVI. Remote Sens. Environ.
 #'      https://doi.org/10.1016/j.rse.2005.10.021 \cr
-#' [6]. https://github.com/kongdd/phenopix/blob/master/R/FitDoubleLogBeck.R
+#' 6. https://github.com/kongdd/phenopix/blob/master/R/FitDoubleLogBeck.R
 #'
 #' @rdname wFUN
 #' @export
@@ -45,8 +44,8 @@ wSELF <- function(y, yfit, w, ...){w}
 #' @author
 #' wTSM is implemented by Per J\"onsson, Malm\"o University, Sweden
 #' \email{per.jonsson@ts.mah.se} and Lars Eklundh, Lund University, Sweden
-#' \email{lars.eklundh@nateko.lu.se}. And Translated into Rcpp by Dongdong Kong,
-#' 01 May 2018.
+#' \email{lars.eklundh@nateko.lu.se}. 
+#' And Translated into Rcpp by Dongdong Kong, 01 May 2018.
 #'
 #' @rdname wFUN
 #' @export

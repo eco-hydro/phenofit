@@ -16,10 +16,10 @@
 #' @note This function only works in every growing season.
 #' 
 #' @references
-#' [1]. Zhang, X., 2015. Reconstruction of a complete global time series of daily 
+#' 1. Zhang, X., 2015. Reconstruction of a complete global time series of daily 
 #'      vegetation index trajectory from long-term AVHRR data. Remote Sens. Environ. 
 #'      156, 457–472. https://doi.org/10.1016/j.rse.2014.10.012. \cr
-#' [2]. Zhang, Y., Xiao, X., Jin, C., Dong, J., Zhou, S., Wagle, P., Joiner, 
+#' 2. Zhang, Y., Xiao, X., Jin, C., Dong, J., Zhou, S., Wagle, P., Joiner, 
 #'      J., Guanter, L., Zhang, Y., Zhang, G., Qin, Y., Wang, J., Moore, B., 2016. 
 #'      Consistency between sun-induced chlorophyll fluorescence and gross primary 
 #'      production of vegetation in North America. Remote Sens. Environ. 

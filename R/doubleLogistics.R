@@ -2,23 +2,21 @@
 #'
 #' Define double logistics, piecewise logistics and many other functions to
 #' curve fit VI time-series
-#' \itemize{
-#'    \item \code{Logistic} The traditional simplest logistic function. It can
+#' * `Logistic` The traditional simplest logistic function. It can
 #'      be only used in half growing season, i.e. vegetation green-up or senescence
 #'      period.
-#'    \item \code{doubleLog.Zhang} Piecewise logistics, (Zhang Xiaoyang, RSE, 2003).
-#'    \item \code{doubleAG} Asymmetric Gaussian.
-#'    \item \code{doubleLog.Beck} Beck logistics.
-#'    \item \code{doubleLog.Gu} Gu logistics.
-#'    \item \code{doubleLog.Elmore} Elmore logistics.
-#'    \item \code{doubleLog.Klos} Klos logistics.
-#' }
+#' * `doubleLog.Zhang` Piecewise logistics, (Zhang Xiaoyang, RSE, 2003).
+#' * `doubleAG` Asymmetric Gaussian.
+#' * `doubleLog.Beck` Beck logistics.
+#' * `doubleLog.Gu` Gu logistics.
+#' * `doubleLog.Elmore` Elmore logistics.
+#' * `doubleLog.Klos` Klos logistics.
 #'
-#' All of those function have \code{par} and \code{formula} attributes for the
+#' All of those function have `par` and `formula` attributes for the
 #' convenience for analytical D1 and D2
 #' 
 #' @param par A vector of parameters
-#' @param t A \code{Date} or numeric vector
+#' @param t A `Date` or numeric vector
 #' @references
 #' Peter M. Atkinson, et al., 2012, RSE, 123:400-417
 #'
@@ -209,9 +207,9 @@ attr(doubleLog.Klos, 'formula') <- expression((a1*t + b1) + (a2*t^2 + b2*t + c) 
 #' @inheritParams optim_pheno
 #' @inheritParams Logistic
 #'
-#' @param fun A curve fitting function, can be one of \code{doubleAG}, 
-#' \code{doubleLog.Beck}, \code{doubleLog.Elmore}, \code{doubleLog.Gu}, 
-#' \code{doubleLog.Klos}, \code{doubleLog.Zhang}, see \code{\link{Logistic}} 
+#' @param fun A curve fitting function, can be one of `doubleAG`, 
+#' `doubleLog.Beck`, `doubleLog.Elmore`, `doubleLog.Gu`, 
+#' `doubleLog.Klos`, `doubleLog.Zhang`, see [Logistic()] 
 #' for details.
 #' @param ... others will be ignored.
 #'

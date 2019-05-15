@@ -12,7 +12,7 @@ get_param.fFITs(fFITs)
 \arguments{
 \item{fits}{Multiple methods curve fitting results by \code{curvefits} result.}
 
-\item{fFITs}{\code{fFITs} object returned by \code{\link{curvefit}}.}
+\item{fFITs}{\code{fFITs} object returned by \code{\link[=curvefit]{curvefit()}}.}
 }
 \description{
 Get parameters from curve fitting result

@@ -9,12 +9,12 @@ movmean(y, halfwin = 1L, SG_style = FALSE, w = NULL)
 \arguments{
 \item{y}{A numeric vector.}
 
+\item{halfwin}{Integer, half of moving window size}
+
 \item{SG_style}{If true, head and tail values will be in the style of SG
 (more weights on the center point), else traditional moving mean style.}
 
 \item{w}{Corresponding weights of yy, same long as yy.}
-
-\item{haflwin}{Integer, half of moving window size}
 }
 \description{
 NA and Inf values in the yy will be ignored automatically.

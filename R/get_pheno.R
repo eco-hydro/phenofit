@@ -21,10 +21,10 @@ PhenoPlot <- function(t, y, main = "", ...){
 #'
 #' @inheritParams get_GOF
 #' @inheritParams D
-#' @param fits A list of \code{\link{fFITs}} object, for a single curve fitting
+#' @param fits A list of [fFITs()] object, for a single curve fitting
 #' method.
 #' @param method Which fine curve fitting method to be extracted?
-#' @param TRS Threshold for \code{PhenoTrs}.
+#' @param TRS Threshold for `PhenoTrs`.
 #' @param IsPlot Boolean. Whether to plot figure?
 #' @param title_left String of growing season flag.
 #' @param showName_fitting Whether to show the name of fine curve fitting method

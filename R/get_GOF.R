@@ -2,8 +2,8 @@
 #'
 #' Goodness-of-fitting (GOF) of fine curve fitting results.
 #' 
-#' @param fit Object returned by \code{curvefits}.
-#' @param fFITs \code{fFITs} object returned by \code{\link{curvefit}}.
+#' @param fit Object returned by `curvefits`.
+#' @param fFITs `fFITs` object returned by [curvefit()].
 #'
 #' @return
 #' \describe{
@@ -11,15 +11,15 @@
 #'   \item{RMSE}{Root Mean Square Error}
 #'   \item{NSE}{Nash-Sutcliffe model efficiency coefficient}
 #'   \item{R}{Pearson-Correlation}
-#'   \item{pvalue}{pvalue of \code{R}}
+#'   \item{pvalue}{pvalue of `R`}
 #'   \item{n}{The number of observations}
 #' }
 #'
 #' @references
-#' [1]. https://en.wikipedia.org/wiki/Nash-Sutcliffe_model_efficiency_coefficient \cr
-#' [2]. https://en.wikipedia.org/wiki/Pearson_correlation_coefficient
+#' 1. https://en.wikipedia.org/wiki/Nash-Sutcliffe_model_efficiency_coefficient \cr
+#' 2. https://en.wikipedia.org/wiki/Pearson_correlation_coefficient
 #' 
-#' @seealso \code{\link{curvefit}}
+#' @seealso [curvefit()]
 #' 
 #' @example inst/examples/ex-get_fitting_param_GOF.R
 #' @export

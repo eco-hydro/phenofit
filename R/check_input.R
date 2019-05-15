@@ -2,63 +2,69 @@
 .normalize     <- function(x, sf) (x-sf[1])/(sf[2]-sf[1])
 .backnormalize <- function(x, sf) (x+sf[1]/(sf[2]-sf[1]))*(sf[2]-sf[1])
 
+# ' @param perc_wc critical percentage of good- and marginal- quality points for
+# ' `wc`.
+
 #' check_input
 #'
 #' Check input data, interpolate NA values in y, remove spike values, and set
 #' weights for NA in y and w.
 #'
-#' @param t Numeric vector, \code{Date} variable
+#' @param t Numeric vector, `Date` variable
 #' @param y Numeric vector, vegetation index time-series
-#' @param w (optional) Numeric vector, weights of \code{y}. If not specified, 
-#' weights of all \code{NA} values will be \code{wmin}, the others will be 1.0.
-#' @param QC_flag Factor (optional) returned by \code{qcFUN}, levels should be
-#' in the range of \code{c("snow", "cloud", "shadow", "aerosol", "marginal",
-#' "good")}, others will be categoried into \code{others}. \code{QC_flag} is
-#' used for visualization in \code{\link{get_pheno}} and
-#' \code{\link{plot_phenofit}}.
+#' @param w (optional) Numeric vector, weights of `y`. If not specified,
+#' weights of all `NA` values will be `wmin`, the others will be 1.0.
+#' @param QC_flag Factor (optional) returned by `qcFUN`, levels should be
+#' in the range of `c("snow", "cloud", "shadow", "aerosol", "marginal",
+#' "good")`, others will be categoried into `others`. `QC_flag` is
+#' used for visualization in [get_pheno()] and [plot_phenofit()].
 #' @param nptperyear Integer, number of images per year.
 #' @param south Boolean. In south hemisphere, growing year is 1 July to the
 #' following year 31 June; In north hemisphere, growing year is 1 Jan to 31 Dec.
 #' @param Tn Numeric vector, night temperature, default is null. If provided,
 #' Tn is used to help divide ungrowing period, and then get background value in
-#' ungrowing season (see details in \code{\link[phenofit]{backval}}).
-#' @param wmin Double, minimum weigth (i.e. weight of snow, ice and cloud).
+#' ungrowing season (see details in [phenofit::backval()]).
+#' @param wmin Double, minimum weight of bad points, which could be smaller
+#' the weight of snow, ice and cloud.
 #' @param missval Double, which is used to replace NA values in y. If missing,
-#' the default vlaue is \code{ylu[1]}.
-#' @param ymin If specified, \code{ylu[1]} is constrained greater than ymin. This 
+#' the default vlaue is `ylu[1]`.
+#' @param ymin If specified, `ylu[1]` is constrained greater than ymin. This
 #' value is critical for bare, snow/ice land, where vegetation amplitude is quite
-#' small. Generally, you can set ymin=0.08 for NDVI, ymin=0.05 for EVI, 
-#' ymin=0.5 gC m-2 s-1 for GPP.  
+#' small. Generally, you can set ymin=0.08 for NDVI, ymin=0.05 for EVI,
+#' ymin=0.5 gC m-2 s-1 for GPP.
 #' @param maxgap Integer, nptperyear/4 will be a suitable value. If continuous
 #' missing value numbers less than maxgap, then interpolate those NA values by
 #' zoo::na.approx; If false, then replace those NA values with a constant value
-#' \code{ylu[1]}. \cr
+#' `ylu[1]`. \cr
 #' Replacing NA values with a constant missing value (e.g. background value ymin)
 #' is inappropriate for middle growing season points. Interpolating all values
 #' by na.approx, it is unsuitable for large number continous missing segments,
 #' e.g. in the start or end of growing season.
-#' @param alpha Double value in [0,1], quantile prob of ylu_min.
+#' @param alpha Double value in `[0,1]`, quantile prob of ylu_min.
 #' @param ... Others will be ignored.
 #'
 #' @return A list object returned
 #' \itemize{
 #' \item{t } Numeric vector
 #' \item{y0} Numeric vector, original vegetation time-series.
-#' \item{y } Numeric vector, checked vegetation time-series, \code{NA} values 
-#' are interpolated. 
+#' \item{y } Numeric vector, checked vegetation time-series, `NA` values
+#' are interpolated.
 #' \item{w } Numeric vector
 #' \item{Tn} Numeric vector
-#' \item{ylu} =[ymin, ymax]. \code{w_critical} is used to filter not too
-#'      bad values. If the percentage good values (w=1) is greater than 30\%, then
-#'      \code{w_critical}=1. The else, if the percentage of w >= 0.5 points is greater
-#'      than 10\%, then \code{w_critical}=0.5. In boreal regions, even if the percentage
-#'      of w >= 0.5 points is only 10\%, we still can't set \code{w_critical=wmin}.
-#'      We can't rely on points with the wmin weights. Then,
-#'      \code{y_good = y[w >= w_critical ]},
-#'      \code{ymin = pmax( quantile(y_good, alpha/2), 0)}, \code{ymax = max(y_good)}.
+#' \item{ylu} = `[ymin, ymax]`. `w_critical` is used to filter not too bad values.
+#'
+#' If the percentage good values (w=1) is greater than 30\%, then `w_critical`=1.
+#'
+#' The else, if the percentage of w >= 0.5 points is greater than 10\%, then
+#' `w_critical`=0.5. In boreal regions, even if the percentage of w >= 0.5
+#' points is only 10\%, we still can't set `w_critical=wmin`.
+#'
+#' We can't rely on points with the wmin weights. Then,  \cr
+#' `y_good = y[w >= w_critical ]`,  \cr
+#' `ymin = pmax( quantile(y_good, alpha/2), 0)`  \cr `ymax = max(y_good)`.
 #' }
 #'
-#' @seealso \code{\link[phenofit]{backval}}
+#' @seealso [phenofit::backval()]
 #' @example inst/examples/ex-check_input.R
 #' @export
 check_input <- function(t, y, w, QC_flag,
@@ -143,14 +149,14 @@ check_input <- function(t, y, w, QC_flag,
 
 #' check_ylu
 #'
-#' Curve fitting values are constrained in the range of \code{ylu}.
+#' Curve fitting values are constrained in the range of `ylu`.
 #' Only constrain trough value for a stable background value. But not for peak
 #' value.
 #'
 #' @param yfit Numeric vector, curve fitting result
-#' @param ylu limits of y value, [ymin, ymax]
+#' @param ylu limits of y value, `[ymin, ymax]`
 #' 
-#' @return yfit, the numeric vector in the range of \code{ylu}.
+#' @return yfit, the numeric vector in the range of `ylu`.
 #' 
 #' @export
 #' @examples

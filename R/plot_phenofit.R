@@ -2,10 +2,11 @@
 
 #' plot_phenofit
 #'
-#' @param d_fit data.frame of curve fittings returned by \code{\link{get_fitting}}.
-#' @param seasons Growing season dividing object returned by \code{\link{season}}
-#' and \code{\link{season_mov}}.
+#' @param d_fit data.frame of curve fittings returned by [get_fitting()].
+#' @param seasons Growing season dividing object returned by [season()]
+#' and [season_mov()].
 #' @param title String, title of figure.
+#' @param title.ylab String, title of `ylab`.
 #' @param font.size Font size of axis.text
 #' @param show.legend Boolean
 #'

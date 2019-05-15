@@ -11,9 +11,7 @@ optim_pheno(prior, sFUN, y, t, tout, method, w, nptperyear, ylu,
 \item{prior}{A vector of initial values for the parameters for which optimal
 values are to be found. \code{prior} is suggested giving a column name.}
 
-\item{sFUN}{The name of fine curve fitting functions, can be one of \code{
-'FitAG', 'FitDL.Beck', 'FitDL.Elmore', 'FitDL.Gu' and 'FitDL.Klos',
-'FitDL.Zhang'}.}
+\item{sFUN}{The name of fine curve fitting functions, can be one of \code{ 'FitAG', 'FitDL.Beck', 'FitDL.Elmore', 'FitDL.Gu' and 'FitDL.Klos', 'FitDL.Zhang'}.}
 
 \item{y}{Numeric vector, vegetation index time-series}
 
@@ -22,16 +20,15 @@ values are to be found. \code{prior} is suggested giving a column name.}
 \item{tout}{Corresponding doy of prediction.}
 
 \item{method}{The name of optimization method to solve fine fitting, passed
-to \code{\link{I_optim}} or \code{\link{I_optimx}}.
-\code{I_optim} supports \code{'BFGS','CG','Nelder-Mead',
-'L-BFGS-B', 'nlm', 'nlminb', 'ucminf'};
+to \code{\link[=I_optim]{I_optim()}} or \code{\link[=I_optimx]{I_optimx()}}.
+\code{I_optim} supports \code{'BFGS','CG','Nelder-Mead', 'L-BFGS-B', 'nlm', 'nlminb', 'ucminf'};
 \code{I_optimx} supports \code{'spg','Rcgmin','Rvmmin', 'newuoa','bobyqa','nmkb','hjkb'}.}
 
-\item{w}{(optional) Numeric vector, weights of \code{y}. If not specified, 
+\item{w}{(optional) Numeric vector, weights of \code{y}. If not specified,
 weights of all \code{NA} values will be \code{wmin}, the others will be 1.0.}
 
 \item{nptperyear}{Integer, number of images per year, passed to \code{wFUN}.
-Only \code{\link{wTSM}} needs \code{nptperyear}. If not specified,
+Only \code{\link[=wTSM]{wTSM()}} needs \code{nptperyear}. If not specified,
 \code{nptperyear} will be calculated based on \code{t}.}
 
 \item{ylu}{\code{ymin, ymax}, which is used to force \code{ypred} in the
@@ -44,10 +41,10 @@ range of \code{ylu}.}
 
 \item{verbose}{Whether to display intermediate variables?}
 
-\item{...}{other parameters passed to \code{\link{I_optim}} or \code{\link{I_optimx}}.}
+\item{...}{other parameters passed to \code{\link[=I_optim]{I_optim()}} or \code{\link[=I_optimx]{I_optimx()}}.}
 }
 \value{
-fFIT object, see \code{\link{fFIT}} for details.
+fFIT object, see \code{\link[=fFIT]{fFIT()}} for details.
 }
 \description{
 Interface of optimization functions for double logistics and other parametric

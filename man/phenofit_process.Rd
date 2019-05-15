@@ -4,15 +4,12 @@
 \alias{phenofit_process}
 \alias{getsite_data}
 \alias{getsite_INPUT}
-\alias{phenofit_season}
 \alias{phenofit_finefit}
 \title{phenofit_process}
 \usage{
 getsite_data(df, sitename, dateRange = NULL)
 
 getsite_INPUT(df, st, sitename, nptperyear, dateRange = NULL)
-
-phenofit_season(INPUT, options, IsPlot = FALSE, verbose = TRUE, ...)
 
 phenofit_finefit(INPUT, brks, options, TRS = c(0.2, 0.5, 0.6), ...)
 
@@ -21,30 +18,38 @@ phenofit_process(options, dateRange = c(as.Date("2010-01-01"),
   .parallel = FALSE, ...)
 }
 \arguments{
-\item{dateRange}{Date vector, filter input in the \code{dateRange}}
+\item{df}{data.table of vegetation time-series. At least with the columns of
+\code{t, y, w}.}
+
+\item{sitename}{character}
+
+\item{dateRange}{Date vector, \code{[date_begin, date_end]}. filter input in the
+range of \code{dateRange}}
+
+\item{st}{data.table of site information, e.g. \code{site}, \code{lat}.}
+
+\item{nptperyear}{Integer, number of images per year.}
 
 \item{INPUT}{An object returned by \code{check_input}}
 
-\item{options}{options of phenofit}
+\item{brks}{object returned by \code{\link[=season_mov]{season_mov()}} and \code{\link[=season]{season()}}}
 
-\item{IsPlot}{whether to plot season dividing procedure?}
-
-\item{...}{other parameters to \code{\link{season_mov}} or \code{\link{season}}}
-
-\item{brks}{object returned by \code{\link{season_mov}} and \code{\link{season}}}
+\item{options}{options of phenofit needed to export.}
 
 \item{TRS}{Threshold for \code{PhenoTrs}.}
 
+\item{...}{ignored}
+
 \item{nsite}{the max number of sites to process. \code{-1} means all sites.}
-}
-\value{
-same object returned by \code{\link{season_mov}} and \code{\link{season}}
+
+\item{.progress}{boolean}
+
+\item{.parallel}{boolean}
 }
 \description{
-\describe{
-  \item{phenofit_season}{ Calculate growing season dividing information}
-  \item{phenofit_finefit}{Fine fitting}
-}
+phenofit_process
+
+phenofit_process
 }
 \examples{
 \dontrun{

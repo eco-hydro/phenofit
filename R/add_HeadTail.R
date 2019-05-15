@@ -1,15 +1,15 @@
 #'
 #' Add one year data in the head and tail
 #'
-#' @param d A data.table, should have \code{t} (compositing date) or \code{date}
-#' (image date) column which are (\code{Date} variable).
+#' @param d A data.table, should have `t` (compositing date) or `date`
+#' (image date) column which are (`Date` variable).
 #' @inheritParams check_input
 #' @inheritParams season
 #'
 #' @param trs If nmissing < trs*nptperyear (little missing), this year is
-#' include to extract phenology; if \code{FALSE}, this year is excluded.
+#' include to extract phenology; if `FALSE`, this year is excluded.
 #'
-#' @note \code{date} is image date; \code{t} is compositing date.
+#' @note `date` is image date; `t` is compositing date.
 #'
 #' @return data.table
 #' @importFrom lubridate ddays

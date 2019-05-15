@@ -1,6 +1,6 @@
 #' Get parameters from curve fitting result
 #'
-#' @param fits Multiple methods curve fitting results by \code{curvefits} result.
+#' @param fits Multiple methods curve fitting results by `curvefits` result.
 #' @inheritParams get_GOF
 #'
 #' @example inst/examples/ex-get_fitting_param_GOF.R

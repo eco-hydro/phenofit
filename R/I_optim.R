@@ -2,21 +2,21 @@
 #' @title Interface of unified optimization functions.
 #'
 #' @description
-#' Caution that \pkg{optimx} speed is not so satisfied. So \code{I_optim}
+#' Caution that \pkg{optimx} speed is not so satisfied. So `I_optim`
 #' is present.
 #'
 #' @inheritParams optim_pheno
-#' @param FUN Fine curve fitting function for goal function \code{\link{f_goal}}.
-#' @param method \code{method} can be one of \code{'BFGS','CG','Nelder-Mead',
-#' 'L-BFGS-B', 'nlm', 'nlminb', 'ucminf'}. \cr
-#' For \code{I_optimx}, other methods are also supported,
-#' e.g. \code{'spg','Rcgmin','Rvmmin', 'newuoa','bobyqa','nmkb','hjkb'}.
+#' @param FUN Fine curve fitting function for goal function [f_goal()].
+#' @param method `method` can be one of `'BFGS','CG','Nelder-Mead',
+#' 'L-BFGS-B', 'nlm', 'nlminb', 'ucminf'`. \cr
+#' For `I_optimx`, other methods are also supported,
+#' e.g. `'spg','Rcgmin','Rvmmin', 'newuoa','bobyqa','nmkb','hjkb'`.
 #'
 #' @inherit opt_optim return
 #'
-#' @seealso \code{\link[stats]{optim}}, \code{\link[stats]{nlminb}},
-#' \code{\link[stats]{nlm}}, \code{\link[optimx]{optimx}},
-#' \code{\link[ucminf]{ucminf}}
+#' @seealso [stats::optim()], [stats::nlminb()],
+#' [stats::nlm()], [optimx::optimx()],
+#' [ucminf::ucminf()]
 #'
 #' @examples
 #' library(ggplot2)
@@ -99,8 +99,8 @@ methods <- c(
     "Nelder-Mead", "BFGS", "CG", "L-BFGS-B", # "SANN", "Brent", # (optim)
     'spg','Rcgmin','Rvmmin','newuoa','bobyqa','nmkb','hjkb')
 
-#' @param verbose If \code{TRUE}, all optimization methods in
-#' \code{\link[optimx]{optimx}} are used, and print optimization information
+#' @param verbose If `TRUE`, all optimization methods in
+#' [optimx::optimx()] are used, and print optimization information
 #' of all methods.
 #'
 #' @rdname I_optim

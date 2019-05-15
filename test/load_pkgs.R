@@ -35,7 +35,6 @@ suppressMessages({
 })
 
 fontsize  <- 14
-subl <- function() system('subl .')
 
 ## fluxnet2015 and phenocam dataset were used to test phenofit
 # dir_data <- "data_test/"

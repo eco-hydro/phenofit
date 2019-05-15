@@ -24,27 +24,27 @@ stat_season(INPUT, brks)
 }
 \arguments{
 \item{INPUT}{A list object with the elements of \code{t}, \code{y}, \code{w},
-\code{Tn} (optional) and \code{ylu}, returned by \code{\link{check_input}}.}
+\code{Tn} (optional) and \code{ylu}, returned by \code{\link[=check_input]{check_input()}}.}
 
-\item{rFUN}{Rough curve fitting function, can be one of \code{\link{wSG}},
-\code{\link{wWHIT}} and \code{\link{wHANTS}}.}
+\item{rFUN}{Rough curve fitting function, can be one of \code{\link[=wSG]{wSG()}},
+\code{\link[=wWHIT]{wWHIT()}} and \code{\link[=wHANTS]{wHANTS()}}.}
 
-\item{wFUN}{weights updating function, can be one of \code{\link{wTSM}},
-\code{\link{wChen}}, \code{\link{wBisquare}} and \code{\link{wSELF}}.}
+\item{wFUN}{weights updating function, can be one of \code{\link[=wTSM]{wTSM()}},
+\code{\link[=wChen]{wChen()}}, \code{\link[=wBisquare]{wBisquare()}} and \code{\link[=wSELF]{wSELF()}}.}
 
 \item{iters}{How many times curve fitting is implemented.}
 
 \item{wmin}{Double, minimum weigth (i.e. weight of snow, ice and cloud).}
 
-\item{lambda}{The smoothing parameter of \code{\link{wWHIT}}. For
-\code{\link{season_mov}}, if lambda is \code{NULL}, \code{\link{init_lambda}}
+\item{lambda}{The smoothing parameter of \code{\link[=wWHIT]{wWHIT()}}. For
+\code{\link[=season_mov]{season_mov()}}, if lambda is \code{NULL}, \code{\link[=init_lambda]{init_lambda()}}
 will be used. Generally, it was set as 10000, 15, and 5 for daily, 8-day
 and 16-day inputs respectively.}
 
-\item{nf}{The parameter of \code{\link{wHANTS}}, number of frequencies to be
+\item{nf}{The parameter of \code{\link[=wHANTS]{wHANTS()}}, number of frequencies to be
 considered above the zero frequency.}
 
-\item{frame}{The parameter of \code{\link{wSG}}, moving window size. Suggested by
+\item{frame}{The parameter of \code{\link[=wSG]{wSG()}}, moving window size. Suggested by
 TIMESAT, default \code{frame = floor(nptperyear/7)*2 + 1}.}
 
 \item{minpeakdistance}{Numberic, in the unit of points (default as
@@ -75,7 +75,7 @@ returned.}
 \item{IsPlot}{Boolean}
 
 \item{plotdat}{(optional) A list or data.table, with \code{t}, \code{y} and \code{w}.
-Only if \code{IsPlot=TRUE}, \code{\link{plot_input}} will be used to plot.
+Only if \code{IsPlot=TRUE}, \code{\link[=plot_input]{plot_input()}} will be used to plot.
 Known that y and w in \code{INPUT} have been changed, we suggest using the
 original data.table.}
 
@@ -84,14 +84,14 @@ original data.table.}
 \item{adj.param}{Adjust rough curve fitting function parameters automatically,
 if too many or to less peak and trough values.}
 
-\item{...}{For \code{\link{season_mov}}, Other parameters passed to
-\code{\link{season}}; For \code{\link{season}}, other parameters passed to
-\code{\link{findpeaks}}.}
+\item{...}{For \code{\link[=season_mov]{season_mov()}}, Other parameters passed to
+\code{\link[=season]{season()}}; For \code{\link[=season]{season()}}, other parameters passed to
+\code{\link[=findpeaks]{findpeaks()}}.}
 
 \item{IsOptim_lambda}{Whether to optimize Whittaker's parameter lambda by
 V-curve theory?}
 
-\item{maxExtendMonth}{Previous and subsequent `maxExtendMonth` data were added
+\item{maxExtendMonth}{Previous and subsequent \code{maxExtendMonth} data were added
 for every year curve fitting.}
 
 \item{IsPlot.vc}{Whether to plot V-curve optimized time-series.}
@@ -103,12 +103,12 @@ for every year curve fitting.}
 \item{brks}{A list object returned by \code{season} or \code{season_mov}.}
 }
 \value{
-\describe{
-\item{whit}{Rough fitting result.}
-\item{dt}{Growing season dividing information.}
+\itemize{
+\item \code{whit}: Rough fitting result.
+\item \code{dt}: Growing season dividing information.
 }
 
-List object, list(whit, dt)
+List object, \code{list(whit, dt)}
 }
 \description{
 Divide growing seasons according to rough fitting (\code{rFUN}) result .
@@ -121,7 +121,7 @@ For \code{season_mov} rough fitting is applied in every year, during which
 Before dividing growing season, \code{INPUT} should be added a year in head
 and tail first by \code{add_HeadTail}.
 
-Finally, use \code{\link{findpeaks}} to get local maximum and local minimum values.
+Finally, use \code{\link[=findpeaks]{findpeaks()}} to get local maximum and local minimum values.
 Two local minimum define a growing season.
 If two local minimum(maximum) are too closed, then only the smaller(biger) is left.
 }
@@ -164,5 +164,5 @@ brks2 <- season_mov(INPUT,
     plotdat = d, IsPlot = IsPlot, print = FALSE, IsPlot.OnlyBad = FALSE)
 }
 \seealso{
-\code{\link{findpeaks}}.
+\code{\link[=findpeaks]{findpeaks()}}.
 }

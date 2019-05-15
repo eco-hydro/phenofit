@@ -13,12 +13,12 @@ f_goal(par, y, t, fun, w, ylu, ...)
 
 \item{t}{Numeric vector, \code{Date} variable}
 
-\item{fun}{A curve fitting function, can be one of \code{doubleAG}, 
-\code{doubleLog.Beck}, \code{doubleLog.Elmore}, \code{doubleLog.Gu}, 
-\code{doubleLog.Klos}, \code{doubleLog.Zhang}, see \code{\link{Logistic}} 
+\item{fun}{A curve fitting function, can be one of \code{doubleAG},
+\code{doubleLog.Beck}, \code{doubleLog.Elmore}, \code{doubleLog.Gu},
+\code{doubleLog.Klos}, \code{doubleLog.Zhang}, see \code{\link[=Logistic]{Logistic()}}
 for details.}
 
-\item{w}{(optional) Numeric vector, weights of \code{y}. If not specified, 
+\item{w}{(optional) Numeric vector, weights of \code{y}. If not specified,
 weights of all \code{NA} values will be \code{wmin}, the others will be 1.0.}
 
 \item{ylu}{\code{ymin, ymax}, which is used to force \code{ypred} in the

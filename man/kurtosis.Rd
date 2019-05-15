@@ -20,7 +20,7 @@ before the computation proceeds.}
 computing skewness.}
 }
 \description{
-Inherit from package `e1071`
+Inherit from package \code{e1071}
 }
 \examples{
 x = rnorm(100)

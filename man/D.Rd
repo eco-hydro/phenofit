@@ -46,9 +46,9 @@ Get derivative of \code{phenofit} object.
 \code{curvature} curvature.
 }
 \details{
-If \code{fit$fun} has no gradient function or \code{smoothed.spline = TRUE}, 
-time-series smoothed by spline first, and get derivatives at last. 
-If \code{fit$fun} exists and \code{analytical = TRUE}, \code{smoothed.spline} 
+If \code{fit$fun} has no gradient function or \code{smoothed.spline = TRUE},
+time-series smoothed by spline first, and get derivatives at last.
+If \code{fit$fun} exists and \code{analytical = TRUE}, \code{smoothed.spline}
 will be ignored.
 }
 \examples{

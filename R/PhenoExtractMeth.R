@@ -3,7 +3,7 @@
 #'
 #' @inheritParams D
 #'
-#' @param fFIT \code{fFIT} object returned by \code{\link{optim_pheno}}.
+#' @param fFIT `fFIT` object returned by [optim_pheno()].
 #' @param approach to be used to calculate phenology metrics.
 #' 'White' (White et al. 1997) or 'Trs' for simple threshold.
 #' @param trs threshold to be used for approach "Trs", in (0, 1).
@@ -39,10 +39,10 @@ NULL
 
 #' @description
 #' \itemize{
-#' \item \code{PhenoTrs} Threshold method
-#' \item \code{PhenoDeriv} Derivative method
-#' \item \code{PhenoGu} Gu method
-#' \item \code{PhenoKl} Inflection method
+#' \item `PhenoTrs` Threshold method
+#' \item `PhenoDeriv` Derivative method
+#' \item `PhenoGu` Gu method
+#' \item `PhenoKl` Inflection method
 #' }
 #'
 #' @param asymmetric If true, background value in spring season and autumn season

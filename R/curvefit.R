@@ -11,18 +11,18 @@ phenonames <- c('TRS2.SOS', 'TRS2.EOS', 'TRS5.SOS', 'TRS5.EOS', 'TRS6.SOS', 'TRS
 #' @param y Vegetation time-series index, numeric vector
 #' @param t The corresponding doy of x
 #' @param tout The output interpolated time.
-#' @param methods Fine curve fitting methods, can be one or more of \code{c('AG', 
-#' 'Beck', 'Elmore', 'Gu', 'Klos', 'Zhang')}. 
+#' @param methods Fine curve fitting methods, can be one or more of `c('AG', 
+#' 'Beck', 'Elmore', 'Gu', 'Klos', 'Zhang')`. 
 #' @param ... other parameters passed to curve fitting function.
 #' 
 #' @note 'Klos' have too many parameters. It will be slow and not stable.
 #' 
-#' @return fFITs S3 object, see \code{\link{fFITs}} for details.
+#' @return fFITs S3 object, see [fFITs()] for details.
 #' 
-#' @seealso \code{\link{fFITs}}, 
-#' \code{\link{FitAG}}, \code{\link{FitDL.Beck}}, 
-#' \code{\link{FitDL.Elmore}}, \code{\link{FitDL.Gu}}, 
-#' \code{\link{FitDL.Klos}}, \code{\link{FitDL.Zhang}}
+#' @seealso [fFITs()], 
+#' [FitAG()], [FitDL.Beck()], 
+#' [FitDL.Elmore()], [FitDL.Gu()], 
+#' [FitDL.Klos()], [FitDL.Zhang()]
 #' 
 #' @examples
 #' library(phenofit)

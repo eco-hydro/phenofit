@@ -17,8 +17,8 @@ and 'ylu', returned by \code{check_input}.}
 \code{season} or \code{season_mov}, which contains the growing season
 dividing information.}
 
-\item{wFUN}{weights updating function, can be one of \code{\link{wTSM}},
-\code{\link{wChen}}, \code{\link{wBisquare}} and \code{\link{wSELF}}.}
+\item{wFUN}{weights updating function, can be one of \code{\link[=wTSM]{wTSM()}},
+\code{\link[=wChen]{wChen()}}, \code{\link[=wBisquare]{wBisquare()}} and \code{\link[=wSELF]{wSELF()}}.}
 
 \item{iters}{How many times curve fitting is implemented.}
 
@@ -28,7 +28,7 @@ dividing information.}
 marginal element are found in previous and subsequent growing season.}
 
 \item{maxExtendMonth}{Search good or marginal good values in previous and
-subsequent `maxExtendMonth` period.}
+subsequent \code{maxExtendMonth} period.}
 
 \item{minExtendMonth}{Extending perid defined by \code{nextend} and
 \code{maxExtendMonth} should be no shorter than \code{minExtendMonth}.

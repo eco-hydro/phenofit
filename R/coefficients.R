@@ -102,7 +102,7 @@ cv_coef <- function(x, w){
 #' @param NumberOfPredictor Number of predictor, including constant.
 #' @param alpha significant level.
 #'
-#' @return \code{F} statistic and \code{R2} at significant level.
+#' @return `F` statistic and `R2` at significant level.
 #'
 #' @references
 #' Chen Yanguang (2012), Geographical Data analysis with MATLAB.
@@ -135,18 +135,18 @@ R2_sign <- function(n, NumberOfPredictor = 2, alpha = 0.05){
 #' 
 #' @return
 #' \itemize{
-#' \item \code{RMSE} root mean square error
-#' \item \code{NSE} NASH coefficient
-#' \item \code{MAE} mean absolute error
-#' \item \code{AI} Agreement index (only good points (w == 1)) participate to
+#' \item `RMSE` root mean square error
+#' \item `NSE` NASH coefficient
+#' \item `MAE` mean absolute error
+#' \item `AI` Agreement index (only good points (w == 1)) participate to
 #' calculate. See details in Zhang et al., (2015).
-#' \item \code{Bias} bias
-#' \item \code{Bias_perc} bias percentage
-#' \item \code{n_sim} number of valid obs
-#' \item \code{cv} Coefficient of variation
-#' \item \code{R2} correlation of determination
-#' \item \code{R} pearson correlation
-#' \item \code{pvalue} pvalue of \code{R}
+#' \item `Bias` bias
+#' \item `Bias_perc` bias percentage
+#' \item `n_sim` number of valid obs
+#' \item `cv` Coefficient of variation
+#' \item `R2` correlation of determination
+#' \item `R` pearson correlation
+#' \item `pvalue` pvalue of `R`
 #' }
 #'
 #' @references

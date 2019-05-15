@@ -6,6 +6,7 @@
 #' @description Vegetation phenology package
 #' @import magrittr numDeriv plyr
 #' @import tibble ggplot2 
+#' @import foreach iterators
 #' @importFrom gridExtra arrangeGrob
 #' @importFrom data.table data.table as.data.table := is.data.table fwrite fread
 #' @importFrom zoo na.approx index zoo
@@ -17,6 +18,7 @@
 #' @importFrom utils object.size
 #' @importFrom grDevices dev.off cairo_pdf colorRampPalette
 #' @importFrom jsonlite read_json write_json
+#' @importFrom shiny getDefaultReactiveDomain showNotification
 #' @import stats graphics
 #' 
 #' @useDynLib phenofit, .registration = TRUE
@@ -30,7 +32,8 @@ NULL
               "meth", "doy", "origin", # tidyFitPheno
               "DayOfYear", "SummaryQA", "site", "EVI", "w", "QC_flag", # tidy_MOD13.gee
               "beg", "end",  # plot_phenofit
-              "val", "type", "flag", "peak" # season
+              "val", "type", "flag", "peak", # season, 
+              "i", "qc", "y", "sitename" # phenofit_TS.avhrr
             )
         )
     }

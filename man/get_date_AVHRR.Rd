@@ -6,8 +6,14 @@
 \usage{
 get_date_AVHRR(year_begin = 1982, year_end = 2015)
 }
+\arguments{
+\item{year_begin}{integer}
+
+\item{year_end}{integer}
+}
 \description{
-get_date_AVHRR
+Generate image dates from \code{year_begin} to \code{year_end}.
+This function is only for AVHRR satellites.
 }
 \examples{
 date_AVHRR <- get_date_AVHRR()

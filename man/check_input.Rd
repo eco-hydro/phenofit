@@ -12,14 +12,12 @@ check_input(t, y, w, QC_flag, nptperyear, south = FALSE, Tn = NULL,
 
 \item{y}{Numeric vector, vegetation index time-series}
 
-\item{w}{(optional) Numeric vector, weights of \code{y}. If not specified, 
+\item{w}{(optional) Numeric vector, weights of \code{y}. If not specified,
 weights of all \code{NA} values will be \code{wmin}, the others will be 1.0.}
 
 \item{QC_flag}{Factor (optional) returned by \code{qcFUN}, levels should be
-in the range of \code{c("snow", "cloud", "shadow", "aerosol", "marginal",
-"good")}, others will be categoried into \code{others}. \code{QC_flag} is
-used for visualization in \code{\link{get_pheno}} and
-\code{\link{plot_phenofit}}.}
+in the range of \code{c("snow", "cloud", "shadow", "aerosol", "marginal", "good")}, others will be categoried into \code{others}. \code{QC_flag} is
+used for visualization in \code{\link[=get_pheno]{get_pheno()}} and \code{\link[=plot_phenofit]{plot_phenofit()}}.}
 
 \item{nptperyear}{Integer, number of images per year.}
 
@@ -28,13 +26,14 @@ following year 31 June; In north hemisphere, growing year is 1 Jan to 31 Dec.}
 
 \item{Tn}{Numeric vector, night temperature, default is null. If provided,
 Tn is used to help divide ungrowing period, and then get background value in
-ungrowing season (see details in \code{\link[phenofit]{backval}}).}
+ungrowing season (see details in \code{\link[phenofit:backval]{phenofit::backval()}}).}
 
-\item{wmin}{Double, minimum weigth (i.e. weight of snow, ice and cloud).}
+\item{wmin}{Double, minimum weight of bad points, which could be smaller
+the weight of snow, ice and cloud.}
 
-\item{ymin}{If specified, \code{ylu[1]} is constrained greater than ymin. This 
+\item{ymin}{If specified, \code{ylu[1]} is constrained greater than ymin. This
 value is critical for bare, snow/ice land, where vegetation amplitude is quite
-small. Generally, you can set ymin=0.08 for NDVI, ymin=0.05 for EVI, 
+small. Generally, you can set ymin=0.08 for NDVI, ymin=0.05 for EVI,
 ymin=0.5 gC m-2 s-1 for GPP.}
 
 \item{missval}{Double, which is used to replace NA values in y. If missing,
@@ -49,7 +48,7 @@ is inappropriate for middle growing season points. Interpolating all values
 by na.approx, it is unsuitable for large number continous missing segments,
 e.g. in the start or end of growing season.}
 
-\item{alpha}{Double value in [0,1], quantile prob of ylu_min.}
+\item{alpha}{Double value in \code{[0,1]}, quantile prob of ylu_min.}
 
 \item{...}{Others will be ignored.}
 }
@@ -58,18 +57,21 @@ A list object returned
 \itemize{
 \item{t } Numeric vector
 \item{y0} Numeric vector, original vegetation time-series.
-\item{y } Numeric vector, checked vegetation time-series, \code{NA} values 
-are interpolated. 
+\item{y } Numeric vector, checked vegetation time-series, \code{NA} values
+are interpolated.
 \item{w } Numeric vector
 \item{Tn} Numeric vector
-\item{ylu} =[ymin, ymax]. \code{w_critical} is used to filter not too
-     bad values. If the percentage good values (w=1) is greater than 30\%, then
-     \code{w_critical}=1. The else, if the percentage of w >= 0.5 points is greater
-     than 10\%, then \code{w_critical}=0.5. In boreal regions, even if the percentage
-     of w >= 0.5 points is only 10\%, we still can't set \code{w_critical=wmin}.
-     We can't rely on points with the wmin weights. Then,
-     \code{y_good = y[w >= w_critical ]},
-     \code{ymin = pmax( quantile(y_good, alpha/2), 0)}, \code{ymax = max(y_good)}.
+\item{ylu} = \code{[ymin, ymax]}. \code{w_critical} is used to filter not too bad values.
+
+If the percentage good values (w=1) is greater than 30\%, then \code{w_critical}=1.
+
+The else, if the percentage of w >= 0.5 points is greater than 10\%, then
+\code{w_critical}=0.5. In boreal regions, even if the percentage of w >= 0.5
+points is only 10\%, we still can't set \code{w_critical=wmin}.
+
+We can't rely on points with the wmin weights. Then,  \cr
+\code{y_good = y[w >= w_critical ]},  \cr
+\code{ymin = pmax( quantile(y_good, alpha/2), 0)}  \cr \code{ymax = max(y_good)}.
 }
 }
 \description{
@@ -105,5 +107,5 @@ INPUT    <- check_input(dnew$t, dnew$y, dnew$w, QC_flag = dnew$QC_flag,
      maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
 }
 \seealso{
-\code{\link[phenofit]{backval}}
+\code{\link[phenofit:backval]{phenofit::backval()}}
 }

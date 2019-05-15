@@ -11,27 +11,30 @@ tidy_MOD13.gee(infile, outfile, wmin = 0.2)
 
 \item{outfile}{Output file name. If missing, will not be written to file.}
 
-\item{wmin}{Double, minimum weigth (i.e. weight of snow, ice and cloud).}
+\item{wmin}{Double, minimum weight of bad points, which could be smaller
+the weight of snow, ice and cloud.}
 }
 \value{
 A tidied data.table, with columns of 'site', 'y', 't', 'w', 'date' and
 'SummaryQA'.
-\describe{
-\item{site}{site name}
-\item{y}{real value of EVI, [-1, 1]}
-\item{date}{image date}
-\item{t}{exact compositing date constructed from \code{DayOfYear}}
-\item{w}{weights}
-\item{SummaryQA}{A factor, QA types, one of "good", "margin", "snow/ice"
-or "cloud".}
+\itemize{
+\item \code{site}: site name
+\item \code{y}: real value of EVI, \code{[-1, 1]}
+\item \code{date}: image date
+\item \code{t}: exact compositing date constructed from \code{DayOfYear}
+\item \code{w}: weights
+\item \code{SummaryQA}: A factor, QA types, one of "good", "margin", "snow/ice"
+or "cloud".
 }
 }
 \description{
 Tidy MODIS 'MOD13' VI products' (e.g. MOD13A1, MOD13A2, ...) raw data exported from
 Google Earth Engine.
 Tidy contents include: \cr
-1. add exact compositing date, see \code{\link{getRealDate}}. \cr
-2. Init weigths according \code{SummaryQA}, see \code{\link{qc_summary}}. \cr
+\enumerate{
+\item add exact compositing date, see \code{\link[=getRealDate]{getRealDate()}}. \cr
+\item Init weigths according \code{SummaryQA}, see \code{\link[=qc_summary]{qc_summary()}}. \cr
+}
 }
 \examples{
 library(phenofit)

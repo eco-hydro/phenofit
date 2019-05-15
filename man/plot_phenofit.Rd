@@ -9,12 +9,14 @@ plot_phenofit(d_fit, seasons, title = NULL,
   show.legend = TRUE)
 }
 \arguments{
-\item{d_fit}{data.frame of curve fittings returned by \code{\link{get_fitting}}.}
+\item{d_fit}{data.frame of curve fittings returned by \code{\link[=get_fitting]{get_fitting()}}.}
 
-\item{seasons}{Growing season dividing object returned by \code{\link{season}}
-and \code{\link{season_mov}}.}
+\item{seasons}{Growing season dividing object returned by \code{\link[=season]{season()}}
+and \code{\link[=season_mov]{season_mov()}}.}
 
 \item{title}{String, title of figure.}
+
+\item{title.ylab}{String, title of \code{ylab}.}
 
 \item{font.size}{Font size of axis.text}
 

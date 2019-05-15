@@ -11,19 +11,19 @@ findpeaks(x, IsDiff = TRUE, nups = 1, ndowns = nups, zero = "0",
 \arguments{
 \item{x}{Numeric vector.}
 
-\item{IsDiff}{If want to find extreme values, `IsDiff` should be true; If 
-just want to find the continue negative or positive values, just set 
-`IsDiff` as false.}
+\item{IsDiff}{If want to find extreme values, \code{IsDiff} should be true; If
+just want to find the continue negative or positive values, just set
+\code{IsDiff} as false.}
 
 \item{nups}{minimum number of increasing steps before a peak is reached}
 
 \item{ndowns}{minimum number of decreasing steps after the peak}
 
-\item{zero}{can be `+', `-', or `0'; how to interprete succeeding steps
+\item{zero}{can be \code{+}, \code{-}, or \code{0}; how to interprete succeeding steps
 of the same value: increasing, decreasing, or special}
 
 \item{peakpat}{define a peak as a regular pattern, such as the default
-pattern ``[+]{1,}[-]{1,}''; if a pattern is provided, the parameters
+pattern \code{[+]{1,}[-]{1,}}; if a pattern is provided, the parameters
 \code{nups} and \code{ndowns} are not taken into account}
 
 \item{minpeakheight}{The minimum (absolute) height a peak has to have
@@ -31,27 +31,27 @@ to be recognized as such}
 
 \item{minpeakdistance}{The minimum distance (in indices) peaks have to have
 to be counted. If the distance of two maximum extreme value less than
-`minpeakdistance`, only the real maximum value will be left.}
+\code{minpeakdistance}, only the real maximum value will be left.}
 
 \item{r_min}{Threshold is defined as the difference of peak value with
 trough value. There are two threshold (left and right). The minimum threshold
 should be greater than r_min.}
 
-\item{r_max}{Similar as `r_min`, The maximum threshold should
-be greater than `r_max`.}
+\item{r_max}{Similar as \code{r_min}, The maximum threshold should
+be greater than \code{r_max}.}
 
-\item{npeaks}{the number of peaks to return. If \code{sortstr} = true, the 
-largest npeaks maximum values will be returned; If \code{sortstr} = false, 
+\item{npeaks}{the number of peaks to return. If \code{sortstr} = true, the
+largest npeaks maximum values will be returned; If \code{sortstr} = false,
 just the first npeaks are returned in the order of index.}
 
-\item{sortstr}{Boolean, Should the peaks be returned sorted in decreasing oreder of 
+\item{sortstr}{Boolean, Should the peaks be returned sorted in decreasing oreder of
 their maximum value?}
 
 \item{IsPlot}{Boolean.}
 }
 \description{
 Find peaks (maxima) in a time series. This function is modified from
-\code{pracma::findpeaks}.
+\code{\link[pracma:findpeaks]{pracma::findpeaks()}}.
 }
 \examples{
 x <- seq(0, 1, len = 1024)

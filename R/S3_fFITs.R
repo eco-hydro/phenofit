@@ -30,8 +30,8 @@ NULL
 #' curvature (k) and the change rate of curvature(der.k)
 #'
 #' @inheritParams get_pheno
-#' @param x Fine curve fitting object \code{\link{fFITs}} returned by
-#' \code{\link{curvefit}}.
+#' @param x Fine curve fitting object [fFITs()] returned by
+#' [curvefit()].
 #' @param ... ignored.
 #'
 #' @rdname fFITs

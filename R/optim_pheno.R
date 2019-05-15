@@ -5,26 +5,26 @@
 #'
 #' @inheritParams wHANTS
 #' @param prior A vector of initial values for the parameters for which optimal
-#' values are to be found. \code{prior} is suggested giving a column name.
-#' @param sFUN The name of fine curve fitting functions, can be one of \code{
+#' values are to be found. `prior` is suggested giving a column name.
+#' @param sFUN The name of fine curve fitting functions, can be one of `
 #' 'FitAG', 'FitDL.Beck', 'FitDL.Elmore', 'FitDL.Gu' and 'FitDL.Klos',
-#' 'FitDL.Zhang'}.
-#' @param nptperyear Integer, number of images per year, passed to \code{wFUN}.
-#' Only \code{\link{wTSM}} needs \code{nptperyear}. If not specified,
-#' \code{nptperyear} will be calculated based on \code{t}.
-#' @param ylu \code{ymin, ymax}, which is used to force \code{ypred} in the
-#' range of \code{ylu}.
+#' 'FitDL.Zhang'`.
+#' @param nptperyear Integer, number of images per year, passed to `wFUN`.
+#' Only [wTSM()] needs `nptperyear`. If not specified,
+#' `nptperyear` will be calculated based on `t`.
+#' @param ylu `ymin, ymax`, which is used to force `ypred` in the
+#' range of `ylu`.
 #' @param tout Corresponding doy of prediction.
 #' @param method The name of optimization method to solve fine fitting, passed
-#' to \code{\link{I_optim}} or \code{\link{I_optimx}}.
-#' \code{I_optim} supports \code{'BFGS','CG','Nelder-Mead',
-#' 'L-BFGS-B', 'nlm', 'nlminb', 'ucminf'};
-#' \code{I_optimx} supports \code{'spg','Rcgmin','Rvmmin', 'newuoa','bobyqa','nmkb','hjkb'}.
+#' to [I_optim()] or [I_optimx()].
+#' `I_optim` supports `'BFGS','CG','Nelder-Mead',
+#' 'L-BFGS-B', 'nlm', 'nlminb', 'ucminf'`;
+#' `I_optimx` supports `'spg','Rcgmin','Rvmmin', 'newuoa','bobyqa','nmkb','hjkb'`.
 #'
 #' @param verbose Whether to display intermediate variables?
-#' @param ... other parameters passed to \code{\link{I_optim}} or \code{\link{I_optimx}}.
+#' @param ... other parameters passed to [I_optim()] or [I_optimx()].
 #'
-#' @return fFIT object, see \code{\link{fFIT}} for details.
+#' @return fFIT object, see [fFIT()] for details.
 #'
 #' @import optimx
 #' @export

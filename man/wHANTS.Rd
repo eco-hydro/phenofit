@@ -12,12 +12,12 @@ wHANTS(y, t, w, nf = 3, ylu, periodlen = 365, nptperyear,
 
 \item{t}{Numeric vector, \code{Date} variable}
 
-\item{w}{(optional) Numeric vector, weights of \code{y}. If not specified, 
+\item{w}{(optional) Numeric vector, weights of \code{y}. If not specified,
 weights of all \code{NA} values will be \code{wmin}, the others will be 1.0.}
 
 \item{nf}{number of frequencies to be considered above the zero frequency}
 
-\item{ylu}{[low, high] of time-series y (curve fitting values are constrained
+\item{ylu}{\code{[low, high]} of time-series y (curve fitting values are constrained
 in the range of \code{ylu}.}
 
 \item{periodlen}{length of the base period, measured in virtual samples
@@ -36,8 +36,8 @@ in the range of \code{ylu}.}
 }
 \value{
 \itemize{
-   \item \code{ws} weights of every iteration
-   \item \code{zs} curve fittings of every iteration
+\item \code{ws}: weights of every iteration
+\item \code{zs}: curve fittings of every iteration
 }
 }
 \description{

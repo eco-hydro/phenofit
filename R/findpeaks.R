@@ -1,7 +1,7 @@
 #' findpeaks
 #'
 #' Find peaks (maxima) in a time series. This function is modified from
-#' \code{pracma::findpeaks}.
+#' [pracma::findpeaks()].
 #' 
 #' @param x Numeric vector.
 #' @param IsDiff If want to find extreme values, `IsDiff` should be true; If 
@@ -9,11 +9,11 @@
 #' `IsDiff` as false.
 #' @param nups minimum number of increasing steps before a peak is reached
 #' @param ndowns minimum number of decreasing steps after the peak
-#' @param zero can be `+', `-', or `0'; how to interprete succeeding steps
+#' @param zero can be `+`, `-`, or `0`; how to interprete succeeding steps
 #' of the same value: increasing, decreasing, or special
 #' @param peakpat define a peak as a regular pattern, such as the default
-#' pattern ``[+]{1,}[-]{1,}''; if a pattern is provided, the parameters
-#' \code{nups} and \code{ndowns} are not taken into account
+#' pattern `[+]{1,}[-]{1,}`; if a pattern is provided, the parameters
+#' `nups` and `ndowns` are not taken into account
 #' @param minpeakheight The minimum (absolute) height a peak has to have
 #' to be recognized as such
 #' @param minpeakdistance The minimum distance (in indices) peaks have to have
@@ -24,8 +24,8 @@
 #' should be greater than r_min.
 #' @param r_max Similar as `r_min`, The maximum threshold should
 #' be greater than `r_max`.
-#' @param npeaks  the number of peaks to return. If \code{sortstr} = true, the 
-#' largest npeaks maximum values will be returned; If \code{sortstr} = false, 
+#' @param npeaks  the number of peaks to return. If `sortstr` = true, the 
+#' largest npeaks maximum values will be returned; If `sortstr` = false, 
 #' just the first npeaks are returned in the order of index.
 #' @param sortstr Boolean, Should the peaks be returned sorted in decreasing oreder of 
 #' their maximum value?

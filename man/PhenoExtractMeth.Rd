@@ -21,7 +21,7 @@ PhenoKl(fFIT, analytical = TRUE, smoothed.spline = FALSE,
   IsPlot = TRUE, show.lgd = TRUE, ...)
 }
 \arguments{
-\item{fFIT}{\code{fFIT} object returned by \code{\link{optim_pheno}}.}
+\item{fFIT}{\code{fFIT} object returned by \code{\link[=optim_pheno]{optim_pheno()}}.}
 
 \item{approach}{to be used to calculate phenology metrics.
 'White' (White et al. 1997) or 'Trs' for simple threshold.}

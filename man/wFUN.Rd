@@ -23,7 +23,7 @@ wKong(y, yfit, w, ..., wmin = 0.2)
 
 \item{yfit}{Numeric vector curve fitting values.}
 
-\item{w}{(optional) Numeric vector, weights of \code{y}. If not specified, 
+\item{w}{(optional) Numeric vector, weights of \code{y}. If not specified,
 weights of all \code{NA} values will be \code{wmin}, the others will be 1.0.}
 
 \item{...}{other parameters are ignored.}
@@ -35,44 +35,47 @@ weights of all \code{NA} values will be \code{wmin}, the others will be 1.0.}
 \item{wfact}{weight adaptation factor (0-1), equal to the reciprocal of
 'Adaptation strength' in TIMESAT.}
 
-\item{wmin}{Double, minimum weigth (i.e. weight of snow, ice and cloud).}
+\item{wmin}{Double, minimum weight of bad points, which could be smaller
+the weight of snow, ice and cloud.}
 }
 \value{
 wnew Numeric Vector, adjusted weights.
 }
 \description{
 \itemize{
-   \item \code{wSELF} weigth are not changed and return the original.
-   \item \code{wTSM} weight updating method in TIMESAT.
-   \item \code{wBisquare} Bisquare weight update method. wBisquare has been
+\item \code{wSELF} weigth are not changed and return the original.
+\item \code{wTSM} weight updating method in TIMESAT.
+\item \code{wBisquare} Bisquare weight update method. wBisquare has been
 modified to emphasis on upper envelope.
-   \item \code{wChen} Chen et al., (2004) weight updating method.
-   \item \code{wBeck} Beck et al., (2006) weigth updating method. wBeck need
+\item \code{wChen} Chen et al., (2004) weight updating method.
+\item \code{wBeck} Beck et al., (2006) weigth updating method. wBeck need
 sos and eos input. The function parameter is different from others. It is
 still not finished.
 }
 }
 \references{
-[1]. Per J\"onsson, P., Eklundh, L., 2004. TIMESAT - A program for analyzing
-    time-series of satellite sensor data. Comput. Geosci. 30, 833-845.
-    https://doi.org/10.1016/j.cageo.2004.05.006. \cr
-[2]. https://au.mathworks.com/help/curvefit/smoothing-data.html#bq_6ys3-3 \cr
-[3]. Garcia, D., 2010. Robust smoothing of gridded data in one and higher
+\enumerate{
+\item Per J"onsson, P., Eklundh, L., 2004. TIMESAT - A program for analyzing
+time-series of satellite sensor data. Comput. Geosci. 30, 833-845.
+https://doi.org/10.1016/j.cageo.2004.05.006. \cr
+\item https://au.mathworks.com/help/curvefit/smoothing-data.html#bq_6ys3-3 \cr
+\item Garcia, D., 2010. Robust smoothing of gridded data in one and higher
 dimensions with missing values. Computational statistics & data analysis,
 54(4), pp.1167-1178. \cr
-[4]. Chen, J., J\"onsson, P., Tamura, M., Gu, Z., Matsushita, B., Eklundh, L.,
-     2004. A simple method for reconstructing a high-quality NDVI time-series
-     data set based on the Savitzky-Golay filter. Remote Sens. Environ. 91,
-     332-344. https://doi.org/10.1016/j.rse.2004.03.014. \cr
-[5]. Beck, P.S.A., Atzberger, C., Hogda, K.A., Johansen, B., Skidmore, A.K.,
-     2006. Improved monitoring of vegetation dynamics at very high latitudes:
-     A new method using MODIS NDVI. Remote Sens. Environ.
-     https://doi.org/10.1016/j.rse.2005.10.021 \cr
-[6]. https://github.com/kongdd/phenopix/blob/master/R/FitDoubleLogBeck.R
+\item Chen, J., J"onsson, P., Tamura, M., Gu, Z., Matsushita, B., Eklundh, L.,
+2004. A simple method for reconstructing a high-quality NDVI time-series
+data set based on the Savitzky-Golay filter. Remote Sens. Environ. 91,
+332-344. https://doi.org/10.1016/j.rse.2004.03.014. \cr
+\item Beck, P.S.A., Atzberger, C., Hogda, K.A., Johansen, B., Skidmore, A.K.,
+2006. Improved monitoring of vegetation dynamics at very high latitudes:
+A new method using MODIS NDVI. Remote Sens. Environ.
+https://doi.org/10.1016/j.rse.2005.10.021 \cr
+\item https://github.com/kongdd/phenopix/blob/master/R/FitDoubleLogBeck.R
+}
 }
 \author{
-wTSM is implemented by Per J\"onsson, Malm\"o University, Sweden
+wTSM is implemented by Per J"onsson, Malm"o University, Sweden
 \email{per.jonsson@ts.mah.se} and Lars Eklundh, Lund University, Sweden
-\email{lars.eklundh@nateko.lu.se}. And Translated into Rcpp by Dongdong Kong,
-01 May 2018.
+\email{lars.eklundh@nateko.lu.se}.
+And Translated into Rcpp by Dongdong Kong, 01 May 2018.
 }

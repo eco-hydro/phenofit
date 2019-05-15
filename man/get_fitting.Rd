@@ -12,7 +12,7 @@ get_fitting.fFITs(fFITs)
 \arguments{
 \item{fit}{Object returned by \code{curvefits}.}
 
-\item{fFITs}{\code{fFITs} object returned by \code{\link{curvefit}}.}
+\item{fFITs}{\code{fFITs} object returned by \code{\link[=curvefit]{curvefit()}}.}
 }
 \description{
 Get curve fitting data.frame

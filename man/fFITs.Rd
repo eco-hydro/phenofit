@@ -8,8 +8,8 @@
 \method{plot}{fFITs}(x, method, ...)
 }
 \arguments{
-\item{x}{Fine curve fitting object \code{\link{fFITs}} returned by
-\code{\link{curvefit}}.}
+\item{x}{Fine curve fitting object \code{\link[=fFITs]{fFITs()}} returned by
+\code{\link[=curvefit]{curvefit()}}.}
 
 \item{method}{Which fine curve fitting method to be extracted?}
 

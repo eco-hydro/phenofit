@@ -14,16 +14,15 @@ curvefit(y, t = index(y), tout = t, methods = c("AG", "Beck",
 
 \item{tout}{The output interpolated time.}
 
-\item{methods}{Fine curve fitting methods, can be one or more of \code{c('AG', 
-'Beck', 'Elmore', 'Gu', 'Klos', 'Zhang')}.}
+\item{methods}{Fine curve fitting methods, can be one or more of \code{c('AG',  'Beck', 'Elmore', 'Gu', 'Klos', 'Zhang')}.}
 
 \item{...}{other parameters passed to curve fitting function.}
 }
 \value{
-fFITs S3 object, see \code{\link{fFITs}} for details.
+fFITs S3 object, see \code{\link[=fFITs]{fFITs()}} for details.
 }
 \description{
-Curve fit vegetation index (VI) time-series of every growing season using 
+Curve fit vegetation index (VI) time-series of every growing season using
 fine curve fitting methods.
 }
 \note{
@@ -48,8 +47,8 @@ methods <- c("AG", "Beck", "Elmore", "Gu", "Zhang") # "Klos" too slow
 fFITs <- curvefit(y, t, tout, methods)
 }
 \seealso{
-\code{\link{fFITs}}, 
-\code{\link{FitAG}}, \code{\link{FitDL.Beck}}, 
-\code{\link{FitDL.Elmore}}, \code{\link{FitDL.Gu}}, 
-\code{\link{FitDL.Klos}}, \code{\link{FitDL.Zhang}}
+\code{\link[=fFITs]{fFITs()}},
+\code{\link[=FitAG]{FitAG()}}, \code{\link[=FitDL.Beck]{FitDL.Beck()}},
+\code{\link[=FitDL.Elmore]{FitDL.Elmore()}}, \code{\link[=FitDL.Gu]{FitDL.Gu()}},
+\code{\link[=FitDL.Klos]{FitDL.Klos()}}, \code{\link[=FitDL.Zhang]{FitDL.Zhang()}}
 }

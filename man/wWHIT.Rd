@@ -10,10 +10,10 @@ wWHIT(y, w, ylu, nptperyear, wFUN = wTSM, iters = 1, lambda = 15,
 \arguments{
 \item{y}{Numeric vector, vegetation index time-series}
 
-\item{w}{(optional) Numeric vector, weights of \code{y}. If not specified, 
+\item{w}{(optional) Numeric vector, weights of \code{y}. If not specified,
 weights of all \code{NA} values will be \code{wmin}, the others will be 1.0.}
 
-\item{ylu}{[low, high] of time-series y (curve fitting values are constrained
+\item{ylu}{\code{[low, high]} of time-series y (curve fitting values are constrained
 in the range of \code{ylu}.}
 
 \item{nptperyear}{Integer, number of images per year.}
@@ -36,8 +36,8 @@ smoothing is unnecessary.}
 }
 \value{
 \itemize{
-   \item \code{ws} weights of every iteration
-   \item \code{zs} curve fittings of every iteration
+\item \code{ws}: weights of every iteration
+\item \code{zs}: curve fittings of every iteration
 }
 }
 \description{
@@ -53,7 +53,9 @@ l <- check_input(d$t, d$y, d$w, nptperyear=23)
 r_wWHIT <- wWHIT(l$y, l$w, l$ylu, nptperyear = 23, iters = 2)
 }
 \references{
-[1]. Eilers, P.H.C., 2003. A perfect smoother. Anal. Chem. https://doi.org/10.1021/ac034173t \cr
-[2]. Frasso, G., Eilers, P.H.C., 2015. L- and V-curves for optimal smoothing. Stat.
-     Modelling 15, 91–111. https://doi.org/10.1177/1471082X14549288
+\enumerate{
+\item Eilers, P.H.C., 2003. A perfect smoother. Anal. Chem. https://doi.org/10.1021/ac034173t \cr
+\item Frasso, G., Eilers, P.H.C., 2015. L- and V-curves for optimal smoothing. Stat.
+Modelling 15, 91–111. https://doi.org/10.1177/1471082X14549288
+}
 }

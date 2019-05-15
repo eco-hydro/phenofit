@@ -13,7 +13,7 @@ I_optimx(prior, FUN, y, t, tout, method, verbose = FALSE, ...)
 \item{prior}{A vector of initial values for the parameters for which optimal
 values are to be found. \code{prior} is suggested giving a column name.}
 
-\item{FUN}{Fine curve fitting function for goal function \code{\link{f_goal}}.}
+\item{FUN}{Fine curve fitting function for goal function \code{\link[=f_goal]{f_goal()}}.}
 
 \item{y}{Numeric vector, vegetation index time-series}
 
@@ -21,15 +21,14 @@ values are to be found. \code{prior} is suggested giving a column name.}
 
 \item{tout}{Corresponding doy of prediction.}
 
-\item{method}{\code{method} can be one of \code{'BFGS','CG','Nelder-Mead',
-'L-BFGS-B', 'nlm', 'nlminb', 'ucminf'}. \cr
+\item{method}{\code{method} can be one of \code{'BFGS','CG','Nelder-Mead', 'L-BFGS-B', 'nlm', 'nlminb', 'ucminf'}. \cr
 For \code{I_optimx}, other methods are also supported,
 e.g. \code{'spg','Rcgmin','Rvmmin', 'newuoa','bobyqa','nmkb','hjkb'}.}
 
-\item{...}{other parameters passed to \code{\link{I_optim}} or \code{\link{I_optimx}}.}
+\item{...}{other parameters passed to \code{\link[=I_optim]{I_optim()}} or \code{\link[=I_optimx]{I_optimx()}}.}
 
 \item{verbose}{If \code{TRUE}, all optimization methods in
-\code{\link[optimx]{optimx}} are used, and print optimization information
+\code{\link[optimx:optimx]{optimx::optimx()}} are used, and print optimization information
 of all methods.}
 }
 \value{
@@ -38,18 +37,18 @@ of all methods.}
 Various methods may or may not return sufficient information to allow all
 the codes to be specified. An incomplete list of codes includes
 \describe{
-     \item{\code{1}}{indicates that the iteration limit \code{maxit}
-     had been reached.}
-     \item{\code{20}}{indicates that the initial set of parameters is
-     inadmissible, that is, that the function cannot be computed or returns
-     an infinite, NULL, or NA value.}
-     \item{\code{21}}{indicates that an intermediate set of parameters is inadmissible.}
-     \item{\code{10}}{indicates degeneracy of the Nelder--Mead simplex.}
-     \item{\code{51}}{indicates a warning from the \code{"L-BFGS-B"}
-     method; see component \code{message} for further details.}
-     \item{\code{52}}{indicates an error from the \code{"L-BFGS-B"}
-     method; see component \code{message} for further details.}
-     \item{\code{9999}}{error}
+\item{\code{1}}{indicates that the iteration limit \code{maxit}
+had been reached.}
+\item{\code{20}}{indicates that the initial set of parameters is
+inadmissible, that is, that the function cannot be computed or returns
+an infinite, NULL, or NA value.}
+\item{\code{21}}{indicates that an intermediate set of parameters is inadmissible.}
+\item{\code{10}}{indicates degeneracy of the Nelder--Mead simplex.}
+\item{\code{51}}{indicates a warning from the \code{"L-BFGS-B"}
+method; see component \code{message} for further details.}
+\item{\code{52}}{indicates an error from the \code{"L-BFGS-B"}
+method; see component \code{message} for further details.}
+\item{\code{9999}}{error}
 }
 }
 \item{value}{ The value of fn corresponding to par }
@@ -103,7 +102,7 @@ opt2 <- I_optimx(prior, fFUN, y, t, tout, c("BFGS", "ucminf", "nlm", "nlminb"))
 # )
 }
 \seealso{
-\code{\link[stats]{optim}}, \code{\link[stats]{nlminb}},
-\code{\link[stats]{nlm}}, \code{\link[optimx]{optimx}},
-\code{\link[ucminf]{ucminf}}
+\code{\link[stats:optim]{stats::optim()}}, \code{\link[stats:nlminb]{stats::nlminb()}},
+\code{\link[stats:nlm]{stats::nlm()}}, \code{\link[optimx:optimx]{optimx::optimx()}},
+\code{\link[ucminf:ucminf]{ucminf::ucminf()}}
 }

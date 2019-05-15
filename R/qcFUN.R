@@ -1,17 +1,16 @@
 #' Initial weights according to qc
 #' 
 #' @description
-#' \describe{
-#'   \item{getBits}{Extract bitcoded QA information from bin value}
-#'   \item{qc_summary}{Initial weigths based on Quality reliability of VI pixel, 
-#'      suit for MOD13A1, MOD13A2 and MOD13Q1 (SummaryQA band).}
-#'   \item{qc_5l}{Initial weights based on Quality control of five-level 
+#' * `getBits`: Extract bitcoded QA information from bin value
+#' 
+#' * `qc_summary`: Initial weigths based on Quality reliability of VI pixel, 
+#'      suit for MOD13A1, MOD13A2 and MOD13Q1 (SummaryQA band).
+#' * `qc_5l`: Initial weights based on Quality control of five-level 
 #'      confidence score, suit for MCD15A3H(LAI, FparLai_QC), MOD17A2H(GPP, Psn_QC) 
-#'      and MOD16A2(ET, ET_QC).}
-#'   \item{qc_NDVI3g}{For NDVI3g}
-#'   \item{qc_NDVIv4}{For NDVIv4}
-#'   \item{qc_StateQA}{Initial weights based on `StateQA`, suit for MOD09A1, MYD09A1. }
-#' }
+#'      and MOD16A2(ET, ET_QC).
+#' * `qc_NDVI3g`: For NDVI3g
+#' * `qc_NDVIv4`: For NDVIv4
+#' * `qc_StateQA`: Initial weights based on `StateQA`, suit for MOD09A1, MYD09A1.
 #' 
 #' @param x Binary value
 #' @param start Bit starting position, count from zero
@@ -20,9 +19,9 @@
 #' @param wmid Dougle, middle weight, i.e. marginal, 
 #' @param wmax Double, maximum weight, i.e. good, 
 #' @return A list object with
-#' \item{weigths}{Double vector, initial weights}
-#' \item{QC_flag}{Factor vector, with the level of 
-#' \code{c("snow", "cloud", "shadow", "aerosol", "marginal", "good")}}
+#' * `weigths`: Double vector, initial weights.
+#' * `QC_flag`: Factor vector, with the level of 
+#' `c("snow", "cloud", "shadow", "aerosol", "marginal", "good")`
 #' 
 #' @examples
 #' set.seed(100)

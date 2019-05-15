@@ -162,7 +162,7 @@ Rcpp::NumericVector smooth_SG(const arma::colvec y, const int halfwin=1, const i
 //' NA and Inf values in the yy will be ignored automatically.
 //'
 //' @param y A numeric vector.
-//' @param haflwin Integer, half of moving window size
+//' @param halfwin Integer, half of moving window size
 //' @param w Corresponding weights of yy, same long as yy.
 //' @param SG_style If true, head and tail values will be in the style of SG
 //' (more weights on the center point), else traditional moving mean style.

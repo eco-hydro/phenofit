@@ -28,13 +28,14 @@ check_file <- function(file, duration = 10){
     }
 }
 
-#' update all INPUT data according to \code{input} file.
+#' update all INPUT data according to `input` file.
 #'
-#' @param options should has children of \code{file_site}, and one of
-#' \code{file_veg_rda} or \code{file_veg_text}.
+#' @param options should has children of `file_site`, and one of
+#' `file_veg_rda` or `file_veg_text`.
 #' @param rv return values to reactiveValues object.
 #' @param ... ignored.
-#'
+#' 
+#' @importFrom utils find
 #' @export
 phenofit_loaddata <- function(options, rv, ...){
     file_type     <- options$file_type

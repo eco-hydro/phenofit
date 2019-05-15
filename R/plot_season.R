@@ -4,7 +4,7 @@
 #'
 #' @inheritParams season
 #' @inheritParams wHANTS
-#' @param brks A list object returned by \code{season} or \code{season_mov}.
+#' @param brks A list object returned by `season` or `season_mov`.
 #' @param show.legend Whether to show legend?
 #'
 #' @importFrom grid viewport pushViewport grid.draw

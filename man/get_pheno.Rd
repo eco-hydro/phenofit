@@ -14,7 +14,7 @@ get_pheno.fFITs(fFITs, method, TRS = c(0.2, 0.5), analytical = TRUE,
   showName_pheno = TRUE)
 }
 \arguments{
-\item{fits}{A list of \code{\link{fFITs}} object, for a single curve fitting
+\item{fits}{A list of \code{\link[=fFITs]{fFITs()}} object, for a single curve fitting
 method.}
 
 \item{method}{Which fine curve fitting method to be extracted?}
@@ -33,11 +33,11 @@ in top title?}
 
 \item{...}{ignored.}
 
-\item{fFITs}{\code{fFITs} object returned by \code{\link{curvefit}}.}
+\item{fFITs}{\code{fFITs} object returned by \code{\link[=curvefit]{curvefit()}}.}
 
 \item{title_left}{String of growing season flag.}
 
-\item{showName_pheno}{Whether to show names of phenological methods in top title? 
+\item{showName_pheno}{Whether to show names of phenological methods in top title?
 Generally, only show top title in the first row.}
 }
 \value{

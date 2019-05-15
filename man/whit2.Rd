@@ -18,7 +18,7 @@ A numeric vector, smoothed signal.
 }
 \description{
 This function smoothes signals with a finite difference penalty of order 2.
-This function is modified from `ptw` package.
+This function is modified from \code{ptw} package.
 }
 \examples{
 library(phenofit)
@@ -33,10 +33,12 @@ lines(whit2(y, lambda = 100), col = 4)
 legend("bottomleft", paste("lambda = ", c(2, 10, 15)), col = 2:4, lty = rep(1, 3))
 }
 \references{
-[1]. Eilers, P.H.C. (2004) "Parametric Time Warping", Analytical Chemistry,
-\bold{76} (2), 404 -- 411. \cr
-[2]. Eilers, P.H.C. (2003) "A perfect smoother", Analytical Chemistry,
-\bold{75}, 3631 -- 3636.
+\enumerate{
+\item Eilers, P.H.C. (2004) "Parametric Time Warping", Analytical Chemistry,
+\strong{76} (2), 404 -- 411. \cr
+\item Eilers, P.H.C. (2003) "A perfect smoother", Analytical Chemistry,
+\strong{75}, 3631 -- 3636.
+}
 }
 \author{
 Paul Eilers, Jan Gerretzen

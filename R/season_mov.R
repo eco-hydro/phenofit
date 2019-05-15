@@ -9,7 +9,7 @@
 #' @param IsPlot.vc Whether to plot V-curve optimized time-series.
 #' @param IsPlot.OnlyBad If true, only plot partial figures whose NSE < 0.3.
 #'
-#' @return List object, list(whit, dt)
+#' @return List object, `list(whit, dt)`
 #'
 #' @example inst/examples/ex-check_input.R
 #' @example inst/examples/ex-season.R
@@ -173,7 +173,7 @@ season_calendar <- function(years, south = FALSE){
 # }
 
 #' statistics
-#' @param brks A list object returned by \code{season} or \code{season_mov}.
+#' @param brks A list object returned by `season` or `season_mov`.
 #' @rdname season
 stat_season <- function(INPUT, brks){
     d_org <- as.data.table(INPUT[c("t", "y", "w")])

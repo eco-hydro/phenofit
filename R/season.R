@@ -2,47 +2,47 @@
 #' @name season
 #'
 #' @description
-#' Divide growing seasons according to rough fitting (\code{rFUN}) result .
+#' Divide growing seasons according to rough fitting (`rFUN`) result .
 #'
-#' For \code{season}, rough fitting is applied for whole.
-#' For \code{season_mov} rough fitting is applied in every year, during which
-#' \code{maxExtendMonth} is extended.
+#' For `season`, rough fitting is applied for whole.
+#' For `season_mov` rough fitting is applied in every year, during which
+#' `maxExtendMonth` is extended.
 #'
 #' @details
-#' Before dividing growing season, \code{INPUT} should be added a year in head
-#' and tail first by \code{add_HeadTail}.
+#' Before dividing growing season, `INPUT` should be added a year in head
+#' and tail first by `add_HeadTail`.
 #'
-#' Finally, use \code{\link{findpeaks}} to get local maximum and local minimum values.
+#' Finally, use [findpeaks()] to get local maximum and local minimum values.
 #' Two local minimum define a growing season.
 #' If two local minimum(maximum) are too closed, then only the smaller(biger) is left.
 #'
-#' @param INPUT A list object with the elements of \code{t}, \code{y}, \code{w},
-#' \code{Tn} (optional) and \code{ylu}, returned by \code{\link{check_input}}.
-#' @param rFUN Rough curve fitting function, can be one of \code{\link{wSG}},
-#' \code{\link{wWHIT}} and \code{\link{wHANTS}}.
-#' @param wFUN weights updating function, can be one of \code{\link{wTSM}},
-#' \code{\link{wChen}}, \code{\link{wBisquare}} and \code{\link{wSELF}}.
+#' @param INPUT A list object with the elements of `t`, `y`, `w`,
+#' `Tn` (optional) and `ylu`, returned by [check_input()].
+#' @param rFUN Rough curve fitting function, can be one of [wSG()],
+#' [wWHIT()] and [wHANTS()].
+#' @param wFUN weights updating function, can be one of [wTSM()],
+#' [wChen()], [wBisquare()] and [wSELF()].
 #' @param iters How many times curve fitting is implemented.
 #' @param wmin Double, minimum weigth (i.e. weight of snow, ice and cloud).
-#' @param lambda The smoothing parameter of \code{\link{wWHIT}}. For
-#' \code{\link{season_mov}}, if lambda is \code{NULL}, \code{\link{init_lambda}}
+#' @param lambda The smoothing parameter of [wWHIT()]. For
+#' [season_mov()], if lambda is `NULL`, [init_lambda()]
 #' will be used. Generally, it was set as 10000, 15, and 5 for daily, 8-day
 #' and 16-day inputs respectively.
-#' @param nf The parameter of \code{\link{wHANTS}}, number of frequencies to be
+#' @param nf The parameter of [wHANTS()], number of frequencies to be
 #' considered above the zero frequency.
-#' @param frame The parameter of \code{\link{wSG}}, moving window size. Suggested by
-#' TIMESAT, default \code{frame = floor(nptperyear/7)*2 + 1}.
+#' @param frame The parameter of [wSG()], moving window size. Suggested by
+#' TIMESAT, default `frame = floor(nptperyear/7)*2 + 1`.
 #' @param minpeakdistance Numberic, in the unit of points (default as
-#' \code{nptperyear/6}). The minimum distance of two peaks. If the distance of two
-#' maximum extreme value less than \code{minpeakdistance}, only the real maximum
+#' `nptperyear/6`). The minimum distance of two peaks. If the distance of two
+#' maximum extreme value less than `minpeakdistance`, only the real maximum
 #' value will be left.
 #' @param r_min Threshold is defined as the difference of peak value with
 #' trough value. There are two threshold (left and right). The minimum threshold
 #' should be greater than r_min.
-#' @param r_max Similar as \code{r_min}, The maximum threshold should
-#' be greater than \code{r_max}.
+#' @param r_max Similar as `r_min`, The maximum threshold should
+#' be greater than `r_max`.
 #' @param ypeak_min ypeak >= ypeak_min
-#' @param rtrough_max \code{ytrough <= rtrough_max*A}, A is the amplitude of y.
+#' @param rtrough_max `ytrough <= rtrough_max*A`, A is the amplitude of y.
 #' @param MaxPeaksPerYear This parameter is used to adjust lambda in iterations.
 #' If PeaksPerYear > MaxPeaksPerYear, then lambda = lambda*2.
 #' @param MaxTroughsPerYear This parameter is used to adjust lambda in iterations.
@@ -50,24 +50,22 @@
 #' @param calendarYear If true, only one static calendar growing season will be
 #' returned.
 #' @param IsPlot Boolean
-#' @param plotdat (optional) A list or data.table, with \code{t}, \code{y} and \code{w}.
-#' Only if \code{IsPlot=TRUE}, \code{\link{plot_input}} will be used to plot.
-#' Known that y and w in \code{INPUT} have been changed, we suggest using the
+#' @param plotdat (optional) A list or data.table, with `t`, `y` and `w`.
+#' Only if `IsPlot=TRUE`, [plot_input()] will be used to plot.
+#' Known that y and w in `INPUT` have been changed, we suggest using the
 #' original data.table.
 #' @param print Whether to print progress information
 #' @param adj.param Adjust rough curve fitting function parameters automatically,
 #' if too many or to less peak and trough values.
-#' @param ... For \code{\link{season_mov}}, Other parameters passed to
-#' \code{\link{season}}; For \code{\link{season}}, other parameters passed to
-#' \code{\link{findpeaks}}.
+#' @param ... For [season_mov()], Other parameters passed to
+#' [season()]; For [season()], other parameters passed to
+#' [findpeaks()].
 #'
 #' @return
-#' \describe{
-#' \item{whit}{Rough fitting result.}
-#' \item{dt}{Growing season dividing information.}
-#' }
+#' * `whit`: Rough fitting result.
+#' * `dt`: Growing season dividing information.
 #'
-#' @seealso \code{\link{findpeaks}}.
+#' @seealso [findpeaks()].
 #' @export
 # $whit
 # # A tibble: 574 x 5

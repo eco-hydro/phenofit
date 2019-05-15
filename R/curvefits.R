@@ -4,25 +4,25 @@
 #'
 #' @inheritParams season
 #' @param INPUT A list object with the elements of 't', 'y', 'w', 'Tn' (option)
-#' and 'ylu', returned by \code{check_input}.
+#' and 'ylu', returned by `check_input`.
 #' @param brks A list object with the elements of 'fit' and 'dt', returned by
-#' \code{season} or \code{season_mov}, which contains the growing season
+#' `season` or `season_mov`, which contains the growing season
 #' dividing information.
-#' @param nextend Extend curve fitting window, until \code{nextend} good or
+#' @param nextend Extend curve fitting window, until `nextend` good or
 #' marginal element are found in previous and subsequent growing season.
 #' @param maxExtendMonth Search good or marginal good values in previous and
 #' subsequent `maxExtendMonth` period.
-#' @param minExtendMonth Extending perid defined by \code{nextend} and
-#' \code{maxExtendMonth} should be no shorter than \code{minExtendMonth}.
+#' @param minExtendMonth Extending perid defined by `nextend` and
+#' `maxExtendMonth` should be no shorter than `minExtendMonth`.
 #' When all points of the input time-series are good value, then the extending
 #' period will be too short. In that situation, we can't make sure the connection
 #' between different growing seasons is smoothing.
 #' @param minT Double, use night temperature Tn to define backgroud value.
 #' Tn < minT is treated as ungrowing season.
 #' @param methods Fine curve fitting methods, can be one or more of
-#' \code{c('AG', 'Beck', 'Elmore', 'Gu', 'Klos', 'Zhang')}.
+#' `c('AG', 'Beck', 'Elmore', 'Gu', 'Klos', 'Zhang')`.
 #' @param minPercValid If the percentage of good and marginal quality points is
-#' less than \code{minPercValid}, curve fiting result is set to \code{NA}.
+#' less than `minPercValid`, curve fiting result is set to `NA`.
 #' @param print Whether to print progress information?
 #' @param use.rough Whether to use rough fitting smoothed time-series as input?
 #' @param ... Other parameters will be ignore.

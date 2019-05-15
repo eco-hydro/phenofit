@@ -2,7 +2,7 @@
 #'
 #' Tidy for every method with multiple years phenology data
 #'
-#' @param pheno Phenology metrics extracted from \code{get_pheno}
+#' @param pheno Phenology metrics extracted from `get_pheno`
 #'
 #' @examples
 #' library(phenofit)

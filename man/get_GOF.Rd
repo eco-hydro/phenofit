@@ -12,16 +12,16 @@ get_GOF.fFITs(fFITs)
 \arguments{
 \item{fit}{Object returned by \code{curvefits}.}
 
-\item{fFITs}{\code{fFITs} object returned by \code{\link{curvefit}}.}
+\item{fFITs}{\code{fFITs} object returned by \code{\link[=curvefit]{curvefit()}}.}
 }
 \value{
 \describe{
-  \item{meth}{The name of fine curve fitting method}
-  \item{RMSE}{Root Mean Square Error}
-  \item{NSE}{Nash-Sutcliffe model efficiency coefficient}
-  \item{R}{Pearson-Correlation}
-  \item{pvalue}{pvalue of \code{R}}
-  \item{n}{The number of observations}
+\item{meth}{The name of fine curve fitting method}
+\item{RMSE}{Root Mean Square Error}
+\item{NSE}{Nash-Sutcliffe model efficiency coefficient}
+\item{R}{Pearson-Correlation}
+\item{pvalue}{pvalue of \code{R}}
+\item{n}{The number of observations}
 }
 }
 \description{
@@ -52,9 +52,11 @@ d_fitting <- get_fitting(fits)
 l_pheno   <- get_pheno(fits, "AG", IsPlot=TRUE)
 }
 \references{
-[1]. https://en.wikipedia.org/wiki/Nash-Sutcliffe_model_efficiency_coefficient \cr
-[2]. https://en.wikipedia.org/wiki/Pearson_correlation_coefficient
+\enumerate{
+\item https://en.wikipedia.org/wiki/Nash-Sutcliffe_model_efficiency_coefficient \cr
+\item https://en.wikipedia.org/wiki/Pearson_correlation_coefficient
+}
 }
 \seealso{
-\code{\link{curvefit}}
+\code{\link[=curvefit]{curvefit()}}
 }

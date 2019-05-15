@@ -1,11 +1,11 @@
 #' getRealDate
 #'
-#' convert MODIS \code{DayOfYear} to the exact compositing date.
+#' convert MODIS `DayOfYear` to the exact compositing date.
 #' @param date Date vector, the first day of the 16-day composite period.
 #' @param DayOfYear Numeric vector, exact composite day of year. 
 #' 
 #' @return
-#' A data.table with a new column \code{t}, which is the exact compositing date.
+#' A data.table with a new column `t`, which is the exact compositing date.
 #' 
 #' @examples
 #' library(phenofit)
@@ -36,8 +36,8 @@ getRealDate <- function(date, DayOfYear){
 #' Tidy MODIS 'MOD13' VI products' (e.g. MOD13A1, MOD13A2, ...) raw data exported from
 #' Google Earth Engine.
 #' Tidy contents include: \cr
-#' 1. add exact compositing date, see \code{\link{getRealDate}}. \cr
-#' 2. Init weigths according \code{SummaryQA}, see \code{\link{qc_summary}}. \cr
+#' 1. add exact compositing date, see [getRealDate()]. \cr
+#' 2. Init weigths according `SummaryQA`, see [qc_summary()]. \cr
 #' 
 #' @inheritParams check_input
 #' @param infile A character csv file path or a data.table
@@ -46,15 +46,13 @@ getRealDate <- function(date, DayOfYear){
 #' @return
 #' A tidied data.table, with columns of 'site', 'y', 't', 'w', 'date' and
 #' 'SummaryQA'.
-#' \describe{
-#' \item{site}{site name}
-#' \item{y}{real value of EVI, [-1, 1]}
-#' \item{date}{image date}
-#' \item{t}{exact compositing date constructed from \code{DayOfYear}}
-#' \item{w}{weights}
-#' \item{SummaryQA}{A factor, QA types, one of "good", "margin", "snow/ice"
-#' or "cloud".}
-#' }
+#' * `site`: site name
+#' * `y`: real value of EVI, `[-1, 1]`
+#' * `date`: image date
+#' * `t`: exact compositing date constructed from `DayOfYear`
+#' * `w`: weights
+#' * `SummaryQA`: A factor, QA types, one of "good", "margin", "snow/ice"
+#' or "cloud".
 #' 
 #' @examples
 #' library(phenofit)

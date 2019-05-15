@@ -3,13 +3,13 @@
 \name{fFIT}
 \alias{fFIT}
 \title{S3 class of fine curve fitting object.}
-\format{\describe{
-  \item{tout}{Corresponding doy of prediction}
-  \item{zs}{curve fitting values of every iteration}
-  \item{ws}{weight of every iteration}
-  \item{par}{Optimized parameter of fine curve fitting method}
-  \item{fun}{The name of fine curve fitting function.}
+\format{\itemize{
+\item \code{tout}: Corresponding doy of prediction
+\item \code{zs}: curve fitting values of every iteration
+\item \code{ws}: weight of every iteration
+\item \code{par}: Optimized parameter of fine curve fitting method
+\item \code{fun}: The name of fine curve fitting function.
 }}
 \description{
-\code{fFIT} is returned by \code{\link{optim_pheno}}.
+\code{fFIT} is returned by \code{\link[=optim_pheno]{optim_pheno()}}.
 }

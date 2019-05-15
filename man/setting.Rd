@@ -21,6 +21,8 @@ setting.update(options)
 
 \item{others}{options in others will override \code{options}.}
 
+\item{...}{ignored.}
+
 \item{file}{file path of phenofit setting file (json).}
 }
 \description{

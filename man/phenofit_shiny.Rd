@@ -7,7 +7,7 @@
 phenofit_shiny()
 }
 \description{
-The GUI allows you to interactively visualize curve fitting time series and 
+The GUI allows you to interactively visualize curve fitting time series and
 phenological metrics.
 }
 \examples{

@@ -3,6 +3,10 @@
 NULL
 
 # Select the data of specific site. Only those variables \code{c('t', 'y', 'w')} selected.
+#' @param df data.table of vegetation time-series. At least with the columns of 
+#' `t, y, w`.
+#' @param sitename character
+#' 
 #' @rdname phenofit_process
 #' @export
 getsite_data  <- function(df, sitename, dateRange = NULL){
@@ -20,6 +24,9 @@ getsite_data  <- function(df, sitename, dateRange = NULL){
     #%T>% plot_input(365)
 }
 
+#' @param st data.table of site information, e.g. `site`, `lat`.
+#' @inheritParams check_input
+#' 
 #' @rdname phenofit_process
 #' @export
 getsite_INPUT <- function(df, st, sitename, nptperyear, dateRange = NULL){
@@ -41,20 +48,21 @@ getsite_INPUT <- function(df, st, sitename, nptperyear, dateRange = NULL){
     INPUT
 }
 
+#' phenofit_season 
+#' 
 #' @description
-#' \describe{
-#'   \item{phenofit_season}{ Calculate growing season dividing information}
-#'   \item{phenofit_finefit}{Fine fitting}
-#' }
+#' * `phenofit_season`: Calculate growing season dividing information
+#' * `phenofit_finefit`: Fine fitting
 #'
-#' @param INPUT An object returned by \code{check_input}
+#' @param INPUT An object returned by `check_input`
 #' @param options options of phenofit
 #' @param IsPlot whether to plot season dividing procedure?
-#' @param ... other parameters to \code{\link{season_mov}} or \code{\link{season}}
+#' @param verbose boolean. Whether print parameters of `season_mov` or `season`?
+#' @param ... other parameters to [season_mov()] or [season()]
 #'
-#' @return same object returned by \code{\link{season_mov}} and \code{\link{season}}
+#' @return same object returned by [season_mov()] and [season()]
 #'
-#' @rdname phenofit_process
+#' @importFrom utils str
 #' @export
 phenofit_season <- function(INPUT, options, IsPlot = FALSE, verbose = TRUE, ...)
 {
@@ -107,7 +115,8 @@ phenofit_season <- function(INPUT, options, IsPlot = FALSE, verbose = TRUE, ...)
     return(brks)
 }
 
-#' @param brks object returned by \code{\link{season_mov}} and \code{\link{season}}
+#' @param INPUT An object returned by `check_input`
+#' @param brks object returned by [season_mov()] and [season()]
 #' @inheritParams get_pheno
 #'
 #' @rdname phenofit_process
@@ -140,18 +149,24 @@ phenofit_finefit <- function(INPUT, brks, options,
         param = params, stat = stat, pheno = pheno)
 }
 
-#' @param dateRange Date vector, filter input in the \code{dateRange}
-#' @param nsite the max number of sites to process. \code{-1} means all sites.
-#'
+#' phenofit_process
+#' 
+#' @inheritParams setting
+#' @param dateRange Date vector, `[date_begin, date_end]`. filter input in the 
+#' range of `dateRange`
+#' @param nsite the max number of sites to process. `-1` means all sites.
+#' @param .progress boolean
+#' @param .parallel boolean
+#' @param ... ignored
+#' 
 #' @rdname phenofit_process
-#' @export
-#'
 #' @examples
 #' \dontrun{
 #' file_json <- system.file('shiny/phenofit/perference/phenofit_setting.json', package = "phenofit")
 #' options <- setting.read(file_json)
 #' r <- phenofit_process(options, nsite=2)
 #' }
+#' @export
 phenofit_process <- function(
     options,
     dateRange = c(as.Date('2010-01-01'), as.Date('2014-12-31')),
@@ -175,7 +190,7 @@ phenofit_process <- function(
     res <- FUN(foreach(i = 1:n, sitename = sites), {
         # sitename <- rv$sites[i]
         if (showProgress){
-            progress$set(i, detail = paste("Doing part", i))
+            .progress$set(i, detail = paste("Doing part", i))
         }
         fprintf("phenofit (n = %d) | running %03d ... \n", i, n)
 
@@ -196,7 +211,13 @@ phenofit_process <- function(
 }
 
 #' get_date_AVHRR
-#'
+#' 
+#' Generate image dates from `year_begin` to `year_end`. 
+#' This function is only for AVHRR satellites.
+#' 
+#' @param year_begin integer
+#' @param year_end integer
+#' 
 #' @importFrom lubridate days_in_month
 #' @export
 #'
@@ -213,148 +234,4 @@ get_date_AVHRR <- function(year_begin = 1982, year_end = 2015){
     d_dates <- data.table(I = seq_along(dates),
         date = dates, month = month(dates), dom = day(dates), doy = yday(dates))
     d_dates
-}
-
-#' phenofit_TSM.avhrr
-#'
-#' @param exportType could be one of \code{"all", "pheno"}. If "all" used, all
-#' also will be exported. Note that exported fitting series is daily scale, which
-#' is quite large.
-#' 
-#' @importFrom readr read_rds write_rds
-#' @export
-phenofit_TS.avhrr <- function(
-    options,
-    dateRange = c(as.Date('2010-01-01'), as.Date('2014-12-31')),
-    I_part = NULL, 
-    outdir = ".",
-    exportType = "all", overwrite = FALSE, 
-    .progress = NULL, .parallel = FALSE,
-    ...)
-{
-    file_y  <- options$file_veg_text
-    file_qc <- options$file_qc
-    nptperyear <- options$nptperyear
-    ymin       <- options$ymin
-
-    d_date <- get_date_AVHRR()
-    t <- d_date$date
-
-    if (!is.null(dateRange)) {
-        I_date <- which(t >= dateRange[1] & t <= dateRange[2])
-    } else {
-        I_date <- seq_along(t)
-    }
-
-    mat_y  <- fread(file_y, skip = 1) %>% as.matrix()
-    mat_qc <- fread(file_qc, skip = 1) %>% as.matrix()
-    n <- nrow(mat_y)
-
-    if (is.null(I_part) || is.na(I_part)) {
-        I_part <- 1:nrow(mat_qc)
-    }
-    mat_y  <- mat_y[I_part, ]
-    mat_qc <- mat_qc[I_part, ]
-
-    showProgress <- !is.null(.progress) # this for shinyapp progress
-    if (showProgress){
-        on.exit(.progress$close())
-        .progress$set(message = sprintf("phenofit (n=%d) | running ", n), value = 0)
-    }
-
-    # rv    <- phenofit_loaddata(options, ...)
-    # sites <- rv$sites
-    # n     <- length(sites)
-
-    # if (nsite > 0) n <- pmin(n, nsite)
-    # sites <- seq_len(n) %>% as.character()
-
-    FUN <- ifelse(.parallel, `%dopar%`, `%do%`)
-    res <- FUN(foreach(
-        y = iter(mat_y, by='row'),
-        qc = iter(mat_qc, by='row'),
-        i = I_part,
-        .packages = c("phenofit")), {
-
-        outfile <- sprintf("%s/phenofit_%05d.RDS", outdir, i)
-        if (!file.exists(outfile) || overwrite) {
-            # sitename <- rv$sites[i]
-            if (showProgress){
-                progress$set(i, detail = paste("Doing part", i))
-            }
-            fprintf("phenofit (n = %d) | running %03d ... \n", n, i)
-
-            tryCatch({
-                wmin <- 0.4
-                l_w  <- qc_summary(qc[I_date], wmin = wmin, wmid = 0.5, wmax = 0.8)
-                INPUT <- check_input(t[I_date], y[I_date], w = l_w$w, QC_flag = l_w$QC_flag,
-                    nptperyear = nptperyear, south = FALSE, ymin = ymin, wmin = wmin)
-                # INPUT <- with(rv, getsite_INPUT(df, st, sitename, nptperyear, dateRange))
-                brks  <- phenofit_season(INPUT, options, IsPlot = FALSE, verbose = FALSE)
-                fits  <- phenofit_finefit(INPUT, brks, options) # multiple methods
-                if (exportType == "pheno") { fits <- fits[-(1:3)] }
-                # fits
-                write_rds(fits, outfile)
-            # }, warning = function(w){
-            #     message(sprintf('[w] phenofit_process, i=%d: %s', i, w$message))
-            }, error = function(e){
-                message(sprintf('[e] phenofit_process, i=%d: %s', i, e$message))
-            })
-
-        } else {
-            fprintf("[file exist] : %s\n", basename(outfile))
-        }
-    })
-    fprintf('Success finished!')
-    ############################# CALCULATION FINISHED #####################
-    # set_names(res, sites[1:n])
-}
-
-#' phenofit_plot
-#'
-#' @param obj \code{fFIT}
-#' @param type one of c("season", "fitting", "pheno", "all")
-#' @inheritParams plot_phenofit
-#' @param show.legend If now show legend, ggplot object will be returned, else
-#' grid object will be returned.
-#'
-#' @export
-phenofit_plot <- function(obj, type = "all", methods,
-    title = NULL, title.ylab = "Vegetation Index",
-    Isplot = TRUE, show.legend = TRUE, newpage = TRUE){
-    if (missing(methods) || is.null(methods)) {
-        methods <- names(obj$fit[[1]]$fFIT)
-    }
-
-    g <- NULL
-    plot_fitting <- function(){
-        df_fit <- get_fitting(obj$fit)
-        df_fit <- df_fit[meth %in% methods]
-
-        g <- plot_phenofit(df_fit, obj$seasons, title, title.ylab, show.legend = show.legend)
-
-        if (Isplot) {
-            if (newpage) grid::grid.newpage()
-            grid::grid.draw(g)
-        }
-        return(g)
-    }
-
-    if (type == "fitting") {
-        g <- plot_fitting()
-    } else if (type == "season") {
-        plot_season(obj$INPUT, obj$seasons)
-    } else if (type == "pheno") {
-        l_pheno <- get_pheno(obj$fit, methods, IsPlot = T)
-    } else if (type == "all") {
-        # fitting
-        g <- plot_fitting()
-        # season
-        plot_season(obj$INPUT, obj$seasons)
-        # pheno
-        l_pheno <- get_pheno(obj$fit, methods, IsPlot = T)
-    } else {
-        stop(sprintf("[e] wrong type: %sn", type))
-    }
-    return(g)
 }

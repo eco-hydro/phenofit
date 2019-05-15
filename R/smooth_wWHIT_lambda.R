@@ -42,7 +42,7 @@ v_point = function(y, w = 0 * y + 1, lambda = 100, d = 2) {
 #'
 #' @inheritParams season
 #' @inheritParams wWHIT
-#' @param lg_lambdas \code{lg} lambda vectors of Whittaker parameter.
+#' @param lg_lambdas `lg` lambda vectors of Whittaker parameter.
 #' @param d Difference order.
 #' @param IsPlot Boolean. Whether to plot figure?
 #' 

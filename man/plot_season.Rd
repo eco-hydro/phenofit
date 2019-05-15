@@ -9,16 +9,16 @@ plot_season(INPUT, brks, plotdat, ylu, IsPlot.OnlyBad = FALSE,
 }
 \arguments{
 \item{INPUT}{A list object with the elements of \code{t}, \code{y}, \code{w},
-\code{Tn} (optional) and \code{ylu}, returned by \code{\link{check_input}}.}
+\code{Tn} (optional) and \code{ylu}, returned by \code{\link[=check_input]{check_input()}}.}
 
 \item{brks}{A list object returned by \code{season} or \code{season_mov}.}
 
 \item{plotdat}{(optional) A list or data.table, with \code{t}, \code{y} and \code{w}.
-Only if \code{IsPlot=TRUE}, \code{\link{plot_input}} will be used to plot.
+Only if \code{IsPlot=TRUE}, \code{\link[=plot_input]{plot_input()}} will be used to plot.
 Known that y and w in \code{INPUT} have been changed, we suggest using the
 original data.table.}
 
-\item{ylu}{[low, high] of time-series y (curve fitting values are constrained
+\item{ylu}{\code{[low, high]} of time-series y (curve fitting values are constrained
 in the range of \code{ylu}.}
 
 \item{IsPlot.OnlyBad}{If true, only plot partial figures whose NSE < 0.3.}

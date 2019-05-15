@@ -10,10 +10,10 @@
 #' @return A numeric vector, smoothed signal.
 #'
 #' @references
-#' [1]. Eilers, P.H.C. (2004) "Parametric Time Warping", Analytical Chemistry,
-#' \bold{76} (2), 404 -- 411. \cr
-#' [2]. Eilers, P.H.C. (2003) "A perfect smoother", Analytical Chemistry,
-#' \bold{75}, 3631 -- 3636.
+#' 1. Eilers, P.H.C. (2004) "Parametric Time Warping", Analytical Chemistry,
+#' **76** (2), 404 -- 411. \cr
+#' 2. Eilers, P.H.C. (2003) "A perfect smoother", Analytical Chemistry,
+#' **75**, 3631 -- 3636.
 #'
 #' @author Paul Eilers, Jan Gerretzen
 #' @examples
@@ -58,8 +58,8 @@ whit2 <- function(y, lambda, w = rep(1, ny))
 #' @inherit wHANTS return
 #' 
 #' @references
-#' [1]. Eilers, P.H.C., 2003. A perfect smoother. Anal. Chem. https://doi.org/10.1021/ac034173t \cr
-#' [2]. Frasso, G., Eilers, P.H.C., 2015. L- and V-curves for optimal smoothing. Stat.
+#' 1. Eilers, P.H.C., 2003. A perfect smoother. Anal. Chem. https://doi.org/10.1021/ac034173t \cr
+#' 2. Frasso, G., Eilers, P.H.C., 2015. L- and V-curves for optimal smoothing. Stat.
 #'      Modelling 15, 91–111. https://doi.org/10.1177/1471082X14549288
 #' 
 #' @examples

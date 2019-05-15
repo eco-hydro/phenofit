@@ -11,11 +11,11 @@ sgolayS <- function(frame, d){
 #' @inherit wHANTS return
 #' 
 #' @references
-#' [1]. Chen, J., J\"onsson, P., Tamura, M., Gu, Z., Matsushita, B., Eklundh, L.,
+#' 1. Chen, J., J\"onsson, P., Tamura, M., Gu, Z., Matsushita, B., Eklundh, L.,
 #'      2004. A simple method for reconstructing a high-quality NDVI time-series
 #'      data set based on the Savitzky-Golay filter. Remote Sens. Environ. 91,
 #'      332-344. https://doi.org/10.1016/j.rse.2004.03.014. \cr
-#' [2]. https://en.wikipedia.org/wiki/Savitzky%E2%80%93Golay_filter
+#' 2. https://en.wikipedia.org/wiki/Savitzky%E2%80%93Golay_filter
 #' 
 #' @examples
 #' library(phenofit)
