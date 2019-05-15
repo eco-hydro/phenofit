@@ -15,35 +15,37 @@ A data.table dataset, raw data of MOD13A1 data, clipped in 10 representative poi
 }
 \details{
 Variables in MOD13A1:
-
-dt: vegetation index data
-\describe{
-\item{system:index}{image index}
-\item{DayOfYear}{Numeric, Julian day of year}
-\item{DayOfYear}{corresponding doy of compositing NDVI and EVI}
-\item{DetailedQA}{VI quality indicators}
-\item{SummaryQA}{Quality reliability of VI pixel}
-\item{EVI}{Enhanced Vegetation Index}
-\item{NDVI}{Normalized Difference Vegetation Index}
-\item{date}{Date, corresponding date}
-\item{site}{String, site name}
-\item{sur_refl_b01}{Red surface reflectance}
-\item{sur_refl_b02}{NIR surface reflectance}
-\item{sur_refl_b03}{Blue surface reflectance}
-\item{sur_refl_b07}{MIR surface reflectance}
-\item{.geo}{geometry}
+\itemize{
+\item \strong{\code{dt}}: vegetation index data
+\itemize{
+\item \code{system:index}: image index
+\item \code{DayOfYear}: Numeric, Julian day of year
+\item \code{DayOfYear}: corresponding doy of compositing NDVI and EVI
+\item \code{DetailedQA}: VI quality indicators
+\item \code{SummaryQA}: Quality reliability of VI pixel
+\item \code{EVI}: Enhanced Vegetation Index
+\item \code{NDVI}: Normalized Difference Vegetation Index
+\item \code{date}: Date, corresponding date
+\item \code{site}: String, site name
+\item \code{sur_refl_b01}: Red surface reflectance
+\item \code{sur_refl_b02}: NIR surface reflectance
+\item \code{sur_refl_b03}: Blue surface reflectance
+\item \code{sur_refl_b07}: MIR surface reflectance
+\item \code{.geo}: geometry
 }
-
-st: station info
-\describe{
-\item{ID}{site ID}
-\item{site}{site name}
-\item{lat}{latitude}
-\item{lon}{longitude}
-\item{IGBPname}{IGBP land cover type}
+\item \strong{\code{st}}: station info
+\itemize{
+\item \code{ID}: site ID
+\item \code{site}: site name
+\item \code{lat}: latitude
+\item \code{lon}: longitude
+\item \code{IGBPname}: IGBP land cover type
+}
 }
 }
 \references{
-https://code.earthengine.google.com/dataset/MODIS/006/MOD13A1
+\enumerate{
+\item https://code.earthengine.google.com/dataset/MODIS/006/MOD13A1
+}
 }
 \keyword{datasets}

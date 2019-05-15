@@ -134,20 +134,18 @@ R2_sign <- function(n, NumberOfPredictor = 2, alpha = 0.05){
 #' @param include.r If true, r and R2 will be included.
 #' 
 #' @return
-#' \itemize{
-#' \item `RMSE` root mean square error
-#' \item `NSE` NASH coefficient
-#' \item `MAE` mean absolute error
-#' \item `AI` Agreement index (only good points (w == 1)) participate to
+#' * `RMSE` root mean square error
+#' * `NSE` NASH coefficient
+#' * `MAE` mean absolute error
+#' * `AI` Agreement index (only good points (w == 1)) participate to
 #' calculate. See details in Zhang et al., (2015).
-#' \item `Bias` bias
-#' \item `Bias_perc` bias percentage
-#' \item `n_sim` number of valid obs
-#' \item `cv` Coefficient of variation
-#' \item `R2` correlation of determination
-#' \item `R` pearson correlation
-#' \item `pvalue` pvalue of `R`
-#' }
+#' * `Bias` bias
+#' * `Bias_perc` bias percentage
+#' * `n_sim` number of valid obs
+#' * `cv` Coefficient of variation
+#' * `R2` correlation of determination
+#' * `R` pearson correlation
+#' * `pvalue` pvalue of `R`
 #'
 #' @references
 #' Zhang Xiaoyang (2015), http://dx.doi.org/10.1016/j.rse.2014.10.012

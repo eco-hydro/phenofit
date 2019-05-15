@@ -1,7 +1,7 @@
 #' findpeaks
 #'
 #' Find peaks (maxima) in a time series. This function is modified from
-#' [pracma::findpeaks()].
+#' `pracma::findpeaks`.
 #' 
 #' @param x Numeric vector.
 #' @param IsDiff If want to find extreme values, `IsDiff` should be true; If 

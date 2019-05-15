@@ -6,15 +6,11 @@
 #' performance. Some basic optimization functions are unified here, with some
 #' input and output format. \cr
 #'
-#' \itemize{
-#'    \item `opt_ncminf` General-Purpose Unconstrained Non-Linear
-#'                          Optimization, see [ucminf::ucminf()].
-#'    \item `opt_nlminb` Optimization using PORT routines, see
-#'                          [stats::nlminb()].
-#'    \item `opt_nlm` Non-Linear Minimization, [stats::nlm()].
-#'    \item `opt_optim` General-purpose Optimization, see
-#'                         [stats::optim()].
-#' }
+#' * `opt_ncminf` General-Purpose Unconstrained Non-Linear Optimization, 
+#' see [ucminf::ucminf()].
+#' * `opt_nlminb` Optimization using PORT routines, see [stats::nlminb()].
+#' * `opt_nlm` Non-Linear Minimization, [stats::nlm()].
+#' * `opt_optim` General-purpose Optimization, see [stats::optim()].
 #'
 #' @param par0 Initial values for the parameters to be optimized over.
 #' @param objective A function to be minimized (or maximized), with first
@@ -25,31 +21,27 @@
 #' @param ... other parameters passed to `objective`.
 #'
 #' @return
-#' \describe{
-#' \item{convcode}{ An integer code. 0 indicates successful convergence.
+#' * `convcode`: An integer code. 0 indicates successful convergence.
 #' Various methods may or may not return sufficient information to allow all
 #' the codes to be specified. An incomplete list of codes includes
-#' \describe{
-#'      \item{`1`}{indicates that the iteration limit `maxit`
-#'      had been reached.}
-#'      \item{`20`}{indicates that the initial set of parameters is
-#'      inadmissible, that is, that the function cannot be computed or returns
-#'      an infinite, NULL, or NA value.}
-#'      \item{`21`}{indicates that an intermediate set of parameters is inadmissible.}
-#'      \item{`10`}{indicates degeneracy of the Nelder--Mead simplex.}
-#'      \item{`51`}{indicates a warning from the `"L-BFGS-B"`
-#'      method; see component `message` for further details.}
-#'      \item{`52`}{indicates an error from the `"L-BFGS-B"`
-#'      method; see component `message` for further details.}
-#'      \item{`9999`}{error}
-#' }
-#' }
-#' \item{value}{ The value of fn corresponding to par }
-#' \item{par}{ The best parameter found }
-#' \item{nitns}{ the number of iterations }
-#' \item{fevals}{ The number of calls to `objective`. }
-#' }
-#'
+#' 
+#'   * `1`: indicates that the iteration limit `maxit` had been reached.
+#'   * `20`: indicates that the initial set of parameters is inadmissible, 
+#'    that is, that the function cannot be computed or returns an infinite, 
+#'    NULL, or NA value.
+#'   * `21`: indicates that an intermediate set of parameters is inadmissible.
+#'   * `10`: indicates degeneracy of the Nelder--Mead simplex.
+#'   * `51`: indicates a warning from the `"L-BFGS-B"` method; see component 
+#'    `message` for further details.
+#'   * `52`: indicates an error from the `"L-BFGS-B"` method; see component 
+#'    `message` for further details.
+#'   * `9999`: error
+#' 
+#' * `value`: The value of fn corresponding to par 
+#' * `par`: The best parameter found 
+#' * `nitns`: the number of iterations 
+#' * `fevals`: The number of calls to `objective`.
+#' 
 #' @seealso [optim_pheno()], [I_optim()]
 #' @examples
 #' library(phenofit)
@@ -99,7 +91,7 @@
 #'
 NULL
 
-# ' \item{gevals}{ The number of calls to gradient function. This excludes
+# ' * `gevals`: The number of calls to gradient function. This excludes
 # ' those calls needed to compute the Hessian, if requested, and any calls to
 # ' \code{objective} to compute a finite-difference approximation to the
 # ' gradient. }

@@ -81,6 +81,6 @@ RUN wget --no-verbose https://download3.rstudio.org/ubuntu-14.04/x86_64/VERSION 
 EXPOSE 3838
 
 RUN installGithub.r kongdd/Ipaper \
-    && R -e "devtools::install_github('kongdd/phenofit', ref='dev')" \
+    && R -e "devtools::install_github('kongdd/phenofit', ref='master')" \
     && rm -rf /tmp/downloaded_packages/
     # kongdd/phenofit \

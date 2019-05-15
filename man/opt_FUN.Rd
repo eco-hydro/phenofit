@@ -29,44 +29,39 @@ It should return a scalar result.}
 \code{\link[stats:optim]{stats::optim()}}.}
 }
 \value{
-\describe{
-\item{convcode}{ An integer code. 0 indicates successful convergence.
+\itemize{
+\item \code{convcode}: An integer code. 0 indicates successful convergence.
 Various methods may or may not return sufficient information to allow all
 the codes to be specified. An incomplete list of codes includes
-\describe{
-\item{\code{1}}{indicates that the iteration limit \code{maxit}
-had been reached.}
-\item{\code{20}}{indicates that the initial set of parameters is
-inadmissible, that is, that the function cannot be computed or returns
-an infinite, NULL, or NA value.}
-\item{\code{21}}{indicates that an intermediate set of parameters is inadmissible.}
-\item{\code{10}}{indicates degeneracy of the Nelder--Mead simplex.}
-\item{\code{51}}{indicates a warning from the \code{"L-BFGS-B"}
-method; see component \code{message} for further details.}
-\item{\code{52}}{indicates an error from the \code{"L-BFGS-B"}
-method; see component \code{message} for further details.}
-\item{\code{9999}}{error}
+\itemize{
+\item \code{1}: indicates that the iteration limit \code{maxit} had been reached.
+\item \code{20}: indicates that the initial set of parameters is inadmissible,
+that is, that the function cannot be computed or returns an infinite,
+NULL, or NA value.
+\item \code{21}: indicates that an intermediate set of parameters is inadmissible.
+\item \code{10}: indicates degeneracy of the Nelder--Mead simplex.
+\item \code{51}: indicates a warning from the \code{"L-BFGS-B"} method; see component
+\code{message} for further details.
+\item \code{52}: indicates an error from the \code{"L-BFGS-B"} method; see component
+\code{message} for further details.
+\item \code{9999}: error
 }
-}
-\item{value}{ The value of fn corresponding to par }
-\item{par}{ The best parameter found }
-\item{nitns}{ the number of iterations }
-\item{fevals}{ The number of calls to \code{objective}. }
+\item \code{value}: The value of fn corresponding to par
+\item \code{par}: The best parameter found
+\item \code{nitns}: the number of iterations
+\item \code{fevals}: The number of calls to \code{objective}.
 }
 }
 \description{
 \code{I_optimx} is rich of functionality, but with a low computing
 performance. Some basic optimization functions are unified here, with some
 input and output format. \cr
-
 \itemize{
-\item \code{opt_ncminf} General-Purpose Unconstrained Non-Linear
-Optimization, see \code{\link[ucminf:ucminf]{ucminf::ucminf()}}.
-\item \code{opt_nlminb} Optimization using PORT routines, see
-\code{\link[stats:nlminb]{stats::nlminb()}}.
+\item \code{opt_ncminf} General-Purpose Unconstrained Non-Linear Optimization,
+see \code{\link[ucminf:ucminf]{ucminf::ucminf()}}.
+\item \code{opt_nlminb} Optimization using PORT routines, see \code{\link[stats:nlminb]{stats::nlminb()}}.
 \item \code{opt_nlm} Non-Linear Minimization, \code{\link[stats:nlm]{stats::nlm()}}.
-\item \code{opt_optim} General-purpose Optimization, see
-\code{\link[stats:optim]{stats::optim()}}.
+\item \code{opt_optim} General-purpose Optimization, see \code{\link[stats:optim]{stats::optim()}}.
 }
 }
 \examples{

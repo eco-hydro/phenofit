@@ -51,7 +51,7 @@ their maximum value?}
 }
 \description{
 Find peaks (maxima) in a time series. This function is modified from
-\code{\link[pracma:findpeaks]{pracma::findpeaks()}}.
+\code{pracma::findpeaks}.
 }
 \examples{
 x <- seq(0, 1, len = 1024)

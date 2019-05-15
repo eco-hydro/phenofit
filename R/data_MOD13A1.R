@@ -6,36 +6,32 @@
 #' 
 #' Variables in MOD13A1:
 #' 
-#' dt: vegetation index data
-#' \describe{
-#'   \item{system:index}{image index}
-#'   \item{DayOfYear}{Numeric, Julian day of year}
-#'   \item{DayOfYear}{corresponding doy of compositing NDVI and EVI}
-#'   \item{DetailedQA}{VI quality indicators}
-#'   \item{SummaryQA}{Quality reliability of VI pixel}
-#'   \item{EVI}{Enhanced Vegetation Index}
-#'   \item{NDVI}{Normalized Difference Vegetation Index}
-#'   \item{date}{Date, corresponding date}
-#'   \item{site}{String, site name}
-#'   \item{sur_refl_b01}{Red surface reflectance}
-#'   \item{sur_refl_b02}{NIR surface reflectance}
-#'   \item{sur_refl_b03}{Blue surface reflectance}
-#'   \item{sur_refl_b07}{MIR surface reflectance}
-#'   \item{.geo}{geometry}
-#' }
+#' * __`dt`__: vegetation index data
+#'   * `system:index`: image index
+#'   * `DayOfYear`: Numeric, Julian day of year
+#'   * `DayOfYear`: corresponding doy of compositing NDVI and EVI
+#'   * `DetailedQA`: VI quality indicators
+#'   * `SummaryQA`: Quality reliability of VI pixel
+#'   * `EVI`: Enhanced Vegetation Index
+#'   * `NDVI`: Normalized Difference Vegetation Index
+#'   * `date`: Date, corresponding date
+#'   * `site`: String, site name
+#'   * `sur_refl_b01`: Red surface reflectance
+#'   * `sur_refl_b02`: NIR surface reflectance
+#'   * `sur_refl_b03`: Blue surface reflectance
+#'   * `sur_refl_b07`: MIR surface reflectance
+#'   * `.geo`: geometry
 #' 
-#' st: station info
-#' \describe{
-#'   \item{ID}{site ID}
-#'   \item{site}{site name}
-#'   \item{lat}{latitude}
-#'   \item{lon}{longitude}
-#'   \item{IGBPname}{IGBP land cover type}
-#' }
+#' * __`st`__: station info
+#'   * `ID`: site ID
+#'   * `site`: site name
+#'   * `lat`: latitude
+#'   * `lon`: longitude
+#'   * `IGBPname`: IGBP land cover type
 #' 
 #' @docType data
 #' @usage
 #' data('MOD13A1')
 #' @references
-#' https://code.earthengine.google.com/dataset/MODIS/006/MOD13A1
+#' 1. https://code.earthengine.google.com/dataset/MODIS/006/MOD13A1
 'MOD13A1'
