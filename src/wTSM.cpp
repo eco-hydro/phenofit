@@ -18,7 +18,7 @@ NumericVector wTSM_cpp(NumericVector y, NumericVector yfit, NumericVector w,
   double yfitmean = sum(yfit * w_ceil / m);
   double yfitstd  = sqrt((double) sum(pow( (yfit - yfitmean) * w_ceil, 2)/(m - 1)));
 
-  int deltaT = floor(nptperyear/7);
+  int deltaT = floor(nptperyear/7.0); // fix Solaris error; 20190524
   // Rprintf("deltaT:%d\n", deltaT);
 
   for (int i = 0; i < n; i++){

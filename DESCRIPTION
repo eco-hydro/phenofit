@@ -1,7 +1,7 @@
 Package: phenofit
 Type: Package
 Title: Extract Remote Sensing Vegetation Phenology 
-Version: 0.2.3.9000
+Version: 0.2.4
 Authors@R: c(
     person("Dongdong", "Kong", role = c("aut", "cre"), email = "kongdd.sysu@gmail.com"),
     person("Mingzhong", "Xiao", role = c("aut"), email = "xmingzh@mail2.sysu.edu.cn"),
@@ -16,6 +16,12 @@ Description:
     every curve fitting methods according to their ecological meaning. 
     And 'optimx' is used to select best optimization method for different 
     curve fitting methods.
+    Reference:
+    Dongdong Kong, R package: A state-of-the-art Vegetation Phenology extraction package, 
+    phenofit version 0.2.3, <https://github.com/kongdd/phenofit>;
+    Zhang, Q., Kong, D., Shi, P., Singh, V.P., Sun, P., 2018. Vegetation phenology 
+    on the Qinghai-Tibetan Plateau and its response to climate change (1982–2013). 
+    Agric. For. Meteorol. 248, 408–417. <doi:10.1016/j.agrformet.2017.10.026>.
 License: GPL-2 | file LICENSE
 Encoding: UTF-8
 LazyData: true
