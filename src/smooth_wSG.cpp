@@ -26,7 +26,7 @@ arma::mat sgmat_S(int halfwin = 5, int d = 2) {
 
     for (int i = 0; i < frame; i++) {
         for (int j =0; j <= d; j++) {
-            mat(i, j) = pow(i - halfwin, j);
+            mat(i, j) = pow(i - halfwin - 0.0, j - 0.0); // fix solaris error
         }
     }
     // Rcout << mat << std::endl;

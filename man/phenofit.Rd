@@ -22,10 +22,10 @@ Useful links:
 
 Authors:
 \itemize{
+  \item Jianjian Cui \email{cuijj6@mail2.sysu.edu.cn}
   \item Mingzhong Xiao \email{xmingzh@mail2.sysu.edu.cn}
   \item Yongqiang Zhang \email{yongqiang.zhang2014@gmail.com}
   \item Xihui Gu \email{guxh@cug.edu.cn}
-  \item Jianjian Cui \email{cuijj6@mail2.sysu.edu.cn}
 }
 
 }

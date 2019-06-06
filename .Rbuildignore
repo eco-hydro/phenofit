@@ -5,7 +5,6 @@
 ^.*\.gcda$
 ^.*\.gcno$
 ^submit\.sh$
-^README\.md$
 ^README\.Rmd$
 ^result$
 ^log$
