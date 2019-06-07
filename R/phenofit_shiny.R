@@ -1,10 +1,8 @@
 #' @name phenofit_shiny
 #' @title phenofit shiny app
 #' 
-#' @description The GUI allows you to interactively visualize curve fitting time series and 
-#' phenological metrics.
-#' 
-#' @keywords GUI, front end, interactive
+#' @description The GUI allows you to interactively visualize curve fitting 
+#' time series and phenological metrics.
 #' 
 #' @importFrom shiny runApp
 #' @export
