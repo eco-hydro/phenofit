@@ -33,3 +33,4 @@ y <- fFUN(par, t)
 
 l_param <- init_param(y, t)
 }
+\keyword{internal}

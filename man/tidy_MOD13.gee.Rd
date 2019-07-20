@@ -41,3 +41,4 @@ library(phenofit)
 data("MOD13A1")
 dt <- tidy_MOD13.gee(MOD13A1$dt)
 }
+\keyword{internal}

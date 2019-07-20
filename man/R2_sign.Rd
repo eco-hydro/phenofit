@@ -25,3 +25,4 @@ R2_critical <- R2_sign(30, NumberOfPredictor = 2, alpha = 0.05)
 \references{
 Chen Yanguang (2012), Geographical Data analysis with MATLAB.
 }
+\keyword{internal}

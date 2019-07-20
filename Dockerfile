@@ -11,6 +11,16 @@ RUN apt-get update \
     libnetcdf-dev \
     libssl-dev \
     libudunits2-dev \
+    sudo \
+    gdebi-core \
+    pandoc \
+    pandoc-citeproc \
+    libcurl4-gnutls-dev \
+    libcairo2-dev \
+    libxt-dev \
+    xtail \
+    wget \
+    tree \
     # libsqlite3-dev \
     # libprotobuf-dev \
     # libfftw3-dev \
@@ -57,17 +67,6 @@ RUN apt-get update \
     # && R -e "BiocInstaller::biocLite('rhdf5')"
 
 ## install shiny
-RUN apt-get update && apt-get install -y \
-    sudo \
-    gdebi-core \
-    pandoc \
-    pandoc-citeproc \
-    libcurl4-gnutls-dev \
-    libcairo2-dev \
-    libxt-dev \
-    xtail \
-    wget
-
 # Download and install shiny server
 RUN wget --no-verbose https://download3.rstudio.org/ubuntu-14.04/x86_64/VERSION -O "version.txt" && \
     VERSION=$(cat version.txt)  && \

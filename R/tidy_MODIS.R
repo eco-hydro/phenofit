@@ -4,6 +4,7 @@
 #' @param date Date vector, the first day of the 16-day composite period.
 #' @param DayOfYear Numeric vector, exact composite day of year. 
 #' 
+#' @keywords internal
 #' @return
 #' A data.table with a new column `t`, which is the exact compositing date.
 #' 
@@ -43,6 +44,7 @@ getRealDate <- function(date, DayOfYear){
 #' @param infile A character csv file path or a data.table
 #' @param outfile Output file name. If missing, will not be written to file.
 #'
+#' @keywords internal
 #' @return
 #' A tidied data.table, with columns of 'site', 'y', 't', 'w', 'date' and
 #' 'SummaryQA'.

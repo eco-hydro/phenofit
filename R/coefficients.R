@@ -74,6 +74,7 @@ skewness <- function (x, na.rm = FALSE, type = 3) {
 #' @param w weights of different point
 #' @export
 #'
+#' @keywords internal
 #' @return Named numeric vector, (mean, sd, cv).
 #' @examples
 #' library(phenofit)
@@ -104,6 +105,7 @@ cv_coef <- function(x, w){
 #'
 #' @return `F` statistic and `R2` at significant level.
 #'
+#' @keywords internal
 #' @references
 #' Chen Yanguang (2012), Geographical Data analysis with MATLAB.
 #' @examples

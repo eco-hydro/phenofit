@@ -8,7 +8,8 @@ Status](https://ci.appveyor.com/api/projects/status/github/kongdd/phenofit?branc
 [![codecov](https://codecov.io/gh/kongdd/phenofit/branch/master/graph/badge.svg)](https://codecov.io/gh/kongdd/phenofit)
 [![License](http://img.shields.io/badge/license-GPL%20%28%3E=%202%29-brightgreen.svg?style=flat)](http://www.gnu.org/licenses/gpl-2.0.html)
 [![CRAN](http://www.r-pkg.org/badges/version/phenofit)](https://cran.r-project.org/package=phenofit)
-[![CRAN\_Download\_Badge](http://cranlogs.r-pkg.org/badges/phenofit)](https://CRAN.R-project.org/package=phenofit)
+[![total](http://cranlogs.r-pkg.org/badges/grand-total/phenofit)](https://www.rpackages.io/package/phenofit)
+[![monthly](http://cranlogs.r-pkg.org/badges/phenofit)](https://www.rpackages.io/package/phenofit)
 
 A state-of-the-art **remote sensing vegetation phenology** extraction
 package: `phenofit`
@@ -52,6 +53,20 @@ Run `shinyapp`:
 shiny::runGitHub("phenofit", "kongdd", subdir = "inst/shiny/phenofit")
 # Or run locally
 shiny::runApp(system.file("shiny/phenofit", package = "phenofit"))
+```
+
+Running in docker: 
+
+```bash
+docker run -it -p 8787:8787 `
+    -v E:/ubuntu:/ubuntu `
+    -v E:/ubuntu/site-library:/usr/local/lib/R/site-library `
+    -v E:/ubuntu/etc:/usr/local/lib/R/etc `
+    -v E:/github:/github 
+    --name R-3.5.3 kongdd/phenofit bash 
+
+# powershell docker rm @(docker ps -aq)
+# powershell docker rmi @(docker images -f "dangling=true" -q)
 ```
 
 <!-- ![](man/Figure/phenofit_shiny.png)

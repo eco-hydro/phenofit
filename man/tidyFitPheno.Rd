@@ -36,3 +36,4 @@ pheno <- get_pheno(fits, "AG", IsPlot=FALSE)
 
 p <- tidyFitPheno(pheno)
 }
+\keyword{internal}

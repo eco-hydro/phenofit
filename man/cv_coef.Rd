@@ -22,3 +22,4 @@ library(phenofit)
 x = rnorm(100)
 coefs <- cv_coef(x)
 }
+\keyword{internal}

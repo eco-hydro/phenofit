@@ -4,6 +4,7 @@
 #'
 #' @param pheno Phenology metrics extracted from `get_pheno`
 #'
+#' @keywords internal
 #' @examples
 #' library(phenofit)
 #' # simulate vegetation time-series

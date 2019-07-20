@@ -4,6 +4,7 @@
 #' 
 #' @param y Numeric vector
 #' 
+#' @keywords internal
 #' @examples
 #' library(phenofit)
 #' data("MOD13A1")

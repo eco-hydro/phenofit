@@ -48,3 +48,4 @@ INPUT    <- check_input(dnew$t, dnew$y, dnew$w, nptperyear,
 lg_lambdas <- seq(0, 3, 0.1)
 r <- v_curve(INPUT, lg_lambdas, d = 2, IsPlot = TRUE)
 }
+\keyword{internal}

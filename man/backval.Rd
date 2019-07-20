@@ -52,3 +52,4 @@ production of vegetation in North America. Remote Sens. Environ.
 183, 154–169. https://doi.org/10.1016/j.rse.2016.05.015.
 }
 }
+\keyword{internal}

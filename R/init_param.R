@@ -4,6 +4,7 @@
 #'
 #' @inheritParams FitDL.Zhang
 #'
+#' @keywords internal
 #' @examples
 #' library(phenofit)
 #' # simulate vegetation time-series

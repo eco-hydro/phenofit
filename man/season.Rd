@@ -166,3 +166,4 @@ brks2 <- season_mov(INPUT,
 \seealso{
 \code{\link[=findpeaks]{findpeaks()}}.
 }
+\keyword{internal}

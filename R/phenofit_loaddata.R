@@ -35,6 +35,7 @@ check_file <- function(file, duration = 10){
 #' @param rv return values to reactiveValues object.
 #' @param ... ignored.
 #' 
+#' @keywords internal
 #' @importFrom utils find
 #' @export
 phenofit_loaddata <- function(options, rv, ...){

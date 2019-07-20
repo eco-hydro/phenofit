@@ -40,6 +40,7 @@ grad.fFIT <- function(fit, tout){
 #' @param smoothed.spline Whether apply `smooth.spline` first?
 #' @param ... Other parameters will be ignored.
 #' 
+#' @keywords internal
 #' @return 
 #' \itemize{
 #' \item der1 First order derivative

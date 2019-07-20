@@ -17,3 +17,4 @@ phenofit_loaddata(options, rv, ...)
 \description{
 update all INPUT data according to \code{input} file.
 }
+\keyword{internal}

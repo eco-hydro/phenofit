@@ -73,3 +73,4 @@ d1 <- D1(fFIT)
 d2 <- D2(fFIT)
 d_k <- curvature(fFIT)
 }
+\keyword{internal}

@@ -13,6 +13,7 @@
 #' 
 #' @return back If back value is NA, it is impossible to extract phenology here.
 #' 
+#' @keywords internal
 #' @note This function only works in every growing season.
 #' 
 #' @references

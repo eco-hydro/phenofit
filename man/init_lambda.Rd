@@ -23,3 +23,4 @@ sitename <- dt$site[1]
 d      <- dt[site == sitename, ] # get the first site data
 lambda <- init_lambda(d$y)
 }
+\keyword{internal}

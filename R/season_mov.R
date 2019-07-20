@@ -174,6 +174,8 @@ season_calendar <- function(years, south = FALSE){
 
 #' statistics
 #' @param brks A list object returned by `season` or `season_mov`.
+#' 
+#' @keywords internal
 #' @rdname season
 stat_season <- function(INPUT, brks){
     d_org <- as.data.table(INPUT[c("t", "y", "w")])
