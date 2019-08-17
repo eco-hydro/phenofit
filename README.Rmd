@@ -33,6 +33,8 @@ A state-of-the-art **remote sensing vegetation phenology** extraction package: `
 
 ***Task lists***
 
+- [ ] Test the performance of `phenofit` in multiple growing season regions (e.g. the North China Plain);
+- [ ] separate shiny application into a independent repository;
 - [ ] Improve computational efficiency of fine fitting;
 - [x] Complete script automatic generating module of shinyapp;
 - [ ] Uncertainty analysis of curve fitting and phenological metrics;

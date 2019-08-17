@@ -25,8 +25,10 @@ package: `phenofit`
 
 ***Task lists***
 
+  - [ ] Test the performance of `phenofit` in multiple growing season regions (e.g. the North China Plain);
+  - [ ] separate shiny application into a independent repository;
   - [ ] Improve computational efficiency of fine fitting;
-  - [x] Complete script automatic generating module of shinyapp;
+  - [x] Complete script automatic generating module in shinyapp;
   - [ ] Uncertainty analysis of curve fitting and phenological metrics;
   - [x] Support spatial analysis;
   - [x] Support annual season in curve fitting;
@@ -340,14 +342,9 @@ head(l_pheno$doy$AG)
 
 # **References**
 
-> \[1\] Dongdong Kong, R package: A state-of-the-art Vegetation
-> Phenology extraction package, `phenofit` version 0.2.2,
-> <https://github.com/kongdd/phenofit>
+> \[1\] Dongdong Kong, R package: A state-of-the-art Vegetation Phenology extraction package, `phenofit` version 0.2.2, <https://github.com/kongdd/phenofit>
 > 
-> \[2\] Zhang, Q., Kong, D., Shi, P., Singh, V.P., Sun, P., 2018.
-> Vegetation phenology on the Qinghai-Tibetan Plateau and its response
-> to climate change (1982–2013). Agric. For. Meteorol. 248, 408–417.
-> <https://doi.org/10.1016/j.agrformet.2017.10.026>
+> \[2\] Zhang, Q., Kong, D., Shi, P., Singh, V.P., Sun, P., 2018. Vegetation phenology on the Qinghai-Tibetan Plateau and its response to climate change (1982–2013). Agric. For. Meteorol. 248, 408–417. <https://doi.org/10.1016/j.agrformet.2017.10.026>
 
 # Acknowledgements
 
