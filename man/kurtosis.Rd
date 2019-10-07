@@ -28,3 +28,4 @@ coef_kurtosis <- kurtosis(x)
 coef_skewness <- skewness(x)
 
 }
+\keyword{internal}

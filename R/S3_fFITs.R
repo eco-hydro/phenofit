@@ -21,6 +21,7 @@
 #'
 #' # plot
 #' plot(fFITs)
+#' @keywords internal
 NULL
 
 
@@ -35,6 +36,7 @@ NULL
 #' @param ... ignored.
 #'
 #' @rdname fFITs
+#' @keywords internal
 #' @export
 plot.fFITs <- function(x, method, ...){
 

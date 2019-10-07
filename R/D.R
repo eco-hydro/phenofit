@@ -80,6 +80,7 @@ D1 <- function(fit, analytical = TRUE, smoothed.spline = FALSE, ...) UseMethod('
 #' @export
 D2 <- function(fit, analytical = TRUE, smoothed.spline = FALSE, ...) UseMethod('D2', fit)
 
+#' @keywords internal
 #' @rdname D
 #' @export
 D1.fFIT <- function(fit, analytical = TRUE, smoothed.spline = FALSE, ...){
@@ -113,6 +114,7 @@ D1.fFIT <- function(fit, analytical = TRUE, smoothed.spline = FALSE, ...){
     return(der1)
 }
 
+#' @keywords internal
 #' @rdname D
 #' @export
 D2.fFIT <- function(fit, analytical = TRUE, smoothed.spline = FALSE, ...){
@@ -153,6 +155,7 @@ D2.fFIT <- function(fit, analytical = TRUE, smoothed.spline = FALSE, ...){
 #' @export
 curvature <- function(fit, analytical = TRUE, smoothed.spline = FALSE, ...) UseMethod('curvature', fit)
 
+#' @keywords internal
 #' @rdname D
 #' @export
 curvature.fFIT <- function(fit, analytical = TRUE, smoothed.spline = FALSE, ...){

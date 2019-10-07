@@ -13,3 +13,4 @@
 \description{
 \code{fFIT} is returned by \code{\link[=optim_pheno]{optim_pheno()}}.
 }
+\keyword{internal}

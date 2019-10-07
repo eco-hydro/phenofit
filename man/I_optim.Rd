@@ -98,9 +98,11 @@ opt2 <- I_optimx(prior, fFUN, y, t, tout, c("BFGS", "ucminf", "nlm", "nlminb"))
 #     I_optimx(prior, fFUN, y, t, tout, c("BFGS", "ucminf", "nlm", "nlminb")),
 #     times = 2
 # )
+
 }
 \seealso{
 \code{\link[stats:optim]{stats::optim()}}, \code{\link[stats:nlminb]{stats::nlminb()}},
 \code{\link[stats:nlm]{stats::nlm()}}, \code{\link[optimx:optimx]{optimx::optimx()}},
 \code{\link[ucminf:ucminf]{ucminf::ucminf()}}
 }
+\keyword{internal}

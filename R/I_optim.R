@@ -57,6 +57,8 @@
 #' #     I_optimx(prior, fFUN, y, t, tout, c("BFGS", "ucminf", "nlm", "nlminb")),
 #' #     times = 2
 #' # )
+#' 
+#' @keywords internal
 #' @export
 I_optim <- function(prior, FUN, y, t, tout, method = "BFGS", ...)
 {
@@ -105,6 +107,8 @@ methods <- c(
 #'
 #' @rdname I_optim
 #' @import optimx
+#' 
+#' @keywords internal
 #' @export
 I_optimx <- function(prior, FUN, y, t, tout, method, verbose = FALSE, ...){
 

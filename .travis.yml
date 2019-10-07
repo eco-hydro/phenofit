@@ -3,10 +3,15 @@ cache: packages
 latex: false
 
 
+os:
+  - linux
+  - osx
+  # - windows
+
 matrix:
   include:
     - r: release
-    - r: devel
+    # - r: devel
     # - os: osx
     #   fortran: false
 

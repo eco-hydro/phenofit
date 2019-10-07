@@ -74,3 +74,4 @@ notebook
 *.set
 *.rda
 inst/shiny/
+inst/phenofit.shiny

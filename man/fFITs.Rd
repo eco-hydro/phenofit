@@ -40,3 +40,4 @@ fFITs <- curvefit(y, t, tout, methods)
 # plot
 plot(fFITs)
 }
+\keyword{internal}

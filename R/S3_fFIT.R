@@ -10,6 +10,8 @@
 #' * `ws`: weight of every iteration
 #' * `par`: Optimized parameter of fine curve fitting method
 #' * `fun`: The name of fine curve fitting function.
+#' 
+#' @keywords internal
 NULL
 
 #' @export

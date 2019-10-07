@@ -29,7 +29,6 @@ season_mov <- function(INPUT,
     nptperyear <- INPUT$nptperyear
     south      <- INPUT$south
     t          <- INPUT$t
-
     nlen       <- length(t)
 
     # 1. How many years data
@@ -54,7 +53,7 @@ season_mov <- function(INPUT,
         nf  = nf, frame = frame,
         IsPlot = debug, plotdat = plotdat, ...)
 
-    has_lambda = !is.null(lambda)
+    has_lambda = !(is.null(lambda) || is.na(lambda))
     brks  <- list()
     vcs   <- vector("list", nyear-2) %>% set_names(years[2:(nyear-1)])
 

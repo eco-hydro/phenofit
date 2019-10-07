@@ -13,6 +13,7 @@
 #' coef_kurtosis <- kurtosis(x)
 #' coef_skewness <- skewness(x)
 #' 
+#' @keywords internal
 #' @export
 kurtosis <- function (x, na.rm = FALSE, type = 3) {
     if (any(ina <- is.na(x))) {
@@ -72,14 +73,14 @@ skewness <- function (x, na.rm = FALSE, type = 3) {
 #' weighted CV
 #' @param x Numeric vector
 #' @param w weights of different point
-#' @export
 #'
-#' @keywords internal
 #' @return Named numeric vector, (mean, sd, cv).
 #' @examples
 #' library(phenofit)
 #' x = rnorm(100)
 #' coefs <- cv_coef(x)
+#' @keywords internal
+#' @export
 cv_coef <- function(x, w){
     if (missing(w)) w <- rep(1, length(x))
     if (length(x) == 0){
