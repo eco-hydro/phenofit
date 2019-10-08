@@ -16,15 +16,16 @@ bool all_finite(NumericVector x) {
 }
 
 // [[Rcpp::export]]
-double f_goal_cpp(NumericVector par, NumericVector y, NumericVector t,
-    Function fun,
+double f_goal_cpp(NumericVector par, Function fun, 
+    NumericVector y, NumericVector t, NumericVector ypred,
     Nullable<NumericVector> w   = R_NilValue,
     Nullable<NumericVector> ylu = R_NilValue)
 {
     // Function FUN(fun);
     if ( !all_finite(par) ) return(9999.0);
 
-    NumericVector ypred = fun(par, t);
+    // NumericVector ypred = 
+    fun(par, t, ypred);
     if ( !all_finite(ypred) )  return(9999.0);
 
     double SSE;

@@ -46,32 +46,6 @@ You can install phenofit from github with:
 devtools::install_github("kongdd/phenofit")
 ```
 
-Run `shinyapp`:
-
-``` r
-shiny::runGitHub("phenofit", "kongdd", subdir = "inst/shiny/phenofit")
-# Or run locally
-shiny::runApp(system.file("shiny/phenofit", package = "phenofit"))
-```
-
-Running in docker: 
-
-```bash
-docker run -it -p 8787:8787 `
-    -v E:/ubuntu:/ubuntu `
-    -v E:/ubuntu/site-library:/usr/local/lib/R/site-library `
-    -v E:/ubuntu/etc:/usr/local/lib/R/etc `
-    -v E:/github:/github 
-    --name R-3.5.3 kongdd/phenofit bash 
-
-# powershell docker rm @(docker ps -aq)
-# powershell docker rmi @(docker images -f "dangling=true" -q)
-```
-
-<!-- ![](man/Figure/phenofit_shiny.png)
-*<u>Figure 2. Shiny interface of `phenofit`.</u>*
- -->
-
 # Example
 
 Here, we illustrate how to use `phenofit` to extract vegetation

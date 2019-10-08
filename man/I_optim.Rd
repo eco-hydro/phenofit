@@ -5,9 +5,9 @@
 \alias{I_optimx}
 \title{Interface of unified optimization functions.}
 \usage{
-I_optim(prior, FUN, y, t, tout, method = "BFGS", fn = f_goal, ...)
+I_optim(prior, FUN, y, t, method = "BFGS", fn = f_goal, ...)
 
-I_optimx(prior, FUN, y, t, tout, method, verbose = FALSE, ...)
+I_optimx(prior, FUN, y, t, method, verbose = FALSE, ...)
 }
 \arguments{
 \item{prior}{A vector of initial values for the parameters for which optimal
@@ -18,8 +18,6 @@ values are to be found. \code{prior} is suggested giving a column name.}
 \item{y}{Numeric vector, vegetation index time-series}
 
 \item{t}{Numeric vector, \code{Date} variable}
-
-\item{tout}{Corresponding doy of prediction.}
 
 \item{method}{\code{method} can be some of \code{'BFGS','CG','Nelder-Mead', 'L-BFGS-B', 'nlm', 'nlminb', 'ucminf'}. \cr
 For \code{I_optimx}, other methods are also supported,
@@ -63,46 +61,25 @@ NULL, or NA value.
 }
 }
 \examples{
-library(ggplot2)
-library(magrittr)
-library(purrr)
-
 # simulate vegetation time-series
-fFUN = doubleLog.Beck
-par = c(
-  mn  = 0.1,
-  mx  = 0.7,
-  sos = 50,
-  rsp = 0.1,
-  eos = 250,
-  rau = 0.1)
-t    <- seq(1, 365, 8)
-tout <- seq(1, 365, 1)
-y <- fFUN(par, t)
+FUN  = doubleLog_Beck
+par  = c( mn  = 0.1 , mx  = 0.7 , sos = 50 , rsp = 0.1 , eos = 250, rau = 0.1)
+par0 = c( mn  = 0.15, mx  = 0.65, sos = 100, rsp = 0.12, eos = 200, rau = 0.12)
 
-# initial parameter
-par0 <- c(
-  mn  = 0.15,
-  mx  = 0.65,
-  sos = 100,
-  rsp = 0.12,
-  eos = 200,
-  rau = 0.12)
+t <- seq(1, 365, 8)
+y <- FUN(par, t)
 
-objective <- f_goal # goal function
-optFUNs   <- c("opt_ucminf", "opt_nlminb", "opt_nlm", "opt_optim") \%>\% set_names(., .)
-prior <- as.matrix(par0) \%>\% t() \%>\% rbind(., .)
+methods = c("BFGS", "ucminf", "nlm", "nlminb")
+opt1 <- I_optim (par0, FUN, y, t, methods)
+opt2 <- I_optimx(par0, FUN, y, t, methods)
 
-opt1 <- I_optim(prior, fFUN, y, t, tout, c("BFGS", "ucminf", "nlm", "nlminb"))
-opt2 <- I_optimx(prior, fFUN, y, t, tout, c("BFGS", "ucminf", "nlm", "nlminb"))
-
-\dontrun{
-microbenchmark::microbenchmark(
-    I_optim(prior, fFUN, y, t, tout, c("BFGS", "ucminf", "nlm", "nlminb")),
-    I_optimx(prior, fFUN, y, t, tout, c("BFGS", "ucminf", "nlm", "nlminb")),
-    times = 2
-)
-}
+# \dontrun{
+# microbenchmark::microbenchmark(
+#     opt1 = I_optim (par0, FUN, y, t, methods),
+#     opt2 = I_optimx(par0, FUN, y, t, methods),
+#     times = 2
+# )
+# }
 }
 \seealso{
 \code{\link[stats:optim]{stats::optim()}}, \code{\link[stats:nlminb]{stats::nlminb()}},

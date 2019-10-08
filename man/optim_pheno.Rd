@@ -5,7 +5,7 @@
 \title{optim_pheno}
 \usage{
 optim_pheno(prior, sFUN, y, t, tout, method, w, nptperyear, ylu,
-  iters = 2, wFUN = wTSM, use.cpp = FALSE, verbose = FALSE, ...)
+  iters = 2, wFUN = wTSM, verbose = FALSE, ...)
 }
 \arguments{
 \item{prior}{A vector of initial values for the parameters for which optimal
@@ -38,8 +38,6 @@ range of \code{ylu}.}
 \item{wFUN}{weights updating function, can be one of 'wTSM', 'wChen' and
 'wBisquare'.}
 
-\item{use.cpp}{If true, double logistics fucntions in Rcpp format will be used.}
-
 \item{verbose}{Whether to display intermediate variables?}
 
 \item{...}{other parameters passed to \code{\link[=I_optim]{I_optim()}} or \code{\link[=I_optimx]{I_optimx()}}.}
@@ -56,7 +54,7 @@ curve fitting functions.
 # library(purrr)
 
 # simulate vegetation time-series
-FUN = doubleLog.Beck
+FUN = doubleLog_Beck
 par  = c( mn  = 0.1 , mx  = 0.7 , sos = 50 , rsp = 0.1 , eos = 250, rau = 0.1)
 par0 = c( mn  = 0.15, mx  = 0.65, sos = 100, rsp = 0.12, eos = 200, rau = 0.12)
 
@@ -64,23 +62,18 @@ t    <- seq(1, 365, 8)
 tout <- seq(1, 365, 1)
 y <- FUN(par, t)
 
-opt1 <- I_optim(par0, FUN, y, t, tout, c("nlminb")) # "BFGS", "ucminf", "nlm",
+methods = c("BFGS", "ucminf", "nlm", "nlminb")
+opt1 <- I_optim(par0, doubleLog_Beck, y, t, methods) # "BFGS", "ucminf", "nlm",
 # opt2 <- I_optimx(prior, fFUN, y, t, tout, )
 
-methods = c("BFGS", "ucminf", "nlm", "nlminb")[4]
-r <- optim_pheno(par0, "doubleLog.Beck", y, t, tout, method = methods,
-                 nptperyear = 46, iters = 2, wFUN = wTSM,
-                 use.cpp = FALSE, verbose = FALSE)
+sFUN   = "doubleLog.Beck" # doubleLog.Beck
+r <- optim_pheno(par0, sFUN, y, t, tout, method = methods[4],
+                 nptperyear = 46, iters = 2, wFUN = wTSM, verbose = FALSE)
 # method = "BFGS"
-# sFUN   = "doubleLog.Zhang" # doubleLog.Beck
 # par0 <- c(t0 = 100, par0)
 # rbenchmark::benchmark(
-#   r1 = optim_pheno(par0, sFUN, y, t, tout, method ,
-#               nptperyear = 46, iters = 2, wFUN = wTSM,
-#               use.cpp = FALSE, verbose = FALSE),
-#   r2 = optim_pheno(par0, sFUN, y, t, tout, method,
-#               nptperyear = 46, iters = 2, wFUN = wTSM,
-#               use.cpp = TRUE, verbose = FALSE)
+#   r1 = optim_pheno(par0, sFUN, y, t, tout, methods[4],
+#               nptperyear = 46, iters = 2, wFUN = wTSM, verbose = FALSE)
 # )
 }
 \seealso{

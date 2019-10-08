@@ -19,7 +19,7 @@
 #' @param t A `Date` or numeric vector
 #' @references
 #' Peter M. Atkinson, et al., 2012, RSE, 123:400-417
-#'
+#' 
 #' @rdname logistics
 #' @export
 Logistic <- function(par, t){
@@ -31,7 +31,6 @@ Logistic <- function(par, t){
     # pred <- c/(1 + exp(a + b * t)) + d
     return(pred)
 }
-attr(Logistic, 'name')    <- 'Logistic'
 attr(Logistic, 'par')     <- c("mn", "mx", "sos", "rsp")
 attr(Logistic, 'formula') <- expression((mx - mn)/(1 + exp(-rsp*(t - sos))) + mn)
 
@@ -61,7 +60,6 @@ doubleLog.Zhang <- function(par, t){
     return(pred)
 }
 attr(doubleLog.Zhang, 'par')     <- c("t0", "mn", "mx", "sos", "rsp", "eos", "rau")
-attr(doubleLog_Zhang, 'par')     <- c("t0", "mn", "mx", "sos", "rsp", "eos", "rau")
 attr(doubleLog.Zhang, 'formula') <- expression( (mx - mn)/(1 + exp(-rsp*(t - sos))),
                                                 (mx - mn)/(1 + exp( rau*(t - eos))) )
 
@@ -82,7 +80,6 @@ doubleLog.AG <- function(par, t){
 }
 # a3, a5 should be greater than 1
 attr(doubleLog.AG, 'par')     <- c("t0", "mn", "mx", "rsp", "a3", "rau", "a5")
-attr(doubleLog_AG, 'par')     <- c("t0", "mn", "mx", "rsp", "a3", "rau", "a5")
 attr(doubleLog.AG, 'formula') <- expression( mn + (mx - mn)*exp(- ((t0 - t)*rsp) ^a3 ),
                                          mn + (mx - mn)*exp(- ((t - t0)*rau) ^a5 ))
 
@@ -103,7 +100,6 @@ doubleLog.Beck <- function(par, t) {
     return(pred)
 }
 attr(doubleLog.Beck, 'par')  <- c("mn", "mx", "sos", "rsp", "eos", "rau")
-attr(doubleLog_Beck, 'par')  <- c("mn", "mx", "sos", "rsp", "eos", "rau")
 attr(doubleLog.Beck, 'formula') <- expression(mn + (mx - mn)*(1/(1 + exp(-rsp*(t - sos))) + 1/(1 + exp(rau*(t - eos)))) - 1)
 
 #' @rdname logistics
@@ -127,7 +123,6 @@ doubleLog.Elmore <- function(par, t) {
     pred <- mn + (mx - m7*t)*( 1/(1 + exp(-rsp*(t-sos))) - 1/(1 + exp(-rau*(t-eos))) )
     return(pred)
 }
-
 attr(doubleLog.Elmore, 'par')     <- c("mn", "mx", "sos", "rsp", "eos", "rau", "m7")
 attr(doubleLog.Elmore, 'formula') <- expression( mn + (mx - m7*t)*( 1/(1 + exp(-rsp*(t-sos))) - 1/(1 + exp(-rau*(t-eos))) ) )
 
@@ -152,7 +147,6 @@ doubleLog.Gu <- function(par, t) {
     return(pred)
 }
 attr(doubleLog.Gu, 'par')     <- c('y0', 'a1', 'a2', 'sos', 'rsp', 'eos', 'rau', 'c1', 'c2')
-attr(doubleLog_Gu, 'par')     <- c('y0', 'a1', 'a2', 'sos', 'rsp', 'eos', 'rau', 'c1', 'c2')
 attr(doubleLog.Gu, 'formula') <- expression(y0 + (a1/(1 + exp(-rsp*(t - sos)))^c1) - (a2/(1 + exp(-rau*(t - eos)))^c2))
 
 #' @rdname logistics
@@ -175,11 +169,7 @@ doubleLog.Klos <- function(par, t) {
         - 1/(1 + q2 * exp(-B2 * (t - m2)))^v2)
     return(pred)
 }
-
-attr(doubleLog.Klos, 'name')    <- 'doubleLog.Klos'
 attr(doubleLog.Klos, 'par')     <- c('a1', 'a2', 'b1', 'b2', 'c', 'B1', 'B2',
-    'm1', 'm2', 'q1', 'q2', 'v1', 'v2')
-attr(doubleLog_Klos, 'par')     <- c('a1', 'a2', 'b1', 'b2', 'c', 'B1', 'B2',
     'm1', 'm2', 'q1', 'q2', 'v1', 'v2')
 attr(doubleLog.Klos, 'formula') <- expression((a1*t + b1) + (a2*t^2 + b2*t + c) * (1/(1 + q1 * exp(-B1 * (t - m1)))^v1
         - 1/(1 + q2 * exp(-B2 * (t - m2)))^v2))
@@ -217,15 +207,3 @@ attr(doubleLog.Klos, 'formula') <- expression((a1*t + b1) + (a2*t^2 + b2*t + c) 
         assign(FUN, fun, envir = environment(fun)) #environment("namespace:phenofit"))#
         # fun
     })
-
-# set par and names for double Logistics functions
-funcs = lsf.str(pattern = "doubleLog_")
-for (func in funcs) {
-    funr = gsub("_", ".", func)
-    eval(parse(text = sprintf("attr(%s, 'name') <- '%s'", func, func)))
-    eval(parse(text = sprintf("attr(%s, 'name') <- '%s'", funr, funr)))
-    eval(parse(text = sprintf("attr(%s, 'par')  <- attr(%s, 'par')", func, funr)))
-    eval(parse(text = sprintf("attr(%s, 'formula')  <- attr(%s, 'formula')", func, funr)))
-    eval(parse(text = sprintf("attr(%s, 'gradient') <- attr(%s, 'gradient')", func, funr)))
-    eval(parse(text = sprintf("attr(%s, 'hessian')  <- attr(%s, 'hessian')", func, funr)))
-}

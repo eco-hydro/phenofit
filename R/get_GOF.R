@@ -6,15 +6,13 @@
 #' @param fFITs `fFITs` object returned by [curvefit()].
 #'
 #' @return
-#' \describe{
-#'   \item{meth}{The name of fine curve fitting method}
-#'   \item{RMSE}{Root Mean Square Error}
-#'   \item{NSE}{Nash-Sutcliffe model efficiency coefficient}
-#'   \item{R}{Pearson-Correlation}
-#'   \item{pvalue}{pvalue of `R`}
-#'   \item{n}{The number of observations}
-#' }
-#'
+#' - `meth`: The name of fine curve fitting method
+#' - `RMSE`: Root Mean Square Error
+#' - `NSE` : Nash-Sutcliffe model efficiency coefficient
+#' - `R`   : Pearson-Correlation
+#' - `pvalue`: pvalue of `R`
+#' - `n`   : The number of observations
+#' 
 #' @references
 #' 1. https://en.wikipedia.org/wiki/Nash-Sutcliffe_model_efficiency_coefficient \cr
 #' 2. https://en.wikipedia.org/wiki/Pearson_correlation_coefficient

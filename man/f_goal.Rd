@@ -4,19 +4,21 @@
 \alias{f_goal}
 \title{Goal function of fine curve fitting methods}
 \usage{
-f_goal(par, y, t, fun, w, ylu, ...)
+f_goal(par, fun, y, t, pred, w, ylu, ...)
 }
 \arguments{
 \item{par}{A vector of parameters}
-
-\item{y}{Numeric vector, vegetation index time-series}
-
-\item{t}{Numeric vector, \code{Date} variable}
 
 \item{fun}{A curve fitting function, can be one of \code{doubleAG},
 \code{doubleLog.Beck}, \code{doubleLog.Elmore}, \code{doubleLog.Gu},
 \code{doubleLog.Klos}, \code{doubleLog.Zhang}, see \code{\link[=Logistic]{Logistic()}}
 for details.}
+
+\item{y}{Numeric vector, vegetation index time-series}
+
+\item{t}{Numeric vector, \code{Date} variable}
+
+\item{pred}{Numeric Vector, predicted values}
 
 \item{w}{(optional) Numeric vector, weights of \code{y}. If not specified,
 weights of all \code{NA} values will be \code{wmin}, the others will be 1.0.}
@@ -34,25 +36,15 @@ Goal function of fine curve fitting methods
 }
 \examples{
 library(phenofit)
+
+par  = c( mn  = 0.1 , mx  = 0.7 , sos = 50 , rsp = 0.1 , eos = 250, rau = 0.1)
+par0 = c( mn  = 0.15, mx  = 0.65, sos = 100, rsp = 0.12, eos = 200, rau = 0.12)
+
 # simulate vegetation time-series
-fFUN = doubleLog.Beck
-par  = c(
-    mn  = 0.1,
-    mx  = 0.7,
-    sos = 50,
-    rsp = 0.1,
-    eos = 250,
-    rau = 0.1)
+fFUN = doubleLog_Beck
 t    <- seq(1, 365, 8)
 tout <- seq(1, 365, 1)
-y <- fFUN(par, t)
+y    <- fFUN(par, t)
 
-par0 <- c(
-    mn  = 0.15,
-    mx  = 0.65,
-    sos = 100,
-    rsp = 0.12,
-    eos = 200,
-    rau = 0.12)
-f_goal(par0, y, t, fFUN)
+f_goal(par0, fFUN, y, t)
 }

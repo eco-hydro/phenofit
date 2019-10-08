@@ -19,10 +19,7 @@
 #' `'BFGS','CG','Nelder-Mead', 'L-BFGS-B', 'nlm', 'nlminb', 'ucminf'` and
 #' `'spg','Rcgmin','Rvmmin', 'newuoa','bobyqa','nmkb','hjkb'`.
 #'
-#' @param use.cpp If true, double logistics fucntions in Rcpp format will be used.
-#'
 #' @param verbose Whether to display intermediate variables?
-#'
 #' @param ... other parameters passed to [I_optim()] or [I_optimx()].
 #'
 #' @return fFIT object, see [fFIT()] for details.
@@ -38,9 +35,17 @@ optim_pheno <- function(
     y, t, tout, method,
     w, nptperyear, ylu,
     iters = 2, wFUN = wTSM,
-    use.cpp = FALSE,
     verbose = FALSE, ...)
 {
+    sFUN = gsub("\\.", "_", sFUN )
+    FUN <- get(sFUN, mode = "function" )
+
+    # add prior colnames
+    parnames <- attr(FUN, 'par')
+    if (is.vector(prior)) prior <- t(prior)
+    colnames(prior) <- parnames
+    ############################################################################
+
     methods_optim  <- c('BFGS','CG','Nelder-Mead', 'L-BFGS-B', 'nlm', 'nlminb', 'ucminf')
     methods_optimx <- c('spg','Rcgmin','Rvmmin', 'newuoa','bobyqa','nmkb','hjkb')
 
@@ -63,13 +68,6 @@ optim_pheno <- function(
     if (missing(ylu))        ylu <- range(y, na.rm = TRUE)
     A <- diff(ylu) # y amplitude
 
-    if (use.cpp) sFUN = gsub("\\.", "_", sFUN )
-    FUN <- get(sFUN, mode = "function" )
-    # add prior colnames
-    parnames <- attr(FUN, 'par')
-    if (is.vector(prior)) prior <- t(prior)
-
-    colnames(prior) <- parnames
     ############################################################################
 
     fits <- list()
@@ -87,7 +85,7 @@ optim_pheno <- function(
     for (i in 1:iters){
         ws[[i]] <- w
         # pass verbose for optimx optimization methods selection
-        opt.df  <- I_optimFUN(prior, FUN, y, t, tout, method = method, w = w, verbose = verbose, ...)
+        opt.df  <- I_optimFUN(prior, FUN, y, t, method = method, w = w, verbose = verbose, ...)
         # print(opt.df)
         # colnames(opt.df) <- c(parnames, colnames(opt.df)[(length(parnames) + 1):ncol(opt.df)])
         if (verbose){
@@ -105,7 +103,7 @@ optim_pheno <- function(
             if (opt.df$convcode[best] != 0) {
                 # repeat with more maximum iterations if it did not converge
                 par <- opt.df[best, parnames] %>% as.matrix #best par generally
-                opt <- I_optimFUN(par, FUN, y, t, tout, method, w = w, verbose = verbose, ...)
+                opt <- I_optimFUN(par, FUN, y, t, method, w = w, verbose = verbose, ...)
             } else { #if (opt.df$convcode[best] == 0)
                 opt <- opt.df[best, ]
             }
@@ -117,15 +115,14 @@ optim_pheno <- function(
                 par   <- opt[, parnames] %>% as.matrix()
                 # put opt par into prior for the next iteration
                 prior <- rbind(prior[1:(nrow(prior)-1), ], par, deparse.level = 0) %>% unique() %>% set_rownames(NULL)
-                ypred <- FUN(par, tout)
+                FUN(par, tout, ypred)
                 # too much missing values
                 # if (sum(w == 0)/length(w) > 0.5) ypred <- ypred*NA
 
-                # fixed 04 March, 2018;
+                # to adapt wTS, set iter = i-1; #20180910
+                # nptperyear, wfact = 0.5)
                 w <- tryCatch(
-                    # to adapt wTS, set iter = i-1; #20180910
                     wFUN(y, FUN(par, t), w, i, nptperyear, ...),
-                    #nptperyear, wfact = 0.5)
                     error = function(e) {
                         message(sprintf('[%s]: %s', sFUN, e$message))
                         return(w) #return original w

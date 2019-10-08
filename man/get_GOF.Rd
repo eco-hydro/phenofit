@@ -15,13 +15,13 @@ get_GOF.fFITs(fFITs)
 \item{fFITs}{\code{fFITs} object returned by \code{\link[=curvefit]{curvefit()}}.}
 }
 \value{
-\describe{
-\item{meth}{The name of fine curve fitting method}
-\item{RMSE}{Root Mean Square Error}
-\item{NSE}{Nash-Sutcliffe model efficiency coefficient}
-\item{R}{Pearson-Correlation}
-\item{pvalue}{pvalue of \code{R}}
-\item{n}{The number of observations}
+\itemize{
+\item \code{meth}: The name of fine curve fitting method
+\item \code{RMSE}: Root Mean Square Error
+\item \code{NSE} : Nash-Sutcliffe model efficiency coefficient
+\item \code{R}   : Pearson-Correlation
+\item \code{pvalue}: pvalue of \code{R}
+\item \code{n}   : The number of observations
 }
 }
 \description{

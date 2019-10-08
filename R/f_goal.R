@@ -1,49 +1,29 @@
 #' Goal function of fine curve fitting methods
 #'
 #' @inheritParams optim_pheno
-#' @inheritParams Logistic
+#' @inheritParams doubleLog_Beck
 #'
-#' @param fun A curve fitting function, can be one of `doubleAG`, 
-#' `doubleLog.Beck`, `doubleLog.Elmore`, `doubleLog.Gu`, 
-#' `doubleLog.Klos`, `doubleLog.Zhang`, see [Logistic()] 
+#' @param fun A curve fitting function, can be one of `doubleAG`,
+#' `doubleLog.Beck`, `doubleLog.Elmore`, `doubleLog.Gu`,
+#' `doubleLog.Klos`, `doubleLog.Zhang`, see [Logistic()]
 #' for details.
 #' @param ... others will be ignored.
 #'
 #' @return RMSE Root Mean Square Error of curve fitting values.
-#' 
-#' @examples
-#' library(phenofit)
-#' # simulate vegetation time-series
-#' fFUN = doubleLog.Beck
-#' par  = c(
-#'     mn  = 0.1,
-#'     mx  = 0.7,
-#'     sos = 50,
-#'     rsp = 0.1,
-#'     eos = 250,
-#'     rau = 0.1)
-#' t    <- seq(1, 365, 8)
-#' tout <- seq(1, 365, 1)
-#' y <- fFUN(par, t)
-#' 
-#' par0 <- c(
-#'     mn  = 0.15,
-#'     mx  = 0.65,
-#'     sos = 100,
-#'     rsp = 0.12,
-#'     eos = 200,
-#'     rau = 0.12)
-#' f_goal(par0, y, t, fFUN)
+#'
+#' @example man/examples/ex-f_goal.R
+#'
 #' @export
 f_goal <- function(
-    par, y, t,
-    fun,
-    w, ylu, ...)
+    par, fun, y, t,
+    pred, w, ylu, ...)
 {
+    if (missing(pred)) pred = y*0
     # FUN <- match.fun(fun)
     if (!all(is.finite(par))) return(9999)
 
-    pred <- fun(par, t = t)
+    # fun is c++ function, pred address will be reused
+    fun(par, t, pred)
     # If have no finite values, return 9999
     if (!all(is.finite(pred))) return(9999) # for Klos fitting
 
@@ -81,8 +61,7 @@ f_goal <- function(
 }
 
 f_goal2 <- function(
-    par, y, t,
-    fun,
+    par, fun, y, t, pred,
     w = NULL, ylu = NULL, ...){
-    f_goal_cpp(par, y, t, fun, w, ylu)
+    f_goal_cpp(par, fun, y, t, pred, w, ylu)
 }

@@ -24,14 +24,14 @@ extern SEXP _phenofit_smooth_wSG(SEXP, SEXP, SEXP, SEXP);
 extern SEXP _phenofit_wTSM_cpp(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP _phenofit_movmean(SEXP, SEXP, SEXP, SEXP);
 
-extern SEXP _phenofit_f_goal_cpp(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP _phenofit_logistic(SEXP, SEXP);
-extern SEXP _phenofit_doubleLog_Zhang(SEXP, SEXP);
-extern SEXP _phenofit_doubleLog_AG(SEXP, SEXP);
-extern SEXP _phenofit_doubleLog_Beck(SEXP, SEXP);
-extern SEXP _phenofit_doubleLog_Elmore(SEXP, SEXP);
-extern SEXP _phenofit_doubleLog_Gu(SEXP, SEXP);
-extern SEXP _phenofit_doubleLog_Klos(SEXP, SEXP);
+extern SEXP _phenofit_f_goal_cpp(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
+extern SEXP _phenofit_logistic(SEXP, SEXP, SEXP);
+extern SEXP _phenofit_doubleLog_Zhang(SEXP, SEXP, SEXP);
+extern SEXP _phenofit_doubleLog_AG(SEXP, SEXP, SEXP);
+extern SEXP _phenofit_doubleLog_Beck(SEXP, SEXP, SEXP);
+extern SEXP _phenofit_doubleLog_Elmore(SEXP, SEXP, SEXP);
+extern SEXP _phenofit_doubleLog_Gu(SEXP, SEXP, SEXP);
+extern SEXP _phenofit_doubleLog_Klos(SEXP, SEXP, SEXP);
 
 static const R_CMethodDef CEntries[] = {
     CALLDEF(smooth2, 8),
@@ -48,14 +48,14 @@ static const R_CallMethodDef CallEntries[] = {
     CALLDEF(_phenofit_wTSM_cpp  , 6),
     CALLDEF(_phenofit_movmean   , 4),
 
-    CALLDEF(_phenofit_f_goal_cpp, 6),
-    CALLDEF(_phenofit_logistic        , 2),
-    CALLDEF(_phenofit_doubleLog_Zhang , 2),
-    CALLDEF(_phenofit_doubleLog_AG    , 2),
-    CALLDEF(_phenofit_doubleLog_Beck  , 2),
-    CALLDEF(_phenofit_doubleLog_Elmore, 2),
-    CALLDEF(_phenofit_doubleLog_Gu    , 2),
-    CALLDEF(_phenofit_doubleLog_Klos  , 2),
+    CALLDEF(_phenofit_f_goal_cpp, 7),
+    CALLDEF(_phenofit_logistic        , 3),
+    CALLDEF(_phenofit_doubleLog_Zhang , 3),
+    CALLDEF(_phenofit_doubleLog_AG    , 3),
+    CALLDEF(_phenofit_doubleLog_Beck  , 3),
+    CALLDEF(_phenofit_doubleLog_Elmore, 3),
+    CALLDEF(_phenofit_doubleLog_Gu    , 3),
+    CALLDEF(_phenofit_doubleLog_Klos  , 3),
     {NULL, NULL, 0}
 };
 
