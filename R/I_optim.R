@@ -65,6 +65,9 @@
 #' @export
 I_optim <- function(prior, FUN, y, t, tout, method = "BFGS", fn = f_goal, ...)
 {
+    # numeric into row vector
+    if (is.vector(prior)) prior <- t(prior)
+
     res <- vector("list", length(method)) %>% set_names(method)
 
     for (i in seq_along(method)){
@@ -83,7 +86,6 @@ I_optim <- function(prior, FUN, y, t, tout, method = "BFGS", fn = f_goal, ...)
 
         # optimize parameters
         # browser()
-
         opt.lst <- alply(prior, 1, optFUN, method = meth,
             objective = fn, fun = FUN, y = y, t = t, ...)
 

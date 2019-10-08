@@ -3,7 +3,7 @@
 \name{FitDL}
 \alias{FitDL}
 \alias{FitDL.Zhang}
-\alias{FitAG}
+\alias{FitDL.AG}
 \alias{FitDL.Beck}
 \alias{FitDL.Elmore}
 \alias{FitDL.Gu}
@@ -12,7 +12,7 @@
 \usage{
 FitDL.Zhang(y, t = index(y), tout = t, method = "nlm", w, ...)
 
-FitAG(y, t = index(y), tout = t, method = "nlminb", w, ...)
+FitDL.AG(y, t = index(y), tout = t, method = "nlminb", w, ...)
 
 FitDL.Beck(y, t = index(y), tout = t, method = "nlminb", w, ...)
 
@@ -36,12 +36,12 @@ FitDL.Klos(y, t = index(y), tout = t, method = "BFGS", w, ...)
 \item{...}{other paraters passed to \code{\link[=optim_pheno]{optim_pheno()}}.}
 }
 \value{
-\describe{
-\item{tout}{The time of output curve fitting time-series.}
-\item{zs}{Smoothed vegetation time-series of every iteration.}
-\item{ws}{Weights of every iteration.}
-\item{par}{Final optimized parameter of fine fitting.}
-\item{fun}{The name of fine fitting.}
+\itemize{
+\item \code{tout}: The time of output curve fitting time-series.
+\item \code{zs}  : Smoothed vegetation time-series of every iteration.
+\item \code{ws}  : Weights of every iteration.
+\item \code{par} : Final optimized parameter of fine fitting.
+\item \code{fun} : The name of fine fitting.
 }
 }
 \description{
@@ -52,19 +52,13 @@ time-series in every growing season.
 library(phenofit)
 # simulate vegetation time-series
 fFUN = doubleLog.Beck
-par  = c(
-    mn  = 0.1,
-    mx  = 0.7,
-    sos = 50,
-    rsp = 0.1,
-    eos = 250,
-    rau = 0.1)
+par  = c( mn  = 0.1, mx  = 0.7, sos = 50, rsp = 0.1, eos = 250, rau = 0.1)
 t    <- seq(1, 365, 8)
 tout <- seq(1, 365, 1)
 y <- fFUN(par, t)
 methods <- c("AG", "Beck", "Elmore", "Gu", "Zhang")
 
-r <- FitAG(y, t, tout)
+r <- FitDL.AG(y, t, tout)
 plot(t, y)
 lines(tout, r$zs$iter2, col = "red")
 legend('topright', c('Original time-series', 'AG smoothed'), 
@@ -76,16 +70,10 @@ legend('topright', c('Original time-series', 'AG smoothed'),
 2006. Improved monitoring of vegetation dynamics at very high latitudes:
 A new method using MODIS NDVI. Remote Sens. Environ.
 https://doi.org/10.1016/j.rse.2005.10.021.
-}
-
-\enumerate{
 \item Elmore, A.J., Guinn, S.M., Minsley, B.J., Richardson, A.D., 2012.
 Landscape controls on the timing of spring, autumn, and growing season
 length in mid-Atlantic forests. Glob. Chang. Biol. 18, 656-674.
 https://doi.org/10.1111/j.1365-2486.2011.02521.x. \cr
-}
-
-\enumerate{
 \item Gu, L., Post, W.M., Baldocchi, D.D., Black, TRUE.A., Suyker, A.E., Verma,
 S.B., Vesala, TRUE., Wofsy, S.C., 2009. Characterizing the Seasonal Dynamics
 of Plant Community Photosynthesis Across a Range of Vegetation Types,

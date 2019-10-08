@@ -36,20 +36,10 @@ optim_fFUN <- function(optFUN, objective){
     opt
 }
 
-# # visualization
-# df   <- map(opts, "ysim") %>% as.data.frame() %>% cbind(t, y, .)
-# pdat <- melt(df, c("t", "y"), variable.name = "optFUN")
-#
-# ggplot(pdat) +
-#     geom_point(data = data.frame(t, y), aes(t, y), size = 2) +
-#     geom_line(aes(t, value, color = optFUN), size = 0.9)
-
-
 test_that("optFUNs works", {
     # 1. test for error situation
     # f_goal # goal function
     opts <- lapply(optFUNs, optim_fFUN, NULL)
-
     convcode <- map_dbl(opts, "convcode")
     expect_equal(convcode, rep(9999, length(optFUNs)))
 

@@ -2,12 +2,9 @@
 % Please edit documentation in R/f_goal.R
 \name{f_goal}
 \alias{f_goal}
-\alias{f_goal_r}
 \title{Goal function of fine curve fitting methods}
 \usage{
-f_goal(par, y, t, fun, w = NULL, ylu = NULL, ...)
-
-f_goal_r(par, y, t, fun, w, ylu, ...)
+f_goal(par, y, t, fun, w, ylu, ...)
 }
 \arguments{
 \item{par}{A vector of parameters}

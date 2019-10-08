@@ -5,7 +5,7 @@
 \title{optim_pheno}
 \usage{
 optim_pheno(prior, sFUN, y, t, tout, method, w, nptperyear, ylu,
-  iters = 2, wFUN = wTSM, verbose = FALSE, ...)
+  iters = 2, wFUN = wTSM, use.cpp = FALSE, verbose = FALSE, ...)
 }
 \arguments{
 \item{prior}{A vector of initial values for the parameters for which optimal
@@ -19,10 +19,9 @@ values are to be found. \code{prior} is suggested giving a column name.}
 
 \item{tout}{Corresponding doy of prediction.}
 
-\item{method}{The name of optimization method to solve fine fitting, passed
-to \code{\link[=I_optim]{I_optim()}} or \code{\link[=I_optimx]{I_optimx()}}.
-\code{I_optim} supports \code{'BFGS','CG','Nelder-Mead', 'L-BFGS-B', 'nlm', 'nlminb', 'ucminf'};
-\code{I_optimx} supports \code{'spg','Rcgmin','Rvmmin', 'newuoa','bobyqa','nmkb','hjkb'}.}
+\item{method}{The name of optimization method to solve fine fitting, one of
+\code{'BFGS','CG','Nelder-Mead', 'L-BFGS-B', 'nlm', 'nlminb', 'ucminf'} and
+\code{'spg','Rcgmin','Rvmmin', 'newuoa','bobyqa','nmkb','hjkb'}.}
 
 \item{w}{(optional) Numeric vector, weights of \code{y}. If not specified,
 weights of all \code{NA} values will be \code{wmin}, the others will be 1.0.}
@@ -39,6 +38,8 @@ range of \code{ylu}.}
 \item{wFUN}{weights updating function, can be one of 'wTSM', 'wChen' and
 'wBisquare'.}
 
+\item{use.cpp}{If true, double logistics fucntions in Rcpp format will be used.}
+
 \item{verbose}{Whether to display intermediate variables?}
 
 \item{...}{other parameters passed to \code{\link[=I_optim]{I_optim()}} or \code{\link[=I_optimx]{I_optimx()}}.}
@@ -49,4 +50,39 @@ fFIT object, see \code{\link[=fFIT]{fFIT()}} for details.
 \description{
 Interface of optimization functions for double logistics and other parametric
 curve fitting functions.
+}
+\examples{
+# library(magrittr)
+# library(purrr)
+
+# simulate vegetation time-series
+FUN = doubleLog.Beck
+par  = c( mn  = 0.1 , mx  = 0.7 , sos = 50 , rsp = 0.1 , eos = 250, rau = 0.1)
+par0 = c( mn  = 0.15, mx  = 0.65, sos = 100, rsp = 0.12, eos = 200, rau = 0.12)
+
+t    <- seq(1, 365, 8)
+tout <- seq(1, 365, 1)
+y <- FUN(par, t)
+
+opt1 <- I_optim(par0, FUN, y, t, tout, c("nlminb")) # "BFGS", "ucminf", "nlm",
+# opt2 <- I_optimx(prior, fFUN, y, t, tout, )
+
+methods = c("BFGS", "ucminf", "nlm", "nlminb")[4]
+r <- optim_pheno(par0, "doubleLog.Beck", y, t, tout, method = methods,
+                 nptperyear = 46, iters = 2, wFUN = wTSM,
+                 use.cpp = FALSE, verbose = FALSE)
+# method = "BFGS"
+# sFUN   = "doubleLog.Zhang" # doubleLog.Beck
+# par0 <- c(t0 = 100, par0)
+# rbenchmark::benchmark(
+#   r1 = optim_pheno(par0, sFUN, y, t, tout, method ,
+#               nptperyear = 46, iters = 2, wFUN = wTSM,
+#               use.cpp = FALSE, verbose = FALSE),
+#   r2 = optim_pheno(par0, sFUN, y, t, tout, method,
+#               nptperyear = 46, iters = 2, wFUN = wTSM,
+#               use.cpp = TRUE, verbose = FALSE)
+# )
+}
+\seealso{
+\code{\link[=FitDL]{FitDL()}}
 }

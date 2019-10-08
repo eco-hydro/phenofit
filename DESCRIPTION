@@ -1,7 +1,7 @@
 Package: phenofit
 Type: Package
 Title: Extract Remote Sensing Vegetation Phenology 
-Version: 0.2.5-3
+Version: 0.2.6
 Authors@R: c(
     person("Dongdong", "Kong", role = c("aut", "cre"), email = "kongdd.sysu@gmail.com"),
     person("Jianjian", "Cui", role = c("aut"), email = "cuijj6@mail2.sysu.edu.cn"),
@@ -40,9 +40,10 @@ Imports: Rcpp,
     grDevices, utils, stats,
     shiny, jsonlite, 
     foreach, iterators
-Suggests: knitr,
+Suggests: 
+    knitr,
     rmarkdown,
-    testthat
+    testthat (>= 2.1.0)
 URL: https://github.com/kongdd/phenofit
 BugReports: https://github.com/kongdd/phenofit/issues
 Roxygen: list(markdown = TRUE)

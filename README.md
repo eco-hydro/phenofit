@@ -23,11 +23,11 @@ package: `phenofit`
 
 ***Task lists***
 
-  - [ ] Test the performance of `phenofit` in multiple growing season regions (e.g. the North China Plain);
+  - [ ] Illustration of multiple growing season usage (e.g. in the region of the North China Plain);
+  - [ ] Uncertainty analysis of curve fitting and phenological metrics;
   - [x] shiny app has been moved to [phenofit.shiny](https://github.com/kongdd/phenofit.shiny);
   - [x] Complete script automatic generating module in shinyapp;
-  - [x] `Rcpp` improve double logistics optimization efficiency by 27%;
-  - [ ] Uncertainty analysis of curve fitting and phenological metrics;
+  - [x] `Rcpp` improve double logistics optimization efficiency by 60%;
   - [x] Support spatial analysis;
   - [x] Support annual season in curve fitting;
   - [x] flexible fine fitting input ( original time-series or smoothed time-series by rough fitting).

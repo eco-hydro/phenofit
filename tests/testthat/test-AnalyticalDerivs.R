@@ -4,7 +4,7 @@ expect_silent({
     # attach gradient and hessian analytical function to curve fitting functions
     .dls <- lapply(
         c("doubleLog.Beck", "doubleLog.Elmore", "doubleLog.Gu",
-          "doubleLog.Klos", "doubleLog.Zhang", "doubleAG"),
+          "doubleLog.Klos", "doubleLog.Zhang", "doubleLog.AG"),
         function (FUN){
             # FUN <- deparse(substitute(fun))
             fun <- get(FUN)

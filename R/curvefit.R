@@ -20,7 +20,7 @@ phenonames <- c('TRS2.SOS', 'TRS2.EOS', 'TRS5.SOS', 'TRS5.EOS', 'TRS6.SOS', 'TRS
 #' @return fFITs S3 object, see [fFITs()] for details.
 #' 
 #' @seealso [fFITs()], 
-#' [FitAG()], [FitDL.Beck()], 
+#' [FitDL.AG()], [FitDL.Beck()], 
 #' [FitDL.Elmore()], [FitDL.Gu()], 
 #' [FitDL.Klos()], [FitDL.Zhang()]
 #' 
@@ -52,7 +52,7 @@ curvefit <- function(y, t = index(y), tout = t,
     params <- list(y, t, tout, optimFUN = I_optim, ...)
 
     # if ('spline' %in% methods) fit.spline <- splinefit(y, t, tout)
-    if ('AG'     %in% methods) fit.AG     <- do.call(FitAG,       c(params, method = "nlminb"))  #nlm
+    if ('AG'     %in% methods) fit.AG     <- do.call(FitDL.AG,    c(params, method = "nlminb"))  #nlm
     if ('Beck'   %in% methods) fit.Beck   <- do.call(FitDL.Beck,  c(params, method = "nlminb"))  #nlminb
     if ('Elmore' %in% methods) fit.Elmore <- do.call(FitDL.Elmore,c(params, method = "nlminb"))  #nlminb
 

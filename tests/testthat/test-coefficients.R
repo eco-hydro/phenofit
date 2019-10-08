@@ -30,6 +30,3 @@ test_that("CV, skewness and kurtosis works", {
     coef_skewness <- skewness(x)
     expect_equal(rep(NA_real_, 2), c(coef_kurtosis, coef_skewness))
 })
-
-
-

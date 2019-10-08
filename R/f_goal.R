@@ -38,15 +38,6 @@
 f_goal <- function(
     par, y, t,
     fun,
-    w = NULL, ylu = NULL, ...){
-    f_goal_cpp(par, y, t, fun, w, ylu)
-}
-
-#' @rdname f_goal
-#' @export
-f_goal_r <- function(
-    par, y, t,
-    fun,
     w, ylu, ...)
 {
     # FUN <- match.fun(fun)
@@ -55,14 +46,19 @@ f_goal_r <- function(
     pred <- fun(par, t = t)
     # If have no finite values, return 9999
     if (!all(is.finite(pred))) return(9999) # for Klos fitting
-    if (missing(w)) w <- rep(1, length(y))
 
-    if (!missing(ylu)){
-        # points out of ylu should be punished!
-        w[pred < ylu[1] | pred > ylu[2]] <- 0
-        # pred   <- check_ylu(pred, ylu)
+    if (!missing(w)) {
+        if (!missing(ylu)){
+            # points out of ylu should be punished!
+            w[pred < ylu[1] | pred > ylu[2]] <- 0
+            # pred   <- check_ylu(pred, ylu)
+        }
+        SSE  <- sum((y - pred)^2 * w)
+    } else {
+        SSE  <- sum((y - pred)^2)
     }
-    SSE  <- sum((y - pred)^2 * w)
+
+    # if (missing(w)) w <- rep(1, length(y))
     RMSE <- sqrt(SSE/length(y))
     # NSE  <- SSE/sum((y - mean(pred))^2)
 
@@ -82,4 +78,11 @@ f_goal_r <- function(
     # xpred_2 <- pred - ylu[1]; xpred_2[xpred_2 < 0] <- const
     # x_2     <- y     - ylu[1]; x_2[x_2 < 0] <- const
     return(RMSE)
+}
+
+f_goal2 <- function(
+    par, y, t,
+    fun,
+    w = NULL, ylu = NULL, ...){
+    f_goal_cpp(par, y, t, fun, w, ylu)
 }

@@ -13,8 +13,14 @@ t    <- seq(1, 365, 8)
 tout <- seq(1, 365, 1)
 y <- fFUN(par, t)
 
-methods <- c("AG", "Beck", "Elmore", "Gu", "Klos", "Zhang")
+methods <- c("AG", "Beck", "Elmore", "Gu", "Zhang", "Klos")
 suppressWarnings(fit <- curvefit(y, t, tout, methods))
+
+# rbenchmark::benchmark(
+#     fit1 <- curvefit(y, t, tout, methods[1:5]),
+#     fit2 <- curvefit(y, t, tout, methods[1:5], use.cpp = TRUE),
+#     replications = 10
+# )
 
 # test_that("curvefit works", {
 #     expect_silent(suppressWarnings(

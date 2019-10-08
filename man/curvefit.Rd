@@ -48,7 +48,7 @@ fFITs <- curvefit(y, t, tout, methods)
 }
 \seealso{
 \code{\link[=fFITs]{fFITs()}},
-\code{\link[=FitAG]{FitAG()}}, \code{\link[=FitDL.Beck]{FitDL.Beck()}},
+\code{\link[=FitDL.AG]{FitDL.AG()}}, \code{\link[=FitDL.Beck]{FitDL.Beck()}},
 \code{\link[=FitDL.Elmore]{FitDL.Elmore()}}, \code{\link[=FitDL.Gu]{FitDL.Gu()}},
 \code{\link[=FitDL.Klos]{FitDL.Klos()}}, \code{\link[=FitDL.Zhang]{FitDL.Zhang()}}
 }

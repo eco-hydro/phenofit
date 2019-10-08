@@ -32,11 +32,15 @@ opt1 <- I_optim(prior, fFUN, y, t, tout, c("nlminb")) # "BFGS", "ucminf", "nlm",
 # opt2 <- I_optimx(prior, fFUN, y, t, tout, c("BFGS", "ucminf", "nlm", "nlminb"))
 
 ## Not run:
-# mean: 130 ms
+# mean: 130 ms, 142.1741
 methods = c("BFGS", "ucminf", "nlm", "nlminb")
-microbenchmark::microbenchmark(
-  I_optim(prior, fFUN, y, t, tout, methods, fn = phenofit::f_goal),
-  I_optim(prior, fFUN, y, t, tout, methods, fn = phenofit::f_goal_r),
+# microbenchmark::microbenchmark(
+rbenchmark::benchmark(
+  I_optim(prior, doubleLog_Beck, y, t, tout, methods, fn = phenofit::f_goal),
+  I_optim(prior, doubleLog.Beck, y, t, tout, methods, fn = phenofit::f_goal),
+  # I_optim(prior, FUN = doubleLog_Beck, y, t, tout, methods, fn = phenofit::f_goal_r),
   # I_optimx(prior, fFUN, y, t, tout, c("BFGS", "ucminf", "nlm", "nlminb")),
-  times = 20
+  replications = 100
 )
+
+# 199.2704

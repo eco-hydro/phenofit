@@ -6,14 +6,87 @@
 
 using namespace Rcpp;
 
-// all_finite
-bool all_finite(NumericVector x);
-RcppExport SEXP _phenofit_all_finite(SEXP xSEXP) {
+// logistic
+NumericVector logistic(NumericVector par, NumericVector t);
+RcppExport SEXP _phenofit_logistic(SEXP parSEXP, SEXP tSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
-    rcpp_result_gen = Rcpp::wrap(all_finite(x));
+    Rcpp::traits::input_parameter< NumericVector >::type par(parSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type t(tSEXP);
+    rcpp_result_gen = Rcpp::wrap(logistic(par, t));
+    return rcpp_result_gen;
+END_RCPP
+}
+// doubleLog_Zhang
+NumericVector doubleLog_Zhang(NumericVector par, NumericVector t);
+RcppExport SEXP _phenofit_doubleLog_Zhang(SEXP parSEXP, SEXP tSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type par(parSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type t(tSEXP);
+    rcpp_result_gen = Rcpp::wrap(doubleLog_Zhang(par, t));
+    return rcpp_result_gen;
+END_RCPP
+}
+// doubleLog_AG
+NumericVector doubleLog_AG(NumericVector par, NumericVector t);
+RcppExport SEXP _phenofit_doubleLog_AG(SEXP parSEXP, SEXP tSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type par(parSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type t(tSEXP);
+    rcpp_result_gen = Rcpp::wrap(doubleLog_AG(par, t));
+    return rcpp_result_gen;
+END_RCPP
+}
+// doubleLog_Beck
+NumericVector doubleLog_Beck(NumericVector par, NumericVector t);
+RcppExport SEXP _phenofit_doubleLog_Beck(SEXP parSEXP, SEXP tSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type par(parSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type t(tSEXP);
+    rcpp_result_gen = Rcpp::wrap(doubleLog_Beck(par, t));
+    return rcpp_result_gen;
+END_RCPP
+}
+// doubleLog_Elmore
+NumericVector doubleLog_Elmore(NumericVector par, NumericVector t);
+RcppExport SEXP _phenofit_doubleLog_Elmore(SEXP parSEXP, SEXP tSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type par(parSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type t(tSEXP);
+    rcpp_result_gen = Rcpp::wrap(doubleLog_Elmore(par, t));
+    return rcpp_result_gen;
+END_RCPP
+}
+// doubleLog_Gu
+NumericVector doubleLog_Gu(NumericVector par, NumericVector t);
+RcppExport SEXP _phenofit_doubleLog_Gu(SEXP parSEXP, SEXP tSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type par(parSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type t(tSEXP);
+    rcpp_result_gen = Rcpp::wrap(doubleLog_Gu(par, t));
+    return rcpp_result_gen;
+END_RCPP
+}
+// doubleLog_Klos
+NumericVector doubleLog_Klos(NumericVector par, NumericVector t);
+RcppExport SEXP _phenofit_doubleLog_Klos(SEXP parSEXP, SEXP tSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type par(parSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type t(tSEXP);
+    rcpp_result_gen = Rcpp::wrap(doubleLog_Klos(par, t));
     return rcpp_result_gen;
 END_RCPP
 }

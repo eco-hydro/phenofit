@@ -10,7 +10,6 @@ using namespace Rcpp;
 //   http://adv-r.had.co.nz/Rcpp.html
 //   http://gallery.rcpp.org/
 //
-// [[Rcpp::export]]
 bool all_finite(NumericVector x) {
     bool ans = is_true(all(is_finite(x)));
     return ans;
