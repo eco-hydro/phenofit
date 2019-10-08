@@ -18,22 +18,19 @@ package: `phenofit`
   - A simple and stable growing season dividing methods was proposed
   - Provide a practical snow elimination method, based on Whittaker
   - 7 curve fitting methods and 4 phenology extraction methods
-  - We add parameters boundary for every curve fitting methods according
-    to their ecological meaning.
-  - `optimx` is used to select best optimization method for different
-    curve fitting methods.
+  - We add parameters boundary for every curve fitting methods according to their ecological meaning.
+  - `optimx` is used to select best optimization method for different curve fitting methods.
 
 ***Task lists***
 
   - [ ] Test the performance of `phenofit` in multiple growing season regions (e.g. the North China Plain);
-  - [ ] separate shiny application into a independent repository;
-  - [ ] Improve computational efficiency of fine fitting;
+  - [x] shiny app has been moved to [phenofit.shiny](https://github.com/kongdd/phenofit.shiny);
   - [x] Complete script automatic generating module in shinyapp;
+  - [x] `Rcpp` improve double logistics optimization efficiency by 27%;
   - [ ] Uncertainty analysis of curve fitting and phenological metrics;
   - [x] Support spatial analysis;
   - [x] Support annual season in curve fitting;
-  - [x] flexible fine fitting input ( original time-series or smoothed
-    time-series by rough fitting).
+  - [x] flexible fine fitting input ( original time-series or smoothed time-series by rough fitting).
   - [x] Asymmetric of Threshold method
 
 ![title](man/Figure/Figure1_phenofit_flowchart.svg)

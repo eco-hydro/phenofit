@@ -5,7 +5,7 @@
 \alias{I_optimx}
 \title{Interface of unified optimization functions.}
 \usage{
-I_optim(prior, FUN, y, t, tout, method = "BFGS", ...)
+I_optim(prior, FUN, y, t, tout, method = "BFGS", fn = f_goal, ...)
 
 I_optimx(prior, FUN, y, t, tout, method, verbose = FALSE, ...)
 }
@@ -21,7 +21,7 @@ values are to be found. \code{prior} is suggested giving a column name.}
 
 \item{tout}{Corresponding doy of prediction.}
 
-\item{method}{\code{method} can be one of \code{'BFGS','CG','Nelder-Mead', 'L-BFGS-B', 'nlm', 'nlminb', 'ucminf'}. \cr
+\item{method}{\code{method} can be some of \code{'BFGS','CG','Nelder-Mead', 'L-BFGS-B', 'nlm', 'nlminb', 'ucminf'}. \cr
 For \code{I_optimx}, other methods are also supported,
 e.g. \code{'spg','Rcgmin','Rvmmin', 'newuoa','bobyqa','nmkb','hjkb'}.}
 
@@ -56,8 +56,11 @@ NULL, or NA value.
 }
 }
 \description{
-Caution that \pkg{optimx} speed is not so satisfied. So \code{I_optim}
-is present.
+\pkg{optimx} speed is not satisfied. So \code{I_optim} is present.
+\itemize{
+\item \code{I_optim}: Interface of unified optimization functions.
+\item \code{I_optimx}: deprecated, which is about 10 times slower than \code{I_optim}.
+}
 }
 \examples{
 library(ggplot2)
@@ -93,12 +96,13 @@ prior <- as.matrix(par0) \%>\% t() \%>\% rbind(., .)
 opt1 <- I_optim(prior, fFUN, y, t, tout, c("BFGS", "ucminf", "nlm", "nlminb"))
 opt2 <- I_optimx(prior, fFUN, y, t, tout, c("BFGS", "ucminf", "nlm", "nlminb"))
 
-# microbenchmark::microbenchmark(
-#     I_optim(prior, fFUN, y, t, tout, c("BFGS", "ucminf", "nlm", "nlminb")),
-#     I_optimx(prior, fFUN, y, t, tout, c("BFGS", "ucminf", "nlm", "nlminb")),
-#     times = 2
-# )
-
+\dontrun{
+microbenchmark::microbenchmark(
+    I_optim(prior, fFUN, y, t, tout, c("BFGS", "ucminf", "nlm", "nlminb")),
+    I_optimx(prior, fFUN, y, t, tout, c("BFGS", "ucminf", "nlm", "nlminb")),
+    times = 2
+)
+}
 }
 \seealso{
 \code{\link[stats:optim]{stats::optim()}}, \code{\link[stats:nlminb]{stats::nlminb()}},

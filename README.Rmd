@@ -34,14 +34,14 @@ A state-of-the-art **remote sensing vegetation phenology** extraction package: `
 ***Task lists***
 
 - [ ] Test the performance of `phenofit` in multiple growing season regions (e.g. the North China Plain);
-- [ ] separate shiny application into a independent repository;
-- [ ] Improve computational efficiency of fine fitting;
-- [x] Complete script automatic generating module of shinyapp;
+- [x] shiny app has been moved to [phenofit.shiny](https://github.com/kongdd/phenofit.shiny);
+- [x] Complete script automatic generating module in shinyapp;
+- [x] `Rcpp` improve double logistics optimization efficiency by 27%;
 - [ ] Uncertainty analysis of curve fitting and phenological metrics;
 - [x] Support spatial analysis;
 - [x] Support annual season in curve fitting;
 - [x] flexible fine fitting input ( original time-series or smoothed time-series by rough fitting).
-- [x] Asymmetric of Threshold method 
+- [x] Asymmetric of Threshold method
 
 ![title](man/Figure/Figure1_phenofit_flowchart.svg)   
 
@@ -55,30 +55,6 @@ You can install phenofit from github with:
 # install.packages("devtools")
 devtools::install_github("kongdd/phenofit")
 ```
-
-Run `shinyapp`:
-```{r, eval = FALSE}
-shiny::runGitHub("phenofit", "kongdd", subdir = "inst/shiny/phenofit")
-# Or run locally
-shiny::runApp(system.file("shiny/phenofit", package = "phenofit"))
-```
-
-Running in docker: 
-```bash
-docker run -it -p 8787:8787 `
-    -v E:/ubuntu:/ubuntu `
-    -v E:/ubuntu/site-library:/usr/local/lib/R/site-library `
-    -v E:/ubuntu/etc:/usr/local/lib/R/etc `
-    -v E:/github:/github `
-    --name R-3.5.3 kongdd/phenofit bash 
-
-# powershell docker rm @(docker ps -aq)
-# powershell docker rmi @(docker images -f "dangling=true" -q)
-```
-
-<!-- ![](man/Figure/phenofit_shiny.png)
-*<u>Figure 2. Shiny interface of `phenofit`.</u>*
- -->
 
 # Example
 

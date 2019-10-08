@@ -6,6 +6,33 @@
 
 using namespace Rcpp;
 
+// all_finite
+bool all_finite(NumericVector x);
+RcppExport SEXP _phenofit_all_finite(SEXP xSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
+    rcpp_result_gen = Rcpp::wrap(all_finite(x));
+    return rcpp_result_gen;
+END_RCPP
+}
+// f_goal_cpp
+double f_goal_cpp(NumericVector par, NumericVector y, NumericVector t, Function fun, Nullable<NumericVector> w, Nullable<NumericVector> ylu);
+RcppExport SEXP _phenofit_f_goal_cpp(SEXP parSEXP, SEXP ySEXP, SEXP tSEXP, SEXP funSEXP, SEXP wSEXP, SEXP yluSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type par(parSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type y(ySEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type t(tSEXP);
+    Rcpp::traits::input_parameter< Function >::type fun(funSEXP);
+    Rcpp::traits::input_parameter< Nullable<NumericVector> >::type w(wSEXP);
+    Rcpp::traits::input_parameter< Nullable<NumericVector> >::type ylu(yluSEXP);
+    rcpp_result_gen = Rcpp::wrap(f_goal_cpp(par, y, t, fun, w, ylu));
+    return rcpp_result_gen;
+END_RCPP
+}
 // fix_dt
 void fix_dt(DataFrame d);
 RcppExport SEXP _phenofit_fix_dt(SEXP dSEXP) {

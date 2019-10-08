@@ -2,12 +2,14 @@
 #' @title Interface of unified optimization functions.
 #'
 #' @description
-#' Caution that \pkg{optimx} speed is not so satisfied. So `I_optim`
-#' is present.
+#' \pkg{optimx} speed is not satisfied. So `I_optim` is present.
+#'
+#' - `I_optim`: Interface of unified optimization functions.
+#' - `I_optimx`: deprecated, which is about 10 times slower than `I_optim`.
 #'
 #' @inheritParams optim_pheno
 #' @param FUN Fine curve fitting function for goal function [f_goal()].
-#' @param method `method` can be one of `'BFGS','CG','Nelder-Mead',
+#' @param method `method` can be some of `'BFGS','CG','Nelder-Mead',
 #' 'L-BFGS-B', 'nlm', 'nlminb', 'ucminf'`. \cr
 #' For `I_optimx`, other methods are also supported,
 #' e.g. `'spg','Rcgmin','Rvmmin', 'newuoa','bobyqa','nmkb','hjkb'`.
@@ -22,7 +24,7 @@
 #' library(ggplot2)
 #' library(magrittr)
 #' library(purrr)
-#' 
+#'
 #' # simulate vegetation time-series
 #' fFUN = doubleLog.Beck
 #' par = c(
@@ -35,7 +37,7 @@
 #' t    <- seq(1, 365, 8)
 #' tout <- seq(1, 365, 1)
 #' y <- fFUN(par, t)
-#' 
+#'
 #' # initial parameter
 #' par0 <- c(
 #'   mn  = 0.15,
@@ -44,29 +46,30 @@
 #'   rsp = 0.12,
 #'   eos = 200,
 #'   rau = 0.12)
-#' 
+#'
 #' objective <- f_goal # goal function
 #' optFUNs   <- c("opt_ucminf", "opt_nlminb", "opt_nlm", "opt_optim") %>% set_names(., .)
 #' prior <- as.matrix(par0) %>% t() %>% rbind(., .)
-#' 
+#'
 #' opt1 <- I_optim(prior, fFUN, y, t, tout, c("BFGS", "ucminf", "nlm", "nlminb"))
 #' opt2 <- I_optimx(prior, fFUN, y, t, tout, c("BFGS", "ucminf", "nlm", "nlminb"))
-#' 
-#' # microbenchmark::microbenchmark(
-#' #     I_optim(prior, fFUN, y, t, tout, c("BFGS", "ucminf", "nlm", "nlminb")),
-#' #     I_optimx(prior, fFUN, y, t, tout, c("BFGS", "ucminf", "nlm", "nlminb")),
-#' #     times = 2
-#' # )
-#' 
+#'
+#' \dontrun{
+#' microbenchmark::microbenchmark(
+#'     I_optim(prior, fFUN, y, t, tout, c("BFGS", "ucminf", "nlm", "nlminb")),
+#'     I_optimx(prior, fFUN, y, t, tout, c("BFGS", "ucminf", "nlm", "nlminb")),
+#'     times = 2
+#' )
+#' }
 #' @keywords internal
 #' @export
-I_optim <- function(prior, FUN, y, t, tout, method = "BFGS", ...)
+I_optim <- function(prior, FUN, y, t, tout, method = "BFGS", fn = f_goal, ...)
 {
     res <- vector("list", length(method)) %>% set_names(method)
 
     for (i in seq_along(method)){
         meth <- method[i]
-        
+
         # Get optimization function
         optFUN_name <- ""
         if (meth %in% c("Nelder-Mead", "BFGS", "CG", "L-BFGS-B")){
@@ -78,10 +81,11 @@ I_optim <- function(prior, FUN, y, t, tout, method = "BFGS", ...)
         }
         optFUN <- get(optFUN_name, mode = "function")
 
-        # browser()
         # optimize parameters
+        # browser()
+
         opt.lst <- alply(prior, 1, optFUN, method = meth,
-            objective = f_goal, fun = FUN, y = y, t = t, ...)
+            objective = fn, fun = FUN, y = y, t = t, ...)
 
         opt.df <- ldply(opt.lst, function(opt){
             with(opt,
@@ -107,7 +111,7 @@ methods <- c(
 #'
 #' @rdname I_optim
 #' @import optimx
-#' 
+#'
 #' @keywords internal
 #' @export
 I_optimx <- function(prior, FUN, y, t, tout, method, verbose = FALSE, ...){
@@ -121,7 +125,6 @@ I_optimx <- function(prior, FUN, y, t, tout, method, verbose = FALSE, ...){
         do.call(rbind, .) %>% set_rownames(NULL)
     opt.df$kkt1 <- NULL
     opt.df$kkt2 <- NULL
-
 
     if (verbose){
         opt.df$method <- methods
