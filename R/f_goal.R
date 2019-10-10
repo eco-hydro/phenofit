@@ -60,8 +60,8 @@ f_goal <- function(
     return(RMSE)
 }
 
-f_goal2 <- function(
-    par, fun, y, t, pred,
-    w = NULL, ylu = NULL, ...){
-    f_goal_cpp(par, fun, y, t, pred, w, ylu)
-}
+# f_goal2 <- function(
+#     par, fun, y, t, pred,
+#     w = NULL, ylu = NULL, ...){
+#     f_goal_cpp(par, fun, y, t, pred, w, ylu)
+# }

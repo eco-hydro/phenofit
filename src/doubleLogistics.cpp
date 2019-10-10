@@ -3,7 +3,7 @@ using namespace Rcpp;
 
 
 // [[Rcpp::export]]
-void logistic( NumericVector par, NumericVector t, NumericVector pred){
+void clogistic( NumericVector par, NumericVector t, NumericVector pred){
     double mn  = par[0];
     double mx  = par[1];
     double sos = par[2];
@@ -15,7 +15,7 @@ void logistic( NumericVector par, NumericVector t, NumericVector pred){
 }
 
 // [[Rcpp::export]]
-void doubleLog_Zhang( NumericVector par, NumericVector t, NumericVector pred) {
+void cdoubleLog_Zhang( NumericVector par, NumericVector t, NumericVector pred) {
     double t0  = par[0];
     double mn  = par[1];
     double mx  = par[2];
@@ -35,7 +35,7 @@ void doubleLog_Zhang( NumericVector par, NumericVector t, NumericVector pred) {
 }
 
 // [[Rcpp::export]]
-void doubleLog_AG( NumericVector par, NumericVector t, NumericVector pred) {
+void cdoubleLog_AG( NumericVector par, NumericVector t, NumericVector pred) {
     double t0  = par[0];
     double mn  = par[1];
     double mx  = par[2];
@@ -54,7 +54,7 @@ void doubleLog_AG( NumericVector par, NumericVector t, NumericVector pred) {
 
 
 // [[Rcpp::export]]
-void doubleLog_Beck( NumericVector par, NumericVector t, NumericVector pred) {
+void cdoubleLog_Beck( NumericVector par, NumericVector t, NumericVector pred) {
     double mn  = par[0];
     double mx  = par[1];
     double sos = par[2];
@@ -71,7 +71,7 @@ void doubleLog_Beck( NumericVector par, NumericVector t, NumericVector pred) {
 }
 
 // [[Rcpp::export]]
-void doubleLog_Elmore( NumericVector par, NumericVector t, NumericVector pred) {
+void cdoubleLog_Elmore( NumericVector par, NumericVector t, NumericVector pred) {
     double mn   = par[0];
     double mx   = par[1];
     double sos  = par[2]; // SOS
@@ -88,7 +88,7 @@ void doubleLog_Elmore( NumericVector par, NumericVector t, NumericVector pred) {
 }
 
 // [[Rcpp::export]]
-void doubleLog_Gu( NumericVector par, NumericVector t, NumericVector pred) {
+void cdoubleLog_Gu( NumericVector par, NumericVector t, NumericVector pred) {
     double y0  = par[0];
     double a1  = par[1];
     double a2  = par[2];
@@ -106,7 +106,7 @@ void doubleLog_Gu( NumericVector par, NumericVector t, NumericVector pred) {
 }
 
 // [[Rcpp::export]]
-void doubleLog_Klos( NumericVector par, NumericVector t, NumericVector pred) {
+void cdoubleLog_Klos( NumericVector par, NumericVector t, NumericVector pred) {
     double a1 = par[0];
     double a2 = par[1];
     double b1 = par[2];
@@ -128,8 +128,8 @@ void doubleLog_Klos( NumericVector par, NumericVector t, NumericVector pred) {
 }
 
 /*** R
-funname = "doubleLog.Beck"
-FUN = doubleLog.Beck
+funname = "cdoubleLog.Beck"
+FUN = cdoubleLog.Beck
 par = c(
     mn  = 0.1,
     mx  = 0.7,
@@ -150,14 +150,14 @@ par = c(
     rsp = 0.1,
     eos = 250,
     rau = 0.1)
-doubleLog.Zhang(par, t)
+cdoubleLog.Zhang(par, t)
 ypred <- y*0
-doubleLog_Zhang(par, t, ypred)
+cdoubleLog_Zhang(par, t, ypred)
 #
 # rbenchmark::benchmark(
-#     doubleLog.Zhang(par, t),
-#     doubleLog_Zhang(par, t),
-#     doubleLog_Zhang2(par, t),
+#     cdoubleLog.Zhang(par, t),
+#     cdoubleLog_Zhang(par, t),
+#     cdoubleLog_Zhang2(par, t),
 #     replications = 1000000
 # )
 */

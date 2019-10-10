@@ -16,51 +16,52 @@ doubleLogMain <- function(.NAME, par, t, pred) {
 #' @keywords internal
 #' @export
 logistic <- function(par, t, pred) {
-    doubleLogMain(`_phenofit_logistic`, par, t, pred)
+    doubleLogMain(`_phenofit_clogistic`, par, t, pred)
 }
 
 #' @rdname logistic
 #' @export
 doubleLog_Zhang <- function(par, t, pred) {
-    doubleLogMain(`_phenofit_doubleLog_Zhang`, par, t, pred)
+    doubleLogMain(`_phenofit_cdoubleLog_Zhang`, par, t, pred)
 }
 
 #' @rdname logistic
 #' @export
 doubleLog_AG <- function(par, t, pred) {
-    doubleLogMain(`_phenofit_doubleLog_AG`, par, t, pred)
+    doubleLogMain(`_phenofit_cdoubleLog_AG`, par, t, pred)
 }
 
 #' @rdname logistic
 #' @export
 doubleLog_Beck <- function(par, t, pred) {
-    doubleLogMain(`_phenofit_doubleLog_Beck`, par, t, pred)
+    doubleLogMain(`_phenofit_cdoubleLog_Beck`, par, t, pred)
 }
 
 #' @rdname logistic
 #' @export
 doubleLog_Elmore <- function(par, t, pred) {
-    doubleLogMain(`_phenofit_doubleLog_Elmore`, par, t, pred)
+    doubleLogMain(`_phenofit_cdoubleLog_Elmore`, par, t, pred)
 }
 
 #' @rdname logistic
 #' @export
 doubleLog_Gu <- function(par, t, pred) {
-    doubleLogMain(`_phenofit_doubleLog_Gu`, par, t, pred)
+    doubleLogMain(`_phenofit_cdoubleLog_Gu`, par, t, pred)
 }
 
 #' @rdname logistic
 #' @export
 doubleLog_Klos <- function(par, t, pred) {
-    doubleLogMain(`_phenofit_doubleLog_Klos`, par, t, pred)
+    doubleLogMain(`_phenofit_cdoubleLog_Klos`, par, t, pred)
 }
 
-f_goal_cpp <- function(par, fun, y, t, ypred, w = NULL, ylu = NULL) {
+#' @export
+f_goal2 <- function(par, fun, y, t, ypred, w = NULL, ylu = NULL, ...) {
     .Call(`_phenofit_f_goal_cpp`, par, fun, y, t, ypred, w, ylu)
 }
 
 # set par and names for double Logistics functions
-funcs = lsf.str(pattern = "doubleLog_")
+funcs = lsf.str(pattern = "^doubleLog_")
 
 for (func in funcs) {
     funr = gsub("_", ".", func)
