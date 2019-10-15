@@ -41,7 +41,7 @@ PhenoPlot <- function(t, y, main = "", ...){
 #' @example inst/examples/ex-get_fitting_param_GOF.R
 #' @export
 get_pheno <- function(fits, method,
-    TRS = c(0.2, 0.5),
+    TRS = c(0.2, 0.5, 0.6),
     analytical = TRUE, smoothed.spline = FALSE,
     IsPlot = FALSE, showName_fitting = TRUE, ...)
 {

@@ -5,7 +5,7 @@
 \alias{get_pheno.fFITs}
 \title{get_pheno}
 \usage{
-get_pheno(fits, method, TRS = c(0.2, 0.5), analytical = TRUE,
+get_pheno(fits, method, TRS = c(0.2, 0.5, 0.6), analytical = TRUE,
   smoothed.spline = FALSE, IsPlot = FALSE, showName_fitting = TRUE,
   ...)
 

@@ -119,7 +119,7 @@ findpeaks <- function (x, IsDiff = TRUE, nups = 1, ndowns = nups, zero = "0", pe
         X <- X[1:npeaks, , drop = FALSE]
     }
 
-    X <- setNames(data.table(X), c("val", "pos", "left", "right"))
+    X <- setNames(as.data.table(X), c("val", "pos", "left", "right"))
     if (IsPlot){
         plot(x, type = "b"); grid()
         points(val~pos, X, col = "blue")

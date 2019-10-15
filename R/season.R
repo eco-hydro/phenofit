@@ -138,7 +138,6 @@ season <- function(INPUT,
         # This module was primarily designed for `season_mov`. It also works for
         # group large than 3-year. 2-year median will be underestimated.
         if (nyear >= 2.5){ # considering NA values, nyear of 3-year will be smaller.
-
             ylu_min <- aggregate(ypred, list(year = year(t)), min)$x %>% median()
             ylu_max <- aggregate(ypred, list(year = year(t)), max)$x %>% median()
 
@@ -162,7 +161,7 @@ season <- function(INPUT,
         # if (length(I)/length(y) > 0.3){
         #     ypred[I] <- median(ypred[I])
         # }
-        #
+        
         # local minimum values
         # peak values is small for minimum values, so can't use r_min here
         peaks <- findpeaks(-ypred,
