@@ -228,11 +228,11 @@ get_ylu <- function(y, years, w0, width, I, Imedian = TRUE, wmin = 0.2){
             # ylu_min; while a long way to ylu_max; 20180918
             # length(I) reflects nptperyear
             if (width > length(I)*2/12){
-                ylu_min <- aggregate(y_win, list(year = year_win), min)$x %>% median()
+                ylu_min <- median(aggregate.data.frame(y_win, list(year = year_win), min)$x)
             }
 
             if (width > length(I)*7/12){
-                ylu_max <- aggregate(y_win, list(year = year_win), max)$x %>% median()
+                ylu_max <- median(aggregate.data.frame(y_win, list(year = year_win), max)$x)
             }
         }
     }

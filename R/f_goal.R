@@ -28,20 +28,21 @@ f_goal <- function(
     if (!all(is.finite(pred))) return(9999) # for Klos fitting
 
     if (!missing(w)) {
-        if (!missing(ylu)){
-            # points out of ylu should be punished!
-            w[pred < ylu[1] | pred > ylu[2]] <- 0
-            # pred   <- check_ylu(pred, ylu)
-        }
+        # if (!missing(ylu)){
+        #     # points out of ylu should be punished!
+        #     w[pred < ylu[1] | pred > ylu[2]] <- 0
+        #     # pred   <- check_ylu(pred, ylu)
+        # }
         SSE  <- sum((y - pred)^2 * w)
     } else {
         SSE  <- sum((y - pred)^2)
     }
-
+    return(SSE)
     # if (missing(w)) w <- rep(1, length(y))
-    RMSE <- sqrt(SSE/length(y))
+    # RMSE <- sqrt(SSE/length(y))
+    # return(RMSE)
+    
     # NSE  <- SSE/sum((y - mean(pred))^2)
-
     # 1. better handle low and high values simulation
     # xpred_2 <- sqrt(xpred_2)
     # x_2     <- sqrt(x_2)
@@ -57,7 +58,6 @@ f_goal <- function(
     # const <- ylu[2]
     # xpred_2 <- pred - ylu[1]; xpred_2[xpred_2 < 0] <- const
     # x_2     <- y     - ylu[1]; x_2[x_2 < 0] <- const
-    return(RMSE)
 }
 
 # f_goal2 <- function(

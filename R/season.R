@@ -138,8 +138,8 @@ season <- function(INPUT,
         # This module was primarily designed for `season_mov`. It also works for
         # group large than 3-year. 2-year median will be underestimated.
         if (nyear >= 2.5){ # considering NA values, nyear of 3-year will be smaller.
-            ylu_min <- aggregate(ypred, list(year = year(t)), min)$x %>% median()
-            ylu_max <- aggregate(ypred, list(year = year(t)), max)$x %>% median()
+            ylu_min <- median(aggregate.data.frame(ypred, list(year = year(t)), min)$x)
+            ylu_max <- median(aggregate.data.frame(ypred, list(year = year(t)), max)$x)
 
             # If multiple years are completely missing, ylu_min possiable equals ylu_max
             if (ylu_max - ylu_min > A0*0.2){
@@ -161,7 +161,7 @@ season <- function(INPUT,
         # if (length(I)/length(y) > 0.3){
         #     ypred[I] <- median(ypred[I])
         # }
-        
+
         # local minimum values
         # peak values is small for minimum values, so can't use r_min here
         peaks <- findpeaks(-ypred,
@@ -237,7 +237,6 @@ season <- function(INPUT,
     # I <- which(dt$y_peak >= ypeak_min)
     pos <- pos[I, ]
 
-
     # 1.2 remove both points (date or value of min and max too close)
     # I_del <- union(I_date, I_date+1)
     # I_del <- union(I_date + 1, I_val + 1)
@@ -255,7 +254,7 @@ season <- function(INPUT,
         pos      <- ddply(pos, .(flag), rm_duplicate, y = ypred, threshold = r_min*A)[, 2:6]
     }
 
-    pos$t    <- t[pos$pos]
+    pos$t   <- t[pos$pos]
     res$pos <- pos
 
     # print(nrow(pos))
@@ -307,8 +306,6 @@ season <- function(INPUT,
     # solve the problem of growing season too long, (e.g. US-Cop).
     I <- which(dt$y_peak >= ypeak_min)
     dt <- dt[I, ]
-    # di <- di[I, ]
-    # res$di <- di
 
     # remove di and add fix_dt
     if (calendarYear) {
@@ -324,6 +321,7 @@ season <- function(INPUT,
      # get the growing season year, not only the calendar year
     if (south) dt[, year := year + as.integer(peak >= ymd(sprintf('%d0701', year))) - 1L]
 
+    ## TODO: FIX BUG null dt
     dt[, `:=`(season = as.numeric(1:.N), flag = sprintf("%d_%d", year, 1:.N)), .(year)]
     res <- list(whit = rfit, dt = dt)
 

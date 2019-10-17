@@ -81,7 +81,6 @@ FitDL.Zhang <- function(y, t = index(y), tout = t,
 
     # lower[["r"]] %>% multiply_by(1/3)
     # upper[["r"]] %>% multiply_by(3)
-    # browser()
     optim_pheno(prior, sFUN, y, t, tout, method, w, lower = lower, upper = upper, ...)
 }
 
@@ -127,9 +126,6 @@ FitDL.Beck <- function(y, t = index(y), tout = t,
 
     optim_pheno(prior, sFUN, y, t, tout, method, w, lower = lower, upper = upper, ...)
 }
-# mn + (mx - mn)*(1/(1 + exp(-rsp*(t - sos))) + 1/(1 + exp(rau*(t - eos))))
-# attr(doubleLog.Beck, 'par') <- c("mn", "mx", "sos", "rsp", "eos", "rau")
-# attr(doubleLog.Beck, 'formula') <- expression(mn + (mx - mn)*(1/(1 + exp(-rsp*(t - sos))) + 1/(1 + exp(rau*(t - eos)))))
 
 #' @rdname FitDL
 #' @export
@@ -140,15 +136,18 @@ FitDL.Elmore <- function(y, t = index(y), tout = t,
 
     # doy_q  <- quantile(t, c(0.1, 0.25, 0.5, 0.75, 0.9), na.rm = TRUE)
     sFUN   <- "doubleLog.Elmore"
+    
+    # TODO: remove bad one 
+    # generally m7 < 0.001
     prior <- with(e, rbind(
         c(mn, mx - mn, doy[1]+t1, k*2.5  , doy[2]-t2, k*2.5  , 0.002),
         # c(mn, mx - mn, doy[1]   , k*1.25 , doy[2]   , k*1.25 , 0.002),
-        c(mn, mx - mn, doy[1]   , k*1    , doy[2]   , k*0.5  , 0.05),
-        c(mn, mx - mn, doy[1]-t1, k*1    , doy[2]+t2, k*0.25, 0.1)))
-    # xpred <- m1 + (m2 - m7*t)*((1/(1 + exp((m3l - t)/m4l))) - (1/(1 + exp((m5l - t)/m6l))))
+        # c(mn, mx - mn, doy[1]   , k*1    , doy[2]   , k      , 0.001),
+        c(mn, mx - mn, doy[1]-t1, k*0.25   , doy[2]+t2, k*0.25 , 0.001)
+    ))
     param_lims <- e$lims[c('mn', 'mx', 'sos', 'r', 'eos', 'r')]
-    lower  <- c(sapply(param_lims, `[`, 1), 0  )
-    upper  <- c(sapply(param_lims, `[`, 2), Inf)
+    lower  <- c(sapply(param_lims, `[`, 1), 0)
+    upper  <- c(sapply(param_lims, `[`, 2), 1)
 
     optim_pheno(prior, sFUN, y, t, tout, method, w, lower = lower, upper = upper, ...)
 }
@@ -157,11 +156,6 @@ FitDL.Elmore <- function(y, t = index(y), tout = t,
 # c(mn, mx - mn, doy[2], half*0.2, doy[5], half*0.2, 0.002),
 # c(mn, mx - mn, doy[1], half*0.5, doy[4], half*0.5, 0.05),
 # c(mn, mx - mn, doy[1], half*0.8, doy[5], half*0.8, 0.1))
-
-# attr(doubleLog.Elmore, 'name')    <- 'doubleLog.Elmore'
-# attr(doubleLog.Elmore, 'par')     <- c("mn", "mx", "sos", "rsp", "eos", "rau", "m7")
-# attr(doubleLog.Elmore, 'formula') <- expression( mn + (mx - m7*t)*( 1/(1 + exp(-rsp*(t-sos))) - 1/(1 + exp(-rau*(t-eos))) ) )
-
 
 #' @rdname FitDL
 #' @export

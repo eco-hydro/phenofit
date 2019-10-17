@@ -40,10 +40,16 @@ optim_pheno <- function(
     sFUN = gsub("\\.", "_", sFUN )
     FUN <- get(sFUN, mode = "function" )
 
+    ntime = length(t)
     # add prior colnames
     parnames <- attr(FUN, 'par')
     if (is.vector(prior)) prior <- t(prior)
     colnames(prior) <- parnames
+    npar = ncol(prior)
+
+    # opt.df: par, value, fevals, niter, convcode
+    J_VALUE    = npar + 1
+    J_CONVCODE = npar + 4
     ############################################################################
 
     methods_optim  <- c('BFGS','CG','Nelder-Mead', 'L-BFGS-B', 'nlm', 'nlminb', 'ucminf')
@@ -84,41 +90,45 @@ optim_pheno <- function(
 
     for (i in 1:iters){
         ws[[i]] <- w
+        # dot = list(...)
+        # params = c(list(prior, FUN, y, t, method = method, w = w, verbose = verbose), dot[-4], use.julia = TRUE)
+        # do.call(I_optimFUN, params)
+        # save(list = ls(), file = "debug.rda")
         # pass verbose for optimx optimization methods selection
         opt.df  <- I_optimFUN(prior, FUN, y, t, method = method, w = w, verbose = verbose, ...)
         # print(opt.df)
-        # colnames(opt.df) <- c(parnames, colnames(opt.df)[(length(parnames) + 1):ncol(opt.df)])
         if (verbose){
             fprintf('Initial parameters:\n')
             print(as_tibble(prior))
             print(opt.df)
         }
 
-        best <- which.min(opt.df$value)
+        best <- which.min(opt.df[, J_VALUE])
         if (is_empty(best)){
             warning("optimize parameters failed!")
         }else{
             # test for convergence if maximum iterations where reached - restart from best with more iterations
             # If RMSE is small enough, then accept it.
-            if (opt.df$convcode[best] != 0) {
+            if (opt.df[best, J_CONVCODE] != 0) { # convcode
                 # repeat with more maximum iterations if it did not converge
-                par <- opt.df[best, parnames] %>% as.matrix #best par generally
+                par <- opt.df[best, 1:npar, drop = FALSE]  #best par generally
                 opt <- I_optimFUN(par, FUN, y, t, method, w = w, verbose = verbose, ...)
             } else { #if (opt.df$convcode[best] == 0)
-                opt <- opt.df[best, ]
+                opt <- opt.df[best, , drop = FALSE]
             }
 
-            # check whether convergence
-            if (opt$convcode != 0 & opt$value > 0.1*A) {
+            RMSE = sqrt(opt[1, J_VALUE])/ntime # SSE returned
+            # check whether convergence, only 1 row now
+            if (opt[1, J_CONVCODE] != 0 & RMSE > 0.1*A) {
                 warning("Not convergent!")
             }else{
-                par   <- opt[, parnames] %>% as.matrix()
+                par   <- opt[1, 1:npar, drop = FALSE]
                 # put opt par into prior for the next iteration
-                prior <- rbind(prior[1:(nrow(prior)-1), ], par, deparse.level = 0) %>% unique() %>% set_rownames(NULL)
+                prior <- rbind(prior[1:(nrow(prior)-1), ], par, deparse.level = 0) %>%
+                    unique.matrix()
                 FUN(par, tout, ypred)
                 # too much missing values
                 # if (sum(w == 0)/length(w) > 0.5) ypred <- ypred*NA
-
                 # to adapt wTS, set iter = i-1; #20180910
                 # nptperyear, wfact = 0.5)
                 w <- tryCatch(

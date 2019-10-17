@@ -5,7 +5,8 @@
 \alias{I_optimx}
 \title{Interface of unified optimization functions.}
 \usage{
-I_optim(prior, FUN, y, t, method = "BFGS", fn = f_goal, ...)
+I_optim(prior, FUN, y, t, method = "BFGS", fn = f_goal, ...,
+  use.julia = FALSE)
 
 I_optimx(prior, FUN, y, t, method, verbose = FALSE, ...)
 }
@@ -24,6 +25,8 @@ For \code{I_optimx}, other methods are also supported,
 e.g. \code{'spg','Rcgmin','Rvmmin', 'newuoa','bobyqa','nmkb','hjkb'}.}
 
 \item{...}{other parameters passed to \code{\link[=I_optim]{I_optim()}} or \code{\link[=I_optimx]{I_optimx()}}.}
+
+\item{use.julia}{whether use julia nlminb optimization?}
 
 \item{verbose}{If \code{TRUE}, all optimization methods in
 \code{\link[optimx:optimx]{optimx::optimx()}} are used, and print optimization information

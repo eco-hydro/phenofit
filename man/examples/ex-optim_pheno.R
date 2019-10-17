@@ -16,10 +16,4 @@ opt1 <- I_optim(par0, doubleLog_Beck, y, t, methods) # "BFGS", "ucminf", "nlm",
 
 sFUN   = "doubleLog.Beck" # doubleLog.Beck
 r <- optim_pheno(par0, sFUN, y, t, tout, method = methods[4],
-                 nptperyear = 46, iters = 2, wFUN = wTSM, verbose = FALSE)
-# method = "BFGS"
-# par0 <- c(t0 = 100, par0)
-# rbenchmark::benchmark(
-#   r1 = optim_pheno(par0, sFUN, y, t, tout, methods[4],
-#               nptperyear = 46, iters = 2, wFUN = wTSM, verbose = FALSE)
-# )
+                 nptperyear = 46, iters = 2, wFUN = wTSM, verbose = FALSE, use.julia = FALSE)

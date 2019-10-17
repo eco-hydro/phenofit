@@ -18,6 +18,7 @@ methods <- c(
 #' 'L-BFGS-B', 'nlm', 'nlminb', 'ucminf'`. \cr
 #' For `I_optimx`, other methods are also supported,
 #' e.g. `'spg','Rcgmin','Rvmmin', 'newuoa','bobyqa','nmkb','hjkb'`.
+#' @param use.julia whether use julia nlminb optimization?
 #'
 #' @inherit opt_optim return
 #'
@@ -29,13 +30,16 @@ methods <- c(
 #'
 #' @keywords internal
 #' @export
-I_optim <- function(prior, FUN, y, t, method = "BFGS", fn = f_goal, ...)
+I_optim <- function(prior, FUN, y, t, method = "BFGS", fn = f_goal, ...,
+    use.julia = FALSE)
 {
     pred = y*0
     if (is.vector(prior)) prior <- t(prior)
+    prior2 <- set_colnames(prior, NULL)
+
+    colnames <- colnames(prior) %>% c("value", "fevals", "niter", "convcode")
 
     res <- vector("list", length(method)) %>% set_names(method)
-
     for (i in seq_along(method)){
         meth <- method[i]
         # Get optimization function
@@ -47,23 +51,33 @@ I_optim <- function(prior, FUN, y, t, method = "BFGS", fn = f_goal, ...)
         } else {
             stop(sprintf("[e] method: %s not supported!", meth))
         }
-        optFUN <- get(optFUN_name, mode = "function")
 
-        # optimize parameters
-        # browser()
-        opt.lst <- alply(prior, 1, optFUN, method = meth,
-            objective = fn, fun = FUN, y = y, t = t, pred = pred, ...)
-        opt.df <- ldply(opt.lst, function(opt){
-            with(opt,
-                c(par, value = value,
-                    fevals = fevals[[1]], niter  = nitns,
-                    convcode = convcode)
-            )
-        }, .id = NULL ) #.id didn't work here
-        res[[i]] <- opt.df
+        lst <- list()
+        for (j in 1:nrow(prior)) {
+            par0 <- prior2[j, ]
+
+            if (optFUN_name == "opt_nlminb" && use.julia) {
+                FUN_name = attr(FUN, "name")
+                r   <- opt_nlminb_julia(par0, FUN_name, y, t, ...) # w, ylu
+                ans <- c(r$par, value = r$objective,
+                    fevals   = r$evaluations[[1]],
+                    niter    = r$iterations,
+                    convcode = r$convergence)
+            } else {
+                optFUN <- get(optFUN_name, mode = "function")
+                r   <-  optFUN(par0, method = meth,
+                    objective = fn, fun = FUN, y = y, t = t, pred = pred, ...)
+                ans <- c(r$par, value = r$value,
+                    fevals   = r$fevals[[1]], niter  = r$nitns,
+                    convcode = r$convcode)
+            }
+            lst[[j]] <- ans
+        }
+        res[[i]] <- do.call(rbind, lst) # %>% as.data.frame() %>% set_colnames(colnames)
     }
-    # browser()
-    melt_list(res, "method") # quickly return
+    res = do.call(rbind, res)
+    dimnames(res) <- list(rep(method, each = nrow(prior)), colnames)
+    res
 }
 
 #' @param verbose If `TRUE`, all optimization methods in
