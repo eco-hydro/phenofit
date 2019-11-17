@@ -5,8 +5,8 @@
 \title{plot_phenofit}
 \usage{
 plot_phenofit(d_fit, seasons, title = NULL,
-  title.ylab = "Vegetation Index", font.size = 14,
-  show.legend = TRUE)
+  title.ylab = "Vegetation Index", title.xlab = "Time",
+  font.size = 14, theme = NULL, show.legend = TRUE)
 }
 \arguments{
 \item{d_fit}{data.frame of curve fittings returned by \code{\link[=get_fitting]{get_fitting()}}.}
@@ -19,6 +19,8 @@ and \code{\link[=season_mov]{season_mov()}}.}
 \item{title.ylab}{String, title of \code{ylab}.}
 
 \item{font.size}{Font size of axis.text}
+
+\item{theme}{ggplot theme to be applied}
 
 \item{show.legend}{Boolean}
 }

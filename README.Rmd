@@ -215,11 +215,10 @@ print(head(d_gof))
 # print(fit$fits$AG$`2002_1`$ws)
 print(fit$`2002_1`$fFIT$AG$ws)
 ## visualization
-# svg("Figure1_phenofit_curve_fitting.svg", 11, 7)
-# Cairo::CairoPDF(file_pdf, 11, 6) #
-# dev.off()
-g <- plot_phenofit(d_fit, brks2, titlestr)
+g <- plot_phenofit(d_fit, brks2, NULL, title.ylab = "NDVI", "Time",
+                   theme = coord_cartesian(xlim = c(ymd("2000-04-01"), ymd("2017-07-31"))))
 grid::grid.newpage(); grid::grid.draw(g)# plot to check the curve fitting
+# write_fig(g, "Figure1_phenofit_curve_fitting.pdf", 10, 6)
 ```
 
 ## 2.5 Extract phenology

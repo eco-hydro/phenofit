@@ -9,7 +9,8 @@
 #' @param title.ylab String, title of `ylab`.
 #' @param font.size Font size of axis.text
 #' @param show.legend Boolean
-#'
+#' @param theme ggplot theme to be applied
+#' 
 #' @importFrom dplyr left_join
 #'
 #' @example inst/examples/ex-check_input.R
@@ -20,7 +21,9 @@ plot_phenofit <- function(d_fit,
                           seasons,
                           title = NULL,
                           title.ylab = "Vegetation Index",
-                          font.size = 14,
+                          title.xlab = "Time",
+                          font.size = 14, 
+                          theme = NULL, 
                           show.legend = TRUE)
 {
     methods <- d_fit$meth %>% table() %>% names()
@@ -52,8 +55,9 @@ plot_phenofit <- function(d_fit,
         theme_gray(base_size = font.size) +
         theme(axis.title = element_text(size = font.size),
             # axis.text.x = element_text(angle = 30, hjust = 1, vjust = 1),
-            axis.text = element_text(size = font.size - 2)) +
-        labs(x = 'Time', y = title.ylab)
+            axis.text = element_text(size = font.size - 2), 
+            plot.margin = margin(0.2, 0.2, -0.3, 0.2, "lines")) +
+        labs(x = title.xlab, y = title.ylab) 
 
     if (nyear >= nyear_lean) {
         p <- p + theme(axis.text.x = element_text(angle = 30, hjust = 1, vjust = 1))
@@ -61,9 +65,9 @@ plot_phenofit <- function(d_fit,
 
     if ('QC_flag' %in% colnames(d_obs)){
         #     guides(shape = guide_legend(override.aes_string = list(size = 2)))
-        p  <- p + geom_point(data = d_obs, aes_string("t", "y", shape="QC_flag",
-                                                  color = "QC_flag", fill = "QC_flag"),
-                             size = 2, alpha = 0.7)
+        p  <- p + geom_point(data = d_obs, 
+            aes_string("t", "y", shape="QC_flag", color = "QC_flag", fill = "QC_flag"),
+            size = 2, alpha = 0.7)
     } else {
         p <- p + geom_point(aes_string("t", "y"), size = 2, alpha = 0.5, color = "grey60")
             # geom_line (data = seasons$whit, aes_string(t, ziter2), color = "black", size = 0.8) + # show in front
@@ -79,17 +83,16 @@ plot_phenofit <- function(d_fit,
         scale_fill_manual(values = qc_colors, drop = F) +
         scale_shape_manual(values = qc_shapes, drop = F)
 
+    if (!is.null(theme)) p <- p + theme
     # geom_vline(data = pdat2, aes_string(xintercept=date, linetype = pmeth, color = pmeth), size = 0.4, alpha = 1) +
     # scale_linetype_manual(values=c(2, 3, 1, 1, 1, 4))
     # p + facet_grid(meth~pmeth)
 
     # if (plotly){
     #     plotly::ggplotly(p)
-    # }else{
-
+    # }
     if (show.legend){
         lgd <- make_legend_nmax(iters_name_fine, lines_colors, d_obs$QC_flag)
-
         p <- p + theme(legend.position="none")
         p <- arrangeGrob(p, lgd, nrow = 2, heights = c(min(5*nmethod, 15), 1),
             padding = unit(1, "line"))

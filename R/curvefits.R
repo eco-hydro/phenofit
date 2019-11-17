@@ -57,7 +57,7 @@ curvefits <- function(INPUT, brks,
     w <- w0 <- INPUT$w
     y0     <- INPUT$y0 # original y
     Tn     <- INPUT$Tn # if has no Tn, NULL will be return
-    has_Tn <- ifelse(is_empty(Tn), F, TRUE)
+    has_Tn <- ifelse(is_empty(Tn), FALSE, TRUE)
 
     # possible snow or cloud, replaced with Whittaker smoothing.
     I_all <- match(brks$whit$t, t) %>% rm_empty()
