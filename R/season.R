@@ -318,10 +318,10 @@ season <- function(INPUT,
         # after fix_dt, growing season length will become shorter
         dt <- dt[dt$len > 45 & dt$len < 650, ] # mask too long and short gs
     }
-     # get the growing season year, not only the calendar year
-    if (south) dt[, year := year + as.integer(peak >= ymd(sprintf('%d0701', year))) - 1L]
+    if (is.null(dt) || nrow(dt) == 0) return(NULL)
 
-    ## TODO: FIX BUG null dt
+    # get the growing season year, not only the calendar year
+    if (south) dt[, year := year + as.integer(peak >= ymd(sprintf('%d0701', year))) - 1L]
     dt[, `:=`(season = as.numeric(1:.N), flag = sprintf("%d_%d", year, 1:.N)), .(year)]
     res <- list(whit = rfit, dt = dt)
 

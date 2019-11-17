@@ -5,7 +5,7 @@
 \title{plot_season}
 \usage{
 plot_season(INPUT, brks, plotdat, ylu, IsPlot.OnlyBad = FALSE,
-  show.legend = TRUE)
+  show.legend = TRUE, title = NULL)
 }
 \arguments{
 \item{INPUT}{A list object with the elements of \code{t}, \code{y}, \code{w},
@@ -24,6 +24,8 @@ in the range of \code{ylu}.}
 \item{IsPlot.OnlyBad}{If true, only plot partial figures whose NSE < 0.3.}
 
 \item{show.legend}{Whether to show legend?}
+
+\item{title}{The main title (on top)}
 }
 \description{
 Plot growing season divding result.

@@ -22,7 +22,8 @@ include to extract phenology; if \code{FALSE}, this year is excluded.}
 data.table
 }
 \description{
-Add one year data in the head and tail
+Add the data of the year of \code{year_start - 1} to the head, add the data of the
+year of \code{year_end - 1} to the tail.
 }
 \note{
 \code{date} is image date; \code{t} is compositing date.

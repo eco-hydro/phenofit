@@ -137,8 +137,9 @@ season_mov <- function(INPUT,
         # after fix_dt, growing season length will become shorter
         dt <- dt[dt$len > 45 & dt$len < 650, ] # mask too long and short gs
     }
+    brks$dt  <- dt
+    brks$GOF <- stat_season(INPUT, brks)
 
-    brks$dt <- dt
     ## VISUALIZATION
     if (IsPlot) plot_season(INPUT, brks, plotdat, ylu = INPUT$ylu, IsPlot.OnlyBad)
     if (IsOptim_lambda) brks$optim <- vcs
@@ -177,12 +178,12 @@ season_calendar <- function(years, south = FALSE){
 #' @keywords internal
 #' @rdname season
 stat_season <- function(INPUT, brks){
-    d_org <- as.data.table(INPUT[c("t", "y", "w")])
+    d_org <- as.data.table(INPUT[c("t", "y0", "w")])
     d_fit <- brks$whit %>% .[,.SD,.SDcols=c(1, ncol(.))] %>% set_colnames(c("t", "ypred"))
 
     d <- merge(d_org, d_fit, by = "t")
 
-    stat <- with(d, GOF(y, ypred, w, include.cv = TRUE))# %>% as.list()
+    stat <- with(d, GOF(y0, ypred, w, include.cv = TRUE, include.r = TRUE))# %>% as.list()
     stat['nseason'] <- nrow(brks$dt)
 
     # str_title <- sprintf("[%s] IGBP = %s, %s, lat = %.2f", sitename, IGBP_name, stat_str, lat)

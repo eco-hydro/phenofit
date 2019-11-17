@@ -1,6 +1,8 @@
-#'
 #' Add one year data in the head and tail
-#'
+#' 
+#' Add the data of the year of `year_start - 1` to the head, add the data of the 
+#' year of `year_end - 1` to the tail.
+#' 
 #' @param d A data.table, should have `t` (compositing date) or `date`
 #' (image date) column which are (`Date` variable).
 #' @inheritParams check_input
@@ -43,8 +45,6 @@ add_HeadTail <- function(d, south = FALSE, nptperyear, trs = 0.45){
         nptperyear <- ceiling(365/as.numeric(difftime(d[[bandname]][2], d[[bandname]][1], units = "days")))
     }
     ntrs  <- nptperyear*trs
-
-
 
     ## can coop with years not continuous now
     ntime    <- nrow(d)

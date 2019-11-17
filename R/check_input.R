@@ -41,37 +41,39 @@
 #' by na.approx, it is unsuitable for large number continous missing segments,
 #' e.g. in the start or end of growing season.
 #' @param alpha Double value in `[0,1]`, quantile prob of ylu_min.
+#' @param date_start,date_end starting and ending date of the original vegetation
+#' time-sereis (before `add_HeadTail`)
 #' @param ... Others will be ignored.
 #'
 #' @return A list object returned
-#' \itemize{
-#' \item{t } Numeric vector
-#' \item{y0} Numeric vector, original vegetation time-series.
-#' \item{y } Numeric vector, checked vegetation time-series, `NA` values
-#' are interpolated.
-#' \item{w } Numeric vector
-#' \item{Tn} Numeric vector
-#' \item{ylu} = `[ymin, ymax]`. `w_critical` is used to filter not too bad values.
 #'
-#' If the percentage good values (w=1) is greater than 30\%, then `w_critical`=1.
+#' * `t` : Numeric vector
+#' * `y0`: Numeric vector, original vegetation time-series.
+#' * `y` : Numeric vector, checked vegetation time-series, `NA` values are interpolated.
+#' * `w` : Numeric vector
+#' * `Tn`: Numeric vector
+#' * `ylu`: = `[ymin, ymax]`. `w_critical` is used to filter not too bad values.
 #'
-#' The else, if the percentage of w >= 0.5 points is greater than 10\%, then
-#' `w_critical`=0.5. In boreal regions, even if the percentage of w >= 0.5
-#' points is only 10\%, we still can't set `w_critical=wmin`.
+#'      If the percentage good values (w=1) is greater than 30\%, then `w_critical`=1.
 #'
-#' We can't rely on points with the wmin weights. Then,  \cr
-#' `y_good = y[w >= w_critical ]`,  \cr
-#' `ymin = pmax( quantile(y_good, alpha/2), 0)`  \cr `ymax = max(y_good)`.
-#' }
+#'      The else, if the percentage of w >= 0.5 points is greater than 10\%, then
+#'      `w_critical`=0.5. In boreal regions, even if the percentage of w >= 0.5
+#'      points is only 10\%, we still can't set `w_critical=wmin`.
+#'
+#'      We can't rely on points with the wmin weights. Then,  \cr
+#'      `y_good = y[w >= w_critical]`,  \cr
+#'      `ymin = pmax( quantile(y_good, alpha/2), 0)`  \cr `ymax = max(y_good)`.
 #'
 #' @seealso [phenofit::backval()]
 #' @example inst/examples/ex-check_input.R
 #' @export
 check_input <- function(t, y, w, QC_flag,
     nptperyear, south = FALSE, Tn = NULL,
-    wmin = 0.2, 
-    ymin, missval, 
-    maxgap, alpha = 0.02, ...)
+    wmin = 0.2,
+    ymin, missval,
+    maxgap, alpha = 0.02,
+    date_start = NULL, date_end = NULL,
+    ...)
 {
     if (missing(QC_flag)) QC_flag <- NULL
     if (missing(nptperyear)){
@@ -97,7 +99,7 @@ check_input <- function(t, y, w, QC_flag,
     y_good <- y[w >= w_critical] %>% rm_empty()
     ylu    <- c(pmax( quantile(y_good, alpha/2), 0),
                quantile(y_good, 1 - alpha/2))
-    
+
     if (!missing(ymin) && !is.na(ymin)){
         # constrain back ground value
         ylu[1] <- pmax(ylu[1], ymin)
@@ -118,7 +120,7 @@ check_input <- function(t, y, w, QC_flag,
     ## 20180717 error fixed: y[w <= wmin]  <- missval # na is much appropriate, na.approx will replace it.
     # values out of range are setted to wmin weight.
 
-    w[y < ylu[1] | y > max(y_good)] <- wmin # | y > ylu[2], 
+    w[y < ylu[1] | y > max(y_good)] <- wmin # | y > ylu[2],
     # #based on out test marginal extreme value also often occur in winter
     # #This step is really dangerous! (checked at US-Me2)
     y[y < ylu[1]]                  <- missval
@@ -143,8 +145,9 @@ check_input <- function(t, y, w, QC_flag,
     if (!is_empty(Tn)){
         Tn <- na.approx(Tn, maxgap = maxgap, na.rm = FALSE)
     }
-    list(t = t, y0 = y0, y = y, w = w, QC_flag = QC_flag, Tn = Tn, ylu = ylu, 
-        nptperyear = nptperyear, south = south)
+    list(t = t, y0 = y0, y = y, w = w, QC_flag = QC_flag, Tn = Tn, ylu = ylu,
+        nptperyear = nptperyear, south = south,
+        date_start = date_start, date_end = date_end)
 }
 
 #' check_ylu
@@ -155,9 +158,9 @@ check_input <- function(t, y, w, QC_flag,
 #'
 #' @param yfit Numeric vector, curve fitting result
 #' @param ylu limits of y value, `[ymin, ymax]`
-#' 
+#'
 #' @return yfit, the numeric vector in the range of `ylu`.
-#' 
+#'
 #' @export
 #' @examples
 #' check_ylu(1:10, c(2, 8))
@@ -170,7 +173,7 @@ check_ylu <- function(yfit, ylu){
 }
 
 # #' check_ylu2
-# #' 
+# #'
 # #' values out of ylu, set to be na and interpolate it.
 # #' @export
 # check_ylu2 <- function(y, ylu){

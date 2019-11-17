@@ -15,8 +15,8 @@ weights of all \code{NA} values will be \code{wmin}, the others will be 1.0.}
 
 \item{nptperyear}{Integer, number of images per year.}
 
-\item{ylu}{\code{[low, high]} of time-series y (curve fitting values are constrained
-in the range of \code{ylu}.}
+\item{ylu}{(optional) \code{[low, high]} value of time-series y (curve fitting values
+are constrained in the range of ylu.}
 
 \item{wFUN}{weights updating function, can be one of 'wTSM', 'wChen' and
 'wBisquare'.}

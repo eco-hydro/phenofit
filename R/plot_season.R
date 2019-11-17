@@ -6,11 +6,12 @@
 #' @inheritParams wHANTS
 #' @param brks A list object returned by `season` or `season_mov`.
 #' @param show.legend Whether to show legend?
-#'
+#' @param title The main title (on top)
+#' 
 #' @importFrom grid viewport pushViewport grid.draw
 #' @export
 plot_season <- function(INPUT, brks, plotdat, ylu,
-                        IsPlot.OnlyBad = FALSE, show.legend = TRUE){
+                        IsPlot.OnlyBad = FALSE, show.legend = TRUE, title = NULL){
     if (missing(plotdat)) {
         plotdat <- INPUT
     }
@@ -38,7 +39,8 @@ plot_season <- function(INPUT, brks, plotdat, ylu,
     # plotdat   <- INPUT[c("t", "y", "w", "ylu")]
     # if (!is.null(INPUT$y0)) plotdat$y <- INPUT$y0
     # par.old <- par()
-    par(mar = c(3.5, 3, 1, 1), mgp = c(1.2, 0.6, 0))
+    bottom = ifelse(show.legend, 3.2, 1)
+    par(mar = c(bottom, 3, 1, 1), mgp = c(1.2, 0.6, 0))
     plot_input(plotdat)
 
     # colors <- c("blue", "red", "green")
@@ -58,10 +60,11 @@ plot_season <- function(INPUT, brks, plotdat, ylu,
     if (!missing(ylu)) abline(h=ylu, col="red", lty=2) # show ylims
     legend('topleft', stat_txt, adj = c(0.05, 0.8), bty='n', text.col = "red")
 
+    if (!is.null(title)) title(title, line = -1)
     if (show.legend){
         lgd <- make_legend_nmax(paste0("iter", 1:NITER), lines_colors, plotdat$QC_flag)
         # fix in the futher
-        pos.y <- 0.04
+        pos.y <- 0.032
         pushViewport(viewport(x = unit(0.5, "npc"), y = unit(pos.y, "npc"),
                               width = unit(0.8, "npc"), height = unit(pos.y*2, "npc")))
         # grid.rect()

@@ -2,14 +2,14 @@
 #'
 #' @inheritParams season
 #' @param ... other parameter will be ignored.
-#' 
+#'
 #' @examples
 #' library(phenofit)
 #' data("MOD13A1")
-#' 
+#'
 #' dt <- tidy_MOD13.gee(MOD13A1$dt)
 #' st <- MOD13A1$st
-#' 
+#'
 #' sitename <- dt$site[1]
 #' d     <- dt[site == sitename, ] # get the first site data
 #' sp    <- st[site == sitename, ] # station point
@@ -18,9 +18,9 @@
 #' print  = FALSE
 #' nptperyear = 23
 #' ypeak_min  = 0.05
-#' 
+#'
 #' dnew     <- add_HeadTail(d, nptperyear = nptperyear) # add one year in head and tail
-#' INPUT    <- check_input(dnew$t, dnew$y, dnew$w, d$QC_flag, nptperyear, 
+#' INPUT    <- check_input(dnew$t, dnew$y, dnew$w, d$QC_flag, nptperyear,
 #'                         maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
 #' plot_input(INPUT)
 #' @export
@@ -44,9 +44,19 @@ plot_input <- function(INPUT, wmin = 0.2, ...){
     if (is.null(QC_flag)){
         # divide into three categories: good, marginal and bad
         wf <- 4 - findInterval(w, c(-Inf, wmin, 0.5, 1), left.open = TRUE)
-        QC_flag <- factor(wf, 1:3, c("good", "marginal", "cloud")) %>% as.character() %>% 
+        QC_flag <- factor(wf, 1:3, c("good", "marginal", "cloud")) %>% as.character() %>%
             factor(qc_levels)
     }
+
+    date_start = INPUT$date_start
+    date_end   = INPUT$date_end
+    if (is.null(date_start)) date_start = t[1]
+    if (is.null(date_end  )) date_end   = t[n]
+    xlim <- c(date_start, date_end)
+
+    # I = seq_along(t) # if show fake value added by
+    I = which(t >= date_start & t <= date_end)
+    # end of parameters check
 
     # nptperyear <- INPUT$nptperyear
     npt <- length(y)
@@ -58,22 +68,24 @@ plot_input <- function(INPUT, wmin = 0.2, ...){
 
     # colors <- c("grey60", "#00BFC4", "#C77CFF", "#F8766D", "blue", "red", "black")
     pch    <- c(19, 15, 17) # 4
-
     main <- 'Vegetation Index'
     if (!is.null(years) && length(unique(years)) < 3){
-        plot(t, y, type = "l", xaxt="n", ann = FALSE, main = main, ...)
+        plot(t[I], y[I], type = "l", xaxt="n", ann = FALSE, main = main, ...)
         axis.Date(1, at=seq(min(t), max(t), by="month"), format="%Y-%m")
     } else {
-        plot(t, y, type = "l", ann = FALSE, main = main, ...)
+        plot(t[I], y[I], type = "l", ann = FALSE, main = main, ...)
     }
+
+    show.goodPoints = INPUT$nptperyear < 90
 
     # Ids <- unique(wf)
     for (i in 1:length(qc_levels)){
+        if (!show.goodPoints && qc_levels[i] == "good") next()
         I = QC_flag == qc_levels[i]
         add <- ifelse(i == 1, F, TRUE)
         points(t[I], y[I], pch = qc_shapes[i], bg = qc_colors[i], col = qc_colors[i], cex = 0.8)
     }
-    
+
     # ylab = expression(paste('GPP ( gC ', m^-2, d^-1, ')'))
     if (!is.null(years)){
         date_beg <- ymd( min(years) *1e4 + 0101 )

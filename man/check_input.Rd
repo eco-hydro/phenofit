@@ -5,7 +5,8 @@
 \title{check_input}
 \usage{
 check_input(t, y, w, QC_flag, nptperyear, south = FALSE, Tn = NULL,
-  wmin = 0.2, ymin, missval, maxgap, alpha = 0.02, ...)
+  wmin = 0.2, ymin, missval, maxgap, alpha = 0.02, date_start = NULL,
+  date_end = NULL, ...)
 }
 \arguments{
 \item{t}{Numeric vector, \code{Date} variable}
@@ -50,18 +51,20 @@ e.g. in the start or end of growing season.}
 
 \item{alpha}{Double value in \code{[0,1]}, quantile prob of ylu_min.}
 
+\item{date_start, date_end}{starting and ending date of the original vegetation
+time-sereis (before \code{add_HeadTail})}
+
 \item{...}{Others will be ignored.}
 }
 \value{
 A list object returned
 \itemize{
-\item{t } Numeric vector
-\item{y0} Numeric vector, original vegetation time-series.
-\item{y } Numeric vector, checked vegetation time-series, \code{NA} values
-are interpolated.
-\item{w } Numeric vector
-\item{Tn} Numeric vector
-\item{ylu} = \code{[ymin, ymax]}. \code{w_critical} is used to filter not too bad values.
+\item \code{t} : Numeric vector
+\item \code{y0}: Numeric vector, original vegetation time-series.
+\item \code{y} : Numeric vector, checked vegetation time-series, \code{NA} values are interpolated.
+\item \code{w} : Numeric vector
+\item \code{Tn}: Numeric vector
+\item \code{ylu}: = \code{[ymin, ymax]}. \code{w_critical} is used to filter not too bad values.
 
 If the percentage good values (w=1) is greater than 30\%, then \code{w_critical}=1.
 
@@ -70,7 +73,7 @@ The else, if the percentage of w >= 0.5 points is greater than 10\%, then
 points is only 10\%, we still can't set \code{w_critical=wmin}.
 
 We can't rely on points with the wmin weights. Then,  \cr
-\code{y_good = y[w >= w_critical ]},  \cr
+\code{y_good = y[w >= w_critical]},  \cr
 \code{ymin = pmax( quantile(y_good, alpha/2), 0)}  \cr \code{ymax = max(y_good)}.
 }
 }
