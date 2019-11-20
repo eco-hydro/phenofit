@@ -4,6 +4,7 @@
 #' * `wTSM` weight updating method in TIMESAT.
 #' * `wBisquare` Bisquare weight update method. wBisquare has been
 #' modified to emphasis on upper envelope.
+#' * `wBisquare0` Traditional Bisquare weight update method.
 #' * `wChen` Chen et al., (2004) weight updating method.
 #' * `wBeck` Beck et al., (2006) weigth updating method. wBeck need
 #' sos and eos input. The function parameter is different from others. It is
@@ -55,14 +56,19 @@ wTSM <- function(y, yfit, w, iter = 2, nptperyear, wfact = 0.5, ...){
 
 #' @rdname wFUN
 #' @export
-wBisquare <- function(y, yfit, w, ..., wmin = 0.2){
+wBisquare0 <- function(y, yfit, w, ..., wmin = 0.2) {
+    wBisquare(y, yfit, w, ..., wmin = 0.2, .toUpper = FALSE)    
+}
+
+#' @rdname wFUN
+#' @export
+wBisquare <- function(y, yfit, w, ..., wmin = 0.2, .toUpper = TRUE){
     
     if (missing(w)) w  <- rep(1, length(y))
     wnew <- w
 
     # Update to avoid decrease the weights ungrowing season points too much
-    # This idea is also occur in wTSM and wBeck;
-    # 2018-07-25
+    # This idea is also occur in wTSM and wBeck; 2018-07-25
     ylu <- range(yfit, na.rm = TRUE)
     A = diff(ylu)
     re     <- yfit - y
@@ -70,11 +76,15 @@ wBisquare <- function(y, yfit, w, ..., wmin = 0.2){
 
     sc     <- 6 * median(re_abs, na.rm = TRUE)
 
-    # only decrease the weights of growing season `& yfit > 1/3*A`.
-    I_pos        <- which(re > 0 & re < sc & (yfit > 0.3*A + ylu[1]) )
+    if (.toUpper) {
+        # only decrease the weights of growing season `& yfit > 1/3*A`.
+        # have a problem, in this way, original weights will be ignored.     
+        I_pos <- which(re > 0 & re < sc & (yfit > 0.3*A + ylu[1]) )
+    } else {
+        I_pos <- which(re < sc & (yfit > 0.3*A + ylu[1]))
+    }
     wnew[I_pos]  <- (1 - (re_abs[I_pos]/sc)^2)^2 * w[I_pos]
-    # have a problem, in this way, original weights will be ignored.
-
+   
     # I_zero       <- which(re >= sc) # update 20180723
     I_zero       <- which(abs(re) >= sc) # update 20180924, positive bias outlier
     

@@ -2,10 +2,10 @@
 #'
 #' Find peaks (maxima) in a time series. This function is modified from
 #' `pracma::findpeaks`.
-#' 
+#'
 #' @param x Numeric vector.
-#' @param IsDiff If want to find extreme values, `IsDiff` should be true; If 
-#' just want to find the continue negative or positive values, just set 
+#' @param IsDiff If want to find extreme values, `IsDiff` should be true; If
+#' just want to find the continue negative or positive values, just set
 #' `IsDiff` as false.
 #' @param nups minimum number of increasing steps before a peak is reached
 #' @param ndowns minimum number of decreasing steps after the peak
@@ -19,18 +19,18 @@
 #' @param minpeakdistance The minimum distance (in indices) peaks have to have
 #' to be counted. If the distance of two maximum extreme value less than
 #' `minpeakdistance`, only the real maximum value will be left.
-#' @param r_min Threshold is defined as the difference of peak value with
+#' @param y_min Threshold is defined as the difference of peak value with
 #' trough value. There are two threshold (left and right). The minimum threshold
-#' should be greater than r_min.
-#' @param r_max Similar as `r_min`, The maximum threshold should
-#' be greater than `r_max`.
-#' @param npeaks  the number of peaks to return. If `sortstr` = true, the 
-#' largest npeaks maximum values will be returned; If `sortstr` = false, 
+#' should be greater than `y_min`.
+#' @param y_max Similar as `y_min`, The maximum threshold should
+#' be greater than `y_max`.
+#' @param npeaks  the number of peaks to return. If `sortstr` = true, the
+#' largest npeaks maximum values will be returned; If `sortstr` = false,
 #' just the first npeaks are returned in the order of index.
-#' @param sortstr Boolean, Should the peaks be returned sorted in decreasing oreder of 
+#' @param sortstr Boolean, Should the peaks be returned sorted in decreasing oreder of
 #' their maximum value?
 #' @param IsPlot Boolean.
-#' 
+#'
 #' @examples
 #' x <- seq(0, 1, len = 1024)
 #' pos <- c(0.1, 0.13, 0.15, 0.23, 0.25, 0.40, 0.44, 0.65, 0.76, 0.78, 0.81)
@@ -48,7 +48,7 @@
 #' @export
 findpeaks <- function (x, IsDiff = TRUE, nups = 1, ndowns = nups, zero = "0", peakpat = NULL,
                        minpeakheight = -Inf, minpeakdistance = 1,
-                       r_min = 0, r_max = 0,
+                       y_min = 0, y_max = 0,
                        npeaks = 0, sortstr = FALSE, IsPlot = F)
 {
     stopifnot(is.vector(x, mode = "numeric") ||
@@ -60,8 +60,6 @@ findpeaks <- function (x, IsDiff = TRUE, nups = 1, ndowns = nups, zero = "0", pe
         stop("Argument 'zero' can only be '0', '+', or '-'.")
 
     # extend the use of findpeaks:
-    # 
-    # 
     if (IsDiff){
         xc <- sign(diff(x))
     }else{
@@ -89,8 +87,8 @@ findpeaks <- function (x, IsDiff = TRUE, nups = 1, ndowns = nups, zero = "0", pe
         xv[i] <- x[xp[i]]
     }
     inds <- which(xv >= minpeakheight &
-                      xv - pmin(x[x1], x[x2]) >= r_max &
-                      xv - pmax(x[x1], x[x2]) >= r_min)
+                      xv - pmin(x[x1], x[x2]) >= y_max &
+                      xv - pmax(x[x1], x[x2]) >= y_min)
     X <- cbind(xv[inds], xp[inds], x1[inds], x2[inds])
 
     if (length(X) == 0) return(NULL)

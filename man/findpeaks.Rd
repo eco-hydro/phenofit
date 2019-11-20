@@ -6,7 +6,7 @@
 \usage{
 findpeaks(x, IsDiff = TRUE, nups = 1, ndowns = nups, zero = "0",
   peakpat = NULL, minpeakheight = -Inf, minpeakdistance = 1,
-  r_min = 0, r_max = 0, npeaks = 0, sortstr = FALSE, IsPlot = F)
+  y_min = 0, y_max = 0, npeaks = 0, sortstr = FALSE, IsPlot = F)
 }
 \arguments{
 \item{x}{Numeric vector.}
@@ -33,12 +33,12 @@ to be recognized as such}
 to be counted. If the distance of two maximum extreme value less than
 \code{minpeakdistance}, only the real maximum value will be left.}
 
-\item{r_min}{Threshold is defined as the difference of peak value with
+\item{y_min}{Threshold is defined as the difference of peak value with
 trough value. There are two threshold (left and right). The minimum threshold
-should be greater than r_min.}
+should be greater than \code{y_min}.}
 
-\item{r_max}{Similar as \code{r_min}, The maximum threshold should
-be greater than \code{r_max}.}
+\item{y_max}{Similar as \code{y_min}, The maximum threshold should
+be greater than \code{y_max}.}
 
 \item{npeaks}{the number of peaks to return. If \code{sortstr} = true, the
 largest npeaks maximum values will be returned; If \code{sortstr} = false,

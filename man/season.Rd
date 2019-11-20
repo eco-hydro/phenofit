@@ -8,15 +8,17 @@
 \usage{
 season(INPUT, rFUN = wWHIT, wFUN = wTSM, iters = 2, wmin = 0.1,
   lambda, nf = 3, frame = floor(INPUT$nptperyear/5) * 2 + 1,
-  minpeakdistance, r_max = 0.2, r_min = 0.05, ypeak_min = 0.1,
+  minpeakdistance, ypeak_min = 0.1, r_max = 0.2, r_min = 0.05,
   rtrough_max = 0.6, MaxPeaksPerYear = 2, MaxTroughsPerYear = 3,
   calendarYear = FALSE, IsPlot = FALSE, plotdat = INPUT,
-  print = FALSE, adj.param = TRUE, ...)
+  print = FALSE, adj.param = TRUE, rm.closed = TRUE,
+  is.continuous = TRUE, .check_season = TRUE, ...)
 
 season_mov(INPUT, rFUN = wWHIT, wFUN = wTSM, iters = 2, wmin = 0.1,
   IsOptim_lambda = FALSE, lambda = NULL, nf = 3,
   frame = floor(INPUT$nptperyear/5) * 2 + 1, maxExtendMonth = 12,
-  calendarYear = FALSE, ..., IsPlot = TRUE, IsPlot.vc = FALSE,
+  calendarYear = FALSE, r_min = 0.05, rtrough_max = 0.6, ...,
+  .check_season = TRUE, IsPlot = TRUE, IsPlot.vc = FALSE,
   IsPlot.OnlyBad = FALSE, plotdat = INPUT, print = TRUE,
   titlestr = "")
 
@@ -48,9 +50,11 @@ considered above the zero frequency.}
 TIMESAT, default \code{frame = floor(nptperyear/7)*2 + 1}.}
 
 \item{minpeakdistance}{Numberic, in the unit of points (default as
-\code{nptperyear/6}). The minimum distance of two peaks. If the distance of two
+\code{nptperyear/12}). The minimum distance of two peaks. If the distance of two
 maximum extreme value less than \code{minpeakdistance}, only the real maximum
 value will be left.}
+
+\item{ypeak_min}{\code{y_peak >= ypeak_min}}
 
 \item{r_max}{Similar as \code{r_min}, The maximum threshold should
 be greater than \code{r_max}.}
@@ -58,8 +62,6 @@ be greater than \code{r_max}.}
 \item{r_min}{Threshold is defined as the difference of peak value with
 trough value. There are two threshold (left and right). The minimum threshold
 should be greater than r_min.}
-
-\item{ypeak_min}{ypeak >= ypeak_min}
 
 \item{rtrough_max}{\code{ytrough <= rtrough_max*A}, A is the amplitude of y.}
 
@@ -84,6 +86,13 @@ original data.table.}
 \item{adj.param}{Adjust rough curve fitting function parameters automatically,
 if too many or to less peak and trough values.}
 
+\item{rm.closed}{boolean. Whether check the two closest peaks (or troughs).}
+
+\item{is.continuous}{boolean. Whether the input is continuous? This parameter
+is for fluxsite site-year data.}
+
+\item{.check_season}{not used (only for debug)}
+
 \item{...}{For \code{\link[=season_mov]{season_mov()}}, Other parameters passed to
 \code{\link[=season]{season()}}; For \code{\link[=season]{season()}}, other parameters passed to
 \code{\link[=findpeaks]{findpeaks()}}.}
@@ -104,8 +113,10 @@ for every year curve fitting.}
 }
 \value{
 \itemize{
-\item \code{whit}: Rough fitting result.
-\item \code{dt}: Growing season dividing information.
+\item \code{whit}: A data.table of Rough fitting result, with the columns of
+(\code{t}, \code{y}, \code{witer1}, ..., \code{witerN}, \code{ziter1}, ..., \code{ziterN}).
+\item \code{dt}: A data.table of Growing season dividing information, with the columns
+of (\code{beg}, \code{peak}, \code{end}, \code{y_beg}, \code{y_peak}, \code{y_end}, \code{len}, \code{year}, \code{season}, \code{flag}).
 }
 
 List object, \code{list(whit, dt)}

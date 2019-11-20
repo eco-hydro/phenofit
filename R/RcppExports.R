@@ -33,8 +33,8 @@ f_goal_cpp <- function(par, fun, y, t, ypred, w = NULL, ylu = NULL) {
     .Call(`_phenofit_f_goal_cpp`, par, fun, y, t, ypred, w, ylu)
 }
 
-fix_dt <- function(d) {
-    invisible(.Call(`_phenofit_fix_dt`, d))
+check_season <- function(d, rm_closed = TRUE, rtrough_max = 0.7, r_min = 0.02) {
+    invisible(.Call(`_phenofit_check_season`, d, rm_closed, rtrough_max, r_min))
 }
 
 sgmat_S <- function(halfwin = 5L, d = 2L) {

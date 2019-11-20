@@ -1,71 +1,140 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 
-// This is a simple example of exporting a C++ function to R. You can
-// source this function into an R session using the Rcpp::sourceCpp
-// function (or via the Source button on the editor toolbar). Learn
-// more about Rcpp at:
-//
-//   http://www.rcpp.org/
-//   http://adv-r.had.co.nz/Rcpp.html
-//   http://gallery.rcpp.org/
-//
+// 符合条件的两个相邻(t_diff <= 5) seasons, 合并endtime
+void RightCombine_season(NumericVector y_peak, NumericVector y_end, NumericVector len,
+                         DateVector date_beg, DateVector date_peak, DateVector date_end, int i)
+{
+    y_end[i] = y_end[i + 1];
+    date_end[i] = date_end[i + 1];
+    len[i] = date_end[i] - date_beg[i] + 1;
+
+    if (y_peak[i] < y_peak[i + 1])
+    {
+        date_peak[i] = date_peak[i + 1];
+        y_peak[i] = y_peak[i + 1];
+    }
+    y_peak[i + 1] = -9999.0; // flag
+}
+
+void LeftCombine_season(NumericVector y_peak, NumericVector y_end, NumericVector len,
+                        DateVector date_beg, DateVector date_peak, DateVector date_end, int i)
+{
+    y_end[i + 1] = y_end[i];
+    date_end[i + 1] = date_end[i];
+    len[i + 1] = date_end[i + 1] - date_beg[i + 1] + 1;
+
+    if (y_peak[i] > y_peak[i + 1])
+    {
+        date_peak[i + 1] = date_peak[i];
+        y_peak[i + 1] = y_peak[i];
+    }
+    y_peak[i] = -9999.0; // flag
+}
 
 /**
  * Fix troughs in \code{season_mov} whose date is later than previous year
  * ending trough, and merge two too close troughs (less than 35 days).
+ *  // DateVector t, NumericVector ypred,
  */
 // [[Rcpp::export]]
-void fix_dt(DataFrame d) {
-
+void check_season(DataFrame d,
+    bool rm_closed = true, double rtrough_max = 0.7, double r_min = 0.02)
+{
     DateVector date_beg = d["beg"];
     DateVector date_end = d["end"];
-    NumericVector val_beg = d["y_beg"];
-    NumericVector val_end = d["y_end"];
+    DateVector date_peak = d["peak"];
+    NumericVector len = d["len"];
+    NumericVector y_beg = d["y_beg"];
+    NumericVector y_end = d["y_end"];
+    NumericVector y_peak = d["y_peak"];
 
     int n = d.nrow();
-    for (int i = 0; i < n - 1; i++){
+    Date newdate;
+    double newval;
+
+    for (int i = 0; i < n - 1; i++)
+    {
         // Rcout << i << std::endl;
-        int delta_days = date_end[i] - date_beg[i+1];
-        bool con = (val_end[i] <= val_beg[i+1]);     // previous end smaller ?
+        int t_diff = date_beg[i + 1] - date_end[i];
+        double maxPeakVal = std::max(y_peak[i], y_peak[i + 1]);
 
-        if (delta_days > 0 || abs(delta_days) <= 50){
-            Date  newdate = con? date_end[i] : date_beg[i+1];
-            double newval = con? val_end[i] : val_beg[i+1];
+        double T2_h_left = y_peak[i + 1] - y_beg[i + 1];
+        double T1_h_right = y_peak[i] - y_end[i];
 
-            date_end[i]   = newdate; // + (-1);
-            date_beg[i+1] = newdate;
-            val_end[i]    = newval;
-            val_beg[i+1]  = newval;
+        double trs = maxPeakVal * r_min;
+        double trs2 = maxPeakVal * (r_min + 0.1);
+        // double trs = maxPeakVal * 0.2;
+        // 1. y_end[i] >= trs || y_beg[i+1] >= trs 定义为高trough
+        // double diff = std::abs(y_end[i] - y_beg[i+1]);
+        // bool is_HighTrough = y_end[i] >= trs || y_beg[i+1] >= trs;
+        bool is_PreEndSmaller = (y_end[i] <= y_beg[i + 1]); // previous end smaller ?
+        // Rprintf("trs = %.2f\n", trs);
+        // Rcout << i << ": is_HighTrough = " << is_HighTrough << std::endl;
 
-            // second solution, switch values
-            // Date temp_date = date_end[i];
-            // date_end[i]    = date_beg[i+1];
-            // date_beg[i+1]  =  temp_date;
-            //
-            // double temp_val = val_end[i];
-            // val_end[i]      = val_beg[i+1];
-            // val_beg[i+1]    =  temp_val;
+        // 1. growing season日期交差
+        // 2. 两相邻val_troughs值相差过大; 且不重叠，则进行融合
+        if (t_diff < 0)     //|| (is_HighTrough && delta_days < 0)
+        {                   //|| abs(delta_days) <= 50
+            newdate = is_PreEndSmaller ? date_end[i] : date_beg[i + 1];
+            newval = is_PreEndSmaller ? y_end[i] : y_beg[i + 1];
+
+            date_end[i] = newdate; // + (-1);
+            date_beg[i + 1] = newdate;
+            y_end[i] = newval;
+            y_beg[i + 1] = newval;
+            len[i] = date_end[i] - date_beg[i] + 1;
+        }
+
+        // 坡脚修复大法，IT-BCi, ending of 2005; 必须是相邻troughs
+        // double peak_temp = max(ypred[ t >= date_end[i] & t <= date_beg[i+1] ]);
+        // Rcout << peak_temp << std::endl;
+        if (t_diff > 0 && t_diff <= 150 && 
+            T2_h_left <= trs && y_end[i] < y_beg[i + 1])
+        {
+            // 向左拱进
+            y_beg[i + 1] = y_beg[i];
+            date_beg[i + 1] = date_beg[i];
+            len[i + 1] = date_end[i + 1] - date_beg[i + 1] + 1;
+        }
+
+        // 处理相邻的peaks，进行融合操作
+        // 1. 第二周期，左侧trough过高，超过`0.7*maxPeakVal`
+        // 2. 第二周期，左侧r_min过小, （其ypeak > r_min + 0.1）
+        // 3. 第一周期， 右侧r_min过小,
+        // 3. (not used) 如果相邻生长季返青日期过短，则执行合并操作
+
+        // 这里用max，而非min，意在保护A较小的生长季
+        if (rm_closed)
+        {
+            double is_closed = t_diff >= 0 && t_diff <= 150; // 相差在5天内认为相邻
+            double T1_minVal = std::min(y_beg[i], y_end[i]);
+            double T2_minVal = std::min(y_beg[i + 1], y_end[i + 1]);
+
+            // double diff_right = y_peak[i + 1] - y_end[i + 1];
+            // Rprintf("T1_h_right = %#4.2f, T2_h_left = % 4.2f, trs = %4.2f\n", T1_h_right, T2_h_left, trs);
+            bool con_left = (T1_h_right <= trs && y_beg[i] < y_beg[i + 1] && (y_peak[i] > trs2 + T1_minVal));
+            bool con_right = (T2_h_left <= trs && y_end[i] > y_end[i + 1] && (y_peak[i + 1] > trs2 + T2_minVal));
+
+            if (is_closed &&
+                (y_end[i] >= maxPeakVal * rtrough_max || con_right || con_left))
+            {
+                // Rcout << i+1 << "正在进行融合" << std::endl;
+                RightCombine_season(y_peak, y_end, len, date_beg, date_peak, date_end, i);
+                i++; // 如果进行了融合，则跳过下一生长周期
+                continue;
+            }
+            // if (is_closed && con_left)
+            // {
+            //     LeftCombine_season(y_peak, y_end, len, date_beg, date_peak, date_end, i);
+            //     i++; // 如果进行了融合，则跳过下一生长周期
+            //     continue;
+            // }
         }
     }
-
-    d["beg"] = date_beg;
-    d["end"] = date_end;
-    d["y_beg"] = val_beg;
-    d["y_end"] = val_end;
-    d["len"]   = date_end - date_beg + 1;
     // CharacterVector names = d.attr("names");
-    // Rcout << names << std::endl;
     // return max_dte;
 }
 
-
 /*** R
-# df <- data.frame(
-#     id=1:10,
-#     date = seq(as.Date("2015-01-01"),
-#                as.Date("2015-01-10"),
-#                by="day")
-# )
-# MaxDate(df)
 */

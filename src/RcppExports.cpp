@@ -107,13 +107,16 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// fix_dt
-void fix_dt(DataFrame d);
-RcppExport SEXP _phenofit_fix_dt(SEXP dSEXP) {
+// check_season
+void check_season(DataFrame d, bool rm_closed, double rtrough_max, double r_min);
+RcppExport SEXP _phenofit_check_season(SEXP dSEXP, SEXP rm_closedSEXP, SEXP rtrough_maxSEXP, SEXP r_minSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< DataFrame >::type d(dSEXP);
-    fix_dt(d);
+    Rcpp::traits::input_parameter< bool >::type rm_closed(rm_closedSEXP);
+    Rcpp::traits::input_parameter< double >::type rtrough_max(rtrough_maxSEXP);
+    Rcpp::traits::input_parameter< double >::type r_min(r_minSEXP);
+    check_season(d, rm_closed, rtrough_max, r_min);
     return R_NilValue;
 END_RCPP
 }

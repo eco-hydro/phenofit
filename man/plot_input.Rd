@@ -34,7 +34,7 @@ nptperyear = 23
 ypeak_min  = 0.05
 
 dnew     <- add_HeadTail(d, nptperyear = nptperyear) # add one year in head and tail
-INPUT    <- check_input(dnew$t, dnew$y, dnew$w, d$QC_flag, nptperyear, 
+INPUT    <- check_input(dnew$t, dnew$y, dnew$w, d$QC_flag, nptperyear,
                         maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
 plot_input(INPUT)
 }

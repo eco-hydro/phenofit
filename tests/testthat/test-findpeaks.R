@@ -11,10 +11,10 @@ test_that("findpeaks works", {
         pSignal <- pSignal + hgt[i]/(1 + abs((x - pos[i])/wdt[i]))^4
     }
 
-    expect_equal( nrow(findpeaks(pSignal, r_max=4, sortstr=TRUE)$X), 5, 
-        info = 'r_min works') # 5 points amplitude > 4
-    expect_equal( nrow(findpeaks(pSignal, r_max=3, sortstr=TRUE)$X), 8, 
-        info = 'r_min works') # 8 points amplitude > 3
-    expect_equal( nrow(findpeaks(pSignal, r_min=4.1, sortstr=TRUE)$X), 3, 
-        info = 'r_min works')     
+    expect_equal( nrow(findpeaks(pSignal, y_max=4, sortstr=TRUE)$X), 5,
+                  info = 'r_min works') # 5 points amplitude > 4
+    expect_equal( nrow(findpeaks(pSignal, y_max=3, sortstr=TRUE)$X), 8,
+                  info = 'r_min works') # 8 points amplitude > 3
+    expect_equal( nrow(findpeaks(pSignal, y_min=4.1, sortstr=TRUE)$X), 3,
+                  info = 'r_min works')
 })

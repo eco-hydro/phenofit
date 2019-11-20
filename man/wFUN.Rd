@@ -3,6 +3,7 @@
 \name{wSELF}
 \alias{wSELF}
 \alias{wTSM}
+\alias{wBisquare0}
 \alias{wBisquare}
 \alias{wChen}
 \alias{wKong}
@@ -12,7 +13,9 @@ wSELF(y, yfit, w, ...)
 
 wTSM(y, yfit, w, iter = 2, nptperyear, wfact = 0.5, ...)
 
-wBisquare(y, yfit, w, ..., wmin = 0.2)
+wBisquare0(y, yfit, w, ..., wmin = 0.2)
+
+wBisquare(y, yfit, w, ..., wmin = 0.2, .toUpper = TRUE)
 
 wChen(y, yfit, w, ..., wmin = 0.2)
 
@@ -47,6 +50,7 @@ wnew Numeric Vector, adjusted weights.
 \item \code{wTSM} weight updating method in TIMESAT.
 \item \code{wBisquare} Bisquare weight update method. wBisquare has been
 modified to emphasis on upper envelope.
+\item \code{wBisquare0} Traditional Bisquare weight update method.
 \item \code{wChen} Chen et al., (2004) weight updating method.
 \item \code{wBeck} Beck et al., (2006) weigth updating method. wBeck need
 sos and eos input. The function parameter is different from others. It is

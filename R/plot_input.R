@@ -77,6 +77,7 @@ plot_input <- function(INPUT, wmin = 0.2, ...){
     }
 
     show.goodPoints = INPUT$nptperyear < 90
+    if (length(show.goodPoints) == 0) show.goodPoints = TRUE
 
     # Ids <- unique(wf)
     for (i in 1:length(qc_levels)){

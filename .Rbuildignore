@@ -24,3 +24,5 @@
 ^README\.Rmd$
 ^inst/phenofit\.shiny$
 ^Makefile$
+^\.vscode$
+^Rcpp_debug\.R$

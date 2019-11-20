@@ -15,7 +15,7 @@
 extern void smooth2(void *, void *, void *, void *, void *, void *, void *, void *);
 
 /* .Call calls */
-extern SEXP _phenofit_fix_dt(SEXP);
+extern SEXP _phenofit_check_season(SEXP, SEXP, SEXP, SEXP);
 extern SEXP _phenofit_sgmat_S(SEXP, SEXP);
 extern SEXP _phenofit_sgmat_B(SEXP);
 extern SEXP _phenofit_sgmat_wB(SEXP, SEXP);
@@ -39,7 +39,7 @@ static const R_CMethodDef CEntries[] = {
 };
 
 static const R_CallMethodDef CallEntries[] = {
-    CALLDEF(_phenofit_fix_dt    , 1),
+    CALLDEF(_phenofit_check_season, 4),
     CALLDEF(_phenofit_sgmat_S   , 2),
     CALLDEF(_phenofit_sgmat_B   , 1),
     CALLDEF(_phenofit_sgmat_wB  , 2),

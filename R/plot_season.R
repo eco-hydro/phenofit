@@ -45,8 +45,8 @@ plot_season <- function(INPUT, brks, plotdat, ylu,
 
     # colors <- c("blue", "red", "green")
     NITER  <- ncol(zs)
-    # if (NITER < 3) colors <- c("blue", "red")
     lines_colors <- iter_colors(NITER)
+    if (NITER == 1) lines_colors <- c("red")
 
     for (i in 1:NITER){
         lines(t, zs[[i]], col = lines_colors[i], lwd = 2)
