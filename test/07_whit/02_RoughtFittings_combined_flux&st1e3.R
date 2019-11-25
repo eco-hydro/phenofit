@@ -1,7 +1,7 @@
 # Update 20181024
 # ---------------
-# This function is used to test the rough curve fitting methods, i.e. (wSG,
-# wHANTS, wWHd, wWH2) at 16000 points, sampled at global scale.
+# This function is used to test the rough curve fitting methods, i.e. (smooth_wSG,
+# smooth_wHANTS, wWHd, wWH2) at 16000 points, sampled at global scale.
 # 
 # After this, pls run:
 # - Fig09_(a)_GET_fitting&gof_data.R
@@ -54,8 +54,8 @@ sitename <- sites[1]
 noise_percs = c(0.1, 0.3, 0.5)
 noise_perc  = 0 # default is zero
 
-methods  <- c("wHANTS", "wSG", "wWHIT", "wWHIT")
-methods2 <- c("wHANTS", "wSG", "wWH", "wWH2")
+methods  <- c("smooth_wHANTS", "smooth_wSG", "smooth_wWHIT", "smooth_wWHIT")
+methods2 <- c("smooth_wHANTS", "smooth_wSG", "wWH", "wWH2")
 
 lst <- list()
 k = 4 # k = 4 is corresponding to `grp01_Extend`
@@ -71,7 +71,7 @@ param   <- as.list(coefs[k, ])
 
 ############################################################################
 for (i in 1:4){ # only wWH2 this time
-    method <- methods[i] #"sgfitw", "whitsmw2" and "wHANTS".
+    method <- methods[i] #"sgfitw", "whitsmw2" and "smooth_wHANTS".
     FUN    <- get(method, envir = as.environment("package:phenofit"))
 
     runningId(k, prefix = method)
@@ -87,7 +87,7 @@ for (i in 1:4){ # only wWH2 this time
     # a <- llply(sites[23:100], rough_fitting,
     #              df = df, st = st, FUN = get(method), lambda = lambda,
     #              .progress = "text") #lst[[i]]
-    # rough_fitting(sitename, df, st, .FUN = wWHIT, lambda = lambda)
+    # rough_fitting(sitename, df, st, .FUN = smooth_wWHIT, lambda = lambda)
 
     outdir <- sprintf("%sresult/valid_%s/%s%s_%d%%",
                       dir_flush, version, dir_flux, methods2[i], noise_perc*100)

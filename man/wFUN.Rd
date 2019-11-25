@@ -40,6 +40,8 @@ weights of all \code{NA} values will be \code{wmin}, the others will be 1.0.}
 
 \item{wmin}{Double, minimum weight of bad points, which could be smaller
 the weight of snow, ice and cloud.}
+
+\item{.toUpper}{Boolean. Whether to approach the upper envelope?}
 }
 \value{
 wnew Numeric Vector, adjusted weights.

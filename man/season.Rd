@@ -6,16 +6,16 @@
 \alias{stat_season}
 \title{Growing season dividing}
 \usage{
-season(INPUT, rFUN = wWHIT, wFUN = wTSM, iters = 2, wmin = 0.1,
-  lambda, nf = 3, frame = floor(INPUT$nptperyear/5) * 2 + 1,
-  minpeakdistance, ypeak_min = 0.1, r_max = 0.2, r_min = 0.05,
+season(INPUT, rFUN = smooth_wWHIT, wFUN = wTSM, iters = 2,
+  wmin = 0.1, lambda, nf = 3, frame = floor(INPUT$nptperyear/5) * 2 +
+  1, minpeakdistance, ypeak_min = 0.1, r_max = 0.2, r_min = 0.05,
   rtrough_max = 0.6, MaxPeaksPerYear = 2, MaxTroughsPerYear = 3,
   calendarYear = FALSE, IsPlot = FALSE, plotdat = INPUT,
   print = FALSE, adj.param = TRUE, rm.closed = TRUE,
   is.continuous = TRUE, .check_season = TRUE, ...)
 
-season_mov(INPUT, rFUN = wWHIT, wFUN = wTSM, iters = 2, wmin = 0.1,
-  IsOptim_lambda = FALSE, lambda = NULL, nf = 3,
+season_mov(INPUT, rFUN = smooth_wWHIT, wFUN = wTSM, iters = 2,
+  wmin = 0.1, IsOptim_lambda = FALSE, lambda = NULL, nf = 3,
   frame = floor(INPUT$nptperyear/5) * 2 + 1, maxExtendMonth = 12,
   calendarYear = FALSE, r_min = 0.05, rtrough_max = 0.6, ...,
   .check_season = TRUE, IsPlot = TRUE, IsPlot.vc = FALSE,
@@ -28,8 +28,8 @@ stat_season(INPUT, brks)
 \item{INPUT}{A list object with the elements of \code{t}, \code{y}, \code{w},
 \code{Tn} (optional) and \code{ylu}, returned by \code{\link[=check_input]{check_input()}}.}
 
-\item{rFUN}{Rough curve fitting function, can be one of \code{\link[=wSG]{wSG()}},
-\code{\link[=wWHIT]{wWHIT()}} and \code{\link[=wHANTS]{wHANTS()}}.}
+\item{rFUN}{Rough curve fitting function, can be one of \code{\link[=smooth_wSG]{smooth_wSG()}},
+\code{\link[=smooth_wWHIT]{smooth_wWHIT()}} and \code{\link[=smooth_wHANTS]{smooth_wHANTS()}}.}
 
 \item{wFUN}{weights updating function, can be one of \code{\link[=wTSM]{wTSM()}},
 \code{\link[=wChen]{wChen()}}, \code{\link[=wBisquare]{wBisquare()}} and \code{\link[=wSELF]{wSELF()}}.}
@@ -38,15 +38,15 @@ stat_season(INPUT, brks)
 
 \item{wmin}{Double, minimum weigth (i.e. weight of snow, ice and cloud).}
 
-\item{lambda}{The smoothing parameter of \code{\link[=wWHIT]{wWHIT()}}. For
+\item{lambda}{The smoothing parameter of \code{\link[=smooth_wWHIT]{smooth_wWHIT()}}. For
 \code{\link[=season_mov]{season_mov()}}, if lambda is \code{NULL}, \code{\link[=init_lambda]{init_lambda()}}
 will be used. Generally, it was set as 10000, 15, and 5 for daily, 8-day
 and 16-day inputs respectively.}
 
-\item{nf}{The parameter of \code{\link[=wHANTS]{wHANTS()}}, number of frequencies to be
+\item{nf}{The parameter of \code{\link[=smooth_wHANTS]{smooth_wHANTS()}}, number of frequencies to be
 considered above the zero frequency.}
 
-\item{frame}{The parameter of \code{\link[=wSG]{wSG()}}, moving window size. Suggested by
+\item{frame}{The parameter of \code{\link[=smooth_wSG]{smooth_wSG()}}, moving window size. Suggested by
 TIMESAT, default \code{frame = floor(nptperyear/7)*2 + 1}.}
 
 \item{minpeakdistance}{Numberic, in the unit of points (default as
@@ -165,12 +165,12 @@ INPUT    <- check_input(dnew$t, dnew$y, dnew$w, QC_flag = dnew$QC_flag,
      maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
 # all year as a whole
 brks  <- season(INPUT,
-    rFUN = wWHIT, wFUN = wFUN,
+    rFUN = smooth_wWHIT, wFUN = wFUN,
     lambda = 10,
     plotdat = d, IsPlot = IsPlot, print = FALSE, IsPlot.OnlyBad = FALSE)
 # curve fitting by year
 brks2 <- season_mov(INPUT,
-    rFUN = wWHIT, wFUN = wFUN,
+    rFUN = smooth_wWHIT, wFUN = wFUN,
     lambda = 10,
     plotdat = d, IsPlot = IsPlot, print = FALSE, IsPlot.OnlyBad = FALSE)
 }

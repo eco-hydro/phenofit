@@ -10,12 +10,14 @@
 #' sos and eos input. The function parameter is different from others. It is
 #' still not finished.
 #'
-#' @inheritParams wWHIT
+#' @inheritParams smooth_wWHIT
 #' @param yfit Numeric vector curve fitting values.
 #' @param iter iteration of curve fitting.
 #' @param wfact weight adaptation factor (0-1), equal to the reciprocal of
 #' 'Adaptation strength' in TIMESAT.
 #' @param ... other parameters are ignored.
+#' @param .toUpper Boolean. Whether to approach the upper envelope?
+#' 
 #' @inheritParams check_input
 #' 
 #' @return wnew Numeric Vector, adjusted weights.
@@ -51,7 +53,7 @@ wSELF <- function(y, yfit, w, ...){w}
 #' @rdname wFUN
 #' @export
 wTSM <- function(y, yfit, w, iter = 2, nptperyear, wfact = 0.5, ...){
-    wTSM_cpp(y, yfit, w, iter, nptperyear, wfact)
+    rcpp_wTSM(y, yfit, w, iter, nptperyear, wfact)
 }
 
 #' @rdname wFUN

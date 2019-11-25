@@ -7,7 +7,7 @@ source("test/load_pkgs.R")
 # To compare with different sites, Roughtness is normalized by `Yobs`.
 typename  <- "all"
 str_iter  <- "iter1"
-methods   <- c("AG", "ZHANG", "wHANTS", "wSG", "wWH2")
+methods   <- c("AG", "ZHANG", "smooth_wHANTS", "smooth_wSG", "wWH2")
 
 indice       <- c("R2", "Bias", "RMSE", "Rg_norm_by_obs")
 indice_label <- c("bold((a)*' '*R^2)", "bold((b)*' '*Bias)",

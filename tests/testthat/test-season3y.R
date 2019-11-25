@@ -13,31 +13,31 @@ source('helper_MOD13A1.R')
 # )
 
 param = listk(
-    INPUT, south = sp$lat[1] < 0, 
-    rFUN = wWHIT, wFUN = wTSM, iters = 3,
+    INPUT, south = sp$lat[1] < 0,
+    rFUN = smooth_wWHIT, wFUN = wTSM, iters = 3,
     r_min = 0,
     IsPlot = IsPlot, plotdat = d, print = FALSE, IsOnlyPlotbad = F
 )
 
-param$rFUN <- wSG
+param$rFUN <- smooth_wSG
 # brks <- do.call(season_mov, param)
 
-test_that("`season` with wWHIT and calendarYear", {
+test_that("`season` with smooth_wWHIT and calendarYear", {
     param$calendarYear <- TRUE
     expect_silent(brks <- do.call(season_mov, param))
 })
 
-test_that("`season_mov` with wWHIT", {
+test_that("`season_mov` with smooth_wWHIT", {
     param$calendarYear <- FALSE
     expect_silent(brks <- do.call(season_mov, param))
 })
 
 test_that("`season_mov` with wHANTS", {
-    param$rFUN <- wHANTS
+    param$rFUN <- smooth_wHANTS
     expect_silent(brks <- do.call(season_mov, param))
 })
 
-test_that("`season_mov` with wSG", {
-    param$rFUN <- wSG
+test_that("`season_mov` with smooth_wSG", {
+    param$rFUN <- smooth_wSG
     expect_silent(brks <- do.call(season_mov, param))
 })

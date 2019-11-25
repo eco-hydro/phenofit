@@ -5,8 +5,8 @@ source("test/07_whit/main_Whittaker_Figures.R")
 source("test/07_whit/dat_flux&cam_phenofit.R")
 
 load("data_test/whit_lambda/MOD13A1_st_1e3_20180731.rda")
-methods  <- c('AG', 'BECK', 'ELMORE', 'ZHANG', 'whit_R', 'wHANTS', 'wSG', 'wWH', "wWH2")
-methods2 <- c('AG', 'ZHANG', 'wHANTS', 'wSG', 'wWH', "wWH2")
+methods  <- c('AG', 'BECK', 'ELMORE', 'ZHANG', 'whit_R', 'smooth_wHANTS', 'smooth_wSG', 'wWH', "wWH2")
+methods2 <- c('AG', 'ZHANG', 'smooth_wHANTS', 'smooth_wSG', 'wWH', "wWH2")
 
 st$site %<>% as.character()
 st$IGBPname %<>% factor(IGBPnames_006)

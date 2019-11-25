@@ -4,9 +4,9 @@
 \alias{plot_phenofit}
 \title{plot_phenofit}
 \usage{
-plot_phenofit(d_fit, seasons, title = NULL,
-  title.ylab = "Vegetation Index", title.xlab = "Time",
-  font.size = 14, theme = NULL, show.legend = TRUE)
+plot_phenofit(d_fit, seasons, title = NULL, title.xlab = "Time",
+  title.ylab = "Vegetation Index", font.size = 14, theme = NULL,
+  show.legend = TRUE)
 }
 \arguments{
 \item{d_fit}{data.frame of curve fittings returned by \code{\link[=get_fitting]{get_fitting()}}.}
@@ -16,7 +16,7 @@ and \code{\link[=season_mov]{season_mov()}}.}
 
 \item{title}{String, title of figure.}
 
-\item{title.ylab}{String, title of \code{ylab}.}
+\item{title.xlab, title.ylab}{String, title of \code{xlab} and \code{ylab}.}
 
 \item{font.size}{Font size of axis.text}
 
@@ -56,7 +56,7 @@ INPUT    <- check_input(dnew$t, dnew$y, dnew$w, QC_flag = dnew$QC_flag,
      maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
 # Rough fitting and growing season dividing
 brks2 <- season_mov(INPUT,
-    rFUN = wWHIT, wFUN = wFUN,
+    rFUN = smooth_wWHIT, wFUN = wFUN,
     plotdat = d, IsPlot = IsPlot, print = FALSE, IsPlot.OnlyBad = FALSE)
 # Fine fitting
 fit <- curvefits(

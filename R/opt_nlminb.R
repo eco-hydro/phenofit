@@ -34,6 +34,7 @@ opt_nlminb <- function(par0, objective, ...){
 #' Unconstrained and box-constrained optimization using PORT routines.
 #'
 #' @inheritParams optim_pheno
+#' @inheritParams stats::nlminb
 #' @param par0 Initial values for the parameters to be optimized over.
 #' @param fitMeth Curve fitting methods, one of `c("doubleLog_Beck",
 #' "doubleLog_Elmore", "doubleLog_AG", "doubleLog_Zhang")`
@@ -83,6 +84,9 @@ check_double <- function(x) {
     if(!is.null(x)) as.double(x) else NULL
 }
 
+#' julia_init
+#' 
+#' @keywords internal
 #' @import JuliaCall
 #' @export
 julia_init <- function(){

@@ -46,7 +46,7 @@ whit2 <- function(y, lambda, w = rep(1, ny))
 
 #' Weigthed Whittaker Smoother
 #'
-#' @inheritParams wHANTS
+#' @inheritParams smooth_wHANTS
 #' @param lambda whittaker parameter (2-15 is suitable for 16-day VI). Multiple
 #' lambda values also are accept, then a list object return.
 #' @param second If true, in every iteration, Whittaker will be implemented
@@ -55,7 +55,7 @@ whit2 <- function(y, lambda, w = rep(1, ny))
 #' just prepared for this situation. If lambda value has been optimized, second
 #' smoothing is unnecessary.
 #'
-#' @inherit wHANTS return
+#' @inherit smooth_wHANTS return
 #' 
 #' @references
 #' 1. Eilers, P.H.C., 2003. A perfect smoother. Anal. Chem. https://doi.org/10.1021/ac034173t \cr
@@ -69,9 +69,9 @@ whit2 <- function(y, lambda, w = rep(1, ny))
 #' d <- dt[site == "AT-Neu", ]
 #' 
 #' l <- check_input(d$t, d$y, d$w, nptperyear=23)
-#' r_wWHIT <- wWHIT(l$y, l$w, l$ylu, nptperyear = 23, iters = 2)
+#' r_wWHIT <- smooth_wWHIT(l$y, l$w, l$ylu, nptperyear = 23, iters = 2)
 #' @export
-wWHIT <- function(y, w, ylu, nptperyear, wFUN = wTSM, iters=1, lambda=15,
+smooth_wWHIT <- function(y, w, ylu, nptperyear, wFUN = wTSM, iters=1, lambda=15,
     second = FALSE, ...) #, df = NULL
 {
     trs <- 0.5

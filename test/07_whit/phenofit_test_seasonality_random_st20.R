@@ -21,8 +21,8 @@ ymax_min   <- 0.1
 # info <- rm_nonSIPoints(df, IsPlot = T, file = 'SI_2.pdf')
 ################################################################################
 
-methods <- c("sgfitw", "whitsmw2", "wHANTS")
-method  <- methods[2] #"sgfitw", "whitsmw2" and "wHANTS".
+methods <- c("sgfitw", "whitsmw2", "smooth_wHANTS")
+method  <- methods[2] #"sgfitw", "whitsmw2" and "smooth_wHANTS".
 FUN  <- get(method)
 file <- sprintf("st340_%s.pdf", method)
 

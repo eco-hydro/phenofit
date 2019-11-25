@@ -14,7 +14,7 @@ wFUN = wTSM
 # #     max_MaxPeaksperyear =2.5, max_MinPeaksperyear = 3.5
 # # )
 brks2 <- season_mov(INPUT,
-    rFUN = wWHIT, wFUN = wFUN,
+    rFUN = smooth_wWHIT, wFUN = wFUN,
     plotdat = d, IsPlot = IsPlot, print = F, IsOnlyPlotbad = F)
 
 param <- list(

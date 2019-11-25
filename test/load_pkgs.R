@@ -304,7 +304,7 @@ get_phenofit <- function(sitename, df, st, prefix_fig = 'phenofit_v0.1.6', IsPlo
         #                max_MaxPeaksperyear =2.5, max_MinPeaksperyear = 3.5) #, ...
         ## get growing season breaks in a 3-year moving window
         brks2 <- season_mov(INPUT, south = south,
-            wFUN = wFUN_season, rFUN = wWHIT, iters = 2,
+            wFUN = wFUN_season, rFUN = smooth_wWHIT, iters = 2,
             lambda = lambda,
             minpeakdistance = nptperyear/6,
             MaxPeaksPerYear = 3,

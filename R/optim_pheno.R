@@ -3,7 +3,7 @@
 #' Interface of optimization functions for double logistics and other parametric
 #' curve fitting functions.
 #'
-#' @inheritParams wHANTS
+#' @inheritParams smooth_wHANTS
 #' @param prior A vector of initial values for the parameters for which optimal
 #' values are to be found. `prior` is suggested giving a column name.
 #' @param sFUN The name of fine curve fitting functions, can be one of `

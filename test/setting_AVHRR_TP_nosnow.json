@@ -13,7 +13,7 @@
   "site": ["31"],
   "calendarYear": [true],
   "FUN_season": ["season"],
-  "FUN_rough": ["wHANTS"],
+  "FUN_rough": ["smooth_wHANTS"],
   "frame": [7],
   "lambda": [2],
   "nf": [6],

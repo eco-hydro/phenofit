@@ -9,7 +9,7 @@ check_seasonality <- function(INPUT, IsPlot = F, plotdat = INPUT, nf = 3, ...){
     #
     # pdat <- as.list(d[, .(y = EVI, t = date, w = w)])
     # pdat$ylu <- INPUT$ylu
-    fit <- wHANTS(INPUT$y, INPUT$t, INPUT$w, nf = nf, ylu = INPUT$ylu,
+    fit <- smooth_wHANTS(INPUT$y, INPUT$t, INPUT$w, nf = nf, ylu = INPUT$ylu,
                   nptperyear = 23, iters = 3, wFUN = wTSM, wmin = 0.1)
     if (IsPlot){
         plot_input(plotdat, 23)

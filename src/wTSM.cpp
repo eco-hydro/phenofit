@@ -7,7 +7,7 @@ using namespace Rcpp;
 
 // Weight updating method in TIMESAT.
 // [[Rcpp::export]]
-NumericVector wTSM_cpp(NumericVector y, NumericVector yfit, NumericVector w,
+NumericVector rcpp_wTSM(NumericVector y, NumericVector yfit, NumericVector w,
                    int iter, int nptperyear, double wfact) {
   int n  = y.size();
   int m  = sum(w > 0.5); //valid length
@@ -64,5 +64,5 @@ n <- length(y)
 w <- rep(1, n)
 nptperyear <- 25
 
-wnew <- wTSM_cpp(y, yfit, w, 2, nptperyear, 2)
+wnew <- rcpp_wTSM(y, yfit, w, 2, nptperyear, 2)
 */

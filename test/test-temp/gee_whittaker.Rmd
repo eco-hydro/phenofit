@@ -11,12 +11,12 @@ Try executing this chunk by clicking the *Run* button within the chunk or by pla
 k = 4
 param   <- as.list(coefs[k, ]); print(str(param))
 par(mfrow = c(2, 1), mar = c(1.5, 2, 2, 1), mgp = c(3, 0.6, 0))
-a <- rough_fitting(sitename, df, st, .FUN = wWHIT, lambda = 2, T)
+a <- rough_fitting(sitename, df, st, .FUN = smooth_wWHIT, lambda = 2, T)
 title("wWH2")
-b1 <- rough_fitting(sitename, df, st, .FUN = wWHIT, lambda = NULL, T)
+b1 <- rough_fitting(sitename, df, st, .FUN = smooth_wWHIT, lambda = NULL, T)
 title("wWHd")
 
-b2 <- rough_fitting(sitename, df, st, .FUN = wWHIT, lambda = NULL, T, Ioptim_lambda = T)
+b2 <- rough_fitting(sitename, df, st, .FUN = smooth_wWHIT, lambda = NULL, T, Ioptim_lambda = T)
 
 
 info <- list(wWH2 = a$GOF,
@@ -32,12 +32,12 @@ print(info)
 k = 4
 param   <- as.list(coefs[k, ]); print(str(param))
 par(mfrow = c(2, 1), mar = c(1.5, 2, 2, 1), mgp = c(3, 0.6, 0))
-a <- rough_fitting(sitename, df, st, .FUN = wWHIT, lambda = 2, T)
+a <- rough_fitting(sitename, df, st, .FUN = smooth_wWHIT, lambda = 2, T)
 title("wWH2")
-b1 <- rough_fitting(sitename, df, st, .FUN = wWHIT, lambda = NULL, T)
+b1 <- rough_fitting(sitename, df, st, .FUN = smooth_wWHIT, lambda = NULL, T)
 title("wWHd")
 
-b2 <- rough_fitting(sitename, df, st, .FUN = wWHIT, lambda = NULL, T, Ioptim_lambda = T)
+b2 <- rough_fitting(sitename, df, st, .FUN = smooth_wWHIT, lambda = NULL, T, Ioptim_lambda = T)
 
 
 info <- list(wWH2 = a$GOF,

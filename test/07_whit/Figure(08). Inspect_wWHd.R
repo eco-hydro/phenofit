@@ -1,7 +1,7 @@
 # Update 20181024
 # ---------------
-# This function is used to test the rough curve fitting methods, i.e. (wSG,
-# wHANTS, wWHd, wWH2) at 16000 points, sampled at global scale.
+# This function is used to test the rough curve fitting methods, i.e. (smooth_wSG,
+# smooth_wHANTS, wWHd, wWH2) at 16000 points, sampled at global scale.
 source("test/load_pkgs.R")
 source("R/season_mov.R")
 source("R/curvefits.R")
@@ -127,8 +127,8 @@ sitename <- sites[1]
 noise_percs = c(0.1, 0.3, 0.5)
 noise_perc  = 0 # default is zero
 
-methods  <- c("wHANTS", "wSG", "wWHIT", "wWHIT")
-methods2 <- c("wHANTS", "wSG", "wWH", "wWH2")
+methods  <- c("smooth_wHANTS", "smooth_wSG", "smooth_wWHIT", "smooth_wWHIT")
+methods2 <- c("smooth_wHANTS", "smooth_wSG", "wWH", "wWH2")
 
 lst <- list()
 
@@ -161,10 +161,10 @@ svg("Fig8_wWH2 vs wWHd one site.svg", 9, 6)
 par(mfrow = c(2, 1), mar = c(1.5, 2, 2, 1), mgp = c(3, 0.6, 0),
     oma = c(3.5, 0, 0, 0),
     cex = 1)
-a <- rough_fitting(sitename, df, st, .FUN = wWHIT, lambda = 2, IsPlot = T, iters = iters);
+a <- rough_fitting(sitename, df, st, .FUN = smooth_wWHIT, lambda = 2, IsPlot = T, iters = iters);
 title("(a) wWH2", adj = 0)
 
-b1 <- rough_fitting(sitename, df, st, .FUN = wWHIT, lambda = NULL, IsPlot = T, iters = iters)
+b1 <- rough_fitting(sitename, df, st, .FUN = smooth_wWHIT, lambda = NULL, IsPlot = T, iters = iters)
 title("(b) wWHd", adj = 0)
 mtext("Time", side =1, line = 1.6, font = 2, cex = 1.2)
 pushViewport(viewport(x = 0.5, y = 0.04, width=0.8, height=0.1))
@@ -172,7 +172,7 @@ pushViewport(viewport(x = 0.5, y = 0.04, width=0.8, height=0.1))
 grid.draw(lgd)
 dev.off()
 
-# b2 <- rough_fitting(sitename, df, st, .FUN = wWHIT, lambda = NULL, T, IsOptim_lambda = T, iters = iters)
+# b2 <- rough_fitting(sitename, df, st, .FUN = smooth_wWHIT, lambda = NULL, T, IsOptim_lambda = T, iters = iters)
 # title("wWHd_optim")
 # info <- list(wWH2 = a$GOF,
 #              wWHd_v0 = b1$GOF,

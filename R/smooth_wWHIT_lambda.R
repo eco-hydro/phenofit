@@ -42,7 +42,7 @@ v_point = function(y, w = 0 * y + 1, lambda = 100, d = 2) {
 #' Update 20180605 add weights updating to whittaker lambda selecting
 #'
 #' @inheritParams season
-#' @inheritParams wWHIT
+#' @inheritParams smooth_wWHIT
 #' @param lg_lambdas `lg` lambda vectors of Whittaker parameter.
 #' @param d Difference order.
 #' @param IsPlot Boolean. Whether to plot figure?
@@ -87,7 +87,7 @@ v_curve = function(INPUT, lg_lambdas, d = 2, IsPlot = FALSE,
     fits = pens = NULL
     for (lla in lg_lambdas) {
         # param$lambda <- 10^lla
-        # z    <- do.call(wWHIT, param)$zs %>% dplyr::last()
+        # z    <- do.call(smooth_wWHIT, param)$zs %>% dplyr::last()
 
         z    = whit2(y, 10 ^ lla, w)
         fit  = log(sum(w * (y - z) ^ 2))
@@ -108,7 +108,7 @@ v_curve = function(INPUT, lg_lambdas, d = 2, IsPlot = FALSE,
     lambda  = 10 ^ lamids[k]
 
     # param$lambdas <- lambda
-    # fit <- do.call(wWHIT, param)
+    # fit <- do.call(smooth_wWHIT, param)
     # d_sm <- fit %$% c(ws, zs) %>% as.data.table() %>% cbind(t = INPUT$t, .)
 
     z    <- whit2(y, lambda, w)

@@ -23,8 +23,8 @@ nptperyear <- 23
 
 ################################################################################
 
-methods <- c("sgfitw", "whitsmw2", "wHANTS")
-method  <- methods[3] #"sgfitw", "whitsmw2" and "wHANTS".
+methods <- c("sgfitw", "whitsmw2", "smooth_wHANTS")
+method  <- methods[3] #"sgfitw", "whitsmw2" and "smooth_wHANTS".
 FUN  <- get(method)
 file <- sprintf("st10_%s.pdf", method)
 

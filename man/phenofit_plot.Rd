@@ -18,7 +18,7 @@ phenofit_plot(obj, type = "all", methods, title = NULL,
 
 \item{title}{String, title of figure.}
 
-\item{title.ylab}{String, title of \code{ylab}.}
+\item{title.ylab}{String, title of \code{xlab} and \code{ylab}.}
 
 \item{IsPlot}{boolean. If false, a ggplot object will be returned.}
 

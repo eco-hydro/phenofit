@@ -155,9 +155,9 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// smooth_wSG
-NumericVector smooth_wSG(const arma::colvec y, int halfwin, int d, Nullable<NumericVector> w);
-RcppExport SEXP _phenofit_smooth_wSG(SEXP ySEXP, SEXP halfwinSEXP, SEXP dSEXP, SEXP wSEXP) {
+// rcpp_wSG
+NumericVector rcpp_wSG(const arma::colvec y, int halfwin, int d, Nullable<NumericVector> w);
+RcppExport SEXP _phenofit_rcpp_wSG(SEXP ySEXP, SEXP halfwinSEXP, SEXP dSEXP, SEXP wSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -165,20 +165,20 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type halfwin(halfwinSEXP);
     Rcpp::traits::input_parameter< int >::type d(dSEXP);
     Rcpp::traits::input_parameter< Nullable<NumericVector> >::type w(wSEXP);
-    rcpp_result_gen = Rcpp::wrap(smooth_wSG(y, halfwin, d, w));
+    rcpp_result_gen = Rcpp::wrap(rcpp_wSG(y, halfwin, d, w));
     return rcpp_result_gen;
 END_RCPP
 }
-// smooth_SG
-Rcpp::NumericVector smooth_SG(const arma::colvec y, const int halfwin, const int d);
-RcppExport SEXP _phenofit_smooth_SG(SEXP ySEXP, SEXP halfwinSEXP, SEXP dSEXP) {
+// rcpp_SG
+Rcpp::NumericVector rcpp_SG(const arma::colvec y, const int halfwin, const int d);
+RcppExport SEXP _phenofit_rcpp_SG(SEXP ySEXP, SEXP halfwinSEXP, SEXP dSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const arma::colvec >::type y(ySEXP);
     Rcpp::traits::input_parameter< const int >::type halfwin(halfwinSEXP);
     Rcpp::traits::input_parameter< const int >::type d(dSEXP);
-    rcpp_result_gen = Rcpp::wrap(smooth_SG(y, halfwin, d));
+    rcpp_result_gen = Rcpp::wrap(rcpp_SG(y, halfwin, d));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -196,9 +196,9 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// wTSM_cpp
-NumericVector wTSM_cpp(NumericVector y, NumericVector yfit, NumericVector w, int iter, int nptperyear, double wfact);
-RcppExport SEXP _phenofit_wTSM_cpp(SEXP ySEXP, SEXP yfitSEXP, SEXP wSEXP, SEXP iterSEXP, SEXP nptperyearSEXP, SEXP wfactSEXP) {
+// rcpp_wTSM
+NumericVector rcpp_wTSM(NumericVector y, NumericVector yfit, NumericVector w, int iter, int nptperyear, double wfact);
+RcppExport SEXP _phenofit_rcpp_wTSM(SEXP ySEXP, SEXP yfitSEXP, SEXP wSEXP, SEXP iterSEXP, SEXP nptperyearSEXP, SEXP wfactSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -208,7 +208,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type iter(iterSEXP);
     Rcpp::traits::input_parameter< int >::type nptperyear(nptperyearSEXP);
     Rcpp::traits::input_parameter< double >::type wfact(wfactSEXP);
-    rcpp_result_gen = Rcpp::wrap(wTSM_cpp(y, yfit, w, iter, nptperyear, wfact));
+    rcpp_result_gen = Rcpp::wrap(rcpp_wTSM(y, yfit, w, iter, nptperyear, wfact));
     return rcpp_result_gen;
 END_RCPP
 }

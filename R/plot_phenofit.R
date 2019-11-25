@@ -6,7 +6,7 @@
 #' @param seasons Growing season dividing object returned by [season()]
 #' and [season_mov()].
 #' @param title String, title of figure.
-#' @param title.ylab String, title of `ylab`.
+#' @param title.xlab,title.ylab String, title of `xlab` and `ylab`.
 #' @param font.size Font size of axis.text
 #' @param show.legend Boolean
 #' @param theme ggplot theme to be applied
@@ -20,8 +20,8 @@
 plot_phenofit <- function(d_fit,
                           seasons,
                           title = NULL,
-                          title.ylab = "Vegetation Index",
                           title.xlab = "Time",
+                          title.ylab = "Vegetation Index",
                           font.size = 14, 
                           theme = NULL, 
                           show.legend = TRUE)

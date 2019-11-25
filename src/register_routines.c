@@ -19,9 +19,9 @@ extern SEXP _phenofit_check_season(SEXP, SEXP, SEXP, SEXP);
 extern SEXP _phenofit_sgmat_S(SEXP, SEXP);
 extern SEXP _phenofit_sgmat_B(SEXP);
 extern SEXP _phenofit_sgmat_wB(SEXP, SEXP);
-extern SEXP _phenofit_smooth_SG(SEXP, SEXP, SEXP);
-extern SEXP _phenofit_smooth_wSG(SEXP, SEXP, SEXP, SEXP);
-extern SEXP _phenofit_wTSM_cpp(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
+extern SEXP _phenofit_rcpp_SG(SEXP, SEXP, SEXP);
+extern SEXP _phenofit_rcpp_wSG(SEXP, SEXP, SEXP, SEXP);
+extern SEXP _phenofit_rcpp_wTSM(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP _phenofit_movmean(SEXP, SEXP, SEXP, SEXP);
 
 extern SEXP _phenofit_f_goal_cpp(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
@@ -43,9 +43,9 @@ static const R_CallMethodDef CallEntries[] = {
     CALLDEF(_phenofit_sgmat_S   , 2),
     CALLDEF(_phenofit_sgmat_B   , 1),
     CALLDEF(_phenofit_sgmat_wB  , 2),
-    CALLDEF(_phenofit_smooth_wSG, 4),
-    CALLDEF(_phenofit_smooth_SG , 3),
-    CALLDEF(_phenofit_wTSM_cpp  , 6),
+    CALLDEF(_phenofit_rcpp_wSG, 4),
+    CALLDEF(_phenofit_rcpp_SG , 3),
+    CALLDEF(_phenofit_rcpp_wTSM  , 6),
     CALLDEF(_phenofit_movmean   , 4),
 
     CALLDEF(_phenofit_f_goal_cpp, 7),

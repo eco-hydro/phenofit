@@ -29,7 +29,7 @@
 #' d <- dt[site == "AT-Neu", ]
 #'
 #' l <- check_input(d$t, d$y, d$w, nptperyear=23)
-#' r_wHANTS <- wHANTS(l$y, l$t, l$w, ylu = l$ylu, nptperyear = 23, iters = 2)
+#' r_wHANTS <- smooth_wHANTS(l$y, l$t, l$w, ylu = l$ylu, nptperyear = 23, iters = 2)
 #' @export
 # Modified:
 #   Apply suppression of high amplitudes for near-singular case by
@@ -45,7 +45,7 @@
 #         the curve
 # phi returned array of phases, first element is zero
 # yr array holding reconstructed time series
-wHANTS <- function(y, t, w, nf = 3, ylu, periodlen = 365, nptperyear,
+smooth_wHANTS <- function(y, t, w, nf = 3, ylu, periodlen = 365, nptperyear,
                    wFUN = wTSM, iters = 2, wmin = 0.1, ...){
     if (is.Date(t)) t <- as.numeric(t - t[1])
 

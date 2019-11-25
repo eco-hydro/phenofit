@@ -17,7 +17,7 @@
 #' @importFrom lubridate leap_year
 #' @export
 season_mov <- function(INPUT,
-    rFUN = wWHIT, wFUN = wTSM, iters = 2, wmin = 0.1,
+    rFUN = smooth_wWHIT, wFUN = wTSM, iters = 2, wmin = 0.1,
     IsOptim_lambda = FALSE,
     lambda = NULL, nf  = 3, frame = floor(INPUT$nptperyear/5)*2 + 1,
     maxExtendMonth = 12,

@@ -18,19 +18,19 @@
 #'
 #' @param INPUT A list object with the elements of `t`, `y`, `w`,
 #' `Tn` (optional) and `ylu`, returned by [check_input()].
-#' @param rFUN Rough curve fitting function, can be one of [wSG()],
-#' [wWHIT()] and [wHANTS()].
+#' @param rFUN Rough curve fitting function, can be one of [smooth_wSG()],
+#' [smooth_wWHIT()] and [smooth_wHANTS()].
 #' @param wFUN weights updating function, can be one of [wTSM()],
 #' [wChen()], [wBisquare()] and [wSELF()].
 #' @param iters How many times curve fitting is implemented.
 #' @param wmin Double, minimum weigth (i.e. weight of snow, ice and cloud).
-#' @param lambda The smoothing parameter of [wWHIT()]. For
+#' @param lambda The smoothing parameter of [smooth_wWHIT()]. For
 #' [season_mov()], if lambda is `NULL`, [init_lambda()]
 #' will be used. Generally, it was set as 10000, 15, and 5 for daily, 8-day
 #' and 16-day inputs respectively.
-#' @param nf The parameter of [wHANTS()], number of frequencies to be
+#' @param nf The parameter of [smooth_wHANTS()], number of frequencies to be
 #' considered above the zero frequency.
-#' @param frame The parameter of [wSG()], moving window size. Suggested by
+#' @param frame The parameter of [smooth_wSG()], moving window size. Suggested by
 #' TIMESAT, default `frame = floor(nptperyear/7)*2 + 1`.
 #' @param minpeakdistance Numberic, in the unit of points (default as
 #' `nptperyear/12`). The minimum distance of two peaks. If the distance of two
@@ -74,7 +74,7 @@
 #' @seealso [findpeaks()].
 #' @export
 season <- function(INPUT,
-                   rFUN = wWHIT, wFUN = wTSM, iters = 2, wmin = 0.1,
+                   rFUN = smooth_wWHIT, wFUN = wTSM, iters = 2, wmin = 0.1,
                    lambda, nf  = 3, frame = floor(INPUT$nptperyear/5)*2 + 1,
                    minpeakdistance,
                    ypeak_min = 0.1,
@@ -123,8 +123,8 @@ season <- function(INPUT,
         param <- c(INPUT,
             wFUN = wFUN, wmin = wmin, iters = iters,
             lambda = lambda,  # param for whittaker
-            nf     = nf,      # param for wHANTS,
-            frame  = frame    # param for wSG
+            nf     = nf,      # param for smooth_wHANTS,
+            frame  = frame    # param for smooth_wSG
         )
 
         yfits <- do.call(rFUN, param)
@@ -157,7 +157,7 @@ season <- function(INPUT,
                 iloop, lambda, ntrough_PerYear, npeak_PerYear))
         # maxpeaksperyear <- 2
 
-        ## This module will automatically update lambda, nf and wHANTS
+        ## This module will automatically update lambda, nf and smooth_wHANTS
         if (adj.param){
             delta_frame <- ceiling(nptperyear/12) # adjust frame in the step of `month`
             if (npeak_PerYear > MaxPeaksPerYear | ntrough_PerYear > MaxTroughsPerYear){

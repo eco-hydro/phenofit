@@ -42,7 +42,7 @@
 #' }
 #'
 #' plot(pSignal, type="l", col="navy"); grid()
-#' x <- findpeaks(pSignal, npeaks=3, r_min=4, sortstr=TRUE)
+#' x <- findpeaks(pSignal, npeaks=3, y_min=4, sortstr=TRUE)
 #' points(val~pos, x$X, pch=20, col="maroon")
 #'
 #' @export

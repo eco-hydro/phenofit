@@ -7,7 +7,7 @@ lambda   <- init_lambda(INPUT$y) # lambda for whittaker
 # `season` produce a pdf file here
 param = listk(
     INPUT,
-    rFUN = wWHIT, wFUN = wBisquare, iters = 2,
+    rFUN = smooth_wWHIT, wFUN = wBisquare, iters = 2,
     lambda,
     IsPlot = IsPlot, plotdat = d,
     south = sp$lat[1] < 0,
@@ -16,22 +16,22 @@ param = listk(
 )
 
 
-test_that("`season` with wWHIT and calendarYear", {
+test_that("`season` with smooth_wWHIT and calendarYear", {
     param$calendarYear <- TRUE
     expect_silent(brks <- do.call(season, param))
 })
 
-test_that("`season` with wWHIT", {
+test_that("`season` with smooth_wWHIT", {
     param$calendarYear <- FALSE
     expect_silent(brks <- do.call(season, param))
 })
 
 test_that("`season` with wHANTS", {
-    param$rFUN <- wHANTS
+    param$rFUN <- smooth_wHANTS
     expect_silent(brks <- do.call(season, param))
 })
 
-test_that("`season` with wSG", {
-    param$rFUN <- wSG
+test_that("`season` with smooth_wSG", {
+    param$rFUN <- smooth_wSG
     expect_silent(brks <- do.call(season, param))
 })

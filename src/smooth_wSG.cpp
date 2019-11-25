@@ -66,7 +66,7 @@ arma::mat sgmat_wB(const arma::mat S, const arma::colvec w) {
     return B;
 }
 
-//' Weighted Savitzky-Golay
+//' Weighted Savitzky-Golay written in RcppArmadillo
 //'
 //' NA and Inf values in the yy has been ignored automatically.
 //'
@@ -81,11 +81,11 @@ arma::mat sgmat_wB(const arma::mat S, const arma::colvec w) {
 //'
 //' frame = 5
 //' d = 2
-//' s1 <- smooth_wSG(y, frame, d, w)
-//' s2 <- smooth_SG(y, frame, d)
+//' s1 <- rcpp_wSG(y, frame, d, w)
+//' s2 <- rcpp_SG(y, frame, d)
 //' @export
 // [[Rcpp::export]]
-NumericVector smooth_wSG(
+NumericVector rcpp_wSG(
     const arma::colvec y,
     int halfwin=1, int d=1,
     Nullable<NumericVector> w = R_NilValue)
@@ -132,10 +132,10 @@ NumericVector smooth_wSG(
     return Rcpp::NumericVector(yfit.begin(), yfit.end());
 }
 
-//' @rdname smooth_wSG
+//' @rdname rcpp_wSG
 //' @export
 // [[Rcpp::export]]
-Rcpp::NumericVector smooth_SG(const arma::colvec y, const int halfwin=1, const int d=1){
+Rcpp::NumericVector rcpp_SG(const arma::colvec y, const int halfwin=1, const int d=1){
     int n       = y.n_rows;
     int frame   = halfwin*2 + 1;
 

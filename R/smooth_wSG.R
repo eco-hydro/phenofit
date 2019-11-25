@@ -4,12 +4,12 @@ sgolayS <- function(frame, d){
 
 #' Weighted Savitzky-Golay
 #'
-#' @inheritParams wHANTS
+#' @inheritParams smooth_wHANTS
 #' @param frame Savitzky-Golay windows size
 #' @param d polynomial of degree. When d = 1, it becomes moving average.
 #' @param ylu (optional) `[low, high]` value of time-series y (curve fitting values
 #' are constrained in the range of ylu.
-#' @inherit wHANTS return
+#' @inherit smooth_wHANTS return
 #'
 #' @references
 #' 1. Chen, J., J\"onsson, P., Tamura, M., Gu, Z., Matsushita, B., Eklundh, L.,
@@ -25,9 +25,9 @@ sgolayS <- function(frame, d){
 #' d <- dt[site == "AT-Neu", ]
 #'
 #' l <- check_input(d$t, d$y, d$w, nptperyear=23)
-#' r_wSG <- wSG(l$y, l$w, l$ylu, nptperyear = 23, iters = 2)
+#' r_wSG <- smooth_wSG(l$y, l$w, l$ylu, nptperyear = 23, iters = 2)
 #' @export
-wSG <- function(y, w, nptperyear, ylu, wFUN = wTSM, iters = 2,
+smooth_wSG <- function(y, w, nptperyear, ylu, wFUN = wTSM, iters = 2,
                    frame = floor(nptperyear/7)*2 + 1, d=2, ...){
     if (all(is.na(y))) return(y)
     if (missing(w)) w <- rep(1, length(y))
@@ -40,7 +40,7 @@ wSG <- function(y, w, nptperyear, ylu, wFUN = wTSM, iters = 2,
 
     for (i in 1:iters){
         ws[[i]] <- w
-        z <- smooth_wSG(yiter, halfwin, d, w)
+        z <- rcpp_wSG(yiter, halfwin, d, w)
 
         if (is.null(wFUN)){
             wnew <- w

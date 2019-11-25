@@ -49,7 +49,7 @@ sgmat_wB <- function(S, w) {
     .Call(`_phenofit_sgmat_wB`, S, w)
 }
 
-#' Weighted Savitzky-Golay
+#' Weighted Savitzky-Golay written in RcppArmadillo
 #'
 #' NA and Inf values in the yy has been ignored automatically.
 #'
@@ -64,17 +64,17 @@ sgmat_wB <- function(S, w) {
 #'
 #' frame = 5
 #' d = 2
-#' s1 <- smooth_wSG(y, frame, d, w)
-#' s2 <- smooth_SG(y, frame, d)
+#' s1 <- rcpp_wSG(y, frame, d, w)
+#' s2 <- rcpp_SG(y, frame, d)
 #' @export
-smooth_wSG <- function(y, halfwin = 1L, d = 1L, w = NULL) {
-    .Call(`_phenofit_smooth_wSG`, y, halfwin, d, w)
+rcpp_wSG <- function(y, halfwin = 1L, d = 1L, w = NULL) {
+    .Call(`_phenofit_rcpp_wSG`, y, halfwin, d, w)
 }
 
-#' @rdname smooth_wSG
+#' @rdname rcpp_wSG
 #' @export
-smooth_SG <- function(y, halfwin = 1L, d = 1L) {
-    .Call(`_phenofit_smooth_SG`, y, halfwin, d)
+rcpp_SG <- function(y, halfwin = 1L, d = 1L) {
+    .Call(`_phenofit_rcpp_SG`, y, halfwin, d)
 }
 
 #' movmean
@@ -97,7 +97,7 @@ movmean <- function(y, halfwin = 1L, SG_style = FALSE, w = NULL) {
     .Call(`_phenofit_movmean`, y, halfwin, SG_style, w)
 }
 
-wTSM_cpp <- function(y, yfit, w, iter, nptperyear, wfact) {
-    .Call(`_phenofit_wTSM_cpp`, y, yfit, w, iter, nptperyear, wfact)
+rcpp_wTSM <- function(y, yfit, w, iter, nptperyear, wfact) {
+    .Call(`_phenofit_rcpp_wTSM`, y, yfit, w, iter, nptperyear, wfact)
 }
 
