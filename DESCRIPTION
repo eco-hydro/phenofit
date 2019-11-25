@@ -40,7 +40,8 @@ Imports: Rcpp,
     grDevices, utils, stats,
     shiny, jsonlite, 
     foreach, iterators,
-    JuliaCall
+    JuliaCall, 
+    methods
 Suggests: 
     knitr,
     rmarkdown,

@@ -1,8 +1,8 @@
-doubleLogMain <- function(.NAME, par, t, pred) {
+doubleLogMain <- function(NAME, par, t, pred) {
     miss_pred = missing(pred)
     if (miss_pred) pred = t*0
 
-    invisible(.Call(.NAME, par, t, pred))
+    invisible(.Call(NAME, par, t, pred))
     if (miss_pred) return(pred)
 }
 
@@ -55,6 +55,11 @@ doubleLog_Klos <- function(par, t, pred) {
     doubleLogMain(`_phenofit_cdoubleLog_Klos`, par, t, pred)
 }
 
+#' objective function of double logistics
+#' 
+#' @inheritParams f_goal
+#' 
+#' @keywords internal
 #' @export
 f_goal2 <- function(par, fun, y, t, ypred, w = NULL, ylu = NULL, ...) {
     .Call(`_phenofit_f_goal_cpp`, par, fun, y, t, ypred, w, ylu)

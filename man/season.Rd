@@ -6,9 +6,9 @@
 \alias{stat_season}
 \title{Growing season dividing}
 \usage{
-season(INPUT, rFUN = smooth_wWHIT, wFUN = wTSM, iters = 2,
-  wmin = 0.1, lambda, nf = 3, frame = floor(INPUT$nptperyear/5) * 2 +
-  1, minpeakdistance, ypeak_min = 0.1, r_max = 0.2, r_min = 0.05,
+season(INPUT, rFUN = wWHIT, wFUN = wTSM, iters = 2, wmin = 0.1,
+  lambda, nf = 3, frame = floor(INPUT$nptperyear/5) * 2 + 1,
+  minpeakdistance, ypeak_min = 0.1, r_max = 0.2, r_min = 0.05,
   rtrough_max = 0.6, MaxPeaksPerYear = 2, MaxTroughsPerYear = 3,
   calendarYear = FALSE, IsPlot = FALSE, plotdat = INPUT,
   print = FALSE, adj.param = TRUE, rm.closed = TRUE,

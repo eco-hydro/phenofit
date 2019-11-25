@@ -1,5 +1,9 @@
+library(data.table)
+library(magrittr)
+library(foreach)
+library(phenofit)
 # devtools::load_all()
-Rcpp::sourceCpp("src/season.cpp")
+# Rcpp::sourceCpp("src/season.cpp")
 
 # {
 #     x <- readRDS("x.rds")
@@ -10,14 +14,9 @@ Rcpp::sourceCpp("src/season.cpp")
 #     print(dt)
 #     all.equal(x, dt)
 # }
-library(data.table)
-library(magrittr)
-library(foreach)
-library(phenofit)
 
 {
     # source("../PhenoAsync/R/tidy_seasons.R")
-    # library()
     tidy_seasons <- function(l, rtrough_max = 0.6, r_min = 0.1) {
         INPUT <- l$INPUT
         brks <- l$brks
@@ -27,12 +26,12 @@ library(phenofit)
 
         lst_dt <- foreach(dt = brks$dt) %do% {
             dt <- data.frame(dt) %>% data.table()
-            check_seasons(dt, rtrough_max = rtrough_max, r_min = r_min)
+            check_season(dt, rtrough_max = rtrough_max, r_min = r_min)
             dt <- dt[y_peak != -9999.0 & (len > 45 & len < 650), ]
             dt
         }
         dt <- do.call(rbind, lst_dt)
-        check_seasons(dt, rtrough_max = rtrough_max, r_min = r_min)
+        check_season(dt, rtrough_max = rtrough_max, r_min = r_min)
         dt <- dt[y_peak != -9999.0 & (len > 45 & len < 650), ]
 
         brks$dt <- dt
@@ -57,5 +56,5 @@ library(phenofit)
         dt <- tidy_seasons(l, rtrough_max = 0.6, r_min = 0.1)
     }
     dev.off()
-    # SumatraPDF(file)
+    SumatraPDF(file)
 }

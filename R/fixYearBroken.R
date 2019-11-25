@@ -1,6 +1,7 @@
 # fix across multi-year breaks points, when whole year data are missing
 # 用于处理通量站数据中，年不连续的现象
 # This function is only for fluxsites data, dt returned
+#' @importFrom methods is
 fixYearBroken <- function(di, t, ypred){
     is_date = is(di$beg[1], "Date")
     origin = t[1]

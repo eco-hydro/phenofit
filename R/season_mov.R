@@ -63,7 +63,7 @@ season_mov <- function(INPUT,
     width_ylu <- nptperyear*2 # This is quite important, to make time-series continuous.
 
     year_grps = years[-c(1, nyear)]
-    # year_grps = 2014 #intersect(2006:2008, year_grps) # :2013 # DEBUG
+    # year_grps = intersect(2015:2016, year_grps) # :2013 # DEBUG
 
     for (year_i in year_grps) {
         if (print) runningId(i-1, prefix = '\t[season_mov] ')
@@ -123,21 +123,24 @@ season_mov <- function(INPUT,
     # using calendarYear as growing season
     if (calendarYear) {
         # BUG: need to remove incomplete year
-        dt <- season_calendar(years[2:(nyear-1)], south)
+        brks$dt <- season_calendar(years[2:(nyear-1)], south)
     } else {
         dt  <- do.call(rbind, brks$dt)
         if (is.null(dt)){
             warning( 'No growing season found!'); return(NULL)
         }
+
         if (.check_season) {
             dt <- dt[len > 45 & len < 650, ] # mask too long and short gs
             check_season(dt, rtrough_max = rtrough_max, r_min = r_min) # fix growing season overlap
             dt <- dt[y_peak != -9999.0 & (len > 45 & len < 650), ] # mask too long and short gs
+
+            brks$dt <- dt
         }
     }
 
-    brks$dt  <- dt
     brks$GOF <- stat_season(INPUT, brks)
+
     ## VISUALIZATION
     if (IsPlot) plot_season(INPUT, brks, plotdat, ylu = INPUT$ylu, IsPlot.OnlyBad)
     if (IsOptim_lambda) brks$optim <- vcs
@@ -185,7 +188,8 @@ stat_season <- function(INPUT, brks){
     d <- merge(d_org, d_fit, by = "t")
 
     stat <- with(d, GOF(y0, ypred, w, include.cv = TRUE, include.r = TRUE))# %>% as.list()
-    stat['nseason'] <- nrow(brks$dt)
+    nseason <- ifelse(is.data.frame(brks$dt), nrow(brks$dt), NA)
+    stat['nseason'] <- nseason
 
     # str_title <- sprintf("[%s] IGBP = %s, %s, lat = %.2f", sitename, IGBP_name, stat_str, lat)
     # str_title <- paste(titlestr, stat_txt)

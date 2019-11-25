@@ -37,16 +37,22 @@ void LeftCombine_season(NumericVector y_peak, NumericVector y_end, NumericVector
  * ending trough, and merge two too close troughs (less than 35 days).
  *  // DateVector t, NumericVector ypred,
  */
+//' check_season
+//' @param d Data.frame of growing season dividing info
+//'
+//' @inheritParams season
+//' @keywords internal
+//' @export
 // [[Rcpp::export]]
 void check_season(DataFrame d,
     bool rm_closed = true, double rtrough_max = 0.7, double r_min = 0.02)
 {
-    DateVector date_beg = d["beg"];
-    DateVector date_end = d["end"];
+    DateVector date_beg  = d["beg"];
+    DateVector date_end  = d["end"];
     DateVector date_peak = d["peak"];
-    NumericVector len = d["len"];
-    NumericVector y_beg = d["y_beg"];
-    NumericVector y_end = d["y_end"];
+    NumericVector len    = d["len"];
+    NumericVector y_beg  = d["y_beg"];
+    NumericVector y_end  = d["y_end"];
     NumericVector y_peak = d["y_peak"];
 
     int n = d.nrow();
@@ -72,10 +78,11 @@ void check_season(DataFrame d,
         // Rprintf("trs = %.2f\n", trs);
         // Rcout << i << ": is_HighTrough = " << is_HighTrough << std::endl;
 
-        // 1. growing season日期交差
-        // 2. 两相邻val_troughs值相差过大; 且不重叠，则进行融合
+        // 1. growing season日期交差                                  : t_diff < 0
+        // 2. 两相邻val_troughs挨得太近（且中间不存在较大的peaks）    : t_diff <= 50
+        // 3(temp). 两相邻val_troughs值相差过大; 且不重叠，则进行融合
         if (t_diff < 0)     //|| (is_HighTrough && delta_days < 0)
-        {                   //|| abs(delta_days) <= 50
+        {
             newdate = is_PreEndSmaller ? date_end[i] : date_beg[i + 1];
             newval = is_PreEndSmaller ? y_end[i] : y_beg[i + 1];
 
