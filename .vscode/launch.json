@@ -8,7 +8,8 @@
             "name": "(gdb) 启动",
             "type": "cppdbg",
             "request": "launch",
-            "program": "/usr/bin/Rscript",
+            "program":  "/usr/bin/Rscript",//"/usr/bin/Rscript", 
+            // "program": "C:/Program Files/R/R-3.6.1/bin/x64/Rscript.exe",
             "args": [
                 "${workspaceFolder}/Rcpp_debug.R"
             ],
@@ -17,7 +18,7 @@
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
-            "miDebuggerPath": "gdb",
+            "miDebuggerPath": "gdb.exe",
             "setupCommands": [
                 {
                     "description": "为 gdb 启用整齐打印",

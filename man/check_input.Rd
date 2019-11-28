@@ -57,7 +57,7 @@ time-sereis (before \code{add_HeadTail})}
 \item{...}{Others will be ignored.}
 }
 \value{
-A list object returned
+A list object returned:
 \itemize{
 \item \code{t} : Numeric vector
 \item \code{y0}: Numeric vector, original vegetation time-series.

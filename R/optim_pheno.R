@@ -50,7 +50,6 @@ optim_pheno <- function(
     # opt.df: par, value, fevals, niter, convcode
     J_VALUE    = npar + 1
     J_CONVCODE = npar + 4
-    ############################################################################
 
     methods_optim  <- c('BFGS','CG','Nelder-Mead', 'L-BFGS-B', 'nlm', 'nlminb', 'ucminf')
     methods_optimx <- c('spg','Rcgmin','Rvmmin', 'newuoa','bobyqa','nmkb','hjkb')
@@ -62,19 +61,14 @@ optim_pheno <- function(
     } else {
         stop(sprintf('optimization method (%s) is not supported!', method))
     }
-    # To improve the performance of optimization, \code{t} needs to be normalized.
-    # t_0    <- t
+    # To improve the performance of optimization, `t` needs to be normalized.
     tout_0 <- tout
-    # tout   <- tout - t[1] + 1
-    # t      <- t - t[1] + 1
 
     # check input parameters
     if (missing(w))          w   <- rep(1, length(y))
     if (missing(nptperyear)) nptperyear <- ceiling(365/mean(as.numeric(diff(t))))
     if (missing(ylu))        ylu <- range(y, na.rm = TRUE)
     A <- diff(ylu) # y amplitude
-
-    ############################################################################
 
     fits <- list()
     ws   <- list() #record weights for every iteration

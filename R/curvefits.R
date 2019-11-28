@@ -25,6 +25,9 @@
 #' less than `minPercValid`, curve fiting result is set to `NA`.
 #' @param print Whether to print progress information?
 #' @param use.rough Whether to use rough fitting smoothed time-series as input?
+#' @param use.y0 boolean. whether to use original `y0`, which is before the
+#' process of `check_input`.
+#'
 #' @param ... Other parameters will be ignore.
 #'
 #' @return fits Multiple phenofit object.
@@ -34,13 +37,15 @@
 #'
 #' @export
 curvefits <- function(INPUT, brks,
-                      wFUN = wTSM, iters = 2, wmin = 0.2,
-                      nextend = 2, maxExtendMonth = 3, minExtendMonth = 1,
+                      wFUN = wTSM, iters = 2, wmin = 0.1,
+                      nextend = 2, maxExtendMonth = 2, minExtendMonth = 1,
                       minT = 0,
                       methods = c('AG', 'Beck', 'Elmore', 'Gu', 'Klos', 'Zhang'),
                       minPercValid = 0.2,
                       print = TRUE,
-                      use.rough = FALSE, ...)
+                      use.rough = FALSE,
+                      use.y0 = TRUE,
+                      ...)
 {
     if (all(is.na(INPUT$y))) return(NULL)
 
@@ -54,9 +59,10 @@ curvefits <- function(INPUT, brks,
     doys <- as.numeric(difftime(t, date.origin, units = "day")) # + 1
 
     # Tn for background module
-    w <- w0 <- INPUT$w
-    y0     <- INPUT$y0 # original y
-    Tn     <- INPUT$Tn # if has no Tn, NULL will be return
+    w  <- w0 <- INPUT$w
+    y0 <- if (use.y0) INPUT$y0 else INPUT$y
+
+    Tn <- INPUT$Tn # if has no Tn, NULL will be return
     has_Tn <- ifelse(is_empty(Tn), FALSE, TRUE)
 
     # possible snow or cloud, replaced with Whittaker smoothing.

@@ -16,8 +16,9 @@
 #' @param start Bit starting position, count from zero
 #' @param end Bit ending position
 #' @param wmin Double, minimum weigth (i.e. weight of snow, ice and cloud).
-#' @param wmid Dougle, middle weight, i.e. marginal, 
-#' @param wmax Double, maximum weight, i.e. good, 
+#' @param wmid Dougle, middle weight, i.e. marginal
+#' @param wmax Double, maximum weight, i.e. good
+#' 
 #' @return A list object with
 #' * `weigths`: Double vector, initial weights.
 #' * `QC_flag`: Factor vector, with the level of 
@@ -110,10 +111,56 @@ qc_5l <- function(QA, wmin = 0.2, wmid = 0.5, wmax = 1){
     QA <- getBits(QA, 5, 7)
     w  <- rep(NA, length(QA)) #default zero
     
-    w[QA <= 1] <- wmax            #clear, good
+    w[QA <= 1] <- wmax          #clear, good
     w[QA >= 2 & QA <=3] <- wmid #geometry problems or others
     w[QA >  4] <- wmin
     return(w)
+}
+
+# MODIS_006_MCD15A3H
+#' @rdname qcFUN
+#' @param FparExtra_QC Another QC flag of `MCD15A3H`
+#' 
+#' @details
+#' If `FparLai_QC` specified, `I_margin = SCF_QC >= 2 & SCF_QC <= 3`.
+#' 
+#' @references
+#' https://developers.google.com/earth-engine/datasets/catalog/MODIS_006_MCD15A3H
+#' 
+#' @export
+qc_FparLai <- function(QA, FparLai_QC = NULL, wmin = 0.2, wmid = 0.5, wmax = 1){
+    I_cloud   = getBits(QA, 5) == 1
+    I_shadow  = getBits(QA, 6) == 1
+    I_aerosol = getBits(QA, 3) == 1  # climatology treated as good values
+    I_snow    = getBits(QA, 2) == 1
+
+    QC_flag = rep("good", length(QA))
+    
+    w  <- rep(wmax, length(QA))  # default zero  
+    w[is.na(QA)] = NA
+    QC_flag[is.na(QA)] = "cloud" # NA value
+    
+    if (!is.null(FparLai_QC)) {
+        # FparLai_QC: useless in fluxnet212
+        SCF_QC = getBits(QA, 5, 7)
+        I_margin = SCF_QC >= 2 & SCF_QC <= 3
+        QC_flag[I_margin] = "marginal";
+        w[I_margin] <- wmid
+    }
+
+    QC_flag[I_aerosol] <- "aerosol"
+    QC_flag[I_shadow]  <- "shadow"
+    QC_flag[I_cloud]   <- "cloud"
+    QC_flag[I_snow]    <- "snow"
+
+    w[I_aerosol] <- wmid # test based on fluxsite data
+    w[I_shadow | I_cloud | I_snow]  <- wmin
+
+    levels  <- c("snow", "cloud", "shadow", "aerosol", "marginal", "good")
+    QC_flag <- factor(QC_flag, levels)
+
+    list(QC_flag = QC_flag, w = w) # quickly return
+    # QC_flag[I_good]    <- "good"
 }
 
 #' @rdname qcFUN
@@ -143,6 +190,28 @@ qc_NDVIv4 <- function(QA, wmin = 0.2, wmid = 0.5, wmax = 1){
     return(w)
 }
 
+#' @rdname qcFUN
+#' @export
+#' 
+#' @references
+#' Erwin Wolters, Else Swinnen, Carolien Toté, Sindy Sterckx. 
+#' SPOT-VGT COLLECTION 3 PRODUCTS USER MANUAL V1.2, 2018, P47
+qc_SPOT <- function (QA, wmin = 0.2, wmid = 0.5, wmax = 1) {
+    QA <- getBits(QA, 0, 2) 
+
+    w  <- rep(NA, length(QA))
+    w[QA == 0] <- wmax
+
+    # shadow, cloud and Ice
+    w[QA %in% c(1, 3, 4)] <- wmin
+
+    # undefined
+    w[QA == 2 ] <- 0.5
+
+    QC_flag <- factor(QA, 0:4, c("good", "shadow", "marginal", 
+        "cloud", "snow"))
+    list(QC_flag = QC_flag, w = w)
+}
 
 
 # source('R/GPP_Pheno/main_QC.R')

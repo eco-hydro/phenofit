@@ -10,6 +10,9 @@
 #' @param font.size Font size of axis.text
 #' @param show.legend Boolean
 #' @param theme ggplot theme to be applied
+#' @param shape the shape of input VI observation? `line` or `point`
+#' @param cex point size for VI observation.
+#' @param angle `text.x` angle 
 #' 
 #' @importFrom dplyr left_join
 #'
@@ -22,8 +25,10 @@ plot_phenofit <- function(d_fit,
                           title = NULL,
                           title.xlab = "Time",
                           title.ylab = "Vegetation Index",
-                          font.size = 14, 
-                          theme = NULL, 
+                          font.size = 14,
+                          theme = NULL,
+                          cex = 2,
+                          shape = "point", angle = 30,
                           show.legend = TRUE)
 {
     methods <- d_fit$meth %>% table() %>% names()
@@ -33,9 +38,8 @@ plot_phenofit <- function(d_fit,
     d_obs$meth <- NULL
 
     last_iter_rough <- colnames(seasons$whit) %>% last()
-
     iters_name_fine <- colnames(d_obs) %>% .[grep("ziter", .)] %>% sort() # "ziter1", "ziter2"
-    lines_colors     <- iter_colors(length(iters_name_fine)) %>% set_names(iters_name_fine)# only for smoothed time-series
+    lines_colors    <- iter_colors(length(iters_name_fine)) %>% set_names(iters_name_fine)# only for smoothed time-series
 
     # browser()
     nyear <- diff(range(year(d_obs$t), na.rm = TRUE)) + 1
@@ -55,22 +59,24 @@ plot_phenofit <- function(d_fit,
         theme_gray(base_size = font.size) +
         theme(axis.title = element_text(size = font.size),
             # axis.text.x = element_text(angle = 30, hjust = 1, vjust = 1),
-            axis.text = element_text(size = font.size - 2), 
+            axis.text = element_text(size = font.size - 2),
             plot.margin = margin(0.2, 0.2, -0.3, 0.2, "lines")) +
-        labs(x = title.xlab, y = title.ylab) 
+        labs(x = title.xlab, y = title.ylab)
 
     if (nyear >= nyear_lean) {
-        p <- p + theme(axis.text.x = element_text(angle = 30, hjust = 1, vjust = 1))
+        p <- p + theme(axis.text.x = element_text(angle = angle, hjust = 1, vjust = 1))
     }
 
     if ('QC_flag' %in% colnames(d_obs)){
         #     guides(shape = guide_legend(override.aes_string = list(size = 2)))
-        p  <- p + geom_point(data = d_obs, 
+        p  <- p + geom_point(data = d_obs,
             aes_string("t", "y", shape="QC_flag", color = "QC_flag", fill = "QC_flag"),
-            size = 2, alpha = 0.7)
+            size = cex, alpha = 0.7)
     } else {
-        p <- p + geom_point(aes_string("t", "y"), size = 2, alpha = 0.5, color = "grey60")
-            # geom_line (data = seasons$whit, aes_string(t, ziter2), color = "black", size = 0.8) + # show in front
+        p <- if (shape == "point") {
+            p + geom_point(aes_string("t", "y"), size = cex, alpha = 0.6, color = "grey60")
+        } else if (shape == "line")
+            p + geom_line(aes_string("t", "y"), size = 0.8, alpha = 0.8, color = "grey60")
     }
 
     # iterations of smoothed time-series
@@ -79,11 +85,14 @@ plot_phenofit <- function(d_fit,
         p <- p + geom_line(aes_string(y = iter_name), size = 0.8, alpha = 0.7, color = lines_colors[i])
     }
 
+    xlim = d_fit$t %>% range() %>% add(ddays(c(1, -1)*90))
     p <- p + scale_color_manual(values = c(qc_colors, lines_colors), drop = F) +
         scale_fill_manual(values = qc_colors, drop = F) +
-        scale_shape_manual(values = qc_shapes, drop = F)
+        scale_shape_manual(values = qc_shapes, drop = F) +
+        coord_cartesian(xlim = xlim)
 
     if (!is.null(theme)) p <- p + theme
+
     # geom_vline(data = pdat2, aes_string(xintercept=date, linetype = pmeth, color = pmeth), size = 0.4, alpha = 1) +
     # scale_linetype_manual(values=c(2, 3, 1, 1, 1, 4))
     # p + facet_grid(meth~pmeth)

@@ -7,7 +7,7 @@
 #' @param brks A list object returned by `season` or `season_mov`.
 #' @param show.legend Whether to show legend?
 #' @param title The main title (on top)
-#' 
+#'
 #' @importFrom grid viewport pushViewport grid.draw
 #' @export
 plot_season <- function(INPUT, brks, plotdat, ylu,
@@ -15,7 +15,10 @@ plot_season <- function(INPUT, brks, plotdat, ylu,
     if (missing(plotdat)) {
         plotdat <- INPUT
     }
-    
+    if (is.data.frame(brks$dt[[1]])) {
+        brks$dt %<>% do.call(rbind, .)
+    }
+
     stat <- stat_season(INPUT, brks)
     stat_txt  <- stat[c("R2", "NSE", "sim.cv", "obs.cv")] %>% unlist() %>%
         set_names(c("R2", "NSE", "CV_sim", "CV_obs")) %>%
@@ -42,6 +45,7 @@ plot_season <- function(INPUT, brks, plotdat, ylu,
     bottom = ifelse(show.legend, 3.2, 1)
     par(mar = c(bottom, 3, 1, 1), mgp = c(1.2, 0.6, 0))
     plot_input(plotdat)
+    plot_season_boundary(dt)
 
     # colors <- c("blue", "red", "green")
     NITER  <- ncol(zs)
@@ -69,5 +73,23 @@ plot_season <- function(INPUT, brks, plotdat, ylu,
                               width = unit(0.8, "npc"), height = unit(pos.y*2, "npc")))
         # grid.rect()
         grid.draw(lgd)
+    }
+}
+
+plot_season_boundary <- function(dt) {
+    ylim = par("usr")[3:4]
+    A    = diff(ylim)
+    ylim = ylim + c(1, -1)*A/200
+
+    nGS = nrow(dt)
+    if (!is.null(nGS) && nGS > 0) {
+        xs = foreach(i = 1:nrow(dt)) %do% {
+            x = c(dt$beg[i], dt$end[i]) %>% c(., rev(.), NA)
+        } %>% do.call(c, .)
+        ys = rep(ylim, each = 2) %>% c(NA) %>% rep(nGS)
+        polygon(xs, ys,
+                # density = 2, angle = 30,
+                col = alpha("grey", 0.2),
+                border = alpha("grey", 0.4))
     }
 }

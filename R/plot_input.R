@@ -2,7 +2,9 @@
 #'
 #' @inheritParams season
 #' @param ... other parameter will be ignored.
-#'
+#' @param show.y0 boolean. Whether to show original time-series `y0` or processed time-series `y` by
+#' [check_input()]?
+#' 
 #' @examples
 #' library(phenofit)
 #' data("MOD13A1")
@@ -24,14 +26,14 @@
 #'                         maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
 #' plot_input(INPUT)
 #' @export
-plot_input <- function(INPUT, wmin = 0.2, ...){
+plot_input <- function(INPUT, wmin = 0.2, show.y0 = TRUE, ...){
     y  <- INPUT$y
     y0 <- INPUT$y0
     t <- INPUT$t
     w <- INPUT$w
     n <- length(y)
 
-    if (!is.null(y0)) y <- y0
+    if (!is.null(y0) && show.y0) y <- y0
     if (is.null(t)) {
         t <- 1:n
         years <- NULL

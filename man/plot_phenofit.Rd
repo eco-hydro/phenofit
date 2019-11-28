@@ -6,7 +6,7 @@
 \usage{
 plot_phenofit(d_fit, seasons, title = NULL, title.xlab = "Time",
   title.ylab = "Vegetation Index", font.size = 14, theme = NULL,
-  show.legend = TRUE)
+  cex = 2, shape = "point", angle = 30, show.legend = TRUE)
 }
 \arguments{
 \item{d_fit}{data.frame of curve fittings returned by \code{\link[=get_fitting]{get_fitting()}}.}
@@ -21,6 +21,12 @@ and \code{\link[=season_mov]{season_mov()}}.}
 \item{font.size}{Font size of axis.text}
 
 \item{theme}{ggplot theme to be applied}
+
+\item{cex}{point size for VI observation.}
+
+\item{shape}{the shape of input VI observation? \code{line} or \code{point}}
+
+\item{angle}{\code{text.x} angle}
 
 \item{show.legend}{Boolean}
 }

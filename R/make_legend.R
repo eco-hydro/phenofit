@@ -36,10 +36,10 @@ make_legend <- function(
 make_legend_nmax <- function(linename, linecolor, QC_flag, ...){
     nmax_points <- 4
     if (!is.null(QC_flag)) {
-        nmax_points <- factor(QC_flag) %>% as.numeric() %>% max(na.rm = T)
+        if (!is.factor(QC_flag)) QC_flag = factor(QC_flag)
+        nmax_points <- as.numeric(QC_flag) %>% max(na.rm = T)
         nmax_points <- ifelse(nmax_points <= 4, 4, 6)
     } 
-
     make_legend(linename , linecolor, nmax_points = nmax_points, ...)
 }
 

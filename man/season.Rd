@@ -18,7 +18,8 @@ season_mov(INPUT, rFUN = smooth_wWHIT, wFUN = wTSM, iters = 2,
   wmin = 0.1, IsOptim_lambda = FALSE, lambda = NULL, nf = 3,
   frame = floor(INPUT$nptperyear/5) * 2 + 1, maxExtendMonth = 12,
   calendarYear = FALSE, r_min = 0.05, rtrough_max = 0.6, ...,
-  .check_season = TRUE, IsPlot = TRUE, IsPlot.vc = FALSE,
+  len_min = 45, len_max = 650, .check_season = TRUE,
+  years.run = NULL, IsPlot = TRUE, IsPlot.vc = FALSE,
   IsPlot.OnlyBad = FALSE, plotdat = INPUT, print = TRUE,
   titlestr = "")
 
@@ -103,6 +104,12 @@ V-curve theory?}
 \item{maxExtendMonth}{Previous and subsequent \code{maxExtendMonth} data were added
 for every year curve fitting.}
 
+\item{len_min, len_max}{the minimum and maximum length (in the unit of days)
+of growing season}
+
+\item{years.run}{Numeric vector. Which years to run? If not specified, it is
+all years.}
+
 \item{IsPlot.vc}{Whether to plot V-curve optimized time-series.}
 
 \item{IsPlot.OnlyBad}{If true, only plot partial figures whose NSE < 0.3.}
@@ -116,10 +123,9 @@ for every year curve fitting.}
 \item \code{whit}: A data.table of Rough fitting result, with the columns of
 (\code{t}, \code{y}, \code{witer1}, ..., \code{witerN}, \code{ziter1}, ..., \code{ziterN}).
 \item \code{dt}: A data.table of Growing season dividing information, with the columns
-of (\code{beg}, \code{peak}, \code{end}, \code{y_beg}, \code{y_peak}, \code{y_end}, \code{len}, \code{year}, \code{season}, \code{flag}).
+of (\code{beg}, \code{peak}, \code{end}, \code{y_beg}, \code{y_peak}, \code{y_end}, \code{len}, \code{year},
+\code{season}, \code{flag}).
 }
-
-List object, \code{list(whit, dt)}
 }
 \description{
 Divide growing seasons according to rough fitting (\code{rFUN}) result .
@@ -134,7 +140,8 @@ and tail first by \code{add_HeadTail}.
 
 Finally, use \code{\link[=findpeaks]{findpeaks()}} to get local maximum and local minimum values.
 Two local minimum define a growing season.
-If two local minimum(maximum) are too closed, then only the smaller(biger) is left.
+If two local minimum(maximum) are too closed, then only the smaller(biger)
+is left.
 }
 \examples{
 library(phenofit)

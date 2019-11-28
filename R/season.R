@@ -14,7 +14,8 @@
 #'
 #' Finally, use [findpeaks()] to get local maximum and local minimum values.
 #' Two local minimum define a growing season.
-#' If two local minimum(maximum) are too closed, then only the smaller(biger) is left.
+#' If two local minimum(maximum) are too closed, then only the smaller(biger) 
+#' is left.
 #'
 #' @param INPUT A list object with the elements of `t`, `y`, `w`,
 #' `Tn` (optional) and `ylu`, returned by [check_input()].
@@ -69,9 +70,12 @@
 #' - `whit`: A data.table of Rough fitting result, with the columns of
 #' (`t`, `y`, `witer1`, ..., `witerN`, `ziter1`, ..., `ziterN`).
 #' - `dt`: A data.table of Growing season dividing information, with the columns
-#' of (`beg`, `peak`, `end`, `y_beg`, `y_peak`, `y_end`, `len`, `year`, `season`, `flag`).
-#'
+#' of (`beg`, `peak`, `end`, `y_beg`, `y_peak`, `y_end`, `len`, `year`, 
+#' `season`, `flag`).
 #' @seealso [findpeaks()].
+#' 
+#' @example inst/examples/ex-check_input.R
+#' @example inst/examples/ex-season.R
 #' @export
 season <- function(INPUT,
                    rFUN = wWHIT, wFUN = wTSM, iters = 2, wmin = 0.1,
@@ -151,7 +155,7 @@ season <- function(INPUT,
         INPUT$ylu <- ylu
         A         <- diff(ylu)
         # minPeakHeight <- pmax(ypeak_min, A*0.1 + ylu[1])
-        info_peak = findpeaks_season(ypred, r_max*A, r_min*A, minpeakdistance, 
+        info_peak = findpeaks_season(ypred, r_max*A, r_min*A, minpeakdistance,
             ypeak_min, nyear, nups = nups)
         npeak_PerYear   <- info_peak$npeak_PerYear
         ntrough_PerYear <- info_peak$ntrough_PerYear
@@ -197,8 +201,8 @@ season <- function(INPUT,
 
     if (rm.closed) {
         pos_min <- pos_min[(val - ylu[1]) <= rtrough_max*A, ] # `y_trough <= rtrough_max*A + ylu[1]`
+        # print(str(pos_min, pos_max))
         pos <- rbind(pos_min, pos_max)[order(pos), ]
-
         # rm peak value if peak value smaller than the nearest trough values
         I   <- !with(pos, (c(diff(val) > 0, FALSE) & c(diff(type) == -2, FALSE)) |
                 (c(FALSE, diff(val) < 0) & c(FALSE, diff(type) == 2)))
@@ -254,13 +258,13 @@ season <- function(INPUT,
     } else {
         # only used for fluxsites data, di: beg, peak and end
         dt = if (!is.continuous) {
+            # fix whole year data missing
             fixYearBroken(di, t, ypred)
         } else di2dt(di, t, ypred)
         dt <- dt[dt$len > 45 & dt$len < 650, ] # mask too long and short gs
         if (.check_season) {
-            check_season(dt, rtrough_max = rtrough_max, r_min = r_min)
-            dt <- dt[y_peak != -9999.0 & (len > 45 & len < 650), ] # mask too long and short gs
-            if (!is.continuous) dt %<>% fixYearBroken(t, ypred) # fix whole year data missing
+            dt = check_season_dt(dt, rtrough_max = rtrough_max, r_min = r_min)
+            if (!is.continuous) dt %<>% fixYearBroken(t, ypred) 
         }
     }
 

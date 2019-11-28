@@ -71,8 +71,10 @@ findpeaks_season <- function(ypred, y_max = 0, y_min = 0,
         y_max = y_max, y_min = y_min * 0,
         minpeakdistance = minpeakdistance, zero = "-", nups = 0)
     pos_min  <- peaks$X
-    pos_min[, 1] %<>% multiply_by(-1)
-    pos_min$type <- -1
+    if (!is.null(pos_min)) {
+        pos_min[, 1] %<>% multiply_by(-1)
+        pos_min$type <- -1
+    }
     ntrough_PerYear <- length(peaks$gregexpr) / nyear #max peaks
 
     # minpeakheight = 0.1*A + ylu[1]
@@ -83,7 +85,7 @@ findpeaks_season <- function(ypred, y_max = 0, y_min = 0,
         minpeakheight = minpeakheight,
         nups = nups, ndowns = ndowns) #, ypeak_min
     pos_max <- peaks$X
-    pos_max$type <- 1
+    if (!is.null(pos_max)) pos_max$type <- 1
 
     npeak_PerYear <- length(peaks$gregexpr) / nyear # max peaks
     listk(pos_min, pos_max, ntrough_PerYear, npeak_PerYear)

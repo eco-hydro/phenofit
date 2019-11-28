@@ -45,8 +45,7 @@
 #' time-sereis (before `add_HeadTail`)
 #' @param ... Others will be ignored.
 #'
-#' @return A list object returned
-#'
+#' @return A list object returned:
 #' * `t` : Numeric vector
 #' * `y0`: Numeric vector, original vegetation time-series.
 #' * `y` : Numeric vector, checked vegetation time-series, `NA` values are interpolated.
@@ -104,6 +103,7 @@ check_input <- function(t, y, w, QC_flag,
         # constrain back ground value
         ylu[1] <- pmax(ylu[1], ymin)
     }
+    A = diff(ylu)
     # When check_ylu, ylu_max is not used. ylu_max is only used for dividing
     # growing seasons.
 
@@ -123,16 +123,42 @@ check_input <- function(t, y, w, QC_flag,
     w[y < ylu[1] | y > max(y_good)] <- wmin # | y > ylu[2],
     # #based on out test marginal extreme value also often occur in winter
     # #This step is really dangerous! (checked at US-Me2)
-    y[y < ylu[1]]                  <- missval
-    y[y > ylu[2] & w < w_critical] <- missval
+    y[y < ylu[1]] <- missval
+    y[y > ylu[2] & w < (w_critical + 0.01)] <- missval
+
+    # 整治snow
+    if (!is.null(QC_flag)) {
+        I_snow = QC_flag == "snow" & y >= (ylu[1] + 0.1*A)
+        y[I_snow] = missval
+    }
 
     ## 2. rm spike values
+    # 强化除钉值模块, 20191127
     std   <- sd(y, na.rm = TRUE)
-    ymean <- cbind(y[c(1, 1:(n - 2), n-1)], y[c(2, 3:n, n)]) %>% rowMeans(na.rm = TRUE)
-    # y[abs(y - ymean) > std]
-    # which(abs(y - ymean) > std)
-    I_spike <- which(abs(y - ymean) > 2*std & w < w_critical) # 95.44% interval
-    y[I_spike] <- NA#missval
+    ymov <- cbind(y[c(1, 1:(n - 2), n-1)], y[c(2, 3:n, n)]) %>% rowMeans(na.rm = TRUE)
+    # ymov2 <- movmean(y, 1)
+    halfwin <- ceiling(nptperyear/36) # about 10-days
+    ymov2   <- movmean(y, halfwin = halfwin)
+    # which(abs(y - ymean) > std) & w <= w_critical
+    I_spike <- which(abs(y - ymov) > 2*std | abs(y - ymov2) > 2*std) # 95.44% interval, `(1- 2*pnorm(-2))*100`
+
+# write_fig(expression({
+#     Ind = 1:length(y)
+#     # Ind = t <= "2004-01-01"
+#     lwd = 0.8
+#     print(I_spike)
+#     plot(t[Ind], y[Ind], type = "b", lwd = lwd)
+#     grid()
+#     lines(t, ymov, type = "b", col = "blue", lwd = lwd)
+#     points(t[I_spike], y[I_spike], col = "red")
+#     # points(t[I_spike2], y[I_spike2], col = "red")
+#     y[I_spike]  <- NA # missval
+#     y0[I_spike] <- missval # for debug
+#     plot(t[Ind], y[Ind], type = "l", lwd = lwd, col = "red")
+# }), "check_input.pdf", 10, 5)
+
+    y[I_spike]  <- NA # missval
+    y0[I_spike] <- missval # for debug
 
     ## 3. gap-fill NA values
     w[is.na(w) | is.na(y)] <- wmin

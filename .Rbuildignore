@@ -26,3 +26,4 @@
 ^Makefile$
 ^\.vscode$
 ^Rcpp_debug\.R$
+^src/tmp\.def$
