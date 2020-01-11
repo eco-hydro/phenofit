@@ -86,7 +86,7 @@ findpeaks_season <- function(ypred, y_max = 0, y_min = 0,
         nups = nups, ndowns = ndowns) #, ypeak_min
     pos_max <- peaks$X
     if (!is.null(pos_max)) pos_max$type <- 1
-
+    
     npeak_PerYear <- length(peaks$gregexpr) / nyear # max peaks
     listk(pos_min, pos_max, ntrough_PerYear, npeak_PerYear)
 }

@@ -63,7 +63,7 @@ season_mov <- function(INPUT,
     if (is.null(years.run)) {
         years.run = years0
     } else years.run = intersect(years.run, years0)
-
+    
     for (year_i in years.run) {
         i = which(year_i == years)
         if (print) runningId(i-1, prefix = '\t[season_mov] ')
@@ -139,7 +139,7 @@ season_mov <- function(INPUT,
 
     ## VISUALIZATION
     if (IsPlot) plot_season(INPUT, brks, plotdat, ylu = INPUT$ylu, IsPlot.OnlyBad)
-    if (IsOptim_lambda) brks$optim <- vcs
+    if (!has_lambda && IsOptim_lambda) brks$optim <- vcs
     return(brks)
 }
 

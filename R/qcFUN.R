@@ -8,9 +8,10 @@
 #' * `qc_5l`: Initial weights based on Quality control of five-level 
 #'      confidence score, suit for MCD15A3H(LAI, FparLai_QC), MOD17A2H(GPP, Psn_QC) 
 #'      and MOD16A2(ET, ET_QC).
+#' * `qc_StateQA`: Initial weights based on `StateQA`, suit for MOD09A1, MYD09A1.
+#' * `qc_FparLai`
 #' * `qc_NDVI3g`: For NDVI3g
 #' * `qc_NDVIv4`: For NDVIv4
-#' * `qc_StateQA`: Initial weights based on `StateQA`, suit for MOD09A1, MYD09A1.
 #' 
 #' @param x Binary value
 #' @param start Bit starting position, count from zero
@@ -23,6 +24,9 @@
 #' * `weigths`: Double vector, initial weights.
 #' * `QC_flag`: Factor vector, with the level of 
 #' `c("snow", "cloud", "shadow", "aerosol", "marginal", "good")`
+#' 
+#' @references
+#' https://developers.google.com/earth-engine/datasets/catalog/MODIS_006_MOD13A1
 #' 
 #' @examples
 #' set.seed(100)

@@ -26,6 +26,10 @@
 #' ungrowing season (see details in [phenofit::backval()]).
 #' @param wmin Double, minimum weight of bad points, which could be smaller
 #' the weight of snow, ice and cloud.
+#' @param wsnow Doulbe. Reset the weight of snow points, after get `ylu`.
+#' Snow flag is an important flag of ending of growing
+#' season. Snow points is more valuable than marginal points. Hence, the weight
+#' of snow should be great than that of `marginal`.
 #' @param missval Double, which is used to replace NA values in y. If missing,
 #' the default vlaue is `ylu[1]`.
 #' @param ymin If specified, `ylu[1]` is constrained greater than ymin. This
@@ -69,6 +73,7 @@
 check_input <- function(t, y, w, QC_flag,
     nptperyear, south = FALSE, Tn = NULL,
     wmin = 0.2,
+    wsnow = 0.8,
     ymin, missval,
     maxgap, alpha = 0.02,
     date_start = NULL, date_end = NULL,
@@ -96,7 +101,7 @@ check_input <- function(t, y, w, QC_flag,
         w_critical <- 0.5
     }
     y_good <- y[w >= w_critical] %>% rm_empty()
-    ylu    <- c(pmax( quantile(y_good, alpha/2), 0),
+    ylu    <- c(pmax( quantile(y_good, 0.05), 0), # alpha/2
                quantile(y_good, 1 - alpha/2))
 
     if (!missing(ymin) && !is.na(ymin)){
@@ -128,8 +133,9 @@ check_input <- function(t, y, w, QC_flag,
 
     # 整治snow
     if (!is.null(QC_flag)) {
-        I_snow = QC_flag == "snow" & y >= (ylu[1] + 0.1*A)
+        I_snow = QC_flag == "snow" & y >= (ylu[1] + 0.2*A)
         y[I_snow] = missval
+        w[QC_flag == "snow"] = wsnow
     }
 
     ## 2. rm spike values
@@ -168,6 +174,7 @@ check_input <- function(t, y, w, QC_flag,
     # If still have na values after na.approx, just replace it with `missval`.
     y[is.na(y)] <- missval
 
+# browser()
     if (!is_empty(Tn)){
         Tn <- na.approx(Tn, maxgap = maxgap, na.rm = FALSE)
     }

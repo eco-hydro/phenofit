@@ -81,24 +81,6 @@ metric_phase <- function(metric){
     phase %>% factor(c("spring", "pop", "autumn"))
 }
 
-#' nth_max
-#'
-#' The nth maximum value
-#' @examples
-#' x <- c(12.45,34,4,0,-234,45.6,4)
-#' nth_max(x)
-nth_max <- function(x, n = 2){
-    len <- length(x)
-
-    if (sum(!is.na(x)) <= n){
-        min(x, na.rm = T)
-    } else {
-        sort(x, decreasing = T)[n]
-    }
-    # i   <- len-n+1
-    # sort(x, partial=i, na.last=T)[i]
-}
-
 fix_null <- function(x, default = NA){
     I <- sapply(x, is.null)
     x[I] <- default

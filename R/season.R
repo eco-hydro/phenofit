@@ -14,7 +14,7 @@
 #'
 #' Finally, use [findpeaks()] to get local maximum and local minimum values.
 #' Two local minimum define a growing season.
-#' If two local minimum(maximum) are too closed, then only the smaller(biger) 
+#' If two local minimum(maximum) are too closed, then only the smaller(biger)
 #' is left.
 #'
 #' @param INPUT A list object with the elements of `t`, `y`, `w`,
@@ -70,10 +70,10 @@
 #' - `whit`: A data.table of Rough fitting result, with the columns of
 #' (`t`, `y`, `witer1`, ..., `witerN`, `ziter1`, ..., `ziterN`).
 #' - `dt`: A data.table of Growing season dividing information, with the columns
-#' of (`beg`, `peak`, `end`, `y_beg`, `y_peak`, `y_end`, `len`, `year`, 
+#' of (`beg`, `peak`, `end`, `y_beg`, `y_peak`, `y_end`, `len`, `year`,
 #' `season`, `flag`).
 #' @seealso [findpeaks()].
-#' 
+#'
 #' @example inst/examples/ex-check_input.R
 #' @example inst/examples/ex-season.R
 #' @export
@@ -112,7 +112,8 @@ season <- function(INPUT,
 
     if (all(is.na(y))) return(NULL)
     npt   <- sum(INPUT$w > wmin)
-    nyear <- round(npt/nptperyear) # matter most for parameter adjustment
+    if (npt == 0) npt = length(INPUT$y)
+    nyear <- ceiling(npt/nptperyear) # matter most for parameter adjustment
 
     ylu0  <- INPUT$ylu
     ylu   <- ylu0
@@ -166,7 +167,10 @@ season <- function(INPUT,
         ## This module will automatically update lambda, nf and wHANTS
         #  Not only wWHd, it has been extended to wHANT and wSG. 20180910
         if (adj.param) {
-            delta_frame <- ceiling(nptperyear/12) # adjust frame in the step of `month`
+            delta_frame <- ceiling(nptperyear/12)
+             # adjust frame in the step of `month`
+            if (is.null(npeak_PerYear) || is.null(ntrough_PerYear)) browser()
+
             if (npeak_PerYear > MaxPeaksPerYear | ntrough_PerYear > MaxTroughsPerYear) {
                 lambda <- lambda*2
                 nf     <- max(1, nf - 1)
@@ -264,7 +268,7 @@ season <- function(INPUT,
         dt <- dt[dt$len > 45 & dt$len < 650, ] # mask too long and short gs
         if (.check_season) {
             dt = check_season_dt(dt, rtrough_max = rtrough_max, r_min = r_min)
-            if (!is.continuous) dt %<>% fixYearBroken(t, ypred) 
+            if (!is.continuous) dt %<>% fixYearBroken(t, ypred)
         }
     }
 
