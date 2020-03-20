@@ -1,13 +1,13 @@
 Package: phenofit
 Type: Package
 Title: Extract Remote Sensing Vegetation Phenology 
-Version: 0.2.6.9001
+Version: 0.2.7
 Authors@R: c(
     person("Dongdong", "Kong", role = c("aut", "cre"), email = "kongdd.sysu@gmail.com"),
-    person("Jianjian", "Cui", role = c("aut"), email = "cuijj6@mail2.sysu.edu.cn"),
     person("Mingzhong", "Xiao", role = c("aut"), email = "xmingzh@mail2.sysu.edu.cn"),
     person("Yongqiang", "Zhang", role = c("aut"), email = "yongqiang.zhang2014@gmail.com"),
-    person("Xihui", "Gu", role = c("aut"), email = "guxh@cug.edu.cn"))
+    person("Xihui", "Gu", role = c("aut"), email = "guxh@cug.edu.cn"), 
+    person("Jianjian", "Cui", role = c("aut"), email = "cuijj6@mail2.sysu.edu.cn"))
 Description: 
     The merits of 'TIMESAT' and 'phenopix' are adopted. Besides, a simple and 
     growing season dividing method and a practical snow elimination method 
@@ -25,7 +25,7 @@ Description:
 License: GPL-2 | file LICENSE
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.0
 LinkingTo: Rcpp, RcppArmadillo
 Depends:
     R (>= 3.1)

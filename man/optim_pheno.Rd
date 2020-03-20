@@ -4,14 +4,27 @@
 \alias{optim_pheno}
 \title{optim_pheno}
 \usage{
-optim_pheno(prior, sFUN, y, t, tout, method, w, nptperyear, ylu,
-  iters = 2, wFUN = wTSM, verbose = FALSE, ...)
+optim_pheno(
+  prior,
+  sFUN,
+  y,
+  t,
+  tout,
+  method,
+  w,
+  nptperyear,
+  ylu,
+  iters = 2,
+  wFUN = wTSM,
+  verbose = FALSE,
+  ...
+)
 }
 \arguments{
 \item{prior}{A vector of initial values for the parameters for which optimal
 values are to be found. \code{prior} is suggested giving a column name.}
 
-\item{sFUN}{The name of fine curve fitting functions, can be one of \code{ 'FitAG', 'FitDL.Beck', 'FitDL.Elmore', 'FitDL.Gu' and 'FitDL.Klos', 'FitDL.Zhang'}.}
+\item{sFUN}{The name of fine curve fitting functions, can be one of \verb{ 'FitAG', 'FitDL.Beck', 'FitDL.Elmore', 'FitDL.Gu' and 'FitDL.Klos', 'FitDL.Zhang'}.}
 
 \item{y}{Numeric vector, vegetation index time-series}
 
@@ -20,8 +33,8 @@ values are to be found. \code{prior} is suggested giving a column name.}
 \item{tout}{Corresponding doy of prediction.}
 
 \item{method}{The name of optimization method to solve fine fitting, one of
-\code{'BFGS','CG','Nelder-Mead', 'L-BFGS-B', 'nlm', 'nlminb', 'ucminf'} and
-\code{'spg','Rcgmin','Rvmmin', 'newuoa','bobyqa','nmkb','hjkb'}.}
+\verb{'BFGS','CG','Nelder-Mead', 'L-BFGS-B', 'nlm', 'nlminb', 'ucminf'} and
+\verb{'spg','Rcgmin','Rvmmin', 'newuoa','bobyqa','nmkb','hjkb'}.}
 
 \item{w}{(optional) Numeric vector, weights of \code{y}. If not specified,
 weights of all \code{NA} values will be \code{wmin}, the others will be 1.0.}
@@ -30,7 +43,7 @@ weights of all \code{NA} values will be \code{wmin}, the others will be 1.0.}
 Only \code{\link[=wTSM]{wTSM()}} needs \code{nptperyear}. If not specified,
 \code{nptperyear} will be calculated based on \code{t}.}
 
-\item{ylu}{\code{ymin, ymax}, which is used to force \code{ypred} in the
+\item{ylu}{\verb{ymin, ymax}, which is used to force \code{ypred} in the
 range of \code{ylu}.}
 
 \item{iters}{How many times curve fitting is implemented.}

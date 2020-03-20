@@ -4,8 +4,17 @@
 \alias{smooth_wWHIT}
 \title{Weigthed Whittaker Smoother}
 \usage{
-smooth_wWHIT(y, w, ylu, nptperyear, wFUN = wTSM, iters = 1,
-  lambda = 15, second = FALSE, ...)
+smooth_wWHIT(
+  y,
+  w,
+  ylu,
+  nptperyear,
+  wFUN = wTSM,
+  iters = 1,
+  lambda = 15,
+  second = FALSE,
+  ...
+)
 }
 \arguments{
 \item{y}{Numeric vector, vegetation index time-series}
@@ -13,7 +22,7 @@ smooth_wWHIT(y, w, ylu, nptperyear, wFUN = wTSM, iters = 1,
 \item{w}{(optional) Numeric vector, weights of \code{y}. If not specified,
 weights of all \code{NA} values will be \code{wmin}, the others will be 1.0.}
 
-\item{ylu}{\code{[low, high]} of time-series y (curve fitting values are constrained
+\item{ylu}{\verb{[low, high]} of time-series y (curve fitting values are constrained
 in the range of \code{ylu}.}
 
 \item{nptperyear}{Integer, number of images per year.}

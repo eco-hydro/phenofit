@@ -8,17 +8,34 @@
 \alias{PhenoKl}
 \title{Phenology Extraction methods}
 \usage{
-PhenoTrs(fFIT, approach = c("White", "Trs"), trs = 0.5,
-  asymmetric = TRUE, IsPlot = TRUE, ...)
+PhenoTrs(
+  fFIT,
+  approach = c("White", "Trs"),
+  trs = 0.5,
+  asymmetric = TRUE,
+  IsPlot = TRUE,
+  ...
+)
 
-PhenoDeriv(fFIT, analytical = TRUE, smoothed.spline = FALSE,
-  IsPlot = TRUE, show.lgd = TRUE, ...)
+PhenoDeriv(
+  fFIT,
+  analytical = TRUE,
+  smoothed.spline = FALSE,
+  IsPlot = TRUE,
+  show.lgd = TRUE,
+  ...
+)
 
-PhenoGu(fFIT, analytical = TRUE, smoothed.spline = FALSE,
-  IsPlot = TRUE, ...)
+PhenoGu(fFIT, analytical = TRUE, smoothed.spline = FALSE, IsPlot = TRUE, ...)
 
-PhenoKl(fFIT, analytical = TRUE, smoothed.spline = FALSE,
-  IsPlot = TRUE, show.lgd = TRUE, ...)
+PhenoKl(
+  fFIT,
+  analytical = TRUE,
+  smoothed.spline = FALSE,
+  IsPlot = TRUE,
+  show.lgd = TRUE,
+  ...
+)
 }
 \arguments{
 \item{fFIT}{\code{fFIT} object returned by \code{\link[=optim_pheno]{optim_pheno()}}.}

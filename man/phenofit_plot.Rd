@@ -4,9 +4,16 @@
 \alias{phenofit_plot}
 \title{phenofit_plot}
 \usage{
-phenofit_plot(obj, type = "all", methods, title = NULL,
-  title.ylab = "Vegetation Index", IsPlot = TRUE, show.legend = TRUE,
-  newpage = TRUE)
+phenofit_plot(
+  obj,
+  type = "all",
+  methods,
+  title = NULL,
+  title.ylab = "Vegetation Index",
+  IsPlot = TRUE,
+  show.legend = TRUE,
+  newpage = TRUE
+)
 }
 \arguments{
 \item{obj}{\code{fFIT}}

@@ -4,8 +4,17 @@
 \alias{smooth_wSG}
 \title{Weighted Savitzky-Golay}
 \usage{
-smooth_wSG(y, w, nptperyear, ylu, wFUN = wTSM, iters = 2,
-  frame = floor(nptperyear/7) * 2 + 1, d = 2, ...)
+smooth_wSG(
+  y,
+  w,
+  nptperyear,
+  ylu,
+  wFUN = wTSM,
+  iters = 2,
+  frame = floor(nptperyear/7) * 2 + 1,
+  d = 2,
+  ...
+)
 }
 \arguments{
 \item{y}{Numeric vector, vegetation index time-series}
@@ -15,7 +24,7 @@ weights of all \code{NA} values will be \code{wmin}, the others will be 1.0.}
 
 \item{nptperyear}{Integer, number of images per year.}
 
-\item{ylu}{(optional) \code{[low, high]} value of time-series y (curve fitting values
+\item{ylu}{(optional) \verb{[low, high]} value of time-series y (curve fitting values
 are constrained in the range of ylu.}
 
 \item{wFUN}{weights updating function, can be one of 'wTSM', 'wChen' and
@@ -49,10 +58,10 @@ r_wSG <- smooth_wSG(l$y, l$w, l$ylu, nptperyear = 23, iters = 2)
 }
 \references{
 \enumerate{
-\item Chen, J., J"onsson, P., Tamura, M., Gu, Z., Matsushita, B., Eklundh, L.,
+\item Chen, J., J\"onsson, P., Tamura, M., Gu, Z., Matsushita, B., Eklundh, L.,
 2004. A simple method for reconstructing a high-quality NDVI time-series
 data set based on the Savitzky-Golay filter. Remote Sens. Environ. 91,
 332-344. https://doi.org/10.1016/j.rse.2004.03.014. \cr
-\item https://en.wikipedia.org/wiki/Savitzky%E2%80%93Golay_filter
+\item https://en.wikipedia.org/wiki/Savitzky\%E2\%80\%93Golay_filter
 }
 }

@@ -4,9 +4,21 @@
 \alias{findpeaks}
 \title{findpeaks}
 \usage{
-findpeaks(x, IsDiff = TRUE, nups = 1, ndowns = nups, zero = "0",
-  peakpat = NULL, minpeakheight = -Inf, minpeakdistance = 1,
-  y_min = 0, y_max = 0, npeaks = 0, sortstr = FALSE, IsPlot = F)
+findpeaks(
+  x,
+  IsDiff = TRUE,
+  nups = 1,
+  ndowns = nups,
+  zero = "0",
+  peakpat = NULL,
+  minpeakheight = -Inf,
+  minpeakdistance = 1,
+  y_min = 0,
+  y_max = 0,
+  npeaks = 0,
+  sortstr = FALSE,
+  IsPlot = F
+)
 }
 \arguments{
 \item{x}{Numeric vector.}
@@ -23,7 +35,7 @@ just want to find the continue negative or positive values, just set
 of the same value: increasing, decreasing, or special}
 
 \item{peakpat}{define a peak as a regular pattern, such as the default
-pattern \code{[+]{1,}[-]{1,}}; if a pattern is provided, the parameters
+pattern \verb{[+]\{1,\}[-]\{1,\}}; if a pattern is provided, the parameters
 \code{nups} and \code{ndowns} are not taken into account}
 
 \item{minpeakheight}{The minimum (absolute) height a peak has to have

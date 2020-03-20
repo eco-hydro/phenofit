@@ -6,22 +6,59 @@
 \alias{stat_season}
 \title{Growing season dividing}
 \usage{
-season(INPUT, rFUN = wWHIT, wFUN = wTSM, iters = 2, wmin = 0.1,
-  lambda, nf = 3, frame = floor(INPUT$nptperyear/5) * 2 + 1,
-  minpeakdistance, ypeak_min = 0.1, r_max = 0.2, r_min = 0.05,
-  rtrough_max = 0.6, MaxPeaksPerYear = 2, MaxTroughsPerYear = 3,
-  calendarYear = FALSE, IsPlot = FALSE, plotdat = INPUT,
-  print = FALSE, adj.param = TRUE, rm.closed = TRUE,
-  is.continuous = TRUE, .check_season = TRUE, ...)
+season(
+  INPUT,
+  rFUN = wWHIT,
+  wFUN = wTSM,
+  iters = 2,
+  wmin = 0.1,
+  lambda,
+  nf = 3,
+  frame = floor(INPUT$nptperyear/5) * 2 + 1,
+  minpeakdistance,
+  ypeak_min = 0.1,
+  r_max = 0.2,
+  r_min = 0.05,
+  rtrough_max = 0.6,
+  MaxPeaksPerYear = 2,
+  MaxTroughsPerYear = 3,
+  calendarYear = FALSE,
+  IsPlot = FALSE,
+  plotdat = INPUT,
+  print = FALSE,
+  adj.param = TRUE,
+  rm.closed = TRUE,
+  is.continuous = TRUE,
+  .check_season = TRUE,
+  ...
+)
 
-season_mov(INPUT, rFUN = smooth_wWHIT, wFUN = wTSM, iters = 2,
-  wmin = 0.1, IsOptim_lambda = FALSE, lambda = NULL, nf = 3,
-  frame = floor(INPUT$nptperyear/5) * 2 + 1, maxExtendMonth = 12,
-  calendarYear = FALSE, r_min = 0.05, rtrough_max = 0.6, ...,
-  len_min = 45, len_max = 650, .check_season = TRUE,
-  years.run = NULL, IsPlot = TRUE, IsPlot.vc = FALSE,
-  IsPlot.OnlyBad = FALSE, plotdat = INPUT, print = TRUE,
-  titlestr = "")
+season_mov(
+  INPUT,
+  rFUN = smooth_wWHIT,
+  wFUN = wTSM,
+  iters = 2,
+  wmin = 0.1,
+  IsOptim_lambda = FALSE,
+  lambda = NULL,
+  nf = 3,
+  frame = floor(INPUT$nptperyear/5) * 2 + 1,
+  maxExtendMonth = 12,
+  calendarYear = FALSE,
+  r_min = 0.05,
+  rtrough_max = 0.6,
+  ...,
+  len_min = 45,
+  len_max = 650,
+  .check_season = TRUE,
+  years.run = NULL,
+  IsPlot = TRUE,
+  IsPlot.vc = FALSE,
+  IsPlot.OnlyBad = FALSE,
+  plotdat = INPUT,
+  print = TRUE,
+  titlestr = ""
+)
 
 stat_season(INPUT, brks)
 }

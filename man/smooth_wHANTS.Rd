@@ -4,8 +4,19 @@
 \alias{smooth_wHANTS}
 \title{Weighted HANTS SMOOTH}
 \usage{
-smooth_wHANTS(y, t, w, nf = 3, ylu, periodlen = 365, nptperyear,
-  wFUN = wTSM, iters = 2, wmin = 0.1, ...)
+smooth_wHANTS(
+  y,
+  t,
+  w,
+  nf = 3,
+  ylu,
+  periodlen = 365,
+  nptperyear,
+  wFUN = wTSM,
+  iters = 2,
+  wmin = 0.1,
+  ...
+)
 }
 \arguments{
 \item{y}{Numeric vector, vegetation index time-series}
@@ -17,7 +28,7 @@ weights of all \code{NA} values will be \code{wmin}, the others will be 1.0.}
 
 \item{nf}{number of frequencies to be considered above the zero frequency}
 
-\item{ylu}{\code{[low, high]} of time-series y (curve fitting values are constrained
+\item{ylu}{\verb{[low, high]} of time-series y (curve fitting values are constrained
 in the range of \code{ylu}.}
 
 \item{periodlen}{length of the base period, measured in virtual samples

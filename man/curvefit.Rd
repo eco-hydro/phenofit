@@ -4,8 +4,13 @@
 \alias{curvefit}
 \title{Fine curve fitting}
 \usage{
-curvefit(y, t = index(y), tout = t, methods = c("AG", "Beck",
-  "Elmore", "Gu", "Klos", "Zhang"), ...)
+curvefit(
+  y,
+  t = index(y),
+  tout = t,
+  methods = c("AG", "Beck", "Elmore", "Gu", "Klos", "Zhang"),
+  ...
+)
 }
 \arguments{
 \item{y}{Vegetation time-series index, numeric vector}

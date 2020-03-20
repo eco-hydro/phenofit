@@ -4,9 +4,26 @@
 \alias{check_input}
 \title{check_input}
 \usage{
-check_input(t, y, w, QC_flag, nptperyear, south = FALSE, Tn = NULL,
-  wmin = 0.2, ymin, missval, maxgap, alpha = 0.02, date_start = NULL,
-  date_end = NULL, ...)
+check_input(
+  t,
+  y,
+  w,
+  QC_flag,
+  nptperyear,
+  south = FALSE,
+  Tn = NULL,
+  wmin = 0.2,
+  wsnow = 0.8,
+  ymin,
+  missval,
+  maxgap,
+  alpha = 0.02,
+  alpha_high = NULL,
+  date_start = NULL,
+  date_end = NULL,
+  mask_spike = TRUE,
+  ...
+)
 }
 \arguments{
 \item{t}{Numeric vector, \code{Date} variable}
@@ -32,6 +49,11 @@ ungrowing season (see details in \code{\link[phenofit:backval]{phenofit::backval
 \item{wmin}{Double, minimum weight of bad points, which could be smaller
 the weight of snow, ice and cloud.}
 
+\item{wsnow}{Doulbe. Reset the weight of snow points, after get \code{ylu}.
+Snow flag is an important flag of ending of growing
+season. Snow points is more valuable than marginal points. Hence, the weight
+of snow should be great than that of \code{marginal}.}
+
 \item{ymin}{If specified, \code{ylu[1]} is constrained greater than ymin. This
 value is critical for bare, snow/ice land, where vegetation amplitude is quite
 small. Generally, you can set ymin=0.08 for NDVI, ymin=0.05 for EVI,
@@ -49,10 +71,15 @@ is inappropriate for middle growing season points. Interpolating all values
 by na.approx, it is unsuitable for large number continous missing segments,
 e.g. in the start or end of growing season.}
 
-\item{alpha}{Double value in \code{[0,1]}, quantile prob of ylu_min.}
+\item{alpha}{Double value in \verb{[0,1]}, quantile prob of ylu_min.}
+
+\item{alpha_high}{Double value in \verb{[0,1]}, quantile prob of \code{ylu_max}. If not
+specified, \code{alpha_high=alpha}.}
 
 \item{date_start, date_end}{starting and ending date of the original vegetation
 time-sereis (before \code{add_HeadTail})}
+
+\item{mask_spike}{Boolean. Whether to remove spike values?}
 
 \item{...}{Others will be ignored.}
 }
@@ -64,13 +91,13 @@ A list object returned:
 \item \code{y} : Numeric vector, checked vegetation time-series, \code{NA} values are interpolated.
 \item \code{w} : Numeric vector
 \item \code{Tn}: Numeric vector
-\item \code{ylu}: = \code{[ymin, ymax]}. \code{w_critical} is used to filter not too bad values.
+\item \code{ylu}: = \verb{[ymin, ymax]}. \code{w_critical} is used to filter not too bad values.
 
-If the percentage good values (w=1) is greater than 30\%, then \code{w_critical}=1.
+If the percentage good values (w=1) is greater than 30\\%, then \code{w_critical}=1.
 
-The else, if the percentage of w >= 0.5 points is greater than 10\%, then
+The else, if the percentage of w >= 0.5 points is greater than 10\\%, then
 \code{w_critical}=0.5. In boreal regions, even if the percentage of w >= 0.5
-points is only 10\%, we still can't set \code{w_critical=wmin}.
+points is only 10\\%, we still can't set \code{w_critical=wmin}.
 
 We can't rely on points with the wmin weights. Then,  \cr
 \code{y_good = y[w >= w_critical]},  \cr

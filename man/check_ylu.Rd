@@ -9,7 +9,7 @@ check_ylu(yfit, ylu)
 \arguments{
 \item{yfit}{Numeric vector, curve fitting result}
 
-\item{ylu}{limits of y value, \code{[ymin, ymax]}}
+\item{ylu}{limits of y value, \verb{[ymin, ymax]}}
 }
 \value{
 yfit, the numeric vector in the range of \code{ylu}.

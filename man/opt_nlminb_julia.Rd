@@ -4,8 +4,17 @@
 \alias{opt_nlminb_julia}
 \title{Optimization using PORT routines}
 \usage{
-opt_nlminb_julia(par0, fitMeth = "doubleLog_Beck", y, t, w = NULL,
-  ylu = NULL, lower = NULL, upper = NULL, ...)
+opt_nlminb_julia(
+  par0,
+  fitMeth = "doubleLog_Beck",
+  y,
+  t,
+  w = NULL,
+  ylu = NULL,
+  lower = NULL,
+  upper = NULL,
+  ...
+)
 }
 \arguments{
 \item{par0}{Initial values for the parameters to be optimized over.}
@@ -19,7 +28,7 @@ opt_nlminb_julia(par0, fitMeth = "doubleLog_Beck", y, t, w = NULL,
 \item{w}{(optional) Numeric vector, weights of \code{y}. If not specified,
 weights of all \code{NA} values will be \code{wmin}, the others will be 1.0.}
 
-\item{ylu}{\code{ymin, ymax}, which is used to force \code{ypred} in the
+\item{ylu}{\verb{ymin, ymax}, which is used to force \code{ypred} in the
 range of \code{ylu}.}
 
 \item{lower}{

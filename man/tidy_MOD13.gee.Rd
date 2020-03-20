@@ -19,7 +19,7 @@ A tidied data.table, with columns of 'site', 'y', 't', 'w', 'date' and
 'SummaryQA'.
 \itemize{
 \item \code{site}: site name
-\item \code{y}: real value of EVI, \code{[-1, 1]}
+\item \code{y}: real value of EVI, \verb{[-1, 1]}
 \item \code{date}: image date
 \item \code{t}: exact compositing date constructed from \code{DayOfYear}
 \item \code{w}: weights

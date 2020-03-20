@@ -61,14 +61,14 @@ still not finished.
 }
 \references{
 \enumerate{
-\item Per J"onsson, P., Eklundh, L., 2004. TIMESAT - A program for analyzing
+\item Per J\"onsson, P., Eklundh, L., 2004. TIMESAT - A program for analyzing
 time-series of satellite sensor data. Comput. Geosci. 30, 833-845.
 https://doi.org/10.1016/j.cageo.2004.05.006. \cr
 \item https://au.mathworks.com/help/curvefit/smoothing-data.html#bq_6ys3-3 \cr
 \item Garcia, D., 2010. Robust smoothing of gridded data in one and higher
 dimensions with missing values. Computational statistics & data analysis,
 54(4), pp.1167-1178. \cr
-\item Chen, J., J"onsson, P., Tamura, M., Gu, Z., Matsushita, B., Eklundh, L.,
+\item Chen, J., J\"onsson, P., Tamura, M., Gu, Z., Matsushita, B., Eklundh, L.,
 2004. A simple method for reconstructing a high-quality NDVI time-series
 data set based on the Savitzky-Golay filter. Remote Sens. Environ. 91,
 332-344. https://doi.org/10.1016/j.rse.2004.03.014. \cr
@@ -80,7 +80,7 @@ https://doi.org/10.1016/j.rse.2005.10.021 \cr
 }
 }
 \author{
-wTSM is implemented by Per J"onsson, Malm"o University, Sweden
+wTSM is implemented by Per J\"onsson, Malm\"o University, Sweden
 \email{per.jonsson@ts.mah.se} and Lars Eklundh, Lund University, Sweden
 \email{lars.eklundh@nateko.lu.se}.
 And Translated into Rcpp by Dongdong Kong, 01 May 2018.

@@ -5,13 +5,27 @@
 \alias{get_pheno.fFITs}
 \title{get_pheno}
 \usage{
-get_pheno(fits, method, TRS = c(0.2, 0.5, 0.6), analytical = TRUE,
-  smoothed.spline = FALSE, IsPlot = FALSE, showName_fitting = TRUE,
-  ...)
+get_pheno(
+  fits,
+  method,
+  TRS = c(0.2, 0.5, 0.6),
+  analytical = TRUE,
+  smoothed.spline = FALSE,
+  IsPlot = FALSE,
+  showName_fitting = TRUE,
+  ...
+)
 
-get_pheno.fFITs(fFITs, method, TRS = c(0.2, 0.5), analytical = TRUE,
-  smoothed.spline = FALSE, IsPlot = FALSE, title_left = "",
-  showName_pheno = TRUE)
+get_pheno.fFITs(
+  fFITs,
+  method,
+  TRS = c(0.2, 0.5),
+  analytical = TRUE,
+  smoothed.spline = FALSE,
+  IsPlot = FALSE,
+  title_left = "",
+  showName_pheno = TRUE
+)
 }
 \arguments{
 \item{fits}{A list of \code{\link[=fFITs]{fFITs()}} object, for a single curve fitting

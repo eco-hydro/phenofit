@@ -10,8 +10,7 @@ check_season(d, rm_closed = TRUE, rtrough_max = 0.7, r_min = 0.02)
 
 check_season_dt(dt, rtrough_max, r_min, len_min = 45, len_max = 650)
 
-cheak_season_list(lst_dt, rtrough_max, r_min, len_min = 45,
-  len_max = 650)
+cheak_season_list(lst_dt, rtrough_max, r_min, len_min = 45, len_max = 650)
 }
 \arguments{
 \item{d}{Data.frame of growing season dividing info}

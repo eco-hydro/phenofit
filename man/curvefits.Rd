@@ -4,10 +4,23 @@
 \alias{curvefits}
 \title{Fine Curve fitting}
 \usage{
-curvefits(INPUT, brks, wFUN = wTSM, iters = 2, wmin = 0.2,
-  nextend = 2, maxExtendMonth = 3, minExtendMonth = 1, minT = 0,
+curvefits(
+  INPUT,
+  brks,
+  wFUN = wTSM,
+  iters = 2,
+  wmin = 0.1,
+  nextend = 2,
+  maxExtendMonth = 2,
+  minExtendMonth = 1,
+  minT = 0,
   methods = c("AG", "Beck", "Elmore", "Gu", "Klos", "Zhang"),
-  minPercValid = 0.2, print = TRUE, use.rough = FALSE, ...)
+  minPercValid = 0.2,
+  print = TRUE,
+  use.rough = FALSE,
+  use.y0 = TRUE,
+  ...
+)
 }
 \arguments{
 \item{INPUT}{A list object with the elements of 't', 'y', 'w', 'Tn' (option)
@@ -48,6 +61,9 @@ less than \code{minPercValid}, curve fiting result is set to \code{NA}.}
 \item{print}{Whether to print progress information?}
 
 \item{use.rough}{Whether to use rough fitting smoothed time-series as input?}
+
+\item{use.y0}{boolean. whether to use original \code{y0}, which is before the
+process of \code{check_input}.}
 
 \item{...}{Other parameters will be ignore.}
 }

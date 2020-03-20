@@ -17,6 +17,6 @@ ypeak_min  = 0.05
 south      = sp$lat < 0
 
 dnew  <- add_HeadTail(d, south, nptperyear) # add one year in head and tail
-# INPUT <- check_input(dnew$t, dnew$y, dnew$w, dnew$QC_flag, 
-# 	nptperyear, south = south, 
-#     maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
+INPUT <- check_input(dnew$t, dnew$y, dnew$w, dnew$QC_flag,
+	nptperyear, south = south,
+    maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)

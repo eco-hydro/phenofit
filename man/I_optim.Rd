@@ -5,8 +5,7 @@
 \alias{I_optimx}
 \title{Interface of unified optimization functions.}
 \usage{
-I_optim(prior, FUN, y, t, method = "BFGS", fn = f_goal, ...,
-  use.julia = FALSE)
+I_optim(prior, FUN, y, t, method = "BFGS", fn = f_goal, ..., use.julia = FALSE)
 
 I_optimx(prior, FUN, y, t, method, verbose = FALSE, ...)
 }
@@ -20,9 +19,9 @@ values are to be found. \code{prior} is suggested giving a column name.}
 
 \item{t}{Numeric vector, \code{Date} variable}
 
-\item{method}{\code{method} can be some of \code{'BFGS','CG','Nelder-Mead', 'L-BFGS-B', 'nlm', 'nlminb', 'ucminf'}. \cr
+\item{method}{\code{method} can be some of \verb{'BFGS','CG','Nelder-Mead', 'L-BFGS-B', 'nlm', 'nlminb', 'ucminf'}. \cr
 For \code{I_optimx}, other methods are also supported,
-e.g. \code{'spg','Rcgmin','Rvmmin', 'newuoa','bobyqa','nmkb','hjkb'}.}
+e.g. \verb{'spg','Rcgmin','Rvmmin', 'newuoa','bobyqa','nmkb','hjkb'}.}
 
 \item{...}{other parameters passed to \code{\link[=I_optim]{I_optim()}} or \code{\link[=I_optimx]{I_optimx()}}.}
 

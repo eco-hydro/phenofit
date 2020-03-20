@@ -4,7 +4,9 @@
 \name{MOD13A1}
 \alias{MOD13A1}
 \title{MOD13A1}
-\format{An object of class \code{list} of length 2.}
+\format{
+An object of class \code{list} of length 2.
+}
 \usage{
 data('MOD13A1')
 }

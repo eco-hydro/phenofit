@@ -4,15 +4,29 @@
 \alias{plot_phenofit}
 \title{plot_phenofit}
 \usage{
-plot_phenofit(d_fit, seasons, title = NULL, title.xlab = "Time",
-  title.ylab = "Vegetation Index", font.size = 14, theme = NULL,
-  cex = 2, shape = "point", angle = 30, show.legend = TRUE)
+plot_phenofit(
+  d_fit,
+  seasons,
+  d_obs = NULL,
+  title = NULL,
+  title.xlab = "Time",
+  title.ylab = "Vegetation Index",
+  font.size = 14,
+  theme = NULL,
+  cex = 2,
+  shape = "point",
+  angle = 30,
+  show.legend = TRUE
+)
 }
 \arguments{
 \item{d_fit}{data.frame of curve fittings returned by \code{\link[=get_fitting]{get_fitting()}}.}
 
 \item{seasons}{Growing season dividing object returned by \code{\link[=season]{season()}}
 and \code{\link[=season_mov]{season_mov()}}.}
+
+\item{d_obs}{data.frame of original vegetation time series, with the columns
+of \code{t}, \code{y} and \code{QC_flag}. If not specified, it will be determined from \code{d_fit}.}
 
 \item{title}{String, title of figure.}
 
