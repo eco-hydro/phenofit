@@ -42,7 +42,7 @@ qc_SPOT(QA, wmin = 0.2, wmid = 0.5, wmax = 1)
 
 \item{wmax}{Double, maximum weight, i.e. good}
 
-\item{FparExtra_QC}{Another QC flag of \code{MCD15A3H}}
+\item{FparLai_QC}{Another QC flag of \code{MCD15A3H}}
 }
 \value{
 A list object with

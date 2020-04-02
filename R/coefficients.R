@@ -133,8 +133,8 @@ R2_sign <- function(n, NumberOfPredictor = 2, alpha = 0.05){
 #' @param Y_sim Numeric vector, corresponding simulated values
 #' @param w Numeric vector, weights of every points. If w included, when
 #' calculating mean, Bias, MAE, RMSE and NSE, w will be taken into considered.
-#' @param include.cv If true, cv will be included.
 #' @param include.r If true, r and R2 will be included.
+#' @param include.cv If true, cv will be included.
 #' 
 #' @return
 #' * `RMSE` root mean square error
@@ -159,7 +159,7 @@ R2_sign <- function(n, NumberOfPredictor = 2, alpha = 0.05){
 #' GOF(Y_obs, Y_sim)
 #'
 #' @export
-GOF <- function(Y_obs, Y_sim, w, include.cv = FALSE, include.r = FALSE){
+GOF <- function(Y_obs, Y_sim, w, include.r = TRUE, include.cv = FALSE){
     if (missing(w)) w <- rep(1, length(Y_obs))
 
     # remove NA_real_ and Inf values in Y_sim, Y_obs and w

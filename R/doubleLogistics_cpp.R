@@ -1,3 +1,5 @@
+NAME = ""
+
 doubleLogMain <- function(NAME, par, t, pred) {
     miss_pred = missing(pred)
     if (miss_pred) pred = t*0

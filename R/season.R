@@ -78,7 +78,7 @@
 #' @example inst/examples/ex-season.R
 #' @export
 season <- function(INPUT,
-                   rFUN = wWHIT, wFUN = wTSM, iters = 2, wmin = 0.1,
+                   rFUN = smooth_wWHIT, wFUN = wTSM, iters = 2, wmin = 0.1,
                    lambda, nf  = 3, frame = floor(INPUT$nptperyear/5)*2 + 1,
                    minpeakdistance,
                    ypeak_min = 0.1,

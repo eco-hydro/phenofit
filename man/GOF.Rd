@@ -4,7 +4,7 @@
 \alias{GOF}
 \title{GOF}
 \usage{
-GOF(Y_obs, Y_sim, w, include.cv = FALSE, include.r = FALSE)
+GOF(Y_obs, Y_sim, w, include.r = TRUE, include.cv = FALSE)
 }
 \arguments{
 \item{Y_obs}{Numeric vector, observations}
@@ -14,9 +14,9 @@ GOF(Y_obs, Y_sim, w, include.cv = FALSE, include.r = FALSE)
 \item{w}{Numeric vector, weights of every points. If w included, when
 calculating mean, Bias, MAE, RMSE and NSE, w will be taken into considered.}
 
-\item{include.cv}{If true, cv will be included.}
-
 \item{include.r}{If true, r and R2 will be included.}
+
+\item{include.cv}{If true, cv will be included.}
 }
 \value{
 \itemize{

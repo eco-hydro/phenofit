@@ -123,7 +123,7 @@ qc_5l <- function(QA, wmin = 0.2, wmid = 0.5, wmax = 1){
 
 # MODIS_006_MCD15A3H
 #' @rdname qcFUN
-#' @param FparExtra_QC Another QC flag of `MCD15A3H`
+#' @param FparLai_QC Another QC flag of `MCD15A3H`
 #' 
 #' @details
 #' If `FparLai_QC` specified, `I_margin = SCF_QC >= 2 & SCF_QC <= 3`.

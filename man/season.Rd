@@ -8,7 +8,7 @@
 \usage{
 season(
   INPUT,
-  rFUN = wWHIT,
+  rFUN = smooth_wWHIT,
   wFUN = wTSM,
   iters = 2,
   wmin = 0.1,
