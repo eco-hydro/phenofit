@@ -6,19 +6,14 @@
 #' @description Vegetation phenology package
 #' @import magrittr numDeriv plyr
 #' @import tibble ggplot2 
-#' @import foreach iterators
 #' @importFrom gridExtra arrangeGrob
-#' @importFrom data.table data.table as.data.table := is.data.table fwrite fread
+#' @importFrom data.table data.table as.data.table := is.data.table fwrite fread 
+#' dcast
 #' @importFrom zoo na.approx index zoo
-#' @importFrom dplyr bind_cols bind_rows group_by first last nth
-#' @importFrom purrr map map_df map_dbl is_empty
-#' @importFrom tidyr gather spread
+#' @importFrom purrr map is_empty
 #' @importFrom lubridate ymd yday year month day dyears is.Date
-#' @importFrom stringr str_extract
 #' @importFrom utils object.size
 #' @importFrom grDevices dev.off cairo_pdf colorRampPalette
-#' @importFrom jsonlite read_json write_json
-#' @importFrom shiny getDefaultReactiveDomain showNotification
 #' @import stats graphics
 #' 
 #' @useDynLib phenofit, .registration = TRUE
@@ -35,7 +30,7 @@ NULL
 .onLoad <- function (libname, pkgname){
     if(getRversion() >= "2.15.1") {
         utils::globalVariables(
-            c(".SD", ".N", 
+            c(".SD", ".N", "..vars", 
               "left", "len", "right", "y_peak",
               "meth", "doy", "origin", # tidyFitPheno
               "DayOfYear", "SummaryQA", "site", "EVI", "w", "QC_flag", # tidy_MOD13.gee

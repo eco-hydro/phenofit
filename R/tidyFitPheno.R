@@ -10,7 +10,7 @@
 #' # simulate vegetation time-series
 #' fFUN = doubleLog.Beck
 #' par  = c( mn  = 0.1 , mx  = 0.7 , sos = 50 , rsp = 0.1 , eos = 250, rau = 0.1)
-#' 
+#'
 #' t    <- seq(1, 365, 8)
 #' tout <- seq(1, 365, 1)
 #' y <- fFUN(par, t)
@@ -21,11 +21,9 @@
 #' # multiple years
 #' fits <- list(`2001` = fFITs, `2002` = fFITs)
 #' pheno <- get_pheno(fits, "AG", IsPlot=FALSE)
-#'
-#' p <- tidyFitPheno(pheno)
 #' @export
 tidyFitPheno <- function(pheno){
-    doy2date <- function(datenum) as.Date(unlist(datenum), date.origin)
+    doy2date <- function(datenum) as.Date(unlist(datenum), origin = date.origin)
     # phenonames <- c('TRS2.sos', 'TRS2.eos', 'TRS5.sos', 'TRS5.eos', 'TRS6.sos', 'TRS6.eos',
     #                 'DER.sos', 'DER.pop', 'DER.eos',
     #                 'GU.UD', 'GU.SD', 'GU.DD', 'GU.RD',
@@ -39,20 +37,17 @@ tidyFitPheno <- function(pheno){
     # }
     names <- unlist(pheno[[1]]) %>% names()
     p_date <- ldply(pheno, doy2date, .id = "flag") %>%
-        plyr::mutate(origin = ymd(paste0(substr(flag, 1, 4), "-01-01"))) %>%
-        reorder_name(c("flag", "origin")) %>% 
-        set_colnames(c("flag", "origin", names))
+        mutate(origin = ymd(paste0(substr(flag, 1, 4), "-01-01"))) %>%
+        reorder_name(c("flag", "origin")) %>%
+        set_colnames(c("flag", "origin", names)) %>% data.table()
 
     colnames(p_date) %<>% gsub("GU\\.|ZHANG\\.", "", .)
     phenonames <- setdiff(colnames(p_date),  c("flag", "origin", "meth"))
 
-    df <- gather(p_date, meth, date, -flag, -origin) %>%
+    df <- p_date %>% melt(c("flag", "origin"), variable.name = "meth",value.name = "date") %>%
         mutate(doy = as.numeric(date - origin + 1))
-
     # date <- spread(pheno[, c("flag", "meth", "date")], meth, date)
-    p_doy  <- spread(df[, c("flag", "meth", "doy", "origin")], meth, doy)
-
+    p_doy <- df[, c("flag", "meth", "doy", "origin")] %>% dcast(flag + origin ~ meth, value.var = "doy")
     vars  <- c("flag", "origin", phenonames)
-    list(doy = p_doy[vars], date = p_date[vars]) %>% 
-        map(as.data.table)
+    list(doy = p_doy[, ..vars], date = p_date[, ..vars])
 }

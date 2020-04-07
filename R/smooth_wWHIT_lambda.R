@@ -87,7 +87,7 @@ v_curve = function(INPUT, lg_lambdas, d = 2, IsPlot = FALSE,
     fits = pens = NULL
     for (lla in lg_lambdas) {
         # param$lambda <- 10^lla
-        # z    <- do.call(smooth_wWHIT, param)$zs %>% dplyr::last()
+        # z    <- do.call(smooth_wWHIT, param)$zs %>% last()
 
         z    = whit2(y, 10 ^ lla, w)
         fit  = log(sum(w * (y - z) ^ 2))

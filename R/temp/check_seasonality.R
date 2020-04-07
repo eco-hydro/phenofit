@@ -18,7 +18,7 @@ check_seasonality <- function(INPUT, IsPlot = F, plotdat = INPUT, nf = 3, ...){
             lines(plotdat$t, fit[[i+1]], col = colors[i], lwd = 2)
         }
     }
-    stat  <- GOF(INPUT$y, dplyr::last(fit), INPUT$w, include.cv = TRUE)
+    stat  <- GOF(INPUT$y, last(fit), INPUT$w, include.cv = TRUE)
     stat # quickly return
 }
 

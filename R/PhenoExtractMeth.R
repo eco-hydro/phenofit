@@ -231,7 +231,6 @@ PhenoDeriv <- function(fFIT,
 
 
 #' @inheritParams PhenoTrs
-#' @importFrom dplyr last
 #' @rdname PhenoExtractMeth
 #' @export
 PhenoGu <- function(fFIT,

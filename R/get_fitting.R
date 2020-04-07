@@ -23,11 +23,13 @@ get_fitting.fFITs <- function(fFITs){
     t  <- t[Ix]
 
     iters <- length(fFITs$fFIT[[1]]$zs)
+
     df <- fFITs$fFIT %>% map(function(x){
-        d_z <- map_dfc(x$zs, ~.[I]) %>% set_colnames(paste0("ziter", 1:iters))
+        d_z <- map(x$zs, ~.[I]) %>% as.data.table() %>%
+            set_colnames(paste0("ziter", 1:iters))
         # d_w <- map_dfc(x$ws, ~.) %>% set_colnames(paste0("witer", 1:iters))
         cbind(t, d_z) # , d_w
-    }) %>% melt_list("meth") %>% as.data.table()
+    }) %>% melt_list("meth") #%>% as.data.table()
 
     df <- merge(fFITs$data[Ix], df, id = "t")
     df$t %<>% as.Date(date.origin)

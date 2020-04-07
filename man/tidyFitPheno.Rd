@@ -28,7 +28,5 @@ fFITs <- curvefit(y, t, tout, methods)
 # multiple years
 fits <- list(`2001` = fFITs, `2002` = fFITs)
 pheno <- get_pheno(fits, "AG", IsPlot=FALSE)
-
-p <- tidyFitPheno(pheno)
 }
 \keyword{internal}

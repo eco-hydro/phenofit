@@ -30,22 +30,27 @@ listk <- function(...){
     return(x)
 }
 
-#' @importFrom reshape2 melt
-melt_list <- function(list, var.name, na.rm = TRUE, ...){
-    if (is.data.table(list[[1]])){
+#' @importFrom data.table melt
+melt_list <- function(list, var.name = "variable", na.rm = TRUE, ...){
+    if (is.null(list) || length(list) == 0) return(NULL)
+    if (is.null(names(list))) names(list) <- seq_along(list)
+
+    list  <- rm_empty(list)
+    first <- list[[1]]
+    if (is.data.table(first)){
         names <- names(list)
         for (i in seq_along(list)){
             x <- list[[i]]
             eval(parse(text = sprintf("x$%s <- names[i]", var.name)))
             list[[i]] <- x
         }
-        res <- do.call(rbind, list)#return
-    } else{
-        id.vars <- colnames(list[[1]])
-        res <- melt(list, ..., id.vars = id.vars, na.rm = na.rm)
+        res <- do.call(rbind, list) # return
+    } else {
+        id.vars <- colnames(first)
+        res <- reshape2::melt(list, ..., id.vars = id.vars, na.rm = na.rm)
         colnames(res) <- c(id.vars, var.name)
     }
-    return(res)
+    reorder_name(res, var.name)
 }
 
 reorder_name <- function(
@@ -67,4 +72,60 @@ reorder_name <- function(
     } else{
         stop("Unknown data type!")
     }
+}
+
+first <- function(x, order_by = NULL, default = NA_real_) {
+    nth(x, 1L, order_by = order_by, default = default)
+}
+
+last <- function(x, order_by = NULL, default = NA_real_) {
+    nth(x, -1L, order_by = order_by, default = default)
+}
+
+nth <- function (x, n, order_by = NULL, default = NA_real_) {
+    stopifnot(length(n) == 1, is.numeric(n))
+    n <- trunc(n)
+    if (n == 0 || n > length(x) || n < -length(x)) {
+        return(default)
+    }
+    if (n < 0) {
+        n <- length(x) + n + 1
+    }
+    if (is.null(order_by)) {
+        x[[n]]
+    }
+    else {
+        x[[order(order_by)[[n]]]]
+    }
+}
+
+# d <- data.table(a = 1:10, f1 = 1:10, f2 = 1:10, f3 = 1:10)
+# select_vars(d, "f*")
+# select_vars(d, "f")
+select_vars <- function(x, pattern) {
+    names <- names(x)
+    # if (is.data.frame(x)) {
+    #     names <- colnames(x)
+    # }
+    # print(pattern)
+    # print(names)
+    ind <- grep(pattern, names)
+    # vars = names[ind]
+    # print(vars)
+    if (is.data.table(x)) {
+        x[, .SD, .SDcols = ind]
+    } else if (is.data.frame(x)) {
+        x[, ind]
+    }
+}
+
+mutate <- function (.data, ...) 
+{
+    stopifnot(is.data.frame(.data) || is.list(.data) || is.environment(.data))
+    cols <- as.list(substitute(list(...))[-1])
+    cols <- cols[names(cols) != ""]
+    for (col in names(cols)) {
+        .data[[col]] <- eval(cols[[col]], .data, parent.frame())
+    }
+    .data
 }

@@ -29,7 +29,7 @@ PhenoPlot <- function(t, y, main = "", ...){
 #' @param title_left String of growing season flag.
 #' @param showName_fitting Whether to show the name of fine curve fitting method
 #' in top title?
-#' @param showName_pheno Whether to show names of phenological methods in top title? 
+#' @param showName_pheno Whether to show names of phenological methods in top title?
 #' Generally, only show top title in the first row.
 #' @param ... ignored.
 #'
@@ -37,7 +37,7 @@ PhenoPlot <- function(t, y, main = "", ...){
 #' Please note that only a single fine curve fitting method allowed here!
 #'
 #' @return List of every year phenology metrics
-#' 
+#'
 #' @example inst/examples/ex-get_fitting_param_GOF.R
 #' @export
 get_pheno <- function(fits, method,
@@ -71,7 +71,7 @@ get_pheno <- function(fits, method,
             } else {
                 oma <- c(1, 2, 3, 1)
             }
-            op <- par(mfrow = c(length(fits), 5), oma = oma, 
+            op <- par(mfrow = c(length(fits), 5), oma = oma,
                 mar = rep(0, 4), yaxt = "n", xaxt = "n")
         }
 
@@ -93,14 +93,14 @@ get_pheno <- function(fits, method,
             par(new = TRUE, mfrow = c(1, 1), oma = rep(0, 4), mar = rep(0, 4))
             plot(0, axes = F, type = "n", xaxt = "n", yaxt = "n") #
             if (showName_fitting) {
-                text(1, 1, method, font = 2, cex = 1.3)            
+                text(1, 1, method, font = 2, cex = 1.3)
             }
         }
         pheno_list
     })
 
     # return
-    map(res, tidyFitPheno) %>% purrr::transpose() 
+    lapply(res, tidyFitPheno) %>% purrr::transpose()
 }
 
 #' @rdname get_pheno
@@ -117,7 +117,6 @@ get_pheno.fFITs <- function(fFITs, method,
         warning(sprintf("method is missing and set to %s!", method))
     }
 
-    # browser()
     if (!(method %in% meths)){
         warning(sprintf("%s not in methods and set to %s!", method, meths[1]))
         method <- meths[1]

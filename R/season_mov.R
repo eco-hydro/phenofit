@@ -165,10 +165,12 @@ cheak_season_list <- function(lst_dt, rtrough_max, r_min,
 {
     if (is.data.frame(lst_dt)) lst_dt = list(lst_dt)
     lst_dt %<>% rm_empty()
-    lst_dt = foreach(dt = lst_dt) %do% {
-        check_season_dt(dt, rtrough_max, r_min, len_min, len_max)
+    res <- list()
+    for(i in seq_along(lst_dt)) {
+        dt = lst_dt[[i]]
+        res[[i]] <- check_season_dt(dt, rtrough_max, r_min, len_min, len_max)        
     }
-    dt2 = do.call(rbind, lst_dt)
+    dt2 = do.call(rbind, res)
     check_season_dt(dt2, rtrough_max, r_min, len_min, len_max)
 }
 

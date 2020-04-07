@@ -16,8 +16,6 @@
 #' @param cex point size for VI observation.
 #' @param angle `text.x` angle
 #'
-#' @importFrom dplyr left_join
-#'
 #' @example inst/examples/ex-check_input.R
 #' @example inst/examples/ex-visual.R
 #'

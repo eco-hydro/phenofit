@@ -31,7 +31,7 @@ plot_season <- function(INPUT, brks, plotdat, ylu,
 
     t  <- brks$whit$t
     dt <- brks$dt
-    zs <- dplyr::select(brks$whit, dplyr::matches("ziter*"))
+    zs <- select_vars(brks$whit, "ziter")
     ypred <- last(zs)
 
     # if (missing(xlim))
@@ -83,9 +83,9 @@ plot_season_boundary <- function(dt) {
 
     nGS = nrow(dt)
     if (!is.null(nGS) && nGS > 0) {
-        xs = foreach(i = 1:nrow(dt)) %do% {
-            x = c(dt$beg[i], dt$end[i]) %>% c(., rev(.), NA)
-        } %>% do.call(c, .)
+        xs = lapply(1:nrow(dt), function(i){
+            c(dt$beg[i], dt$end[i]) %>% c(., rev(.), NA)
+        }) %>% do.call(c, .)
         ys = rep(ylim, each = 2) %>% c(NA) %>% rep(nGS)
         polygon(xs, ys,
                 # density = 2, angle = 30,

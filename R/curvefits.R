@@ -70,11 +70,11 @@ curvefits <- function(INPUT, brks,
 
     if (use.rough) {
         # if the range of t is smaller than `whit$t`
-        INPUT$y[I_all] <- dplyr::last(brks$whit)
+        INPUT$y[I_all] <- last(brks$whit)
     } else {
         I_fix <- which(w[I_all] == wmin)
         I_y   <- I_all[I_fix]
-        INPUT$y[I_y] <- dplyr::last(brks$whit)[I_fix]
+        INPUT$y[I_y] <- last(brks$whit)[I_fix]
     }
     # use the weights of last iteration of rough fitting
     # w[I_all] <- brks$whit %>% {.[, contain(., "witer"), with = F]} %>% last()
