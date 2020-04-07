@@ -1,12 +1,12 @@
 # Functions for working with the V-curve
 
 #' @keywords internal
-#' @importFrom spam diag.spam
+# ' @importFrom spam diag.spam
 v_point = function(y, w = 0 * y + 1, lambda = 100, d = 2) {
     # Compute the value of the normalized V-curve for one value of lambda
     # Prepare for smoothing
     n = length(y)
-    E = diag.spam(n)
+    E = spam::diag.spam(n)
     D = diff(E, diff = d)
     P = t(D) %*% D
 

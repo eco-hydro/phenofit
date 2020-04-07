@@ -32,8 +32,7 @@ Depends:
 Imports: Rcpp, 
     tibble, purrr, plyr, magrittr, 
     lubridate, 
-    data.table, 
-    zoo, spam, 
+    data.table, zoo, 
     gridExtra, ggplot2, 
     optimx, ucminf, numDeriv, 
     JuliaCall, 
@@ -41,7 +40,7 @@ Imports: Rcpp,
 Suggests: 
     knitr,
     rmarkdown,
-    reshape2,
+    reshape2, spam,
     testthat (>= 2.1.0)
 URL: https://github.com/kongdd/phenofit
 BugReports: https://github.com/kongdd/phenofit/issues
