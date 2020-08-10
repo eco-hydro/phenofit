@@ -156,13 +156,13 @@ check_input <- function(t, y, w, QC_flag,
         I_spike <- which(abs(y - ymov) > 2*std | abs(y - ymov2) > 2*std) # 95.44% interval, `(1- 2*pnorm(-2))*100`
 
         y[I_spike]  <- NA # missval
-        y0[I_spike] <- missval # for debug
+        # y0 kept as original value, update 20200810
+        # y0[I_spike] <- missval # for debug
     }
     ## 3. gap-fill NA values
     w[is.na(w) | is.na(y)] <- wmin
     w[w <= wmin] <- wmin
     # left missing values were interpolated by `na.approx`
-    # browser()
     y <- na.approx(y, maxgap = maxgap, na.rm = FALSE)
     # If still have na values after na.approx, just replace it with `missval`.
     y[is.na(y)] <- missval

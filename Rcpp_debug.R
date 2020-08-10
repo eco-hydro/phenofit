@@ -12,7 +12,7 @@ read_data <- function(file) {
     dt$beg  %<>% as.Date()
     dt$peak %<>% as.Date()
     dt$end  %<>% as.Date()
-    dt    
+    dt
 }
 
 test_check_season <- function(dt, len_min = 45, len_max = 650, 
