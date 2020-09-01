@@ -45,7 +45,7 @@
 #' by na.approx, it is unsuitable for large number continous missing segments,
 #' e.g. in the start or end of growing season.
 #' @param alpha Double value in `[0,1]`, quantile prob of ylu_min.
-#' @param alpha_high Double value in `[0,1]`, quantile prob of `ylu_max`. If not 
+#' @param alpha_high Double value in `[0,1]`, quantile prob of `ylu_max`. If not
 #' specified, `alpha_high=alpha`.
 #' @param date_start,date_end starting and ending date of the original vegetation
 #' time-sereis (before `add_HeadTail`)
@@ -78,7 +78,7 @@ check_input <- function(t, y, w, QC_flag,
     wmin = 0.2,
     wsnow = 0.8,
     ymin, missval,
-    maxgap, alpha = 0.02, alpha_high = NULL, 
+    maxgap, alpha = 0.02, alpha_high = NULL,
     date_start = NULL, date_end = NULL,
     mask_spike = TRUE,
     ...)
@@ -107,8 +107,8 @@ check_input <- function(t, y, w, QC_flag,
     }
     y_good <- y[w >= w_critical] %>% rm_empty()
     # alpha/2, alpha_high set to 0.05 for remote sensing (20200322)
-    ylu    <- c(pmax( quantile(y_good, alpha_high/2), 0), 
-               quantile(y_good, 1 - alpha/2))
+    ylu    <- c(pmax( quantile(y_good, alpha/2), 0),
+               quantile(y_good, 1 - alpha_high/2))
 
     if (!missing(ymin) && !is.na(ymin)){
         # constrain back ground value
@@ -155,7 +155,8 @@ check_input <- function(t, y, w, QC_flag,
         # which(abs(y - ymean) > std) & w <= w_critical
         I_spike <- which(abs(y - ymov) > 2*std | abs(y - ymov2) > 2*std) # 95.44% interval, `(1- 2*pnorm(-2))*100`
 
-        y[I_spike]  <- NA # missval
+        # print(I_spike)
+        y[I_spike] <- NA # missval
         # y0 kept as original value, update 20200810
         # y0[I_spike] <- missval # for debug
     }

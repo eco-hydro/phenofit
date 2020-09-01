@@ -65,6 +65,6 @@ r_wWHIT <- smooth_wWHIT(l$y, l$w, l$ylu, nptperyear = 23, iters = 2)
 \enumerate{
 \item Eilers, P.H.C., 2003. A perfect smoother. Anal. Chem. https://doi.org/10.1021/ac034173t \cr
 \item Frasso, G., Eilers, P.H.C., 2015. L- and V-curves for optimal smoothing. Stat.
-Modelling 15, 91–111. https://doi.org/10.1177/1471082X14549288
+Modelling 15, 91-111. https://doi.org/10.1177/1471082X14549288
 }
 }

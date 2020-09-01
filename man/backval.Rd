@@ -16,7 +16,7 @@ weights of all \code{NA} values will be \code{wmin}, the others will be 1.0.}
 
 \item{Tn}{Numeric vector, night temperature, default is null. If provided,
 Tn is used to help divide ungrowing period, and then get background value in
-ungrowing season (see details in \code{\link[phenofit:backval]{phenofit::backval()}}).}
+ungrowing season (see details in \code{\link[=backval]{backval()}}).}
 
 \item{minT}{min temperature for growing season.}
 

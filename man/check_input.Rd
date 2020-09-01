@@ -44,7 +44,7 @@ following year 31 June; In north hemisphere, growing year is 1 Jan to 31 Dec.}
 
 \item{Tn}{Numeric vector, night temperature, default is null. If provided,
 Tn is used to help divide ungrowing period, and then get background value in
-ungrowing season (see details in \code{\link[phenofit:backval]{phenofit::backval()}}).}
+ungrowing season (see details in \code{\link[=backval]{backval()}}).}
 
 \item{wmin}{Double, minimum weight of bad points, which could be smaller
 the weight of snow, ice and cloud.}
@@ -137,5 +137,5 @@ INPUT    <- check_input(dnew$t, dnew$y, dnew$w, QC_flag = dnew$QC_flag,
      maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
 }
 \seealso{
-\code{\link[phenofit:backval]{phenofit::backval()}}
+\code{\link[=backval]{backval()}}
 }
