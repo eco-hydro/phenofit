@@ -5,23 +5,22 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "(gdb) 启动",
+            "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program":  "/usr/bin/Rscript",//"/usr/bin/Rscript", 
+            "program": "/usr/bin/Rscript", //"/usr/bin/Rscript", 
             // "program": "C:/Program Files/R/R-3.6.1/bin/x64/Rscript.exe",
             "args": [
-                "${workspaceFolder}/Rcpp_debug.R"
+                "${workspaceFolder}/Rcpp_debug2.R"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
-            "miDebuggerPath": "gdb.exe",
             "setupCommands": [
                 {
-                    "description": "为 gdb 启用整齐打印",
+                    "description": "Enable pretty-printing for gdb",
                     "text": "-enable-pretty-printing",
                     "ignoreFailures": true
                 }

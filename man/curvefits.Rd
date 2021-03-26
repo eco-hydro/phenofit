@@ -16,7 +16,6 @@ curvefits(
   minT = 0,
   methods = c("AG", "Beck", "Elmore", "Gu", "Klos", "Zhang"),
   minPercValid = 0.2,
-  print = TRUE,
   use.rough = FALSE,
   use.y0 = TRUE,
   ...
@@ -57,8 +56,6 @@ Tn < minT is treated as ungrowing season.}
 
 \item{minPercValid}{If the percentage of good and marginal quality points is
 less than \code{minPercValid}, curve fiting result is set to \code{NA}.}
-
-\item{print}{Whether to print progress information?}
 
 \item{use.rough}{Whether to use rough fitting smoothed time-series as input?}
 
@@ -109,6 +106,5 @@ fit <- curvefits(
     INPUT, brks2,
     methods = c("AG", "Beck", "Elmore", "Zhang"), #,"klos", "Gu"
     wFUN = wFUN,
-    nextend = 2, maxExtendMonth = 2, minExtendMonth = 1, minPercValid = 0.2,
-    print = TRUE, verbose = FALSE)
+    nextend = 2, maxExtendMonth = 2, minExtendMonth = 1, minPercValid = 0.2)
 }

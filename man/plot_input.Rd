@@ -32,7 +32,6 @@ d     <- dt[site == sitename, ] # get the first site data
 sp    <- st[site == sitename, ] # station point
 # global parameter
 IsPlot = TRUE
-print  = FALSE
 nptperyear = 23
 ypeak_min  = 0.05
 

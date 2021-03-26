@@ -107,11 +107,8 @@ select_vars <- function(x, pattern) {
     # if (is.data.frame(x)) {
     #     names <- colnames(x)
     # }
-    # print(pattern)
-    # print(names)
     ind <- grep(pattern, names)
     # vars = names[ind]
-    # print(vars)
     if (is.data.table(x)) {
         x[, .SD, .SDcols = ind]
     } else if (is.data.frame(x)) {

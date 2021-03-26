@@ -112,22 +112,15 @@ DD <- function(expr, name, order = 1) {
 # ' @rdname curvefit_deriv
 gradf_t <- function(FUN) {
     # f <- deriv(attr(FUN, 'formula'), 't', func = TRUE) #attr(FUN, 'par')
-    # print(environment())
     f <- grad_ft(FUN) #binding env, look variables in enclosure env
-    # f2 <- test()
-    # print(environment(f))
-    # print(environment(f2))
-
     # f is weird, it's envinment is global env
     # environment(f) <- environment()
 
     function(par, t){
         # e <- list2env(as.list(par), envir = parent.env(environment()))
-        # print(environment(f))
         # print(ls.str(envir = environment(f)))
         # e_par <- parent.env(environment())
         # print(ls.str(envir = e_par))
-
         # e   <- list2env(as.list(par), envir = environment(f))
         # ans <- f(t)
         ans <- do.call(f, c(list(t = t), as.list(par)))

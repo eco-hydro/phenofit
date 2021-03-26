@@ -55,7 +55,6 @@
 #' Only if `IsPlot=TRUE`, [plot_input()] will be used to plot.
 #' Known that y and w in `INPUT` have been changed, we suggest using the
 #' original data.table.
-#' @param print Whether to print progress information
 #' @param adj.param Adjust rough curve fitting function parameters automatically,
 #' if too many or to less peak and trough values.
 #' @param rm.closed boolean. Whether check the two closest peaks (or troughs).
@@ -86,7 +85,7 @@ season <- function(INPUT,
                    rtrough_max = 0.6,
                    MaxPeaksPerYear = 2, MaxTroughsPerYear = 3,
                    calendarYear = FALSE,
-                   IsPlot  = FALSE, plotdat = INPUT, print = FALSE,
+                   IsPlot  = FALSE, plotdat = INPUT, 
                    adj.param = TRUE,
                    rm.closed = TRUE,
                    is.continuous = TRUE,
@@ -161,7 +160,7 @@ season <- function(INPUT,
         npeak_PerYear   <- info_peak$npeak_PerYear
         ntrough_PerYear <- info_peak$ntrough_PerYear
 
-        if (print)
+        if (.options$verbose_season)
             cat(sprintf('iloop = %d: lambda = %.1f, ntrough_PerYear = %.2f, npeak_PerYear = %.2f\n',
                 iloop, lambda, ntrough_PerYear, npeak_PerYear))
         ## This module will automatically update lambda, nf and wHANTS
@@ -205,7 +204,6 @@ season <- function(INPUT,
 
     if (rm.closed) {
         pos_min <- pos_min[(val - ylu[1]) <= rtrough_max*A, ] # `y_trough <= rtrough_max*A + ylu[1]`
-        # print(str(pos_min, pos_max))
         pos <- rbind(pos_min, pos_max)[order(pos), ]
         # rm peak value if peak value smaller than the nearest trough values
         I   <- !with(pos, (c(diff(val) > 0, FALSE) & c(diff(type) == -2, FALSE)) |

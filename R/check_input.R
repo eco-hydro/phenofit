@@ -151,6 +151,7 @@ check_input <- function(t, y, w, QC_flag,
         ymov <- cbind(y[c(1, 1:(n - 2), n-1)], y[c(2, 3:n, n)]) %>% rowMeans(na.rm = TRUE)
         # ymov2 <- movmean(y, 1)
         halfwin <- ceiling(nptperyear/36) # about 10-days
+
         ymov2   <- movmean(y, halfwin = halfwin)
         # which(abs(y - ymean) > std) & w <= w_critical
         I_spike <- which(abs(y - ymov) > 2*std | abs(y - ymov2) > 2*std) # 95.44% interval, `(1- 2*pnorm(-2))*100`

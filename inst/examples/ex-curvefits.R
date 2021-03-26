@@ -7,5 +7,4 @@ fit <- curvefits(
     INPUT, brks2,
     methods = c("AG", "Beck", "Elmore", "Zhang"), #,"klos", "Gu"
     wFUN = wFUN,
-    nextend = 2, maxExtendMonth = 2, minExtendMonth = 1, minPercValid = 0.2,
-    print = TRUE, verbose = FALSE)
+    nextend = 2, maxExtendMonth = 2, minExtendMonth = 1, minPercValid = 0.2)

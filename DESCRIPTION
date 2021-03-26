@@ -1,7 +1,7 @@
 Package: phenofit
 Type: Package
 Title: Extract Remote Sensing Vegetation Phenology 
-Version: 0.2.7
+Version: 0.3.0.9000
 Authors@R: c(
     person("Dongdong", "Kong", role = c("aut", "cre"), email = "kongdd.sysu@gmail.com"),
     person("Mingzhong", "Xiao", role = c("aut"), email = "xmingzh@mail2.sysu.edu.cn"),
@@ -17,8 +17,15 @@ Description:
     And 'optimx' is used to select best optimization method for different 
     curve fitting methods.
     Reference:
-    Dongdong Kong, R package: A state-of-the-art Vegetation Phenology extraction package, 
-    phenofit version 0.2.3, <https://github.com/kongdd/phenofit>;
+    Kong, D., (2020). R package: A state-of-the-art Vegetation Phenology extraction 
+    package, phenofit version 0.2.6, <https://doi.org/10.5281/zenodo.3605560>;
+    Kong, D., Zhang, Y., Wang, D., Chen, J., & Gu, X. (2020). Photoperiod Explains 
+    the Asynchronization Between Vegetation Carbon Phenology and Vegetation Greenness 
+    Phenology. Journal of Geophysical Research: Biogeosciences, 125(8), e2020JG005636. 
+    <https://doi.org/10.1029/2020JG005636>;
+    Kong, D., Zhang, Y., Gu, X., & Wang, D. (2019). A robust method for reconstructing 
+    global MODIS EVI time series on the Google Earth Engine. 
+    ISPRS Journal of Photogrammetry and Remote Sensing, 155, 13–24;
     Zhang, Q., Kong, D., Shi, P., Singh, V.P., Sun, P., 2018. Vegetation phenology 
     on the Qinghai-Tibetan Plateau and its response to climate change (1982–2013). 
     Agric. For. Meteorol. 248, 408–417. <doi:10.1016/j.agrformet.2017.10.026>.

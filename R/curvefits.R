@@ -23,7 +23,6 @@
 #' `c('AG', 'Beck', 'Elmore', 'Gu', 'Klos', 'Zhang')`.
 #' @param minPercValid If the percentage of good and marginal quality points is
 #' less than `minPercValid`, curve fiting result is set to `NA`.
-#' @param print Whether to print progress information?
 #' @param use.rough Whether to use rough fitting smoothed time-series as input?
 #' @param use.y0 boolean. whether to use original `y0`, which is before the
 #' process of `check_input`.
@@ -42,7 +41,6 @@ curvefits <- function(INPUT, brks,
                       minT = 0,
                       methods = c('AG', 'Beck', 'Elmore', 'Gu', 'Klos', 'Zhang'),
                       minPercValid = 0.2,
-                      print = TRUE,
                       use.rough = FALSE,
                       use.y0 = TRUE,
                       ...)
@@ -92,7 +90,7 @@ curvefits <- function(INPUT, brks,
     y    <- INPUT$y
     fits <- vector(nrow(di), mode = "list")
     for (i in 1:nrow(di)){
-        if (print) runningId(i, prefix = '\t[curvefits] ')
+        if (.options$verbose_curvefit) fprintf("  [curvefits] running %d ... \n", i)
 
         I     <- di$beg[i]:di$end[i]
         I_beg <- di$beg[i]

@@ -197,14 +197,14 @@ BEGIN_RCPP
 END_RCPP
 }
 // rcpp_wTSM
-NumericVector rcpp_wTSM(NumericVector y, NumericVector yfit, NumericVector w, int iter, int nptperyear, double wfact);
+NumericVector rcpp_wTSM(const NumericVector y, const NumericVector yfit, const NumericVector w, int iter, int nptperyear, double wfact);
 RcppExport SEXP _phenofit_rcpp_wTSM(SEXP ySEXP, SEXP yfitSEXP, SEXP wSEXP, SEXP iterSEXP, SEXP nptperyearSEXP, SEXP wfactSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type y(ySEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type yfit(yfitSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type w(wSEXP);
+    Rcpp::traits::input_parameter< const NumericVector >::type y(ySEXP);
+    Rcpp::traits::input_parameter< const NumericVector >::type yfit(yfitSEXP);
+    Rcpp::traits::input_parameter< const NumericVector >::type w(wSEXP);
     Rcpp::traits::input_parameter< int >::type iter(iterSEXP);
     Rcpp::traits::input_parameter< int >::type nptperyear(nptperyearSEXP);
     Rcpp::traits::input_parameter< double >::type wfact(wfactSEXP);

@@ -1,5 +1,5 @@
 context("season3y")
-source('helper_MOD13A1.R')
+# source('helper_MOD13A1.R')
 
 # lambda   <- init_lambda(INPUT$y) # lambda for whittaker
 # param = listk(
@@ -13,12 +13,13 @@ source('helper_MOD13A1.R')
 # )
 
 param = listk(
-    INPUT, south = sp$lat[1] < 0,
+    INPUT,
     rFUN = smooth_wWHIT, wFUN = wTSM, iters = 3,
     r_min = 0,
-    IsPlot = IsPlot, plotdat = d, print = FALSE, IsOnlyPlotbad = F
+    IsPlot = IsPlot, plotdat = d, IsOnlyPlotbad = F
 )
 
+set_options(verbose_season_mov = FALSE)
 param$rFUN <- smooth_wSG
 # brks <- do.call(season_mov, param)
 

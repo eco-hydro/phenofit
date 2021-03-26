@@ -202,8 +202,6 @@ attr(doubleLog.Klos, 'formula') <- expression((a1*t + b1) + (a2*t^2 + b2*t + c) 
         attr(fun, 'gradient') <- gradf_t(fun) # gradient
         attr(fun, 'hessian')  <- hessf_t(fun) # hessian
         # print(environment(fun))
-        # print(fun)
-        # print(FUN)
         assign(FUN, fun, envir = environment(fun)) #environment("namespace:phenofit"))#
         # fun
     })

@@ -15,7 +15,7 @@ wFUN = wTSM
 # # )
 brks2 <- season_mov(INPUT,
     rFUN = smooth_wWHIT, wFUN = wFUN,
-    plotdat = d, IsPlot = IsPlot, print = F, IsOnlyPlotbad = F)
+    plotdat = d, IsPlot = IsPlot, IsOnlyPlotbad = FALSE)
 
 param <- list(
     INPUT, brks2,
@@ -24,12 +24,12 @@ param <- list(
     wFUN = wFUN,
     nextend = 2, maxExtendMonth = 3, minExtendMonth = 1,
     qc = dnew$QC_flag, minPercValid = 0.2,
-    print = FALSE, 
     use.rough = TRUE
 )
 
-meth <- "AG"
+set_options(verbose_curvefit = FALSE)
 
+meth <- "AG"
 test_curvefit <- function(meth){
     test_that(sprintf("`curvefits` with %s", meth), {
         expect_silent({
@@ -40,7 +40,6 @@ test_curvefit <- function(meth){
         })
     })
 }
-
 
 test_curvefit("AG") # works with rough fitting result
 

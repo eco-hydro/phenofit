@@ -10,7 +10,6 @@ param = listk(
     rFUN = smooth_wWHIT, wFUN = wBisquare, iters = 2,
     lambda,
     IsPlot = IsPlot, plotdat = d,
-    south = sp$lat[1] < 0,
     rymin_less = 0.6, ypeak_min = ypeak_min,
     max_MaxPeaksperyear =2.5, max_MinPeaksperyear = 3.5
 )

@@ -25,7 +25,6 @@ season(
   calendarYear = FALSE,
   IsPlot = FALSE,
   plotdat = INPUT,
-  print = FALSE,
   adj.param = TRUE,
   rm.closed = TRUE,
   is.continuous = TRUE,
@@ -56,7 +55,6 @@ season_mov(
   IsPlot.vc = FALSE,
   IsPlot.OnlyBad = FALSE,
   plotdat = INPUT,
-  print = TRUE,
   titlestr = ""
 )
 
@@ -118,8 +116,6 @@ returned.}
 Only if \code{IsPlot=TRUE}, \code{\link[=plot_input]{plot_input()}} will be used to plot.
 Known that y and w in \code{INPUT} have been changed, we suggest using the
 original data.table.}
-
-\item{print}{Whether to print progress information}
 
 \item{adj.param}{Adjust rough curve fitting function parameters automatically,
 if too many or to less peak and trough values.}
@@ -211,12 +207,12 @@ INPUT    <- check_input(dnew$t, dnew$y, dnew$w, QC_flag = dnew$QC_flag,
 brks  <- season(INPUT,
     rFUN = smooth_wWHIT, wFUN = wFUN,
     lambda = 10,
-    plotdat = d, IsPlot = IsPlot, print = FALSE, IsPlot.OnlyBad = FALSE)
+    plotdat = d, IsPlot = IsPlot, IsPlot.OnlyBad = FALSE)
 # curve fitting by year
 brks2 <- season_mov(INPUT,
     rFUN = smooth_wWHIT, wFUN = wFUN,
     lambda = 10,
-    plotdat = d, IsPlot = IsPlot, print = FALSE, IsPlot.OnlyBad = FALSE)
+    plotdat = d, IsPlot = IsPlot, IsPlot.OnlyBad = FALSE)
 }
 \seealso{
 \code{\link[=findpeaks]{findpeaks()}}.
