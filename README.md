@@ -10,33 +10,34 @@ Status](https://ci.appveyor.com/api/projects/status/github/kongdd/phenofit?branc
 [![CRAN](http://www.r-pkg.org/badges/version/phenofit)](https://cran.r-project.org/package=phenofit)
 [![total](http://cranlogs.r-pkg.org/badges/grand-total/phenofit)](https://www.rpackages.io/package/phenofit)
 [![monthly](http://cranlogs.r-pkg.org/badges/phenofit)](https://www.rpackages.io/package/phenofit)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3605560.svg)](https://doi.org/10.5281/zenodo.3605560)
 
 A state-of-the-art **remote sensing vegetation phenology** extraction
 package: `phenofit`
 
-  - `phenofit` combine merits of TIMESAT and phenopix
-  - A simple and stable growing season dividing methods was proposed
-  - Provide a practical snow elimination method, based on Whittaker
-  - 7 curve fitting methods and 4 phenology extraction methods
-  - We add parameters boundary for every curve fitting methods according
+-   `phenofit` combine merits of TIMESAT and phenopix
+-   A simple and stable growing season dividing methods was proposed
+-   Provide a practical snow elimination method, based on Whittaker
+-   7 curve fitting methods and 4 phenology extraction methods
+-   We add parameters boundary for every curve fitting methods according
     to their ecological meaning.
-  - `optimx` is used to select best optimization method for different
+-   `optimx` is used to select best optimization method for different
     curve fitting methods.
 
 ***Task lists***
 
-  - [ ] Test the performance of `phenofit` in multiple growing season
+-   [ ] Test the performance of `phenofit` in multiple growing season
     regions (e.g. the North China Plain);
-  - [ ] Uncertainty analysis of curve fitting and phenological metrics;
-  - [x] shiny app has been moved to
+-   [ ] Uncertainty analysis of curve fitting and phenological metrics;
+-   [x] shiny app has been moved to
     [phenofit.shiny](https://github.com/kongdd/phenofit.shiny);
-  - [x] Complete script automatic generating module in shinyapp;
-  - [x] `Rcpp` improve double logistics optimization efficiency by 60%;
-  - [x] Support spatial analysis;
-  - [x] Support annual season in curve fitting;
-  - [x] flexible fine fitting input ( original time-series or smoothed
+-   [x] Complete script automatic generating module in shinyapp;
+-   [x] `Rcpp` improve double logistics optimization efficiency by 60%;
+-   [x] Support spatial analysis;
+-   [x] Support annual season in curve fitting;
+-   [x] flexible fine fitting input ( original time-series or smoothed
     time-series by rough fitting).
-  - [x] Asymmetric of Threshold method
+-   [x] Asymmetric of Threshold method
 
 ![title](man/Figure/Figure1_phenofit_flowchart.svg)
 
@@ -90,21 +91,21 @@ nptperyear <- 23   # How many points for a single year
 wFUN       <- wBisquare #wTSM #wBisquare # Weights updating function, could be one of `wTSM`, 'wBisquare', `wChen` and `wSELF`. 
 ```
 
-  - Add date according to composite day of the year (DayOfYear), other
+-   Add date according to composite day of the year (DayOfYear), other
     than image date.
-  - Add weights according to `SummaryQA`.
+-   Add weights according to `SummaryQA`.
 
 For MOD13A1, Weights can by initialed by `SummaryQA` band (also suit for
 MOD13A2 and MOD13Q1). There is already a `QC` function for `SummaryQA`,
 i.e. `qc_summary`.
 
-| SummaryQA        | Pixel reliability summary QA                        | weight |
-| ---------------- | --------------------------------------------------- | ------ |
-| \-1 Fill/No data | Not processed                                       | `wmin` |
-| 0 Good data      | Use with confidence                                 | 1      |
-| 1 Marginal data  | Useful but look at detailed QA for more information | 0.5    |
-| 2 Snow/ice       | Pixel covered with snow/ice                         | `wmin` |
-| 3 Cloudy         | Pixel is cloudy                                     | `wmin` |
+| SummaryQA       | Pixel reliability summary QA                        | weight |
+|-----------------|-----------------------------------------------------|--------|
+| -1 Fill/No data | Not processed                                       | `wmin` |
+| 0 Good data     | Use with confidence                                 | 1      |
+| 1 Marginal data | Useful but look at detailed QA for more information | 0.5    |
+| 2 Snow/ice      | Pixel covered with snow/ice                         | `wmin` |
+| 3 Cloudy        | Pixel is cloudy                                     | `wmin` |
 
 ``` r
 data('MOD13A1')
@@ -129,7 +130,7 @@ df[, c("QC_flag", "w") := qc_summary(SummaryQA)]
 df <- df[, .(site, y = EVI/1e4, t, date, w, QC_flag)]
 ```
 
-  - `add_HeadTail` is used to deal with such situation, e.g. MOD13A2
+-   `add_HeadTail` is used to deal with such situation, e.g. MOD13A2
     begins from 2000-02-08. We need to construct a series with complete
     year, which begins from 01-01 for NH, and 07-01 for SH. For example,
     the input data period is 20000218 \~ 20171219. After adding one year
@@ -215,33 +216,33 @@ fit  <- curvefits(INPUT, brks2,
 l_param <- get_param(fit)
 print(str(l_param, 1))
 # List of 4
-#  $ AG    :Classes 'tbl_df', 'tbl' and 'data.frame':   18 obs. of  8 variables:
-#  $ Beck  :Classes 'tbl_df', 'tbl' and 'data.frame':   18 obs. of  7 variables:
-#  $ Elmore:Classes 'tbl_df', 'tbl' and 'data.frame':   18 obs. of  8 variables:
-#  $ Zhang :Classes 'tbl_df', 'tbl' and 'data.frame':   18 obs. of  8 variables:
+#  $ AG    : tibble [18 x 8] (S3: tbl_df/tbl/data.frame)
+#  $ Beck  : tibble [18 x 7] (S3: tbl_df/tbl/data.frame)
+#  $ Elmore: tibble [18 x 8] (S3: tbl_df/tbl/data.frame)
+#  $ Zhang : tibble [18 x 8] (S3: tbl_df/tbl/data.frame)
 # NULL
 print(l_param$AG)
 # # A tibble: 18 x 8
-#    flag      t0    mn    mx    rsp    a3    rau    a5
-#    <fct>  <dbl> <dbl> <dbl>  <dbl> <dbl>  <dbl> <dbl>
-#  1 2000_1  201. 0.168 0.407 0.0323  3.53 0.0151  5.83
-#  2 2001_1  561. 0.173 0.407 0.0225  4.06 0.0162  6   
-#  3 2002_1  931. 0.188 0.511 0.0383  2    0.0169  4.21
-#  4 2003_1 1275. 0.167 0.434 0.0268  2    0.0122  3.37
-#  5 2004_1 1660. 0.175 0.451 0.0363  2    0.0179  4.46
-#  6 2005_1 2052. 0.180 0.466 0.0141  6    0.0314  2   
-#  7 2006_1 2379. 0.174 0.436 0.0226  2.51 0.0131  3.26
-#  8 2007_1 2752. 0.165 0.483 0.0208  2    0.0150  2.88
-#  9 2008_1 3134. 0.177 0.492 0.0180  3.50 0.0199  6   
-# 10 2009_1 3525. 0.172 0.480 0.0133  5.40 0.0313  2   
-# 11 2010_1 3841. 0.181 0.493 0.0238  2    0.0148  2   
-# 12 2011_1 4206. 0.190 0.464 0.0328  2    0.0135  6   
-# 13 2012_1 4558. 0.167 0.510 0.0490  2    0.0109  3.64
-# 14 2013_1 4966. 0.168 0.484 0.0140  6    0.0190  2   
-# 15 2014_1 5303. 0.203 0.489 0.0344  2    0.0133  6   
-# 16 2015_1 5690. 0.215 0.494 0.0182  6    0.0275  4.81
-# 17 2016_1 6023. 0.194 0.484 0.0429  2    0.0126  4.99
-# 18 2017_1 6406. 0.171 0.449 0.0201  6    0.0129  3.52
+#    flag      t0    mn    mx    rsp    a3     rau    a5
+#    <fct>  <dbl> <dbl> <dbl>  <dbl> <dbl>   <dbl> <dbl>
+#  1 2000_1  199. 0.167 0.407 0.0351  3.19 0.0146   6   
+#  2 2001_1  579. 0.169 0.397 0.0157  6    0.0227   4.57
+#  3 2002_1  934. 0.167 0.528 0.0329  2    0.0161   2   
+#  4 2003_1 1275. 0.167 0.432 0.0268  2    0.0123   3.73
+#  5 2004_1 1689. 0.169 0.445 0.0166  5.08 0.0372   2   
+#  6 2005_1 2052. 0.172 0.470 0.0141  6    0.0301   2   
+#  7 2006_1 2370. 0.166 0.420 0.0280  2.02 0.0112   3.12
+#  8 2007_1 2751. 0.165 0.479 0.0212  2    0.0142   2.98
+#  9 2008_1 3123. 0.169 0.481 0.0215  2.70 0.0164   6   
+# 10 2009_1 3522. 0.168 0.479 0.0142  6    0.0278   2   
+# 11 2010_1 3840. 0.167 0.489 0.0229  2    0.0131   2   
+# 12 2011_1 4208. 0.175 0.468 0.0288  2    0.0133   5.00
+# 13 2012_1 4558. 0.166 0.505 0.0478  2    0.0109   4.16
+# 14 2013_1 4968. 0.166 0.484 0.0137  6    0.0204   2.26
+# 15 2014_1 5328. 0.168 0.501 0.0166  3.90 0.0164   2.35
+# 16 2015_1 5701. 0.189 0.484 0.0146  6    0.0287   2.03
+# 17 2016_1 6027. 0.172 0.472 0.0299  2    0.0130   5.57
+# 18 2017_1 6381. 0.168 0.441 0.0403  2.95 0.00979  5.98
 
 d_fit <- get_fitting(fit)
 ## Get GOF information
@@ -249,28 +250,29 @@ d_gof <- get_GOF(fit)
 # fit$stat <- stat
 print(head(d_gof))
 #      flag   meth       RMSE       NSE         R       pvalue  n
-# 1: 2000_1     AG 0.10058989 0.4952465 0.9016506 1.809700e-09 24
-# 2: 2000_1   Beck 0.10059953 0.4951497 0.9036266 1.461349e-09 24
-# 3: 2000_1 Elmore 0.10060466 0.4950983 0.9021757 1.710497e-09 24
-# 4: 2000_1  Zhang 0.10059866 0.4951585 0.9036627 1.455586e-09 24
-# 5: 2001_1     AG 0.08808864 0.5879431 0.9037624 3.439665e-09 23
-# 6: 2001_1   Beck 0.08817911 0.5870963 0.9047721 3.093164e-09 23
+# 1: 2000_1     AG 0.09691142 0.4963370 0.9104446 4.481677e-11 27
+# 2: 2000_1   Beck 0.09688513 0.4966102 0.9127208 3.289646e-11 27
+# 3: 2000_1 Elmore 0.09690657 0.4963874 0.9109116 4.209014e-11 27
+# 4: 2000_1  Zhang 0.09688479 0.4966137 0.9127908 3.258098e-11 27
+# 5: 2001_1     AG 0.08197474 0.6537794 0.9011935 5.927392e-08 20
+# 6: 2001_1   Beck 0.08139990 0.6586180 0.9047362 4.324325e-08 20
 
 # print(fit$fits$AG$`2002_1`$ws)
 print(fit$`2002_1`$fFIT$AG$ws)
 # $iter1
-#  [1] 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.5 1.0 1.0 1.0 1.0 0.5 1.0 1.0
-# [18] 1.0 1.0 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 1.0 1.0
+#  [1] 0.8 0.2 0.8 0.8 0.8 0.8 0.8 0.8 0.8 0.8 0.8 0.8 0.5 1.0 1.0 1.0 1.0 0.5 1.0
+# [20] 1.0 1.0 1.0 0.2 0.2 0.2 0.2 0.2 0.8 0.8 0.8 0.8 0.8
 # 
 # $iter2
-#  [1] 0.2000000 0.2000000 0.2000000 0.2000000 0.2000000 0.2000000 0.2000000
-#  [8] 0.2000000 0.2000000 0.5000000 1.0000000 1.0000000 0.7893075 1.0000000
-# [15] 0.4984446 0.8873205 1.0000000 1.0000000 1.0000000 0.2000000 0.2000000
-# [22] 0.2000000 0.2000000 0.2000000 0.2000000 0.2000000 0.2000000 0.2000000
-# [29] 0.2000000 0.2000000 0.2000000 1.0000000 1.0000000
+#  [1] 0.8000000 0.2000000 0.8000000 0.8000000 0.8000000 0.8000000 0.8000000
+#  [8] 0.8000000 0.8000000 0.8000000 0.8000000 0.8000000 0.5000000 1.0000000
+# [15] 1.0000000 0.2000000 0.2000000 0.2873749 0.2000000 0.2000000 1.0000000
+# [22] 0.2000000 0.2000000 0.2000000 0.2000000 0.2000000 0.2000000 0.8000000
+# [29] 0.8000000 0.8000000 0.8000000 0.8000000
 ## visualization
 g <- plot_phenofit(d_fit, brks2, NULL, title.ylab = "NDVI", "Time",
                    theme = coord_cartesian(xlim = c(ymd("2000-04-01"), ymd("2017-07-31"))))
+# Coordinate system already present. Adding new coordinate system, which will replace the existing one.
 grid::grid.newpage(); grid::grid.draw(g)# plot to check the curve fitting
 ```
 
@@ -303,35 +305,39 @@ pheno <- get_pheno(fit[1:6], "Elmore", IsPlot = T)
 # print(str(pheno, 1))
 head(l_pheno$doy$AG)
 #      flag     origin TRS2.sos TRS2.eos TRS5.sos TRS5.eos TRS6.sos TRS6.eos
-# 1: 2000_1 2000-01-01      167      273      175      264      177      261
-# 2: 2001_1 2001-01-01      145      263      155      254      158      251
-# 3: 2002_1 2002-01-01      168      268      179      256      182      252
-# 4: 2003_1 2003-01-01      133      273      149      253      153      246
-# 5: 2004_1 2004-01-01      166      262      178      251      181      248
-# 6: 2005_1 2005-01-01      150      266      159      252      162      248
-#    DER.sos DER.pop DER.eos  UD  SD  DD  RD Greenup Maturity Senescence
-# 1:     174     203     266 164 186 249 280     157      193        243
-# 2:     154     196     256 141 170 240 268     133      177        234
-# 3:     183     202     257 164 195 238 274     157      201        223
-# 4:     153     180     254 128 170 225 283     118      179        196
-# 5:     181     201     253 162 193 236 268     154      200        226
-# 6:     157     225     248 143 175 233 272     136      181        279
-#    Dormancy
-# 1:      287
-# 2:      275
-# 3:      282
-# 4:      298
-# 5:      276
-# 6:       NA
+# 1: 2000_1 2000-01-01      167      275      175      264      177      261
+# 2: 2001_1 2001-01-01      145      263      154      255      157      252
+# 3: 2002_1 2002-01-01      164      284      178      256      182      248
+# 4: 2003_1 2003-01-01      132      273      149      253      153      247
+# 5: 2004_1 2004-01-01      162      264      173      252      176      248
+# 6: 2005_1 2005-01-01      148      268      159      254      162      250
+#    DER.sos DER.pop DER.eos  UD  SD  DD  RD Greenup Maturity Senescence Dormancy
+# 1:     175     200     266 163 186 249 281     157      194        243      287
+# 2:     152     214     256 140 168 241 268     133      174        235      274
+# 3:     182     204     248 161 196 222 292     153      203        219      307
+# 4:     153     180     254 127 170 228 282     118      179        197      294
+# 5:     171     229     248 157 189 235 268     150      196        274       NA
+# 6:     157     225     249 143 175 233 273     135      181        281       NA
 ```
 
 # **References**
 
-> \[1\] Dongdong Kong, R package: A state-of-the-art Vegetation
-> Phenology extraction package, `phenofit` version 0.2.2,
-> <https://github.com/kongdd/phenofit>
-> 
-> \[2\] Zhang, Q., Kong, D., Shi, P., Singh, V.P., Sun, P., 2018.
+> \[1\] Kong, D., Zhang, Y., Wang, D., Chen, J., & Gu, X. (2020).
+> Photoperiod Explains the Asynchronization Between Vegetation Carbon
+> Phenology and Vegetation Greenness Phenology. *Journal of Geophysical
+> Research: Biogeosciences*, 125(8), e2020JG005636.
+> <https://doi.org/10.1029/2020JG005636>
+>
+> \[2\] Kong, D., Zhang, Y., Gu, X., & Wang, D. (2019). A robust method
+> for reconstructing global MODIS EVI time series on the Google Earth
+> Engine. *ISPRS Journal of Photogrammetry and Remote Sensing*, 155,
+> 13–24.
+>
+> \[3\] Kong, D., (2020). R package: A state-of-the-art Vegetation
+> Phenology extraction package, `phenofit` version 0.2.6,
+> <https://doi.org/10.5281/zenodo.3605560>
+>
+> \[4\] Zhang, Q., Kong, D., Shi, P., Singh, V.P., Sun, P., 2018.
 > Vegetation phenology on the Qinghai-Tibetan Plateau and its response
 > to climate change (1982–2013). Agric. For. Meteorol. 248, 408–417.
 > <https://doi.org/10.1016/j.agrformet.2017.10.026>
