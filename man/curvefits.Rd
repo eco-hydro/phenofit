@@ -7,14 +7,14 @@
 curvefits(
   INPUT,
   brks,
-  wFUN = wTSM,
+  methods,
+  wFUN,
   iters = 2,
   wmin = 0.1,
   nextend = 2,
   maxExtendMonth = 2,
   minExtendMonth = 1,
   minT = 0,
-  methods = c("AG", "Beck", "Elmore", "Gu", "Klos", "Zhang"),
   minPercValid = 0.2,
   use.rough = FALSE,
   use.y0 = TRUE,
@@ -29,8 +29,13 @@ and 'ylu', returned by \code{check_input}.}
 \code{season} or \code{season_mov}, which contains the growing season
 dividing information.}
 
-\item{wFUN}{weights updating function, can be one of \code{\link[=wTSM]{wTSM()}},
-\code{\link[=wChen]{wChen()}}, \code{\link[=wBisquare]{wBisquare()}} and \code{\link[=wSELF]{wSELF()}}.}
+\item{methods}{Fine curve fitting methods, can be one or more of
+\code{c('AG', 'Beck', 'Elmore', 'Zhang', 'Gu', 'Klos')}. Note that 'Gu' and 'Klos'
+are very slow.
+f not specified, it will be determined by phenofit options \code{methods_fine}.}
+
+\item{wFUN}{weights updating function of fine fitting function.
+If not specified, it will be determined by phenofit options \code{wFUN_fine}.}
 
 \item{iters}{How many times curve fitting is implemented.}
 
@@ -50,9 +55,6 @@ between different growing seasons is smoothing.}
 
 \item{minT}{Double, use night temperature Tn to define backgroud value.
 Tn < minT is treated as ungrowing season.}
-
-\item{methods}{Fine curve fitting methods, can be one or more of
-\code{c('AG', 'Beck', 'Elmore', 'Gu', 'Klos', 'Zhang')}.}
 
 \item{minPercValid}{If the percentage of good and marginal quality points is
 less than \code{minPercValid}, curve fiting result is set to \code{NA}.}

@@ -8,8 +8,8 @@
 \usage{
 season(
   INPUT,
-  rFUN = smooth_wWHIT,
-  wFUN = wTSM,
+  rFUN,
+  wFUN,
   iters = 2,
   wmin = 0.1,
   lambda,
@@ -34,8 +34,8 @@ season(
 
 season_mov(
   INPUT,
-  rFUN = smooth_wWHIT,
-  wFUN = wTSM,
+  rFUN,
+  wFUN,
   iters = 2,
   wmin = 0.1,
   IsOptim_lambda = FALSE,

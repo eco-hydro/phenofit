@@ -1,10 +1,14 @@
 .options <- list(
+    FUN_season    = "season_mov",
+    rFUN          = "smooth_wWHIT",
+    methods_fine  = c("AG", "Beck", "Elmore", "Zhang"),
+    methods_pheno = c("TRS", "DER", "Zhang", "Gu"),
+    wFUN_rough    = "wTSM",
+    wFUN_fine     = "wTSM",
+  
     verbose_season_mov = TRUE,
     verbose_season     = FALSE,
     verbose_curvefit   = TRUE, 
-    wFUN_rough         = "wTSM", 
-    wFUN_fine          = "wTSM", 
-    FUN_rough          = "wHANTS", 
     calendarYear       = TRUE,
     south              = FALSE
 )

@@ -126,3 +126,8 @@ mutate <- function (.data, ...)
     }
     .data
 }
+
+check_function <- function(fun) {
+    if (is.character(fun)) fun = get(fun)
+    return(fun)
+}

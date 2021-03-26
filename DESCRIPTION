@@ -52,3 +52,4 @@ Suggests:
 URL: https://github.com/kongdd/phenofit
 BugReports: https://github.com/kongdd/phenofit/issues
 Roxygen: list(markdown = TRUE)
+VignetteBuilder: knitr

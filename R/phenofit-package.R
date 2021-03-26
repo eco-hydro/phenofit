@@ -10,7 +10,7 @@
 #' @importFrom data.table data.table as.data.table := is.data.table fwrite fread 
 #' dcast
 #' @importFrom zoo na.approx index zoo
-#' @importFrom purrr map is_empty
+#' @importFrom purrr map is_empty %>%
 #' @importFrom lubridate ymd yday year month day dyears is.Date
 #' @importFrom utils object.size
 #' @importFrom grDevices dev.off cairo_pdf colorRampPalette

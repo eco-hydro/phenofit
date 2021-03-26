@@ -28,3 +28,5 @@
 ^Rcpp_debug\.R$
 ^src/tmp\.def$
 ^data-raw$
+^notes$
+^scripts$

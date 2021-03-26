@@ -176,26 +176,6 @@ check_input <- function(t, y, w, QC_flag,
         nptperyear = nptperyear, south = south,
         date_start = date_start, date_end = date_end)
 }
-# write_fig(expression({
-#     Ind = 1:length(y)
-#     # Ind = t <= "2004-01-01"
-#     lwd = 0.8
-#     print(I_spike)
-#     plot(t[Ind], y[Ind], type = "b", lwd = lwd)
-#     grid()
-#     lines(t, ymov, type = "b", col = "blue", lwd = lwd)
-#     points(t[I_spike], y[I_spike], col = "red")
-#     # points(t[I_spike2], y[I_spike2], col = "red")
-#     y[I_spike]  <- NA # missval
-#     y0[I_spike] <- missval # for debug
-#     plot(t[Ind], y[Ind], type = "l", lwd = lwd, col = "red")
-# }), "check_input.pdf", 10, 5)
-# write_fig(expression({
-    # plot(y0, type = "l")
-    # points(I_spike, y0[I_spike])
-    # lines(ymov, col = "blue")
-    # lines(ymov2, col = "green")
-# }), "b.pdf")
 
 #' check_ylu
 #'
@@ -241,3 +221,24 @@ check_ylu <- function(yfit, ylu){
 #     }
 #     return(y)
 # }
+
+# write_fig(expression({
+#     Ind = 1:length(y)
+#     # Ind = t <= "2004-01-01"
+#     lwd = 0.8
+#     print(I_spike)
+#     plot(t[Ind], y[Ind], type = "b", lwd = lwd)
+#     grid()
+#     lines(t, ymov, type = "b", col = "blue", lwd = lwd)
+#     points(t[I_spike], y[I_spike], col = "red")
+#     # points(t[I_spike2], y[I_spike2], col = "red")
+#     y[I_spike]  <- NA # missval
+#     y0[I_spike] <- missval # for debug
+#     plot(t[Ind], y[Ind], type = "l", lwd = lwd, col = "red")
+# }), "check_input.pdf", 10, 5)
+# write_fig(expression({
+    # plot(y0, type = "l")
+    # points(I_spike, y0[I_spike])
+    # lines(ymov, col = "blue")
+    # lines(ymov2, col = "green")
+# }), "b.pdf")

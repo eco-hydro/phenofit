@@ -72,16 +72,14 @@ data. [Here](https://code.earthengine.google.com/ee3ec39cf3061374dab435c358d008a
 ## 1.1 Initial weights for input data
 
 Load packages.
-```{r load pkg, message=FALSE}
-suppressMessages({
-    library(data.table)
-    library(magrittr)
-    library(lubridate)
-    library(purrr)
-    library(plyr)
-    library(ggplot2)
-    library(phenofit)
-})
+```{r load pkg, message=FALSE, echo=FALSE}
+library(data.table)
+library(magrittr)
+library(lubridate)
+library(purrr)
+library(plyr)
+library(ggplot2)
+library(phenofit)
 ```
 Set global parameters for `phenofit`
 ```{r phenofit_parameters}
@@ -90,7 +88,7 @@ Set global parameters for `phenofit`
 ymax_min   <- 0.1  # the maximum ymax shoud be greater than `ymax_min` 
 rymin_less <- 0.8  # trough < ymin + A*rymin_less
 nptperyear <- 23   # How many points for a single year
-wFUN       <- wBisquare #wTSM #wBisquare # Weights updating function, could be one of `wTSM`, 'wBisquare', `wChen` and `wSELF`. 
+wFUN       <- wBisquare #wTSM #wBisquare # Weights updating function, could be one of `wTSM`, 'wBisquare', `wChen` and `wSELF`.
 ```
 
 - Add date according to composite day of the year (DayOfYear), other than image date.

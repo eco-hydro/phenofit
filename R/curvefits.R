@@ -20,31 +20,38 @@
 #' @param minT Double, use night temperature Tn to define backgroud value.
 #' Tn < minT is treated as ungrowing season.
 #' @param methods Fine curve fitting methods, can be one or more of
-#' `c('AG', 'Beck', 'Elmore', 'Gu', 'Klos', 'Zhang')`.
+#' `c('AG', 'Beck', 'Elmore', 'Zhang', 'Gu', 'Klos')`. Note that 'Gu' and 'Klos' 
+#' are very slow.
+#' f not specified, it will be determined by phenofit options `methods_fine`.
+#' @param wFUN weights updating function of fine fitting function.
+#' If not specified, it will be determined by phenofit options `wFUN_fine`.
 #' @param minPercValid If the percentage of good and marginal quality points is
 #' less than `minPercValid`, curve fiting result is set to `NA`.
 #' @param use.rough Whether to use rough fitting smoothed time-series as input?
 #' @param use.y0 boolean. whether to use original `y0`, which is before the
 #' process of `check_input`.
-#'
+#' 
 #' @param ... Other parameters will be ignore.
 #'
 #' @return fits Multiple phenofit object.
 #'
 #' @example inst/examples/ex-check_input.R
 #' @example inst/examples/ex-curvefits.R
-#'
+#' 
 #' @export
 curvefits <- function(INPUT, brks,
-                      wFUN = wTSM, iters = 2, wmin = 0.1,
+                      methods, wFUN, iters = 2, wmin = 0.1,
                       nextend = 2, maxExtendMonth = 2, minExtendMonth = 1,
                       minT = 0,
-                      methods = c('AG', 'Beck', 'Elmore', 'Gu', 'Klos', 'Zhang'),
                       minPercValid = 0.2,
                       use.rough = FALSE,
                       use.y0 = TRUE,
                       ...)
 {
+    if (missing(methods)) methods = .options$methods_fine
+    if (missing(wFUN)) wFUN = get(.options$wFUN_fine)
+    wFUN = check_function(wFUN)
+    
     if (all(is.na(INPUT$y))) return(NULL)
 
     QC_flag    <- INPUT$QC_flag

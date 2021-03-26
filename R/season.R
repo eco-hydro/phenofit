@@ -76,8 +76,7 @@
 #' @example inst/examples/ex-check_input.R
 #' @example inst/examples/ex-season.R
 #' @export
-season <- function(INPUT,
-                   rFUN = smooth_wWHIT, wFUN = wTSM, iters = 2, wmin = 0.1,
+season <- function(INPUT, rFUN, wFUN, iters = 2, wmin = 0.1,
                    lambda, nf  = 3, frame = floor(INPUT$nptperyear/5)*2 + 1,
                    minpeakdistance,
                    ypeak_min = 0.1,
@@ -92,6 +91,11 @@ season <- function(INPUT,
                     .check_season = TRUE,
                    ...)
 {
+    if (missing(wFUN)) wFUN = get(.options$wFUN_rough)
+    if (missing(rFUN)) rFUN = .options$rFUN
+    rFUN = check_function(rFUN)
+    wFUN = check_function(wFUN)
+    
     nptperyear <- INPUT$nptperyear
     south      <- INPUT$south
     t          <- INPUT$t
@@ -201,7 +205,6 @@ season <- function(INPUT,
 
     # plot(ypred, type = "b"); grid()
     # 1.1 the local minimum value should small than rtrough_max*A
-
     if (rm.closed) {
         pos_min <- pos_min[(val - ylu[1]) <= rtrough_max*A, ] # `y_trough <= rtrough_max*A + ylu[1]`
         pos <- rbind(pos_min, pos_max)[order(pos), ]

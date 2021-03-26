@@ -13,8 +13,7 @@
 #' @importFrom lubridate leap_year
 #' @rdname season
 #' @export
-season_mov <- function(INPUT,
-    rFUN = smooth_wWHIT, wFUN = wTSM, iters = 2, wmin = 0.1,
+season_mov <- function(INPUT, rFUN, wFUN, iters = 2, wmin = 0.1,
     IsOptim_lambda = FALSE,
     lambda = NULL, nf  = 3, frame = floor(INPUT$nptperyear/5)*2 + 1,
     maxExtendMonth = 12,
@@ -28,6 +27,11 @@ season_mov <- function(INPUT,
     IsPlot = TRUE, IsPlot.vc = FALSE, IsPlot.OnlyBad = FALSE,
     plotdat = INPUT,  titlestr = "")
 {
+    if (missing(wFUN)) wFUN = get(.options$wFUN_rough)
+    if (missing(rFUN)) rFUN = .options$rFUN
+    rFUN = check_function(rFUN)
+    wFUN = check_function(wFUN)
+
     nptperyear <- INPUT$nptperyear
     south      <- INPUT$south
     t          <- INPUT$t

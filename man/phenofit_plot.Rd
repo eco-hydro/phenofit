@@ -21,7 +21,9 @@ phenofit_plot(
 \item{type}{one of c("season", "fitting", "pheno", "all")}
 
 \item{methods}{Fine curve fitting methods, can be one or more of
-\code{c('AG', 'Beck', 'Elmore', 'Gu', 'Klos', 'Zhang')}.}
+\code{c('AG', 'Beck', 'Elmore', 'Zhang', 'Gu', 'Klos')}. Note that 'Gu' and 'Klos'
+are very slow.
+f not specified, it will be determined by phenofit options \code{methods_fine}.}
 
 \item{title}{String, title of figure.}
 
