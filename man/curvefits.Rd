@@ -15,14 +15,14 @@ curvefits(
   maxExtendMonth = 2,
   minExtendMonth = 1,
   minT = 0,
-  minPercValid = 0.2,
+  minPercValid = 0,
   use.rough = FALSE,
   use.y0 = TRUE,
   ...
 )
 }
 \arguments{
-\item{INPUT}{A list object with the elements of 't', 'y', 'w', 'Tn' (option)
+\item{INPUT}{A list object with the elements of 't', 'y', 'w', 'Tn' (optional)
 and 'ylu', returned by \code{check_input}.}
 
 \item{brks}{A list object with the elements of 'fit' and 'dt', returned by
@@ -34,7 +34,8 @@ dividing information.}
 are very slow.
 f not specified, it will be determined by phenofit options \code{methods_fine}.}
 
-\item{wFUN}{weights updating function of fine fitting function.
+\item{wFUN}{Character or function, weights updating function of fine fitting
+function.
 If not specified, it will be determined by phenofit options \code{wFUN_fine}.}
 
 \item{iters}{How many times curve fitting is implemented.}
@@ -53,13 +54,18 @@ When all points of the input time-series are good value, then the extending
 period will be too short. In that situation, we can't make sure the connection
 between different growing seasons is smoothing.}
 
-\item{minT}{Double, use night temperature Tn to define backgroud value.
-Tn < minT is treated as ungrowing season.}
+\item{minT}{(optional). If Tn not provided in \code{INPUT}, \code{minT} will not be used.
+\code{minT} use night temperature Tn to define backgroud value (days with \code{Tn < minT}
+treated as ungrowing season).}
 
-\item{minPercValid}{If the percentage of good and marginal quality points is
-less than \code{minPercValid}, curve fiting result is set to \code{NA}.}
+\item{minPercValid}{(optional, default not use). If the percentage of good
+and marginal quality points is less than \code{minPercValid}, curve fiting result
+is set to \code{NA}.}
 
-\item{use.rough}{Whether to use rough fitting smoothed time-series as input?}
+\item{use.rough}{Whether to use rough fitting smoothed time-series as input?
+If \code{false}, smoothed VI by rough fitting will be used for Phenological metrics
+extraction; If \code{true}, original input \code{y} will be used (rough fitting is used
+to divide growing seasons and update weights.}
 
 \item{use.y0}{boolean. whether to use original \code{y0}, which is before the
 process of \code{check_input}.}
@@ -67,7 +73,7 @@ process of \code{check_input}.}
 \item{...}{Other parameters will be ignore.}
 }
 \value{
-fits Multiple phenofit object.
+List of phenofit fitting object.
 }
 \description{
 Fine Curve fitting for INPUT time-series.

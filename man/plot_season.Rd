@@ -11,6 +11,7 @@ plot_season(
   ylu,
   IsPlot.OnlyBad = FALSE,
   show.legend = TRUE,
+  ylab = "VI",
   title = NULL
 )
 }

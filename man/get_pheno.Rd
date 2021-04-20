@@ -12,7 +12,7 @@ get_pheno(
   analytical = TRUE,
   smoothed.spline = FALSE,
   IsPlot = FALSE,
-  showName_fitting = TRUE,
+  show_title = TRUE,
   ...
 )
 
@@ -42,7 +42,7 @@ will be used; if false, \code{D1} and \code{D2} will be used.}
 
 \item{IsPlot}{Boolean. Whether to plot figure?}
 
-\item{showName_fitting}{Whether to show the name of fine curve fitting method
+\item{show_title}{Whether to show the name of fine curve fitting method
 in top title?}
 
 \item{...}{ignored.}
@@ -51,8 +51,7 @@ in top title?}
 
 \item{title_left}{String of growing season flag.}
 
-\item{showName_pheno}{Whether to show names of phenological methods in top title?
-Generally, only show top title in the first row.}
+\item{showName_pheno}{Whether to show phenological methods names in the top panel?}
 }
 \value{
 List of every year phenology metrics

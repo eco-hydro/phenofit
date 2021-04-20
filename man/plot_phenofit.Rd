@@ -5,87 +5,41 @@
 \title{plot_phenofit}
 \usage{
 plot_phenofit(
-  d_fit,
-  seasons,
-  d_obs = NULL,
+  obj,
+  type = "all",
+  methods,
   title = NULL,
-  title.xlab = "Time",
   title.ylab = "Vegetation Index",
-  font.size = 14,
-  theme = NULL,
-  cex = 2,
-  shape = "point",
-  angle = 30,
-  show.legend = TRUE
+  IsPlot = TRUE,
+  show.legend = TRUE,
+  newpage = TRUE,
+  ...
 )
 }
 \arguments{
-\item{d_fit}{data.frame of curve fittings returned by \code{\link[=get_fitting]{get_fitting()}}.}
+\item{obj}{\code{phenofit} object, list(INPUT, fit, seasons)}
 
-\item{seasons}{Growing season dividing object returned by \code{\link[=season]{season()}}
-and \code{\link[=season_mov]{season_mov()}}.}
+\item{type}{one of c("season", "fitting", "pheno", "all")}
 
-\item{d_obs}{data.frame of original vegetation time series, with the columns
-of \code{t}, \code{y} and \code{QC_flag}. If not specified, it will be determined from \code{d_fit}.}
+\item{methods}{Fine curve fitting methods, can be one or more of
+\code{c('AG', 'Beck', 'Elmore', 'Zhang', 'Gu', 'Klos')}. Note that 'Gu' and 'Klos'
+are very slow.
+f not specified, it will be determined by phenofit options \code{methods_fine}.}
 
 \item{title}{String, title of figure.}
 
-\item{title.xlab, title.ylab}{String, title of \code{xlab} and \code{ylab}.}
+\item{title.ylab}{String, title of \code{xlab} and \code{ylab}.}
 
-\item{font.size}{Font size of axis.text}
+\item{IsPlot}{boolean. If false, a ggplot object will be returned.}
 
-\item{theme}{ggplot theme to be applied}
+\item{show.legend}{If now show legend, ggplot object will be returned, else
+grid object will be returned.}
 
-\item{cex}{point size for VI observation.}
+\item{newpage}{boolean, whether draw figure in a new page?}
 
-\item{shape}{the shape of input VI observation? \code{line} or \code{point}}
-
-\item{angle}{\code{text.x} angle}
-
-\item{show.legend}{Boolean}
+\item{...}{other parameters to \code{\link[=plot_curvefits]{plot_curvefits()}}}
 }
 \description{
 plot_phenofit
 }
-\examples{
-library(phenofit)
-data("MOD13A1")
-
-df <- tidy_MOD13.gee(MOD13A1$dt)
-st <- MOD13A1$st
-
-date_start <- as.Date('2013-01-01')
-date_end   <- as.Date('2016-12-31')
-
-sitename <- 'CA-NS6' # df$site[1]
-d     <- df[site == sitename & (date >= date_start & date <= date_end), ]
-sp    <- st[site == sitename, ]
-south <- sp$lat < 0
-nptperyear <- 23
-
-# global parameter
-IsPlot = TRUE
-print  = FALSE
-ypeak_min  = 0.05
-wFUN = wTSM
-
-# add one year in head and tail
-dnew     <- add_HeadTail(d, south = south, nptperyear = nptperyear) 
-INPUT    <- check_input(dnew$t, dnew$y, dnew$w, QC_flag = dnew$QC_flag,
-     nptperyear = nptperyear, south = south, 
-     maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
-# Rough fitting and growing season dividing
-brks2 <- season_mov(INPUT,
-    rFUN = smooth_wWHIT, wFUN = wFUN,
-    plotdat = d, IsPlot = IsPlot, IsPlot.OnlyBad = FALSE)
-# Fine fitting
-fit <- curvefits(
-    INPUT, brks2,
-    methods = c("AG", "Beck", "Elmore", "Zhang"), #,"klos", "Gu"
-    wFUN = wFUN,
-    nextend = 2, maxExtendMonth = 2, minExtendMonth = 1, minPercValid = 0.2)
-## visualization
-df_fit <- get_fitting(fit)
-g <- plot_phenofit(df_fit, brks2)
-grid::grid.newpage(); grid::grid.draw(g)
-}
+\keyword{internel}

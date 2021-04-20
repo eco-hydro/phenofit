@@ -31,24 +31,24 @@ listk <- function(...){
 }
 
 #' @importFrom data.table melt
-melt_list <- function(list, var.name = "variable", na.rm = TRUE, ...){
-    if (is.null(list) || length(list) == 0) return(NULL)
-    if (is.null(names(list))) names(list) <- seq_along(list)
-
-    list  <- rm_empty(list)
+melt_list <- function (list, var.name = "variable", na.rm = TRUE, ...) 
+{
+    if (is.null(names(list))) 
+        names(list) <- seq_along(list)
+    list <- rm_empty(list)
+    if (is.null(list) || length(list) == 0) {
+        return(NULL)
+    }
     first <- list[[1]]
-    if (is.data.table(first)){
+    if (is.data.frame(first)) {
         names <- names(list)
-        for (i in seq_along(list)){
+        for (i in seq_along(list)) {
             x <- list[[i]]
-            eval(parse(text = sprintf("x$%s <- names[i]", var.name)))
+            eval(parse(text = sprintf("x$%s <- names[i]", 
+                var.name)))
             list[[i]] <- x
         }
-        res <- do.call(rbind, list) # return
-    } else {
-        id.vars <- colnames(first)
-        res <- reshape2::melt(list, ..., id.vars = id.vars, na.rm = na.rm)
-        colnames(res) <- c(id.vars, var.name)
+        res <- do.call(rbind, list) %>% data.table()
     }
     reorder_name(res, var.name)
 }
@@ -130,4 +130,15 @@ mutate <- function (.data, ...)
 check_function <- function(fun) {
     if (is.character(fun)) fun = get(fun)
     return(fun)
+}
+
+merge_pdf <- function(outfile = "RPlot.pdf", indir = "Figure",
+         pattern = "*.pdf", del = FALSE) {
+    files <- dir(indir, pattern, full.names = TRUE)
+    order <- str_extract(basename(files), "(?<=\\[)\\d*(?=.*\\])") %>%
+        as.numeric() %>% order()
+    if (all(is.finite(order))) files <- files[order]
+    # print(basename(files))
+    pdftools::pdf_combine(files, outfile)
+    if (del) file.remove(files)
 }

@@ -19,7 +19,7 @@ curvefit(
 
 \item{tout}{The output interpolated time.}
 
-\item{methods}{Fine curve fitting methods, can be one or more of \code{c('AG',  'Beck', 'Elmore', 'Gu', 'Klos', 'Zhang')}.}
+\item{methods}{Fine curve fitting methods, can be one or more of \code{c('AG', 'Beck', 'Elmore', 'Gu', 'Klos', 'Zhang')}.}
 
 \item{...}{other parameters passed to curve fitting function.}
 }

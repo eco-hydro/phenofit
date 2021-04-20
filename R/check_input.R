@@ -17,7 +17,7 @@
 #' @param QC_flag Factor (optional) returned by `qcFUN`, levels should be
 #' in the range of `c("snow", "cloud", "shadow", "aerosol", "marginal",
 #' "good")`, others will be categoried into `others`. `QC_flag` is
-#' used for visualization in [get_pheno()] and [plot_phenofit()].
+#' used for visualization in [get_pheno()] and [plot_curvefits()].
 #' @param nptperyear Integer, number of images per year.
 #' @param south Boolean. In south hemisphere, growing year is 1 July to the
 #' following year 31 June; In north hemisphere, growing year is 1 Jan to 31 Dec.
@@ -44,8 +44,8 @@
 #' is inappropriate for middle growing season points. Interpolating all values
 #' by na.approx, it is unsuitable for large number continous missing segments,
 #' e.g. in the start or end of growing season.
-#' @param alpha Double value in `[0,1]`, quantile prob of ylu_min.
-#' @param alpha_high Double value in `[0,1]`, quantile prob of `ylu_max`. If not
+#' @param alpha Double, in `[0,1]`, quantile prob of ylu_min.
+#' @param alpha_high Double, `[0,1]`, quantile prob of `ylu_max`. If not
 #' specified, `alpha_high=alpha`.
 #' @param date_start,date_end starting and ending date of the original vegetation
 #' time-sereis (before `add_HeadTail`)

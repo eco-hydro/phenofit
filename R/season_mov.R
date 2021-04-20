@@ -9,7 +9,7 @@
 #' all years.
 #' @param len_min,len_max the minimum and maximum length (in the unit of days)
 #' of growing season
-#'
+#' 
 #' @importFrom lubridate leap_year
 #' @rdname season
 #' @export
@@ -24,7 +24,7 @@ season_mov <- function(INPUT, rFUN, wFUN, iters = 2, wmin = 0.1,
     len_min = 45, len_max = 650,
     .check_season = TRUE,
     years.run = NULL,
-    IsPlot = TRUE, IsPlot.vc = FALSE, IsPlot.OnlyBad = FALSE,
+    IsPlot = FALSE, IsPlot.vc = FALSE, IsPlot.OnlyBad = FALSE,
     plotdat = INPUT,  titlestr = "")
 {
     if (missing(wFUN)) wFUN = get(.options$wFUN_rough)
@@ -60,7 +60,7 @@ season_mov <- function(INPUT, rFUN, wFUN, iters = 2, wmin = 0.1,
     nextend   <- ceiling(maxExtendMonth/12*nptperyear)
     width_ylu <- nptperyear*2 # This is quite important, to make time-series continuous.
 
-    # 修改默认：运行所有年份
+    # modified options：run all years
     # years0 = years[-c(1, nyear)] # original years before `add_HeadTail`
     if (is.null(years.run)) {
         years.run = years

@@ -43,7 +43,7 @@
 #' * `fevals`: The number of calls to `objective`.
 #' 
 #' @seealso [optim_pheno()], [I_optim()]
-#' @example man/examples/ex-opt_FUN.R
+#' @example R/examples/ex-opt_FUN.R
 NULL
 
 # ' * `gevals`: The number of calls to gradient function. This excludes

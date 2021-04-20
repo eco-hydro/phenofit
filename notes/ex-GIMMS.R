@@ -21,7 +21,7 @@ brks <- season_mov(INPUT, calendarYear = TRUE, IsPlot = TRUE)
 fit  <- curvefits(INPUT, brks, nextend = 2, maxExtendMonth = 3, minExtendMonth = 1, minPercValid = 0.2)
 
 d_fit <- get_fitting(fit)
-# g <- plot_phenofit(d_fit, brks, NULL, title.ylab = "NDVI", "Time",
+# g <- plot_curvefits(d_fit, brks, NULL, title.ylab = "NDVI", "Time",
 #                    theme = coord_cartesian(xlim = c(ymd("2000-04-01"), ymd("2004-07-31"))))
 # grid::grid.newpage(); grid::grid.draw(g)# plot to check the curve fitting
 # write_fig(g, "a.pdf", 9, 6)

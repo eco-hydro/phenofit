@@ -16,6 +16,8 @@ optim_pheno(
   ylu,
   iters = 2,
   wFUN = wTSM,
+  lower = -Inf,
+  upper = Inf,
   verbose = FALSE,
   ...
 )
@@ -51,6 +53,18 @@ range of \code{ylu}.}
 \item{wFUN}{weights updating function, can be one of 'wTSM', 'wChen' and
 'wBisquare'.}
 
+\item{lower}{
+    vectors of lower and upper bounds, replicated to be as long as
+    \code{start}.  If unspecified, all parameters are assumed to be
+    unconstrained.
+  }
+
+\item{upper}{
+    vectors of lower and upper bounds, replicated to be as long as
+    \code{start}.  If unspecified, all parameters are assumed to be
+    unconstrained.
+  }
+
 \item{verbose}{Whether to display intermediate variables?}
 
 \item{...}{other parameters passed to \code{\link[=I_optim]{I_optim()}} or \code{\link[=I_optimx]{I_optimx()}}.}
@@ -84,5 +98,5 @@ r <- optim_pheno(par0, sFUN, y, t, tout, method = methods[4],
                  nptperyear = 46, iters = 2, wFUN = wTSM, verbose = FALSE, use.julia = FALSE)
 }
 \seealso{
-\code{\link[=FitDL]{FitDL()}}
+\code{\link[=FitDL]{FitDL()}}, \code{\link[stats:nlminb]{stats::nlminb()}}
 }

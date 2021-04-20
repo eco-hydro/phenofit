@@ -26,11 +26,8 @@ PhenoPlot <- function(t, y, main = "", ...){
 #' @param method Which fine curve fitting method to be extracted?
 #' @param TRS Threshold for `PhenoTrs`.
 #' @param IsPlot Boolean. Whether to plot figure?
-#' @param title_left String of growing season flag.
-#' @param showName_fitting Whether to show the name of fine curve fitting method
+#' @param show_title Whether to show the name of fine curve fitting method
 #' in top title?
-#' @param showName_pheno Whether to show names of phenological methods in top title?
-#' Generally, only show top title in the first row.
 #' @param ... ignored.
 #'
 #' @note
@@ -43,45 +40,28 @@ PhenoPlot <- function(t, y, main = "", ...){
 get_pheno <- function(fits, method,
     TRS = c(0.2, 0.5, 0.6),
     analytical = TRUE, smoothed.spline = FALSE,
-    IsPlot = FALSE, showName_fitting = TRUE, ...)
+    IsPlot = FALSE, show_title = TRUE, ...)
 {
-    if (!is.list(fits)) {
-        stop("Unsupported input type!")
-    }
+    if (!is.list(fits)) stop("Unsupported input type!")
+    if (class(fits) == 'fFITs')  fits <- list(fits)
 
-    if (class(fits) == 'fFITs') {
-        fits <- list(fits)
-    }
-    names       <- names(fits)
-    # nseason <- length(fits)
-
-    if (missing(method)) {
-        methods <- names(fits[[1]]$fFIT)
-    } else {
-        methods <- method
-    }
+    names   <- names(fits) # methods
+    methods <- if (missing(method)) names(fits[[1]]$fFIT) else method
 
     # pheno_list
-    res <- llply(set_names(seq_along(methods), methods), function(k){
+    res <- lapply(set_names(seq_along(methods), methods), function(k){
         method <- methods[k]
-
         if (IsPlot){
-            if (showName_fitting){
-                oma <- c(1, 2, 4, 1)
-            } else {
-                oma <- c(1, 2, 3, 1)
-            }
+            oma <- if (show_title) c(1, 2, 4, 1) else c(1, 2, 2, 1)
             op <- par(mfrow = c(length(fits), 5), oma = oma,
                 mar = rep(0, 4), yaxt = "n", xaxt = "n")
         }
 
         # fFITs
-        pheno_list <- llply(seq_along(names) %>% set_names(names), function(i){
+        pheno_list <- lapply(seq_along(names) %>% set_names(names), function(i){
             fFITs <- fits[[i]]
             title_left <- names[i]
             showName_pheno <- ifelse(i == 1, TRUE, FALSE)
-
-            # browser()
             get_pheno.fFITs(fFITs, method,
                 TRS = TRS,
                 analytical = analytical, smoothed.spline = smoothed.spline,
@@ -92,17 +72,18 @@ get_pheno <- function(fits, method,
         if (IsPlot){
             par(new = TRUE, mfrow = c(1, 1), oma = rep(0, 4), mar = rep(0, 4))
             plot(0, axes = F, type = "n", xaxt = "n", yaxt = "n") #
-            if (showName_fitting) {
+            if (show_title) {
                 text(1, 1, method, font = 2, cex = 1.3)
             }
         }
         pheno_list
     })
-
-    # return
     lapply(res, tidyFitPheno) %>% purrr::transpose()
 }
 
+#' @param title_left String of growing season flag.
+#' @param showName_pheno Whether to show phenological methods names in the top panel?
+#' 
 #' @rdname get_pheno
 #' @export
 get_pheno.fFITs <- function(fFITs, method,
@@ -116,7 +97,6 @@ get_pheno.fFITs <- function(fFITs, method,
         method <- meths[1]
         warning(sprintf("method is missing and set to %s!", method))
     }
-
     if (!(method %in% meths)){
         warning(sprintf("%s not in methods and set to %s!", method, meths[1]))
         method <- meths[1]
@@ -131,7 +111,6 @@ get_pheno.fFITs <- function(fFITs, method,
     all_na <- all(is.na(ypred))
 
     show.lgd = FALSE
-
     if (IsPlot && !all_na){
         ti <- fFITs$data$t
         yi <- fFITs$data$y # may have NA values.
@@ -150,7 +129,6 @@ get_pheno.fFITs <- function(fFITs, method,
         if (is.null(QC_flag)){
             points(ti, yi)
         } else {
-            # browser()
             for (j in seq_along(qc_levels)){
                 ind = which(QC_flag == qc_levels[j])
                 if (!is_empty(ind)) {
@@ -166,18 +144,20 @@ get_pheno.fFITs <- function(fFITs, method,
             legend('topright', c('y', "f(t)"), lty = c(1, 1), pch =c(1, NA), bty='n')
         }
         stat <- get_GOF.fFITs(fFITs)
-        stat <- subset(stat, meth == method)
+        stat <- subset(stat, meth == method) %>% unlist() %>% round(3)
 
-        stat_txt <- sprintf("  R=%.2f, p=%.3f\n RMSE=%.3f\nNSE=%.2f\n",
-            stat[['R']], stat[['pvalue']], stat[['RMSE']], stat[['NSE']])
+        exprs = list(
+            eval(substitute(bquote(R2 == .R2), list(.R2 = stat['R2']))),
+            eval(substitute(bquote(NSE == .NSE), list(.NSE = stat['NSE']))),
+            eval(substitute(bquote(RMSE == .RMSE), list(.RMSE = stat['RMSE'])))
+        )
 
-        legend('topleft', stat_txt, adj = c(0.2, 0.2), bty='n', text.col = "red")
-        mtext(title_left, side = 2)
+        legend('topleft', do.call(expression, exprs), adj = c(0.2, 0.2), bty='n', text.col = "red")
+        mtext(title_left, side = 2, line = 0.2)
     }
-    if (showName_pheno && IsPlot) mtext("fitting")
-    # browser()
+    if (showName_pheno && IsPlot) mtext("Fitting", line = 0.2)
 
-    p_TRS <- map(TRS, function(trs) {
+    p_TRS <- lapply(TRS, function(trs) {
         PhenoTrs(fFIT, approach = "White", trs = trs, IsPlot = FALSE)
     })
 
@@ -191,9 +171,9 @@ get_pheno.fFITs <- function(fFITs, method,
         IsPlot, ylim = ylim)
     param_common2 <- c(param_common, list(show.lgd = show.lgd))
 
-    der   <- do.call(PhenoDeriv, param_common2);  if (showName_pheno && IsPlot) mtext("DER")
-    gu    <- do.call(PhenoGu, param_common)[1:4]; if (showName_pheno && IsPlot) mtext("GU")
-    zhang <- do.call(PhenoKl, param_common2);     if (showName_pheno && IsPlot) mtext("ZHANG")
+    der   <- do.call(PhenoDeriv, param_common2);  if (showName_pheno && IsPlot) mtext("DER", line = 0.2)
+    gu    <- do.call(PhenoGu, param_common)[1:4]; if (showName_pheno && IsPlot) mtext("GU", line = 0.2)
+    zhang <- do.call(PhenoKl, param_common2);     if (showName_pheno && IsPlot) mtext("ZHANG", line = 0.2)
 
     c(p_TRS, list(der, gu, zhang)) %>% set_names(methods)
 }

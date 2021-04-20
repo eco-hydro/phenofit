@@ -35,7 +35,7 @@ expect_silent({
         stat  <- get_GOF(fit)
         d_fit <- get_fitting(fit)
 
-        g <- plot_phenofit(d_fit, brks2)
+        g <- plot_curvefits(d_fit, brks2)
         grid::grid.newpage(); grid::grid.draw(g)
     })
 })

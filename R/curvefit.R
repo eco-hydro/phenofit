@@ -5,25 +5,25 @@ phenonames <- c('TRS2.SOS', 'TRS2.EOS', 'TRS5.SOS', 'TRS5.EOS', 'TRS6.SOS', 'TRS
 
 #' Fine curve fitting
 #'
-#' Curve fit vegetation index (VI) time-series of every growing season using 
+#' Curve fit vegetation index (VI) time-series of every growing season using
 #' fine curve fitting methods.
 #'
 #' @param y Vegetation time-series index, numeric vector
 #' @param t The corresponding doy of x
 #' @param tout The output interpolated time.
-#' @param methods Fine curve fitting methods, can be one or more of `c('AG', 
-#' 'Beck', 'Elmore', 'Gu', 'Klos', 'Zhang')`. 
+#' @param methods Fine curve fitting methods, can be one or more of `c('AG',
+#' 'Beck', 'Elmore', 'Gu', 'Klos', 'Zhang')`.
 #' @param ... other parameters passed to curve fitting function.
-#' 
+#'
 #' @note 'Klos' have too many parameters. It will be slow and not stable.
-#' 
+#'
 #' @return fFITs S3 object, see [fFITs()] for details.
-#' 
-#' @seealso [fFITs()], 
-#' [FitDL.AG()], [FitDL.Beck()], 
-#' [FitDL.Elmore()], [FitDL.Gu()], 
+#'
+#' @seealso [fFITs()],
+#' [FitDL.AG()], [FitDL.Beck()],
+#' [FitDL.Elmore()], [FitDL.Gu()],
 #' [FitDL.Klos()], [FitDL.Zhang()]
-#' 
+#'
 #' @examples
 #' library(phenofit)
 #' # simulate vegetation time-series
@@ -38,11 +38,11 @@ phenonames <- c('TRS2.SOS', 'TRS2.EOS', 'TRS5.SOS', 'TRS5.EOS', 'TRS6.SOS', 'TRS
 #' t    <- seq(1, 365, 8)
 #' tout <- seq(1, 365, 1)
 #' y <- fFUN(par, t)
-#' 
+#'
 #' methods <- c("AG", "Beck", "Elmore", "Gu", "Zhang") # "Klos" too slow
 #' fFITs <- curvefit(y, t, tout, methods)
 #' @export
-curvefit <- function(y, t = index(y), tout = t, 
+curvefit <- function(y, t = index(y), tout = t,
     methods = c('AG', 'Beck', 'Elmore', 'Gu', 'Klos', 'Zhang'), ...)
 {
     if (all(is.na(y))) return(NULL)
@@ -65,6 +65,6 @@ curvefit <- function(y, t = index(y), tout = t,
     fFITs <- lapply(names, get, envir = environment()) %>%
         set_names(gsub("fit\\.", "", names)) #remove `fit.` and update names
 
-    structure(list(data = data.table(y, t), tout = tout, fFIT = fFITs), 
+    structure(list(data = data.table(y, t), tout = tout, fFIT = fFITs),
         class = 'fFITs')
 }

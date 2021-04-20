@@ -74,7 +74,7 @@ library(ggplot2)
 library(lubridate)
 library(latticeGrob)
 d_fit <- get_fitting(fit)
-g <- plot_phenofit(d_fit, brks2, NULL, title.ylab = "NDVI", "Time",
+g <- plot_curvefits(d_fit, brks2, NULL, title.ylab = "NDVI", "Time",
                    theme = coord_cartesian(xlim = c(ymd("2000-04-01"), ymd("2017-07-31"))))
 # grid::grid.newpage(); grid::grid.draw(g)# plot to check the curve fitting
 write_fig(g, "a.pdf")

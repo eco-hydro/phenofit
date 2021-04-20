@@ -1,4 +1,3 @@
-# '
 # ' devirs of double logistics functions (analytical resolution)
 # '
 # ' Analytical derivative can also have some weird result. `numDeriv`'s result
@@ -114,15 +113,8 @@ gradf_t <- function(FUN) {
     # f <- deriv(attr(FUN, 'formula'), 't', func = TRUE) #attr(FUN, 'par')
     f <- grad_ft(FUN) #binding env, look variables in enclosure env
     # f is weird, it's envinment is global env
-    # environment(f) <- environment()
 
     function(par, t){
-        # e <- list2env(as.list(par), envir = parent.env(environment()))
-        # print(ls.str(envir = environment(f)))
-        # e_par <- parent.env(environment())
-        # print(ls.str(envir = e_par))
-        # e   <- list2env(as.list(par), envir = environment(f))
-        # ans <- f(t)
         ans <- do.call(f, c(list(t = t), as.list(par)))
         return(attr(ans, 'gradient'))
     }
@@ -138,28 +130,10 @@ hessf_t <- function(FUN) {
     # f <- deriv3(attr(FUN, 'formula'), 't', func = TRUE) #attr(FUN, 'par')
     function(par, t){
         ans <- do.call(f, c(list(t = t), as.list(par)))
-        # e <- list2env(as.list(par), envir = environment(f))
-        # ans <- f(t)
         return(attr(ans, 'hessian'))
     }
 }
 
-# grade_t <- function(FUN) {
-#     expr <- D(attr(FUN, 'formula'), 't') #attr(FUN, 'par')
-#     function(par, t){
-#         # e <- list2env(as.list(par), envir = parent.env(environment()))
-#         eval(expr, as.list(par))
-#     }
-# }
-# hesse_t <- function(FUN) {
-#     expr <- DD(attr(FUN, 'formula'), 't', 2) #attr(FUN, 'par')
-#     function(par, t){
-#         # e <- list2env(as.list(par), envir = parent.env(environment()))
-#         eval(expr, as.list(par))
-#     }
-# }
-# @param par Named vector, or named list. It can't be matrix.
-#  Colnamed matrix cooperating with plyr::alply will be fine.
 
 ## 02 ---------- DERIVS from the aspect of par --------------
 # ' grad_par
@@ -173,8 +147,6 @@ grad_par <- function(FUN) {
     # whether eval and expression will be much suitable?
 
     function(par, t){
-        # print(environment(f))
-        # print(parent.env(environment()))
         e <- list2env(list(t = t), envir = environment(f))
         # 1. In this way, list will copy into a new env, cost spare time
         ans <- do.call(f, as.list(par)) #find t in enclosure env

@@ -4,7 +4,7 @@
 #' @param ... other parameter will be ignored.
 #' @param show.y0 boolean. Whether to show original time-series `y0` or processed time-series `y` by
 #' [check_input()]?
-#' 
+#'
 #' @examples
 #' library(phenofit)
 #' data("MOD13A1")
@@ -25,7 +25,7 @@
 #'                         maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
 #' plot_input(INPUT)
 #' @export
-plot_input <- function(INPUT, wmin = 0.2, show.y0 = TRUE, ...){
+plot_input <- function(INPUT, wmin = 0.2, show.y0 = TRUE, ylab = "VI", ...){
     y  <- INPUT$y
     y0 <- INPUT$y0
     t <- INPUT$t
@@ -59,22 +59,20 @@ plot_input <- function(INPUT, wmin = 0.2, show.y0 = TRUE, ...){
     I = which(t >= date_start & t <= date_end)
     # end of parameters check
 
-    # nptperyear <- INPUT$nptperyear
     npt <- length(y)
-    # show grid lines
     par(mgp = c(1.5, 0.5, 0)) #oma = c(1, 2, 3, 1)
     # at <- t[seq(1, npt, nptperyear)]
     # fmt <- ifelse(yday(at[1]) == 1, "%Y", "%Y/%m/%d")
     # axis(side=1, at = at, labels = format(at, fmt))
-
-    # colors <- c("grey60", "#00BFC4", "#C77CFF", "#F8766D", "blue", "red", "black")
     pch    <- c(19, 15, 17) # 4
     main <- 'Vegetation Index'
+    main = NULL
+
     if (!is.null(years) && length(unique(years)) < 3){
-        plot(t[I], y[I], type = "l", xaxt="n", ann = FALSE, main = main, ...)
+        plot(t[I], y[I], type = "l", xaxt = "n", ylab = ylab, xlab = "Time", main = main, ...) # , ann = FALSE
         axis.Date(1, at=seq(min(t), max(t), by="month"), format="%Y-%m")
     } else {
-        plot(t[I], y[I], type = "l", ann = FALSE, main = main, ...)
+        plot(t[I], y[I], type = "l", ylab = ylab, xlab = "Time", main = main, ...)
     }
 
     show.goodPoints = INPUT$nptperyear < 90

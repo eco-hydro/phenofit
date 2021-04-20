@@ -35,7 +35,7 @@ weights of all \code{NA} values will be \code{wmin}, the others will be 1.0.}
 
 \item{QC_flag}{Factor (optional) returned by \code{qcFUN}, levels should be
 in the range of \code{c("snow", "cloud", "shadow", "aerosol", "marginal", "good")}, others will be categoried into \code{others}. \code{QC_flag} is
-used for visualization in \code{\link[=get_pheno]{get_pheno()}} and \code{\link[=plot_phenofit]{plot_phenofit()}}.}
+used for visualization in \code{\link[=get_pheno]{get_pheno()}} and \code{\link[=plot_curvefits]{plot_curvefits()}}.}
 
 \item{nptperyear}{Integer, number of images per year.}
 
@@ -71,9 +71,9 @@ is inappropriate for middle growing season points. Interpolating all values
 by na.approx, it is unsuitable for large number continous missing segments,
 e.g. in the start or end of growing season.}
 
-\item{alpha}{Double value in \verb{[0,1]}, quantile prob of ylu_min.}
+\item{alpha}{Double, in \verb{[0,1]}, quantile prob of ylu_min.}
 
-\item{alpha_high}{Double value in \verb{[0,1]}, quantile prob of \code{ylu_max}. If not
+\item{alpha_high}{Double, \verb{[0,1]}, quantile prob of \code{ylu_max}. If not
 specified, \code{alpha_high=alpha}.}
 
 \item{date_start, date_end}{starting and ending date of the original vegetation

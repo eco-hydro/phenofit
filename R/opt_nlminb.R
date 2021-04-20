@@ -50,7 +50,7 @@ opt_nlminb <- function(par0, objective, ...){
 #' - objective
 #'
 #' @seealso [stats::nlminb()]
-#' @example man/examples/ex-nlminb_julia.R
+#' @example R/examples/ex-nlminb_julia.R
 #'
 #' @export
 opt_nlminb_julia <- function(

@@ -67,8 +67,8 @@ tidy_MOD13.gee <- function(infile, outfile, wmin = 0.2){
 
     # Initial weights
     df[, c("QC_flag", "w") := qc_summary(SummaryQA, wmin = 0.2)]
-    # Remap SummaryQA factor level, plot_phenofit use this variable. For other
-    # remote sensing data without `SummaryQA`, need to modify `plot_phenofit`
+    # Remap SummaryQA factor level, plot_curvefits use this variable. For other
+    # remote sensing data without `SummaryQA`, need to modify `plot_curvefits`
     df <- df[, .(site, y = EVI/1e4, date, t, w, QC_flag
                  # IGBPcode,
                  # IGBPname = as.factor(IGBPnames[IGBPcode]),

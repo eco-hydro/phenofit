@@ -4,7 +4,7 @@
 \alias{plot_input}
 \title{Plot INPUT returned by check_input}
 \usage{
-plot_input(INPUT, wmin = 0.2, show.y0 = TRUE, ...)
+plot_input(INPUT, wmin = 0.2, show.y0 = TRUE, ylab = "VI", ...)
 }
 \arguments{
 \item{INPUT}{A list object with the elements of \code{t}, \code{y}, \code{w},

@@ -51,7 +51,7 @@ season_mov(
   len_max = 650,
   .check_season = TRUE,
   years.run = NULL,
-  IsPlot = TRUE,
+  IsPlot = FALSE,
   IsPlot.vc = FALSE,
   IsPlot.OnlyBad = FALSE,
   plotdat = INPUT,

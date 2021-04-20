@@ -48,7 +48,7 @@ l_pheno   <- get_pheno(fits, "AG", IsPlot=TRUE)
 
 # cairo_pdf('phenofit_MOD13A1.pdf', 12, 6)
 cairo_pdf('phenofit_MOD13A1.pdf', 8, 4.5)
-g <- plot_phenofit(d_fitting, brks2);
+g <- plot_curvefits(d_fitting, brks2);
 grid::grid.draw(g)
 dev.off()
 

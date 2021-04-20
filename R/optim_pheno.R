@@ -4,6 +4,7 @@
 #' curve fitting functions.
 #'
 #' @inheritParams smooth_wHANTS
+#' @inheritParams stats::nlminb
 #' @param prior A vector of initial values for the parameters for which optimal
 #' values are to be found. `prior` is suggested giving a column name.
 #' @param sFUN The name of fine curve fitting functions, can be one of `
@@ -24,9 +25,9 @@
 #'
 #' @return fFIT object, see [fFIT()] for details.
 #'
-#' @seealso [FitDL()]
-#'
-#' @example man/examples/ex-optim_pheno.R
+#' @seealso [FitDL()], [stats::nlminb()]
+#' 
+#' @example R/examples/ex-optim_pheno.R
 #'
 #' @import optimx
 #' @export
@@ -35,6 +36,7 @@ optim_pheno <- function(
     y, t, tout, method,
     w, nptperyear, ylu,
     iters = 2, wFUN = wTSM,
+    lower = -Inf, upper = Inf,
     verbose = FALSE, ...)
 {
     sFUN = gsub("\\.", "_", sFUN )
@@ -151,14 +153,3 @@ optim_pheno <- function(
 #   satisfied, so using self unified optimization function (with prefixion of
 #   'p_', opt_FUN means phenology optimization function) to replace it through
 #   `optim_p` function. The unified procedure was inspired by `optimx` package.
-
-# 1. nlfr package
-# start <- set_names(prior[1, ], attr(FUN, "par"))
-# # lower = lower, upper = upper
-# f_nlf <- nlfb(start, resfn = function(par, t, y, fun, ...){
-#     fun(par, t) - y
-# }, trace = FALSE, y = y, t=t, w = w, fun = FUN, ...)
-# yfit  <- FUN(f_nlf$coefficients, t)
-# plot(t, y, type = "b")
-# lines(t, yfit)
-# print(f_nlf)

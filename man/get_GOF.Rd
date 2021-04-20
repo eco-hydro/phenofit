@@ -20,6 +20,7 @@ get_GOF.fFITs(fFITs)
 \item \code{RMSE}: Root Mean Square Error
 \item \code{NSE} : Nash-Sutcliffe model efficiency coefficient
 \item \code{R}   : Pearson-Correlation
+\item \code{R2}  : determined coefficient
 \item \code{pvalue}: pvalue of \code{R}
 \item \code{n}   : The number of observations
 }

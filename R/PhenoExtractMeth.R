@@ -408,14 +408,15 @@ PhenoKl <- function(fFIT,
 
     if (IsPlot){
         main   <- ifelse(all(par("mar") == 0), "", "Zhang (Curvature Rate)")
+        A <- diff(range(values))
 
-        A          <- diff(range(der.k))
         I_metrics <- match(metrics, t)
         if (all(is.na(I_metrics))) {
             ylons <- I_metrics
         }else{
-            ylons <- values[I_metrics] + c(1, -1, -1, 1)*0.2*A
+            ylons <- values[I_metrics] + c(-1, -1, -1, 1)*0.1*A
         }
+
         xlons  <- metrics + c(1, -1, 1, -1) * 5
         xlons[xlons < min(t)] <- min(t)
         xlons[xlons > max(t)] <- max(t)

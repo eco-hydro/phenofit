@@ -7,7 +7,7 @@
 #' @example inst/examples/ex-get_fitting_param_GOF.R
 #' @export
 get_fitting <- function(fit){
-    llply(fit, get_fitting.fFITs) %>% melt_list("flag")
+    lapply(fit, get_fitting.fFITs) %>% melt_list("flag")
 }
 
 #' @rdname get_fitting

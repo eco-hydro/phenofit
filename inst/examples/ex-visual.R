@@ -10,5 +10,5 @@ fit <- curvefits(
     nextend = 2, maxExtendMonth = 2, minExtendMonth = 1, minPercValid = 0.2)
 ## visualization
 df_fit <- get_fitting(fit)
-g <- plot_phenofit(df_fit, brks2)
+g <- plot_curvefits(df_fit, brks2)
 grid::grid.newpage(); grid::grid.draw(g)

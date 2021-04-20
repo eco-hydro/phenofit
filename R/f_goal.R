@@ -11,7 +11,7 @@
 #'
 #' @return RMSE Root Mean Square Error of curve fitting values.
 #'
-#' @example man/examples/ex-f_goal.R
+#' @example R/examples/ex-f_goal.R
 #'
 #' @export
 f_goal <- function(

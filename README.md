@@ -270,7 +270,7 @@ print(fit$`2002_1`$fFIT$AG$ws)
 # [22] 0.2000000 0.2000000 0.2000000 0.2000000 0.2000000 0.2000000 0.8000000
 # [29] 0.8000000 0.8000000 0.8000000 0.8000000
 ## visualization
-g <- plot_phenofit(d_fit, brks2, NULL, title.ylab = "NDVI", "Time",
+g <- plot_curvefits(d_fit, brks2, NULL, title.ylab = "NDVI", "Time",
                    theme = coord_cartesian(xlim = c(ymd("2000-04-01"), ymd("2017-07-31"))))
 # Coordinate system already present. Adding new coordinate system, which will replace the existing one.
 grid::grid.newpage(); grid::grid.draw(g)# plot to check the curve fitting

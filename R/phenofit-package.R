@@ -4,8 +4,9 @@
 #' @docType package
 #' @keywords Vegetation phenology package
 #' @description Vegetation phenology package
-#' @import magrittr numDeriv plyr
+#' @import magrittr numDeriv
 #' @import tibble ggplot2 
+#' @importFrom plyr ddply alply ldply
 #' @importFrom gridExtra arrangeGrob
 #' @importFrom data.table data.table as.data.table := is.data.table fwrite fread 
 #' dcast
@@ -34,7 +35,7 @@ NULL
               "left", "len", "right", "y_peak",
               "meth", "doy", "origin", # tidyFitPheno
               "DayOfYear", "SummaryQA", "site", "EVI", "w", "QC_flag", # tidy_MOD13.gee
-              "beg", "end",  # plot_phenofit
+              "beg", "end",  # plot_curvefits
               "val", "type", "flag", "peak", # season, 
               "i", "qc", "y", "sitename" # phenofit_TS.avhrr
             )

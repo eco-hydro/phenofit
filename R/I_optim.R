@@ -26,7 +26,7 @@ methods <- c(
 #' [stats::nlm()], [optimx::optimx()],
 #' [ucminf::ucminf()]
 #'
-#' @example man/examples/ex-I_optim.R
+#' @example R/examples/ex-I_optim.R
 #'
 #' @keywords internal
 #' @export
