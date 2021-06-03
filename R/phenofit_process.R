@@ -6,7 +6,7 @@
 #' @param ... other parameters to [curvefits()]
 #'
 #' @export
-phenofit_site <- function(y, t, w, QC_flag, nptperyear = 36,
+phenofit_process <- function(y, t, w, QC_flag, nptperyear = 36,
     brks = NULL,
     wFUN = wTSM,
     fineFit = TRUE,
@@ -40,7 +40,7 @@ phenofit_site <- function(y, t, w, QC_flag, nptperyear = 36,
 
     ## 2.1 load site data
     # south    = FALSE
-    print      = FALSE # whether print progress
+    # print      = FALSE # whether print progress
 
     ## 2.2 Check input data
     dnew <- data.table(y, t, date = t, w, QC_flag)
@@ -52,15 +52,15 @@ phenofit_site <- function(y, t, w, QC_flag, nptperyear = 36,
 
     ## 2.3 Divide growing seasons
     # if (is.null(lambda)) lambda <- v_curve(INPUT, lg_lambdas)$lambda
-        brks2 <- season_mov(INPUT,
-                       FUN = smooth_wWHIT, wFUN = wFUN,
-                       maxExtendMonth = 3,
-                       # minExtendMonth = minExtendMonth,
-                       wmin = wmin,
-                       IsOptim_lambda = TRUE,
-                       lambda = lambda,
-                       r_min = 0.1,
-                       IsPlot = IsPlot.brks, IsPlot.OnlyBad = FALSE, print = FALSE, ...)
+    brks2 <- season_mov(INPUT,
+                    FUN = smooth_wWHIT, wFUN = wFUN,
+                    maxExtendMonth = 3,
+                    # minExtendMonth = minExtendMonth,
+                    wmin = wmin,
+                    IsOptim_lambda = TRUE,
+                    lambda = lambda,
+                    r_min = 0.1,
+                    IsPlot = IsPlot.brks, IsPlot.OnlyBad = FALSE, print = FALSE, ...)
       if (!is.null(brks)) brks2$dt = brks$dt
     # }
     # plot_season(INPUT, brks2)

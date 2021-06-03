@@ -23,7 +23,7 @@
 #' @example inst/examples/ex-get_fitting_param_GOF.R
 #' @export
 get_GOF <- function(fit){
-    ldply(fit, get_GOF.fFITs, .id = "flag") %>% data.table()
+    map_df(fit, get_GOF.fFITs, .id = "flag") %>% data.table()
 }
 
 #' @rdname get_GOF
@@ -43,7 +43,7 @@ get_GOF.fFITs <- function(fFITs){
 
     # The following script assume that tout in every method is equal length.
     # calculate statistic for every meth
-    info <- ldply(fFITs$fFIT, function(fFIT){
+    info <- map_df(fFITs$fFIT, function(fFIT){
         Y_sim <- last(fFIT$zs)[I_sim]
         I <- which(!(is.na(Y_obs) | is.na(Y_sim)))
 

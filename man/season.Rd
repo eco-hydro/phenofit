@@ -54,6 +54,7 @@ season_mov(
   IsPlot = FALSE,
   IsPlot.vc = FALSE,
   IsPlot.OnlyBad = FALSE,
+  show.legend = TRUE,
   plotdat = INPUT,
   titlestr = ""
 )
@@ -147,13 +148,15 @@ all years.}
 
 \item{IsPlot.OnlyBad}{If true, only plot partial figures whose NSE < 0.3.}
 
+\item{show.legend}{boolean}
+
 \item{titlestr}{string for title}
 
 \item{brks}{A list object returned by \code{season} or \code{season_mov}.}
 }
 \value{
 \itemize{
-\item \code{whit}: A data.table of Rough fitting result, with the columns of
+\item \code{fit}: A data.table of Rough fitting result, with the columns of
 (\code{t}, \code{y}, \code{witer1}, ..., \code{witerN}, \code{ziter1}, ..., \code{ziterN}).
 \item \code{dt}: A data.table of Growing season dividing information, with the columns
 of (\code{beg}, \code{peak}, \code{end}, \code{y_beg}, \code{y_peak}, \code{y_end}, \code{len}, \code{year},
@@ -180,7 +183,7 @@ is left.
 library(phenofit)
 data("MOD13A1")
 
-df <- tidy_MOD13.gee(MOD13A1$dt)
+df <- tidy_MOD13(MOD13A1$dt)
 st <- MOD13A1$st
 
 date_start <- as.Date('2013-01-01')
@@ -199,8 +202,8 @@ ypeak_min  = 0.05
 wFUN = wTSM
 
 # add one year in head and tail
-dnew     <- add_HeadTail(d, south = south, nptperyear = nptperyear) 
-INPUT    <- check_input(dnew$t, dnew$y, dnew$w, QC_flag = dnew$QC_flag,
+# d     <- add_HeadTail(d, south = south, nptperyear = nptperyear) 
+INPUT    <- check_input(d$t, d$y, d$w, QC_flag = d$QC_flag,
      nptperyear = nptperyear, south = south, 
      maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
 # all year as a whole

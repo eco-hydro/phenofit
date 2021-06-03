@@ -29,7 +29,7 @@ getRealDate <- function(date, DayOfYear){
     return(t)
 }
 
-#' tidy_MOD13.gee
+#' tidy_MOD13
 #'
 #' Tidy MODIS 'MOD13' VI products' (e.g. MOD13A1, MOD13A2, ...) raw data exported from
 #' Google Earth Engine.
@@ -56,9 +56,9 @@ getRealDate <- function(date, DayOfYear){
 #' @examples
 #' library(phenofit)
 #' data("MOD13A1")
-#' dt <- tidy_MOD13.gee(MOD13A1$dt)
+#' dt <- tidy_MOD13(MOD13A1$dt)
 #' @export
-tidy_MOD13.gee <- function(infile, outfile, wmin = 0.2){
+tidy_MOD13 <- function(infile, outfile, wmin = 0.2){
     df <- infile
     if ("character" %in% class(infile) ) df <- fread(infile)
 

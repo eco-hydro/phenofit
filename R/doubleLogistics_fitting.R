@@ -55,7 +55,7 @@
 #'      in Global Change Research. Springer New York, New York, NY, pp. 35-58.
 #'      https://doi.org/10.1007/978-1-4419-0026-5_2. \cr
 #'
-#' 4. https://github.com/kongdd/phenopix/blob/master/R/FitDoubleLogGu.R
+#' 4. https://github.com/cran/phenopix/blob/master/R/FitDoubleLogGu.R
 #' @example inst/examples/ex-FitDL.R
 NULL
 

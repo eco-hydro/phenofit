@@ -70,7 +70,7 @@ to divide growing seasons and update weights.}
 \item{use.y0}{boolean. whether to use original \code{y0}, which is before the
 process of \code{check_input}.}
 
-\item{...}{Other parameters will be ignore.}
+\item{...}{other parameters passed to curve fitting function.}
 }
 \value{
 List of phenofit fitting object.
@@ -82,7 +82,7 @@ Fine Curve fitting for INPUT time-series.
 library(phenofit)
 data("MOD13A1")
 
-df <- tidy_MOD13.gee(MOD13A1$dt)
+df <- tidy_MOD13(MOD13A1$dt)
 st <- MOD13A1$st
 
 date_start <- as.Date('2013-01-01')
@@ -101,8 +101,8 @@ ypeak_min  = 0.05
 wFUN = wTSM
 
 # add one year in head and tail
-dnew     <- add_HeadTail(d, south = south, nptperyear = nptperyear) 
-INPUT    <- check_input(dnew$t, dnew$y, dnew$w, QC_flag = dnew$QC_flag,
+# d     <- add_HeadTail(d, south = south, nptperyear = nptperyear) 
+INPUT    <- check_input(d$t, d$y, d$w, QC_flag = d$QC_flag,
      nptperyear = nptperyear, south = south, 
      maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
 # Rough fitting and growing season dividing
@@ -115,4 +115,7 @@ fit <- curvefits(
     methods = c("AG", "Beck", "Elmore", "Zhang"), #,"klos", "Gu"
     wFUN = wFUN,
     nextend = 2, maxExtendMonth = 2, minExtendMonth = 1, minPercValid = 0.2)
+}
+\seealso{
+\code{\link[=FitDL]{FitDL()}}
 }

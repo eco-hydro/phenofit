@@ -37,7 +37,7 @@ plot_curvefits <- function(d_fit,
         d_obs$meth <- NULL
     }
 
-    last_iter_rough <- colnames(seasons$whit) %>% last()
+    last_iter_rough <- colnames(seasons$fit) %>% last()
     iters_name_fine <- colnames(d_fit) %>%
         .[grep("ziter", .)] %>%
         sort() # "ziter1", "ziter2"
@@ -85,7 +85,7 @@ plot_curvefits <- function(d_fit,
     }
 
     # iterations of smoothed time-series
-    p <- p + geom_line(data = seasons$whit, aes_string("t", last_iter_rough), color = "black", size = 0.8)
+    p <- p + geom_line(data = seasons$fit, aes_string("t", last_iter_rough), color = "black", size = 0.8)
     for (i in seq_along(iters_name_fine)) {
         iter_name <- iters_name_fine[i]
         p <- p + geom_line(aes_string(y = iter_name), size = 0.8, alpha = 0.7, color = lines_colors[i])

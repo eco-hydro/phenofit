@@ -6,13 +6,13 @@
 #' @example inst/examples/ex-get_fitting_param_GOF.R
 #' @export
 get_param <- function(fits){
-    llply(fits, get_param.fFITs) %>%
+    lapply(fits, get_param.fFITs) %>%
         purrr::transpose() %>%
-        map(~ldply(., function(x) x, .id = "flag") %>% as_tibble())
+        map(~map_df(., ~ .x, .id = "flag")) # could improve
 }
 
 #' @rdname get_param
 #' @export
 get_param.fFITs <- function(fFITs){
-    map(fFITs$fFIT, "par")
+    map(fFITs$fFIT, ~.x[["par"]] %>% as_tibble())
 }

@@ -37,7 +37,7 @@ LinkingTo: Rcpp, RcppArmadillo
 Depends:
     R (>= 3.1)
 Imports: Rcpp, 
-    tibble, purrr, plyr, magrittr, 
+    tibble, purrr, dplyr, magrittr, 
     lubridate, 
     data.table, zoo, 
     gridExtra, ggplot2, 

@@ -32,7 +32,7 @@ year of \code{year_end - 1} to the tail.
 library(phenofit)
 data("MOD13A1")
 
-dt <- tidy_MOD13.gee(MOD13A1$dt)
+dt <- tidy_MOD13(MOD13A1$dt)
 st <- MOD13A1$st
 
 sitename <- dt$site[1]

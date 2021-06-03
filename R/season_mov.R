@@ -9,6 +9,7 @@
 #' all years.
 #' @param len_min,len_max the minimum and maximum length (in the unit of days)
 #' of growing season
+#' @param show.legend boolean
 #' 
 #' @importFrom lubridate leap_year
 #' @rdname season
@@ -25,6 +26,7 @@ season_mov <- function(INPUT, rFUN, wFUN, iters = 2, wmin = 0.1,
     .check_season = TRUE,
     years.run = NULL,
     IsPlot = FALSE, IsPlot.vc = FALSE, IsPlot.OnlyBad = FALSE,
+    show.legend = TRUE,
     plotdat = INPUT,  titlestr = "")
 {
     if (missing(wFUN)) wFUN = get(.options$wFUN_rough)
@@ -74,7 +76,7 @@ season_mov <- function(INPUT, rFUN, wFUN, iters = 2, wmin = 0.1,
         I   <- which(date_year %in% years[i]) # 3y index
         # `nextend` is not enough
 
-        ylu <- get_ylu (INPUT$y, date_year, INPUT$w, width = width_ylu, I, Imedian = TRUE, wmin)
+        ylu <- get_ylu(INPUT$y, date_year, INPUT$w, width = width_ylu, I, Imedian = TRUE, wmin)
         ylu <- merge_ylu(INPUT$ylu, ylu) # curvefits.R
 
         # extend curve fitting period, for continuity.
@@ -106,10 +108,10 @@ season_mov <- function(INPUT, rFUN, wFUN, iters = 2, wmin = 0.1,
                 brk$dt$lambda <- lambda
             }
         }
-        brks[[i]] <- list(whit = brk$whit[date_year[I] == year_i, ], dt   = brk$dt)
+        brks[[i]] <- list(fit = brk$fit[date_year[I] == year_i, ], dt   = brk$dt)
     }
     brks  = set_names(brks, years.run) %>% rm_empty() %>% purrr::transpose()
-    brks$whit %<>% do.call(rbind, .)
+    brks$fit %<>% do.call(rbind, .)
 
     if (calendarYear) {
         # BUG: need to remove incomplete year
@@ -124,9 +126,9 @@ season_mov <- function(INPUT, rFUN, wFUN, iters = 2, wmin = 0.1,
         }
     }
     brks$GOF <- stat_season(INPUT, brks)
-
+    
     ## VISUALIZATION
-    if (IsPlot) plot_season(INPUT, brks, plotdat, ylu = INPUT$ylu, IsPlot.OnlyBad)
+    if (IsPlot) plot_season(INPUT, brks, plotdat, ylu = INPUT$ylu, IsPlot.OnlyBad, show.legend = show.legend)
     if (!has_lambda && IsOptim_lambda) brks$optim <- vcs
     return(brks)
 }
@@ -211,7 +213,7 @@ season_calendar <- function(years, south = FALSE){
 #' @rdname season
 stat_season <- function(INPUT, brks){
     d_org <- as.data.table(INPUT[c("t", "y0", "w")])
-    d_fit <- brks$whit %>% .[,.SD,.SDcols=c(1, ncol(.))] %>% set_colnames(c("t", "ypred"))
+    d_fit <- brks$fit %>% .[,.SD,.SDcols=c(1, ncol(.))] %>% set_colnames(c("t", "ypred"))
 
     d <- merge(d_org, d_fit, by = "t")
 

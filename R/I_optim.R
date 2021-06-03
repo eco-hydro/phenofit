@@ -94,10 +94,12 @@ I_optimx <- function(prior, FUN, y, t, method, verbose = FALSE, ...){
     if (is.vector(prior)) prior <- t(prior)
 
     # add method column
-    opt.lst <- alply(prior, 1, optimx, method = method,
-        fn = f_goal, fun = FUN, y = y, t = t, pred = pred, ...,
-        control = list(maxit = 1000, all.methods = verbose, dowarn = FALSE)
-    )
+    opt.lst <- map(1:nrow(prior), function(i) {
+        optimx(prior[i, ],
+            method = method, fn = f_goal, fun = FUN, y = y, t = t, pred = pred, ...,
+            control = list(maxit = 1000, all.methods = verbose, dowarn = FALSE)
+        )
+    })
     opt.df <- map(opt.lst, ~cbind(., method = rownames(.))) %>%
         do.call(rbind, .) %>% set_rownames(NULL)
     opt.df$kkt1 <- NULL

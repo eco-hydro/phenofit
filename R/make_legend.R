@@ -1,6 +1,6 @@
 # make_legend
 make_legend <- function(
-    linename = c("iter1", "iter2", "whit"),
+    linename = c("iter1", "iter2", "Rough Fitting"),
     linecolor = c("blue", "red", "black"), cex = 1.2,
     nmax_points = 6, nrow = 1)
 {
@@ -10,7 +10,7 @@ make_legend <- function(
     I_sel <-  1:nmax_points
     labels <- c(qc_levels[I_sel], linename)
     colors <- c(qc_colors[I_sel], linecolor)[1:(nline+nmax_points)]
-
+    
     # labels <- c(" good", " margin", " snow/ice", " cloud", linename)
     # colors <- c("grey60", "#00BFC4", "#F8766D", "#C77CFF", linecolor)
     pch <- c(qc_shapes[I_sel], rep(NA, nline))

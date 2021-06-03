@@ -1,7 +1,7 @@
 library(phenofit)
 data("MOD13A1")
 
-df <- tidy_MOD13.gee(MOD13A1$dt)
+df <- tidy_MOD13(MOD13A1$dt)
 st <- MOD13A1$st
 
 date_start <- as.Date('2010-01-01')
@@ -101,6 +101,3 @@ if (is_comp) {
     grid::grid.draw(g)
     dev.off()
 }
-
-# p + geom_point(data = d_obs)
-    # geom_line (data = seasons$whit, aes_string(t, ziter2), color = "black", size = 0.8) + # show in front

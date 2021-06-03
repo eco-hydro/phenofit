@@ -52,7 +52,7 @@ v_point = function(y, w = 0 * y + 1, lambda = 100, d = 2) {
 #' library(phenofit)
 #' data("MOD13A1")
 #' 
-#' dt <- tidy_MOD13.gee(MOD13A1$dt)
+#' dt <- tidy_MOD13(MOD13A1$dt)
 #' st <- MOD13A1$st
 #' 
 #' sitename <- dt$site[1]

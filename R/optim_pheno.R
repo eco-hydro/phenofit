@@ -19,12 +19,12 @@
 #' @param method The name of optimization method to solve fine fitting, one of
 #' `'BFGS','CG','Nelder-Mead', 'L-BFGS-B', 'nlm', 'nlminb', 'ucminf'` and
 #' `'spg','Rcgmin','Rvmmin', 'newuoa','bobyqa','nmkb','hjkb'`.
-#'
+#' @param constrain boolean, whether to use parameter constrain
 #' @param verbose Whether to display intermediate variables?
 #' @param ... other parameters passed to [I_optim()] or [I_optimx()].
-#'
+#' 
 #' @return fFIT object, see [fFIT()] for details.
-#'
+#' 
 #' @seealso [FitDL()], [stats::nlminb()]
 #' 
 #' @example R/examples/ex-optim_pheno.R
@@ -36,9 +36,13 @@ optim_pheno <- function(
     y, t, tout, method,
     w, nptperyear, ylu,
     iters = 2, wFUN = wTSM,
-    lower = -Inf, upper = Inf,
+    lower = -Inf, upper = Inf, 
+    constrain = TRUE,
     verbose = FALSE, ...)
 {
+    if (!constrain) {
+        lower = -Inf; upper = Inf
+    }
     sFUN = gsub("\\.", "_", sFUN )
     FUN <- get(sFUN, mode = "function" )
 
@@ -91,7 +95,8 @@ optim_pheno <- function(
         # do.call(I_optimFUN, params)
         # save(list = ls(), file = "debug.rda")
         # pass verbose for optimx optimization methods selection
-        opt.df  <- I_optimFUN(prior, FUN, y, t, method = method, w = w, verbose = verbose, ...)
+        opt.df  <- I_optimFUN(prior, FUN, y, t, method = method, w = w, verbose = verbose, 
+            lower = lower, upper = upper, ...)
         # print(opt.df)
         if (verbose){
             fprintf('Initial parameters:\n')

@@ -78,12 +78,12 @@ get_pheno <- function(fits, method,
         }
         pheno_list
     })
-    lapply(res, tidyFitPheno) %>% purrr::transpose()
+    lapply(res, tidy_pheno) %>% purrr::transpose()
 }
 
 #' @param title_left String of growing season flag.
 #' @param showName_pheno Whether to show phenological methods names in the top panel?
-#' 
+#'
 #' @rdname get_pheno
 #' @export
 get_pheno.fFITs <- function(fFITs, method,
@@ -144,7 +144,7 @@ get_pheno.fFITs <- function(fFITs, method,
             legend('topright', c('y', "f(t)"), lty = c(1, 1), pch =c(1, NA), bty='n')
         }
         stat <- get_GOF.fFITs(fFITs)
-        stat <- subset(stat, meth == method) %>% unlist() %>% round(3)
+        stat <- subset(stat, meth == method) %>% select(-meth) %>% unlist() %>% round(3)
 
         exprs = list(
             eval(substitute(bquote(R2 == .R2), list(.R2 = stat['R2']))),
@@ -178,3 +178,55 @@ get_pheno.fFITs <- function(fFITs, method,
     c(p_TRS, list(der, gu, zhang)) %>% set_names(methods)
 }
 
+
+#' tidy_pheno
+#'
+#' Tidy for every method with multiple years phenology data
+#'
+#' @param pheno Phenology metrics extracted from `get_pheno`
+#'
+#' @keywords internal
+#' @examples
+#' library(phenofit)
+#' # simulate vegetation time-series
+#' fFUN <- doubleLog.Beck
+#' par <- c(mn = 0.1, mx = 0.7, sos = 50, rsp = 0.1, eos = 250, rau = 0.1)
+#'
+#' t <- seq(1, 365, 8)
+#' tout <- seq(1, 365, 1)
+#' y <- fFUN(par, t)
+#'
+#' methods <- c("AG", "Beck", "Elmore", "Gu", "Zhang") # "Klos" too slow
+#' fFITs <- curvefit(y, t, tout, methods)
+#'
+#' # multiple years
+#' fits <- list(`2001` = fFITs, `2002` = fFITs)
+#' pheno <- get_pheno(fits, "AG", IsPlot = FALSE)
+#' @export
+tidy_pheno <- function(pheno) {
+    doy2date <- function(datenum) as.Date(unlist(datenum), origin = date.origin)
+    # phenonames <- c('TRS2.sos', 'TRS2.eos', 'TRS5.sos', 'TRS5.eos', 'TRS6.sos', 'TRS6.eos',
+    #                 'DER.sos', 'DER.pop', 'DER.eos',
+    #                 'GU.UD', 'GU.SD', 'GU.DD', 'GU.RD',
+    #                 'ZHANG.Greenup', 'ZHANG.Maturity', 'ZHANG.Senescence', 'ZHANG.Dormancy')
+
+    # fix the error of \code{pheno} without name
+    # names <- names(pheno)
+    # if (is.null(names)){
+    #     years <- seq(year(origin), by = 1, length.out = length(pheno))
+    #     names(pheno) <- years
+    # }
+    names <- unlist(pheno[[1]]) %>% names()
+    p_date <- map_df(pheno, doy2date, .id = "flag") %>%
+        mutate(origin = ymd(paste0(substr(flag, 1, 4), "-01-01"))) %>%
+        reorder_name(c("flag", "origin")) %>%
+        set_colnames(c("flag", "origin", names)) %>%
+        data.table()
+
+    colnames(p_date) %<>% gsub("GU\\.|ZHANG\\.", "", .)
+    phenonames <- setdiff(colnames(p_date), c("flag", "origin", "meth"))
+
+    p_doy <- p_date %>% mutate(across(3:ncol(.), ~ as.numeric(.x - origin + 1)))
+    vars <- c("flag", "origin", phenonames)
+    list(doy = p_doy[, ..vars], date = p_date[, ..vars])
+}

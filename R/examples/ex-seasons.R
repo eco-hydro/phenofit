@@ -1,0 +1,47 @@
+{
+    library(phenofit)
+    data("MOD13A1")
+
+    df <- tidy_MOD13(MOD13A1$dt)
+    st <- MOD13A1$st
+
+    date_start <- as.Date("2013-01-01")
+    date_end <- as.Date("2016-12-31")
+
+    sitename <- "CA-NS6" # df$site[1]
+    d <- df[site == sitename & (date >= date_start & date <= date_end), ]
+    sp <- st[site == sitename, ]
+    south <- sp$lat < 0
+    nptperyear <- 23
+
+    # global parameter
+    IsPlot = TRUE
+    print = FALSE
+    ypeak_min = 0.05
+    wFUN = wTSM
+}
+
+profvis::profvis({
+    IsPlot = FALSE
+    # add one year in head and tail
+    # dnew <- add_HeadTail(d, south = south, nptperyear = nptperyear)
+    INPUT <- check_input(d$t, d$y, d$w,
+        QC_flag = d$QC_flag,
+        nptperyear = nptperyear, south = south,
+        maxgap = nptperyear / 4, alpha = 0.02, wmin = 0.2
+    )
+    # all year as a whole
+    # brks <- season(INPUT,
+    #     rFUN = smooth_wWHIT, wFUN = wFUN,
+    #     lambda = 10,
+    #     plotdat = d, IsPlot = IsPlot, IsPlot.OnlyBad = FALSE
+    # )
+    for (i in 1:20) {
+        # curve fitting by year
+        brks2 <- season_mov(INPUT,
+                            rFUN = smooth_wWHIT, wFUN = wFUN,
+                            lambda = 10,
+                            plotdat = d, IsPlot = IsPlot, IsPlot.OnlyBad = FALSE
+        )
+    }
+})

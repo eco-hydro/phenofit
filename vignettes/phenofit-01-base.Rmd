@@ -12,14 +12,16 @@ minPercValid   <- 0
 wFUN           <- wTSM # wBisquare
 wmin           <- 0.2
 methods_fine <- c("AG", "Zhang", "Beck", "Elmore", "Gu")
-```
 
-```{r}
 d = MOD13A1$dt %>% subset(site == "CA-NS6" & date >= "2010-01-01" & date <= "2016-12-31") %>%
     .[, .(date, y = EVI/1e4, DayOfYear, QC = SummaryQA)]
 d %<>% mutate(t = getRealDate(date, DayOfYear)) %>%
     cbind(d[, as.list(qc_summary(QC, wmin = 0.2, wmid = 0.5, wmax = 0.8))]) %>%
     .[, .(date, t, y, QC_flag, w)]
+```
+
+```{r}
+
 ```
 
 ```{r}
@@ -42,6 +44,7 @@ fit <- curvefits(INPUT, brks,
     iters = 2,
     nextend = 2,
     wmin = wmin,
+    # constrain = FALSE,
     maxExtendMonth = maxExtendMonth, minExtendMonth = minExtendMonth,
     minPercValid = minPercValid
 )
@@ -59,8 +62,6 @@ pheno <- l_pheno$doy %>% melt_list("meth")
 ## visualization
 
 ```{r}
-
-```
 # growing season dividing
 Ipaper::write_fig({ plot_season(INPUT, brks, ylab = "EVI") }, "Figure4_seasons.pdf", 9, 4)
 
@@ -70,8 +71,8 @@ Ipaper::write_fig(g, "Figure5_curvefitting.pdf", 8, 6, show = TRUE)
 
 # extract phenology metrics, only the first 3 year showed at here
 write_fig({
-    l_pheno <- get_pheno(fit[1:3], method = "AG", TRS = TRS, IsPlot = TRUE, show_title = FALSE)
-}, "Figure6_phenology_metrics.pdf", 8, 4, show = TRUE)
+    l_pheno <- get_pheno(fit[1:7], method = "AG", TRS = TRS, IsPlot = TRUE, show_title = FALSE)
+}, "Figure6_phenology_metrics.pdf", 8, 6, show = TRUE)
 ```
 
 ```{r}

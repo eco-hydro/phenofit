@@ -17,33 +17,34 @@
 #' When all points of the input time-series are good value, then the extending
 #' period will be too short. In that situation, we can't make sure the connection
 #' between different growing seasons is smoothing.
-#' @param minT (optional). If Tn not provided in `INPUT`, `minT` will not be used. 
-#' `minT` use night temperature Tn to define backgroud value (days with `Tn < minT` 
+#' @param minT (optional). If Tn not provided in `INPUT`, `minT` will not be used.
+#' `minT` use night temperature Tn to define backgroud value (days with `Tn < minT`
 #' treated as ungrowing season).
 #' @param methods Fine curve fitting methods, can be one or more of
 #' `c('AG', 'Beck', 'Elmore', 'Zhang', 'Gu', 'Klos')`. Note that 'Gu' and 'Klos'
 #' are very slow.
 #' f not specified, it will be determined by phenofit options `methods_fine`.
-#' @param wFUN Character or function, weights updating function of fine fitting 
+#' @param wFUN Character or function, weights updating function of fine fitting
 #' function.
 #' If not specified, it will be determined by phenofit options `wFUN_fine`.
-#' @param minPercValid (optional, default not use). If the percentage of good 
-#' and marginal quality points is less than `minPercValid`, curve fiting result 
+#' @param minPercValid (optional, default not use). If the percentage of good
+#' and marginal quality points is less than `minPercValid`, curve fiting result
 #' is set to `NA`.
-#' @param use.rough Whether to use rough fitting smoothed time-series as input? 
-#' If `false`, smoothed VI by rough fitting will be used for Phenological metrics 
-#' extraction; If `true`, original input `y` will be used (rough fitting is used 
+#' @param use.rough Whether to use rough fitting smoothed time-series as input?
+#' If `false`, smoothed VI by rough fitting will be used for Phenological metrics
+#' extraction; If `true`, original input `y` will be used (rough fitting is used
 #' to divide growing seasons and update weights.
 #' @param use.y0 boolean. whether to use original `y0`, which is before the
 #' process of `check_input`.
-#' 
-#' @param ... Other parameters will be ignore.
-#' 
+#'
+#' @param ...  other parameters passed to curve fitting function.
+#'
 #' @return List of phenofit fitting object.
-#' 
+#' @seealso [FitDL()]
+#'
 #' @example inst/examples/ex-check_input.R
 #' @example inst/examples/ex-curvefits.R
-#' 
+#'
 #' @export
 curvefits <- function(INPUT, brks,
                       methods, wFUN, iters = 2, wmin = 0.1,
@@ -57,7 +58,7 @@ curvefits <- function(INPUT, brks,
     if (missing(methods)) methods = .options$methods_fine
     if (missing(wFUN)) wFUN = get(.options$wFUN_fine)
     wFUN = check_function(wFUN)
-    
+
     if (all(is.na(INPUT$y))) return(NULL)
 
     QC_flag    <- INPUT$QC_flag
@@ -77,18 +78,18 @@ curvefits <- function(INPUT, brks,
     has_Tn <- ifelse(is_empty(Tn), FALSE, TRUE)
 
     # possible snow or cloud, replaced with Whittaker smoothing.
-    I_all <- match(brks$whit$t, t) %>% rm_empty()
+    I_all <- match(brks$fit$t, t) %>% rm_empty()
 
     if (use.rough) {
-        # if the range of t is smaller than `whit$t`
-        INPUT$y[I_all] <- last(brks$whit)
+        # if the range of t is smaller than `fit$t`
+        INPUT$y[I_all] <- last(brks$fit)
     } else {
         I_fix <- which(w[I_all] == wmin)
         I_y   <- I_all[I_fix]
-        INPUT$y[I_y] <- last(brks$whit)[I_fix]
+        INPUT$y[I_y] <- last(brks$fit)[I_fix]
     }
     # use the weights of last iteration of rough fitting
-    # w[I_all] <- brks$whit %>% {.[, contain(., "witer"), with = F]} %>% last()
+    # w[I_all] <- brks$fit %>% {.[, contain(., "witer"), with = F]} %>% last()
     # w[I_fix] <- wmin + 0.1 # exert the function of whitaker smoother
 
     # growing season dividing
@@ -244,12 +245,15 @@ get_ylu <- function(y, years, w0, width, I, Imedian = TRUE, wmin = 0.2){
             # Assume peak in the middle of growing season, a few steps will be
             # ylu_min; while a long way to ylu_max; 20180918
             # length(I) reflects nptperyear
+            # d = data.table(y = y_win, year = year_win)
             if (width > length(I)*2/12){
+                # ylu_min = d[, min(y), .(year)]$V1 %>% median()
                 ylu_min <- median(aggregate.data.frame(y_win, list(year = year_win), min)$x)
             }
 
             if (width > length(I)*7/12){
                 ylu_max <- median(aggregate.data.frame(y_win, list(year = year_win), max)$x)
+                # ylu_max <- d[, max(y), .(year)]$V1 %>% median()
             }
         }
     }

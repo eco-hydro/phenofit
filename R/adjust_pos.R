@@ -4,10 +4,10 @@
 # ' - `FALSE`: `pos_max` used
 # ' @examples
 # ' adjust_pos(pos, ypred, A, y_min, minpeakdistance, minPeakHeight)
-# ' 
-# ' @return A data.table with the columns of: 
+# '
+# ' @return A data.table with the columns of:
 # ' `"val", "pos", "left", "right", "type"`
-adjust_pos <- function(pos, rm.closed, ypred, A, y_min, minpeakdistance) 
+adjust_pos <- function(pos, rm.closed, ypred, A, y_min, minpeakdistance)
 {
     # 1.2 remove both points (date or value of min and max too close)
     # I_del <- union(I_date, I_date+1)
@@ -24,9 +24,17 @@ adjust_pos <- function(pos, rm.closed, ypred, A, y_min, minpeakdistance)
                 I_del  <- which(abs(diff(pos$val)) < 0.05 * A) + 1
             }
             if (length(I_del) > 0) pos <- pos[-I_del, ]
+
             # 1.3 remove replicated
             pos$flag <- cumsum(c(1, diff(pos$type) != 0))
-            pos      <- ddply(pos, .(flag), rm_duplicate, y = ypred, threshold = y_min)[, 2:6]
+            has_dulicated <- duplicated(pos$flag) %>% any()
+            if (has_dulicated) {
+                pos %<>% group_by(flag) %>%
+                    group_modify(~rm_duplicate(.x, y = ypred, threshold = y_min)) %>%
+                    ungroup() %>%
+                    select(-flag)
+            }
+            pos
         }
     } else {
         # 对于CRO, GRA, 变化比较剧烈，相邻极值，不进行调整和融合
@@ -37,7 +45,7 @@ adjust_pos <- function(pos, rm.closed, ypred, A, y_min, minpeakdistance)
 
 # rm duplicated max or min values
 rm_duplicate <- function(d, y, threshold){
-    d <- d[, 1:5]
+    # d <- d[, 1:5]
     if (nrow(d) > 1) {
         type <- d$type[1] #1(-1) represent max(min)
         # if range amplitude less than TRS, get median
@@ -86,7 +94,7 @@ findpeaks_season <- function(ypred, y_max = 0, y_min = 0,
         nups = nups, ndowns = ndowns) #, ypeak_min
     pos_max <- peaks$X
     if (!is.null(pos_max)) pos_max$type <- 1
-    
+
     npeak_PerYear <- length(peaks$gregexpr) / nyear # max peaks
     listk(pos_min, pos_max, ntrough_PerYear, npeak_PerYear)
 }

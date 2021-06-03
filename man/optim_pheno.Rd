@@ -18,6 +18,7 @@ optim_pheno(
   wFUN = wTSM,
   lower = -Inf,
   upper = Inf,
+  constrain = TRUE,
   verbose = FALSE,
   ...
 )
@@ -64,6 +65,8 @@ range of \code{ylu}.}
     \code{start}.  If unspecified, all parameters are assumed to be
     unconstrained.
   }
+
+\item{constrain}{boolean, whether to use parameter constrain}
 
 \item{verbose}{Whether to display intermediate variables?}
 

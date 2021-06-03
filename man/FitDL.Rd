@@ -80,6 +80,6 @@ of Plant Community Photosynthesis Across a Range of Vegetation Types,
 in: Noormets, A. (Ed.), Phenology of Ecosystem Processes: Applications
 in Global Change Research. Springer New York, New York, NY, pp. 35-58.
 https://doi.org/10.1007/978-1-4419-0026-5_2. \cr
-\item https://github.com/kongdd/phenopix/blob/master/R/FitDoubleLogGu.R
+\item https://github.com/cran/phenopix/blob/master/R/FitDoubleLogGu.R
 }
 }

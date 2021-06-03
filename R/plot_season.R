@@ -34,9 +34,9 @@ plot_season <- function(
     ))
     if (IsPlot.OnlyBad && stat['NSE'] < 0.3) return()
 
-    t  <- brks$whit$t
+    t  <- brks$fit$t
     dt <- brks$dt
-    zs <- select_vars(brks$whit, "ziter")
+    zs <- select_vars(brks$fit, "ziter")
     ypred <- last(zs)
 
     # if (missing(xlim))
@@ -48,8 +48,9 @@ plot_season <- function(
     # if (!is.null(INPUT$y0)) plotdat$y <- INPUT$y0
     # par.old <- par()
     bottom = ifelse(show.legend, 3.2, 1) + 0.5
-    par(mar = c(bottom, 3, 1, 1), mgp = c(1.2, 0.6, 0))
-
+    par.old <- par(mar = c(bottom, 3, 1, 1), mgp = c(1.2, 0.6, 0))
+    on.exit(par(par.old))
+    
     ymin = min(INPUT$y0, na.rm = TRUE)
     ymax = max(INPUT$y0, na.rm = TRUE)
     ylim = c(ymin, (ymax - ymin)*0.08 + ymax)

@@ -66,8 +66,9 @@
 #' [findpeaks()].
 #'
 #' @return
-#' - `whit`: A data.table of Rough fitting result, with the columns of
+#' - `fit`: A data.table of Rough fitting result, with the columns of
 #' (`t`, `y`, `witer1`, ..., `witerN`, `ziter1`, ..., `ziterN`).
+#' 
 #' - `dt`: A data.table of Growing season dividing information, with the columns
 #' of (`beg`, `peak`, `end`, `y_beg`, `y_peak`, `y_end`, `len`, `year`,
 #' `season`, `flag`).
@@ -197,7 +198,7 @@ season <- function(INPUT, rFUN, wFUN, iters = 2, wmin = 0.1,
     dt   <- di <- NULL
     # rough curve fitting time-series
     rfit <- as.data.table(c(list(t = t, y = y), yfits$ws, yfits$zs))
-    res  <- list(whit = rfit, dt = dt) # , pos = pos, di = di
+    res  <- list(fit = rfit, dt = dt) # , pos = pos, di = di
     if (is.null(pos_max) || is.null(pos_min)){
         warning("Can't find a complete growing season before trim!")
         return(res)
@@ -277,8 +278,8 @@ season <- function(INPUT, rFUN, wFUN, iters = 2, wmin = 0.1,
     # get the growing season year, not only the calendar year
     if (south) dt[, year := year + as.integer(peak >= ymd(sprintf('%d0701', year))) - 1L]
     dt[, `:=`(season = as.numeric(1:.N), flag = sprintf("%d_%d", year, 1:.N)), .(year)]
-    res <- list(whit = rfit, dt = dt)
-
+    res <- list(fit = rfit, dt = dt)
+    
     ## 7. plot
     if (IsPlot) plot_season(INPUT, res, plotdat, INPUT$ylu)
     return(res)

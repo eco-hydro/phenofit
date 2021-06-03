@@ -19,7 +19,7 @@
 #' @examples
 #' library(phenofit)
 #' data("MOD13A1")
-#' dt <- tidy_MOD13.gee(MOD13A1$dt)
+#' dt <- tidy_MOD13(MOD13A1$dt)
 #' y <- dt[site == "AT-Neu", ][1:120, y]
 #' 
 #' plot(y, type = "b")
@@ -65,7 +65,7 @@ whit2 <- function(y, lambda, w = rep(1, ny))
 #' @examples
 #' library(phenofit)
 #' data("MOD13A1")
-#' dt <- tidy_MOD13.gee(MOD13A1$dt)
+#' dt <- tidy_MOD13(MOD13A1$dt)
 #' d <- dt[site == "AT-Neu", ]
 #' 
 #' l <- check_input(d$t, d$y, d$w, nptperyear=23)

@@ -1,3 +1,9 @@
+# phenofit 0.3.0 (2021-06-26)
+
+- The rough fitting result returned by [season_mov()] and [season()] was renamed
+  from `whit` to `fit`.
+
+
 # phenofit 0.2.2 (2019-03-19)
 
 * fix visualization (plot and legend) of multiple iteration 
