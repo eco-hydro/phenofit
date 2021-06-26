@@ -80,32 +80,3 @@ backval <- function(y, t, w, Tn, minT = 5, nptperyear, ...){
     # y[y < back] <- back
     # w[y < back] <- 1
 }
-
-
-# nogrowthPolygon <- function(d, Tmin){
-#     x <- d$Tn#[100:400]
-#     I_ends   <- findBrks(x > Tmin, zero = "-", nups = 1)
-#     I_begins <- findBrks(x < Tmin, zero = "-", nups = 1) - 1
-
-#     plot(type = "b", x); grid(); abline(a = Tmin, b = 0, col = "red")
-#     points(I_ends, x[I_ends], col = "red", pch = 19)
-#     points(I_begins, x[I_begins], col = "blue", pch = 19)
-
-#     nptperyear <- 23
-#     polygons <- list()
-#     for (i in seq_along(I_ends)){
-#         i_beg <- I_ends[i]
-#         i_end <- I_begins[which(I_begins > i_beg & I_begins < i_beg + nptperyear*2/3)]
-
-#         if (!is_empty(i_end)){
-#             polygons[[i]] <- c(i_beg, -Inf, i_end, -Inf, i_end, Inf,i_beg, Inf,i_beg, -Inf) %>%
-#                 matrix(ncol = 2, byrow = TRUE) %>%
-#                 set_colnames(c("x", "y")) %>% as.data.frame()
-#         }
-#     }
-#     polygons %<>% set_names(seq_along(.))
-#     df_polygon <- melt_list(polygons, "id")
-#     df_polygon$date <- d$date[df_polygon$x]
-#     return(df_polygon)
-# }
-

@@ -94,7 +94,7 @@ phenofit_process <- function(y, t, w, QC_flag, nptperyear = 36,
             write_fig(g, file_pdf, 9, 6, show = show)
         }
         ## 2.5 Extract phenology
-        l_pheno <- get_pheno(fit, TRS = TRS, IsPlot = F) #%>% map(~melt_list(., "meth"))
+        l_pheno <- get_pheno(fit, TRS = TRS, IsPlot = F) 
         pheno <- l_pheno$doy %>% melt_list("meth")
     }
     list(brks = brks2, fit = fit, dfit = dfit, pheno = pheno)

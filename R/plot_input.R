@@ -4,7 +4,8 @@
 #' @param ... other parameter will be ignored.
 #' @param show.y0 boolean. Whether to show original time-series `y0` or processed time-series `y` by
 #' [check_input()]?
-#'
+#' @param ylab y axis title
+#' 
 #' @examples
 #' library(phenofit)
 #' data("MOD13A1")

@@ -15,6 +15,8 @@ plot_input(INPUT, wmin = 0.2, show.y0 = TRUE, ylab = "VI", ...)
 \item{show.y0}{boolean. Whether to show original time-series \code{y0} or processed time-series \code{y} by
 \code{\link[=check_input]{check_input()}}?}
 
+\item{ylab}{y axis title}
+
 \item{...}{other parameter will be ignored.}
 }
 \description{

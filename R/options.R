@@ -45,10 +45,9 @@
 
 #' set and get phenofit option
 #' 
-#' @param options
+#' @param ... list of phenofit options
 #' FUN_season: character, `season_mov` or `season`
 #' rFUN: character, rough fitting function. `smooth_wWHIT`, `smooth_wSG` or `smooth_wHANTs`.
-#' 
 #' 
 #' @examples 
 #' set_options(verbose_curvefit = FALSE)
@@ -60,6 +59,8 @@ set_options <- function(...) {
     invisible()
 }
 
+#' @param names vector of character, names of options
+#' 
 #' @rdname set_options
 #' @export
 get_options <- function(names = NULL) {

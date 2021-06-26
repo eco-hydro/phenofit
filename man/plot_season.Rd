@@ -33,6 +33,8 @@ in the range of \code{ylu}.}
 
 \item{show.legend}{Whether to show legend?}
 
+\item{ylab}{y axis title}
+
 \item{title}{The main title (on top)}
 }
 \description{

@@ -31,3 +31,7 @@
 ^notes$
 ^scripts$
 ^\.github$
+^Rcpp_debug2\.R$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$

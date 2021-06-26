@@ -3,6 +3,7 @@
 #' Plot growing season divding result.
 #'
 #' @inheritParams season
+#' @inheritParams plot_input
 #' @inheritParams smooth_wHANTS
 #' @param brks A list object returned by `season` or `season_mov`.
 #' @param show.legend Whether to show legend?

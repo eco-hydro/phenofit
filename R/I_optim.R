@@ -111,14 +111,6 @@ I_optimx <- function(prior, FUN, y, t, method, verbose = FALSE, ...){
         print(opt.df)
 
         df <- opt.df[, c("method", "value", "xtimes", "convcode")]#
-        # df %<>% reshape2::melt(id.vars = "method", variable.name = "index")
-        # df$method %<>% as.factor()
-        # ggplot(df, aes(y = method, y = value*1000, fill = method)) +
-        #     geom_point() +
-        #     scale_y_log10() +
-        #     geom_boxplot(outlier.size=2) +
-        #     facet_wrap(~index, ncol = 1, scales = "free_y") +
-        #     geom_jitter(width = 0.15, size = 1.7, alpha = 1)
         avg <- aggregate(.~method, df, mean)
         avg <- avg[avg$convcode < 0.5, ]
         avg %<>% {.[with(., order(value, xtimes)), ]}

@@ -10,8 +10,11 @@ set_options(...)
 get_options(names = NULL)
 }
 \arguments{
-\item{options}{FUN_season: character, \code{season_mov} or \code{season}
+\item{...}{list of phenofit options
+FUN_season: character, \code{season_mov} or \code{season}
 rFUN: character, rough fitting function. \code{smooth_wWHIT}, \code{smooth_wSG} or \code{smooth_wHANTs}.}
+
+\item{names}{vector of character, names of options}
 }
 \description{
 set and get phenofit option

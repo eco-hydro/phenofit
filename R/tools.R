@@ -30,7 +30,9 @@ listk <- function(...){
     return(x)
 }
 
-#' @importFrom data.table melt
+#' melt_list
+#' @keywords internal
+#' @export 
 melt_list <- function (list, var.name = "variable", na.rm = TRUE, ...)
 {
     if (is.null(names(list)))
