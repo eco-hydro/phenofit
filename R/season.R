@@ -1,6 +1,6 @@
-#' @title Growing season dividing
+#' @title Growing season division
 #' @name season
-#'
+#' 
 #' @description
 #' Divide growing seasons according to rough fitting (`rFUN`) result .
 #'
@@ -16,7 +16,7 @@
 #' Two local minimum define a growing season.
 #' If two local minimum(maximum) are too closed, then only the smaller(biger)
 #' is left.
-#'
+#' 
 #' @param INPUT A list object with the elements of `t`, `y`, `w`,
 #' `Tn` (optional) and `ylu`, returned by [check_input()].
 #' @param rFUN Rough curve fitting function, can be one of [smooth_wSG()],
@@ -64,7 +64,7 @@
 #' @param ... For [season_mov()], Other parameters passed to
 #' [season()]; For [season()], other parameters passed to
 #' [findpeaks()].
-#'
+#' 
 #' @return
 #' - `fit`: A data.table of Rough fitting result, with the columns of
 #' (`t`, `y`, `witer1`, ..., `witerN`, `ziter1`, ..., `ziterN`).

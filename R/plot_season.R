@@ -8,7 +8,8 @@
 #' @param brks A list object returned by `season` or `season_mov`.
 #' @param show.legend Whether to show legend?
 #' @param title The main title (on top)
-#'
+#' @param IsPlot.OnlyBad If true, only plot partial figures whose NSE < 0.3.
+#' 
 #' @importFrom grid viewport pushViewport grid.draw
 #' @export
 plot_season <- function(

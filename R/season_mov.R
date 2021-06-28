@@ -1,21 +1,32 @@
-#' @param IsOptim_lambda Whether to optimize Whittaker's parameter lambda by
-#' V-curve theory?
+#' @param .lambda_vcurve Boolean. Whether to optimize Whittaker's parameter lambda by
+#' V-curve theory? This parameter only works when lambda not provided.
+#' 
 #' @param maxExtendMonth Previous and subsequent `maxExtendMonth` data were added
 #' for every year curve fitting.
 #' @param titlestr string for title
-#' @param IsPlot.vc Whether to plot V-curve optimized time-series.
-#' @param IsPlot.OnlyBad If true, only plot partial figures whose NSE < 0.3.
 #' @param years.run Numeric vector. Which years to run? If not specified, it is
 #' all years.
 #' @param len_min,len_max the minimum and maximum length (in the unit of days)
 #' of growing season
 #' @param show.legend boolean
-#'
-#' @importFrom lubridate leap_year
-#' @rdname season
+#' 
+#' @references
+#' 1. Kong, D., Zhang, Y., Wang, D., Chen, J., & Gu, X. (2020). Photoperiod
+#'    Explains the Asynchronization Between Vegetation Carbon Phenology and
+#'    Vegetation Greenness Phenology. Journal of Geophysical Research:
+#'    Biogeosciences, 125(8), e2020JG005636.
+#'    https://doi.org/10.1029/2020JG005636
+#' 2. Kong, D., Zhang, Y., Gu, X., & Wang, D. (2019). A robust method for
+#'    reconstructing global MODIS EVI time series on the Google Earth Engine.
+#'    ISPRS Journal of Photogrammetry and Remote Sensing, 155, 13-24.
+#' 
+#' @importFrom lubridate leap_year 
+#' @rdname season 
 #' @export
+# ' @param IsPlot.vc Whether to plot V-curve optimized time-series.
+# ' @param IsPlot.OnlyBad If true, only plot partial figures whose NSE < 0.3.
 season_mov <- function(INPUT, rFUN, wFUN, iters = 2, wmin = 0.1,
-    IsOptim_lambda = FALSE,
+    .lambda_vcurve = FALSE,
     lambda = NULL, nf  = 3, frame = floor(INPUT$nptperyear/5)*2 + 1,
     maxExtendMonth = 12,
     calendarYear = FALSE,
@@ -25,7 +36,8 @@ season_mov <- function(INPUT, rFUN, wFUN, iters = 2, wmin = 0.1,
     len_min = 45, len_max = 650,
     .check_season = TRUE,
     years.run = NULL,
-    IsPlot = FALSE, IsPlot.vc = FALSE, IsPlot.OnlyBad = FALSE,
+    IsPlot = FALSE, 
+    # IsPlot.vc = FALSE, IsPlot.OnlyBad = FALSE,
     show.legend = TRUE,
     plotdat = INPUT,  titlestr = "")
 {
@@ -86,7 +98,7 @@ season_mov <- function(INPUT, rFUN, wFUN, iters = 2, wmin = 0.1,
         input <- c(input, list(ylu = ylu, nptperyear=nptperyear, south=south))
 
         if (!has_lambda) {
-            vc = guess_lambda(input, wFUN, iters, IsOptim_lambda, IsPlot.vc)
+            vc = guess_lambda(input, wFUN, iters, .lambda_vcurve) # IsPlot.vc
             lambda = vc$lambda; vcs[[i]] <- vc
         }
 
@@ -128,13 +140,13 @@ season_mov <- function(INPUT, rFUN, wFUN, iters = 2, wmin = 0.1,
     brks$GOF <- stat_season(INPUT, brks)
 
     ## VISUALIZATION
-    if (IsPlot) plot_season(INPUT, brks, plotdat, ylu = INPUT$ylu, IsPlot.OnlyBad, show.legend = show.legend)
-    if (!has_lambda && IsOptim_lambda) brks$optim <- vcs
+    if (IsPlot) plot_season(INPUT, brks, plotdat, ylu = INPUT$ylu, IsPlot.OnlyBad = FALSE, show.legend = show.legend)
+    if (!has_lambda && .lambda_vcurve) brks$optim <- vcs
     return(brks)
 }
 
-guess_lambda <- function(input, wFUN = wTSM, iters = 2, IsOptim_lambda = FALSE, IsPlot.vc = FALSE, ...) {
-    if (IsOptim_lambda) {
+guess_lambda <- function(input, wFUN = wTSM, iters = 2, .lambda_vcurve = FALSE, IsPlot.vc = FALSE, ...) {
+    if (.lambda_vcurve) {
         y <- input$y %>% rm_empty() # should be NA values now
         # update 20181029, add v_curve lambda optimiazaiton in season_mov
         vc <- v_curve(input,

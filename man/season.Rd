@@ -4,7 +4,7 @@
 \alias{season}
 \alias{season_mov}
 \alias{stat_season}
-\title{Growing season dividing}
+\title{Growing season division}
 \usage{
 season(
   INPUT,
@@ -38,7 +38,7 @@ season_mov(
   wFUN,
   iters = 2,
   wmin = 0.1,
-  IsOptim_lambda = FALSE,
+  .lambda_vcurve = FALSE,
   lambda = NULL,
   nf = 3,
   frame = floor(INPUT$nptperyear/5) * 2 + 1,
@@ -52,8 +52,6 @@ season_mov(
   .check_season = TRUE,
   years.run = NULL,
   IsPlot = FALSE,
-  IsPlot.vc = FALSE,
-  IsPlot.OnlyBad = FALSE,
   show.legend = TRUE,
   plotdat = INPUT,
   titlestr = ""
@@ -132,8 +130,8 @@ is for fluxsite site-year data.}
 \code{\link[=season]{season()}}; For \code{\link[=season]{season()}}, other parameters passed to
 \code{\link[=findpeaks]{findpeaks()}}.}
 
-\item{IsOptim_lambda}{Whether to optimize Whittaker's parameter lambda by
-V-curve theory?}
+\item{.lambda_vcurve}{Boolean. Whether to optimize Whittaker's parameter lambda by
+V-curve theory? This parameter only works when lambda not provided.}
 
 \item{maxExtendMonth}{Previous and subsequent \code{maxExtendMonth} data were added
 for every year curve fitting.}
@@ -143,10 +141,6 @@ of growing season}
 
 \item{years.run}{Numeric vector. Which years to run? If not specified, it is
 all years.}
-
-\item{IsPlot.vc}{Whether to plot V-curve optimized time-series.}
-
-\item{IsPlot.OnlyBad}{If true, only plot partial figures whose NSE < 0.3.}
 
 \item{show.legend}{boolean}
 
@@ -216,6 +210,18 @@ brks2 <- season_mov(INPUT,
     rFUN = smooth_wWHIT, wFUN = wFUN,
     lambda = 10,
     plotdat = d, IsPlot = IsPlot, IsPlot.OnlyBad = FALSE)
+}
+\references{
+\enumerate{
+\item Kong, D., Zhang, Y., Wang, D., Chen, J., & Gu, X. (2020). Photoperiod
+Explains the Asynchronization Between Vegetation Carbon Phenology and
+Vegetation Greenness Phenology. Journal of Geophysical Research:
+Biogeosciences, 125(8), e2020JG005636.
+https://doi.org/10.1029/2020JG005636
+\item Kong, D., Zhang, Y., Gu, X., & Wang, D. (2019). A robust method for
+reconstructing global MODIS EVI time series on the Google Earth Engine.
+ISPRS Journal of Photogrammetry and Remote Sensing, 155, 13-24.
+}
 }
 \seealso{
 \code{\link[=findpeaks]{findpeaks()}}.
