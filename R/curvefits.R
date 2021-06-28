@@ -1,7 +1,7 @@
 #' Fine Curve fitting
-#'
+#' 
 #' Fine Curve fitting for INPUT time-series.
-#'
+#' 
 #' @inheritParams season
 #' @param INPUT A list object with the elements of 't', 'y', 'w', 'Tn' (optional)
 #' and 'ylu', returned by `check_input`.
@@ -111,7 +111,7 @@ curvefits <- function(INPUT, brks,
         I_end <- di$end[i]
 
         I_extend <- get_extentI(w0, MaxExtendWidth, MinExtendWidth, I_beg, I_end, nextend, wmin)
-
+        
         ## 2. input data
         ti   <- doys[I_extend]
         yi   <- INPUT$y[I_extend]
@@ -206,7 +206,11 @@ get_extentI <- function(w0, MaxExtendWidth, MinExtendWidth, I_beg, I_end, nexten
     I_beg2 <- ifelse( is.na(I_beg2), max_Beg, min(I_beg2, max_Beg))
     I_end2 <- ifelse( is.na(I_end2), min_End, max(I_end2, min_End))
 
-    return( I_beg2:I_end2 )
+    if (is_empty(I_beg2) || is_empty(I_end2)) {
+        return(I_beg:I_end)
+    } else {
+        return( I_beg2:I_end2 )
+    }
 }
 
 # merge two limits

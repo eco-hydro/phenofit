@@ -217,7 +217,10 @@ tidy_pheno <- function(pheno) {
     #     names(pheno) <- years
     # }
     names <- unlist(pheno[[1]]) %>% names()
-    p_date <- map_df(pheno, doy2date, .id = "flag") %>%
+
+    p_date <- map_df(pheno, function(x) {
+        doy2date(x) %>% set_names(names) %>% as.list() %>% as.data.table()
+    }, .id = "flag") %>%
         mutate(origin = ymd(paste0(substr(flag, 1, 4), "-01-01"))) %>%
         reorder_name(c("flag", "origin")) %>%
         set_colnames(c("flag", "origin", names)) %>%
@@ -226,7 +229,11 @@ tidy_pheno <- function(pheno) {
     colnames(p_date) %<>% gsub("GU\\.|ZHANG\\.", "", .)
     phenonames <- setdiff(colnames(p_date), c("flag", "origin", "meth"))
 
-    p_doy <- p_date %>% mutate(across(3:ncol(.), ~ as.numeric(.x - origin + 1)))
+    p_doy <- p_date %>% date2doy()
     vars <- c("flag", "origin", phenonames)
     list(doy = p_doy[, ..vars], date = p_date[, ..vars])
+}
+
+date2doy <- function(p_date){
+    p_date %>% mutate(across(3:ncol(.), ~ as.numeric(.x - origin + 1)))
 }

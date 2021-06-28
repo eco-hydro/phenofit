@@ -10,7 +10,7 @@
 #' @param len_min,len_max the minimum and maximum length (in the unit of days)
 #' of growing season
 #' @param show.legend boolean
-#' 
+#'
 #' @importFrom lubridate leap_year
 #' @rdname season
 #' @export
@@ -54,9 +54,6 @@ season_mov <- function(INPUT, rFUN, wFUN, iters = 2, wmin = 0.1,
         rtrough_max = rtrough_max, r_min = r_min*0, ...)
 
     has_lambda = !(is.null(lambda) || is.na(lambda))
-    brks  <- list()
-    vcs   <- vector("list", nyear-2) %>% set_names(years[2:(nyear-1)])
-
     width_ylu <- nptperyear*0 # already 3y group, moving window for ylu unnecessary
 
     nextend   <- ceiling(maxExtendMonth/12*nptperyear)
@@ -67,6 +64,9 @@ season_mov <- function(INPUT, rFUN, wFUN, iters = 2, wmin = 0.1,
     if (is.null(years.run)) {
         years.run = years
     } else years.run = intersect(years.run, years)
+
+    brks  <- list()
+    vcs   <- vector("list", length(years.run)) %>% set_names(years.run)
 
     for (year_i in years.run) {
         i = which(year_i == years)
@@ -126,7 +126,7 @@ season_mov <- function(INPUT, rFUN, wFUN, iters = 2, wmin = 0.1,
         }
     }
     brks$GOF <- stat_season(INPUT, brks)
-    
+
     ## VISUALIZATION
     if (IsPlot) plot_season(INPUT, brks, plotdat, ylu = INPUT$ylu, IsPlot.OnlyBad, show.legend = show.legend)
     if (!has_lambda && IsOptim_lambda) brks$optim <- vcs
@@ -212,9 +212,9 @@ season_calendar <- function(years, south = FALSE){
 #' @keywords internal
 #' @rdname season
 stat_season <- function(INPUT, brks){
-    d_org <- as.data.table(INPUT[c("t", "y0", "w")])
-    d_fit <- brks$fit %>% .[,.SD,.SDcols=c(1, ncol(.))] %>% set_colnames(c("t", "ypred"))
+    d_org <- if (!is.data.table(INPUT)) as.data.table(INPUT[c("t", "y0", "w")]) else INPUT
 
+    d_fit <- brks$fit %>% .[,.SD,.SDcols=c(1, ncol(.))] %>% set_colnames(c("t", "ypred"))
     d <- merge(d_org, d_fit, by = "t")
 
     stat <- with(d, GOF(y0, ypred, w, include.cv = TRUE, include.r = TRUE))# %>% as.list()

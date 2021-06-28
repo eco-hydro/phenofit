@@ -9,7 +9,7 @@ plot_phenofit(
   type = "all",
   methods,
   title = NULL,
-  title.ylab = "Vegetation Index",
+  ylab = "Vegetation Index",
   IsPlot = TRUE,
   show.legend = TRUE,
   newpage = TRUE,
@@ -28,7 +28,7 @@ f not specified, it will be determined by phenofit options \code{methods_fine}.}
 
 \item{title}{String, title of figure.}
 
-\item{title.ylab}{String, title of \code{xlab} and \code{ylab}.}
+\item{ylab}{String, title of \code{xlab} and \code{ylab}.}
 
 \item{IsPlot}{boolean. If false, a ggplot object will be returned.}
 

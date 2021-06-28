@@ -9,8 +9,9 @@ plot_curvefits(
   seasons,
   d_obs = NULL,
   title = NULL,
-  title.xlab = "Time",
-  title.ylab = "Vegetation Index",
+  xlab = "Time",
+  ylab = "Vegetation Index",
+  yticks = NULL,
   font.size = 14,
   theme = NULL,
   cex = 2,
@@ -30,7 +31,9 @@ of \code{t}, \code{y} and \code{QC_flag}. If not specified, it will be determine
 
 \item{title}{String, title of figure.}
 
-\item{title.xlab, title.ylab}{String, title of \code{xlab} and \code{ylab}.}
+\item{xlab, ylab}{String, title of \code{xlab} and \code{ylab}.}
+
+\item{yticks}{ticks of y axis}
 
 \item{font.size}{Font size of axis.text}
 

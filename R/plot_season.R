@@ -51,7 +51,8 @@ plot_season <- function(
     bottom = ifelse(show.legend, 3.2, 1) + 0.5
     par.old <- par(mar = c(bottom, 3, 1, 1), mgp = c(1.2, 0.6, 0))
     on.exit(par(par.old))
-    
+
+    if (is.null(INPUT$y0)) INPUT$y0 = INPUT$y
     ymin = min(INPUT$y0, na.rm = TRUE)
     ymax = max(INPUT$y0, na.rm = TRUE)
     ylim = c(ymin, (ymax - ymin)*0.08 + ymax)

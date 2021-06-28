@@ -156,4 +156,3 @@ l_pheno <- get_pheno(fit[1:7], method = "AG", TRS = TRS, IsPlot = TRUE, show_tit
 # p
 # # write_fig(p, "Figure7_comparison_with_others.pdf", 10, 4, show = TRUE)
 ```
-

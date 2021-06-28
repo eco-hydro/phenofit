@@ -13,19 +13,18 @@
 #' @export
 plot_phenofit <- function(obj, type = "all",
                           methods,
-                          title = NULL, title.ylab = "Vegetation Index",
+                          title = NULL, ylab = "Vegetation Index",
                           IsPlot = TRUE, show.legend = TRUE, newpage = TRUE, ...) {
     if (missing(methods) || is.null(methods)) {
         methods <- names(obj$fit[[1]]$fFIT)
     }
-
     g <- NULL
 
     plot_fitting <- function() {
         df_fit <- get_fitting(obj$fit)
         df_fit <- df_fit[meth %in% methods]
 
-        g <- plot_curvefits(df_fit, obj$seasons, title, title.ylab, show.legend = show.legend, ...)
+        g <- plot_curvefits(df_fit, obj$brks, title = title, ylab = ylab, show.legend = show.legend, ...)
 
         if (IsPlot) {
             if (newpage) grid::grid.newpage()
@@ -33,7 +32,7 @@ plot_phenofit <- function(obj, type = "all",
         }
         return(g)
     }
-
+    
     if (type == "fitting") {
         g <- plot_fitting()
     } else if (type == "season") {
