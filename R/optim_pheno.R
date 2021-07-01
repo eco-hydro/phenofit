@@ -22,11 +22,11 @@
 #' @param constrain boolean, whether to use parameter constrain
 #' @param verbose Whether to display intermediate variables?
 #' @param ... other parameters passed to [I_optim()] or [I_optimx()].
-#' 
+#'
 #' @return fFIT object, see [fFIT()] for details.
-#' 
+#'
 #' @seealso [FitDL()], [stats::nlminb()]
-#' 
+#'
 #' @example R/examples/ex-optim_pheno.R
 #'
 #' @import optimx
@@ -36,14 +36,15 @@ optim_pheno <- function(
     y, t, tout, method,
     w, nptperyear, ylu,
     iters = 2, wFUN = wTSM,
-    lower = -Inf, upper = Inf, 
+    lower = -Inf, upper = Inf,
     constrain = TRUE,
     verbose = FALSE, ...)
 {
     if (!constrain) {
         lower = -Inf; upper = Inf
     }
-    sFUN = gsub("\\.", "_", sFUN )
+
+    # sFUN = gsub("\\.", "_", sFUN )
     FUN <- get(sFUN, mode = "function" )
 
     ntime = length(t)
@@ -95,7 +96,7 @@ optim_pheno <- function(
         # do.call(I_optimFUN, params)
         # save(list = ls(), file = "debug.rda")
         # pass verbose for optimx optimization methods selection
-        opt.df  <- I_optimFUN(prior, FUN, y, t, method = method, w = w, verbose = verbose, 
+        opt.df  <- I_optimFUN(prior, FUN, y, t, method = method, w = w, verbose = verbose,
             lower = lower, upper = upper, ...)
         # print(opt.df)
         if (verbose){
@@ -127,7 +128,7 @@ optim_pheno <- function(
                 # put opt par into prior for the next iteration
                 prior <- rbind(prior[1:(nrow(prior)-1), ], par, deparse.level = 0) %>%
                     unique.matrix()
-                FUN(par, tout, ypred)
+                ypred = FUN(par, tout)
                 # too much missing values
                 # if (sum(w == 0)/length(w) > 0.5) ypred <- ypred*NA
                 # to adapt wTS, set iter = i-1; #20180910

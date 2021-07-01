@@ -107,6 +107,28 @@ FitDL.AG <- function(y, t = index(y), tout = t,
     optim_pheno(prior, sFUN, y, t, tout, method, w, lower = lower, upper = upper, ...)
 }
 
+# background value 非对称高斯分布
+#' @rdname FitDL
+#' @export
+FitDL.AG2 <- function(y, t = index(y), tout = t, 
+    method = 'nlminb', w, ...)
+{
+    if (missing(w)) w <- rep(1, length(y))
+    e <- init_param(y, t, w)
+    # print(ls.str(envir = e))
+
+    sFUN <- "doubleLog.AG2"
+    prior <- with(e, rbind(
+        c(doy.mx, mn, mn, mx, 1/half    , 2, 1/half, 2),
+        # c(doy.mx, mn, mx, 0.2*half, 1  , 0.2*half, 1),
+        # c(doy.mx, mn, mx, 0.5*half, 1.5, 0.5*half, 1.5),
+        c(doy.mx, mn, mn, mx, 1/(0.8*half), 3, 1/(0.8*half), 3)))
+    # referenced by TIMESAT
+    lower  <- with(e$lims, c(t0[1], mn[1], mn[1], mx[1], 1/(1.4*e$half), 2, 1/(1.4*e$half), 2))
+    upper  <- with(e$lims, c(t0[2], mn[2], mn[2], mx[2], 1/(0.1*e$half), 6, 1/(0.1*e$half), 6))
+    optim_pheno(prior, sFUN, y, t, tout, method, w, lower = lower, upper = upper, ...)
+}
+
 #' @rdname FitDL
 #' @export
 FitDL.Beck <- function(y, t = index(y), tout = t, 

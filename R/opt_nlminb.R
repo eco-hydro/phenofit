@@ -83,13 +83,3 @@ opt_nlminb_julia <- function(
 check_double <- function(x) {
     if(!is.null(x)) as.double(x) else NULL
 }
-
-#' julia_init
-#' 
-#' @keywords internal
-#' @import JuliaCall
-#' @export
-julia_init <- function(){
-    julia <- julia_setup()
-    julia_library("nlminb")
-}

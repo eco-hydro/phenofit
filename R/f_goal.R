@@ -23,7 +23,8 @@ f_goal <- function(
     if (!all(is.finite(par))) return(9999)
 
     # fun is c++ function, pred address will be reused
-    fun(par, t, pred)
+    # fun(par, t, pred)
+    pred = fun(par, t)
     # If have no finite values, return 9999
     if (!all(is.finite(pred))) return(9999) # for Klos fitting
 
@@ -41,7 +42,7 @@ f_goal <- function(
     # if (missing(w)) w <- rep(1, length(y))
     # RMSE <- sqrt(SSE/length(y))
     # return(RMSE)
-    
+
     # NSE  <- SSE/sum((y - mean(pred))^2)
     # 1. better handle low and high values simulation
     # xpred_2 <- sqrt(xpred_2)

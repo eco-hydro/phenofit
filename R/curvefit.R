@@ -51,20 +51,26 @@ curvefit <- function(y, t = index(y), tout = t,
 
     params <- list(y, t, tout, optimFUN = I_optim, ...)
 
-    # if ('spline' %in% methods) fit.spline <- splinefit(y, t, tout)
-    if ('AG'     %in% methods) fit.AG     <- do.call(FitDL.AG,    c(params, method = "nlminb"))  #nlm
-    if ('Beck'   %in% methods) fit.Beck   <- do.call(FitDL.Beck,  c(params, method = "nlminb"))  #nlminb
-    if ('Elmore' %in% methods) fit.Elmore <- do.call(FitDL.Elmore,c(params, method = "nlminb"))  #nlminb
-
-    # best: BFGS, but its speed lower than other function, i.e. nlm
-    if ('Gu'     %in% methods) fit.Gu     <- do.call(FitDL.Gu,    c(params, method = "nlminb"))  #nlm, ucminf
-    if ('Klos'   %in% methods) fit.Klos   <- do.call(FitDL.Klos,  c(params, method = "BFGS"))    #BFGS, Nelder-Mead, L-BFGS-B
-    if ('Zhang'  %in% methods) fit.Zhang  <- do.call(FitDL.Zhang, c(params, method = "nlminb"))  #nlm
-
-    names <- ls(pattern = "fit\\.") %>% set_names(., .)
-    fFITs <- lapply(names, get, envir = environment()) %>%
-        set_names(gsub("fit\\.", "", names)) #remove `fit.` and update names
-
+    fFITs = lapply(methods %>% set_names(., .), function(meth){
+        meth_optim = ifelse(meth == "Klos", "BFGS", "nlminb")
+        expr = sprintf('do.call(FitDL.%s, c(params, method = "%s"))', meth, meth_optim)
+        eval(parse(text = expr))
+    })
     structure(list(data = data.table(y, t), tout = tout, fFIT = fFITs),
         class = 'fFITs')
+    # if ('spline' %in% methods) fit.spline <- splinefit(y, t, tout)
+    # if ('AG'     %in% methods) fit.AG     <- do.call(FitDL.AG,    c(params, method = "nlminb"))  #nlm
+    # if ('AG2'    %in% methods) fit.AG2    <- do.call(FitDL.AG2,    c(params, method = "nlminb"))  #nlm
+
+    # if ('Beck'   %in% methods) fit.Beck   <- do.call(FitDL.Beck,  c(params, method = "nlminb"))  #nlminb
+    # if ('Elmore' %in% methods) fit.Elmore <- do.call(FitDL.Elmore,c(params, method = "nlminb"))  #nlminb
+
+    # # best: BFGS, but its speed lower than other function, i.e. nlm
+    # if ('Gu'     %in% methods) fit.Gu     <- do.call(FitDL.Gu,    c(params, method = "nlminb"))  #nlm, ucminf
+    # if ('Klos'   %in% methods) fit.Klos   <- do.call(FitDL.Klos,  c(params, method = "BFGS"))    #BFGS, Nelder-Mead, L-BFGS-B
+    # if ('Zhang'  %in% methods) fit.Zhang  <- do.call(FitDL.Zhang, c(params, method = "nlminb"))  #nlm
+    
+    # # names <- ls(pattern = "fit\\.") %>% set_names(., .)
+    # fFITs <- lapply(names, get, envir = environment()) %>%
+    #     set_names(gsub("fit\\.", "", names)) #remove `fit.` and update names
 }

@@ -9,15 +9,16 @@
 process_phenofit <- function(
     y, t, w, QC_flag = NULL, nptperyear = 36,
     brks = NULL,
+    rFUN = "smooth_wWHIT",
     wFUN = wTSM,
-    fineFit = TRUE,
+    lambda = NULL,
+
     TRS = c(0.1, 0.2, 0.5, 0.6, 0.8, 0.9),
     iters = 2,
     maxExtendMonth = 12, minExtendMonth = 0.5,
     minPercValid = 0,
     south = FALSE,
     verbose = TRUE,
-    lambda = NULL,
     # lg_lambdas = seq(1, 4, 0.1),
     methods = c("AG", "Zhang", "Beck", "Elmore", "Gu"),
     outfile = NULL, # outfile for pdf figure
@@ -52,24 +53,23 @@ process_phenofit <- function(
         south = south,
         date_start = d_obs$t[1],
         date_end = last(d_obs$t))
+    # frame = floor(nptperyear/8) * 2 + 1 # wSG
 
-    # frame = floor(INPUT$nptperyear/8) * 2 + 1 # wSG
     if (.v_curve) {
         lg_lambdas <- seq(3.3, 5, 0.1) # 2000-
         r <- v_curve(INPUT, lg_lambdas, d = 2, IsPlot = FALSE)
         lambda = r$lambda
     }
-    print(lambda)
-
+    # print(lambda)
     # wFUN <- "wBisquare", "wTSM", threshold_max = 0.1, IGBP = CSH
     brks2  <- season_mov(INPUT,
-        rFUN = smooth_wWHIT,
+        rFUN = get(rFUN),
         wFUN = wFUN,
         iters = iters, wmin = 0.1,
         .lambda_vcurve = TRUE,
         lambda = lambda, 
         # nf = nf, frame = frame,
-        maxExtendMonth = maxExtendMonth,
+        maxExtendMonth = 12, #maxExtendMonth,
         # r_max = r_max, r_min = r_min,
         # r_minPeakHeight = r_minPeakHeight,
         # calendarYear = calendarYear,
@@ -108,36 +108,34 @@ process_phenofit <- function(
         listk(brks = brks2, data = d_obs) # , INPUT
     } else {
         dfit <- pheno <- NULL
-        if (fineFit) {
-            ## 2.4 Curve fitting
-            fit <- curvefits(INPUT, brks2,
-                methods = methods, # ,"klos",, 'Gu'
-                wFUN = wFUN,
-                iters = 2,
-                wmin = wmin,
-                maxExtendMonth = maxExtendMonth, minExtendMonth = minExtendMonth,
-                minPercValid = minPercValid,
-                print = verbose, verbose = FALSE,
-                use.y0 = use.y0,
-                ...
-            )
+        ## 2.4 Curve fitting
+        fit <- curvefits(INPUT, brks2,
+            methods = methods, # ,"klos",, 'Gu'
+            wFUN = wFUN,
+            iters = 2,
+            wmin = wmin,
+            maxExtendMonth = maxExtendMonth, minExtendMonth = minExtendMonth,
+            minPercValid = minPercValid,
+            print = verbose, verbose = FALSE,
+            use.y0 = use.y0,
+            ...
+        )
 
-            ## check the curve fitting parameters
-            l_param <- get_param(fit)
-            dfit    <- get_fitting(fit)
-            # d_gof <- get_GOF(fit)
+        ## check the curve fitting parameters
+        l_param <- get_param(fit)
+        dfit    <- get_fitting(fit)
+        # d_gof <- get_GOF(fit)
 
-            ## visualization
-            if (write.fig) {
-                check_dir(dirname(outfile))
-                # dfit2 = merge(d_obs, dfit[, -(3:4)], all.x = TRUE) # fill gaps in growing seasons
-                g <- plot_curvefits(dfit, brks2, d_obs = d_obs, title = title, cex = 1.5, ylab = ylab, yticks = yticks)
-                write_fig(g, outfile, 9, length(methods)*1.4, show = show)
-            }
-            ## 2.5 Extract phenology
-            l_pheno <- get_pheno(fit, TRS = TRS, IsPlot = F) # %>% map(~melt_list(., "meth"))
-            pheno <- l_pheno$doy %>% melt_list("meth")
+        ## visualization
+        if (write.fig) {
+            check_dir(dirname(outfile))
+            # dfit2 = merge(d_obs, dfit[, -(3:4)], all.x = TRUE) # fill gaps in growing seasons
+            g <- plot_curvefits(dfit, brks2, d_obs = d_obs, title = title, cex = 1.5, ylab = ylab, yticks = yticks)
+            write_fig(g, outfile, 9, length(methods)*1.4, show = show)
         }
+        ## 2.5 Extract phenology
+        l_pheno <- get_pheno(fit, TRS = TRS, IsPlot = F) # %>% map(~melt_list(., "meth"))
+        pheno <- l_pheno$doy %>% melt_list("meth")
         list(brks = brks2, data = d_obs, pheno = pheno, fit = fit, dfit = dfit)
     }
 }

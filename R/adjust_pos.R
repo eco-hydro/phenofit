@@ -43,6 +43,8 @@ adjust_pos <- function(pos, rm.closed, ypred, A, y_min, minpeakdistance)
     pos
 }
 
+# 如果在指定阈值之内，则进行合并；
+# 否则，仅保留最大的极值
 # rm duplicated max or min values
 rm_duplicate <- function(d, y, threshold){
     # d <- d[, 1:5]
@@ -67,7 +69,6 @@ rm_duplicate <- function(d, y, threshold){
     }
 }
 
-
 findpeaks_season <- function(ypred, y_max = 0, y_min = 0,
     minpeakdistance = 0, minpeakheight = 0,
     nyear = 1,
@@ -75,9 +76,9 @@ findpeaks_season <- function(ypred, y_max = 0, y_min = 0,
 {
     # local minimum values
     # peak values is small for minimum values, so can't use r_min here
-    peaks <- findpeaks(-ypred,
+    peaks <- findpeaks(-ypred, zero = "-",
         y_max = y_max, y_min = y_min * 0,
-        minpeakdistance = minpeakdistance, zero = "-", nups = 0)
+        minpeakdistance = minpeakdistance, nups = 0)
     pos_min  <- peaks$X
     if (!is.null(pos_min)) {
         pos_min[, 1] %<>% multiply_by(-1)

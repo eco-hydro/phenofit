@@ -103,7 +103,7 @@ season <- function(INPUT, rFUN, wFUN, iters = 2, wmin = 0.1,
     y          <- INPUT$y
 
     nlen       <- length(t)
-
+    
     # 1. How many years data
     date_year <- year(t) + ((month(t) >= 7)-1)*south
     info  <- table(date_year) # rm years with so limited obs

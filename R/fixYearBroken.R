@@ -15,7 +15,7 @@ fixYearBroken <- function(di, t, ypred){
         I_end  = di$end
         I_peak = di$peak
     }
-
+    
     for (i in 1:nrow(di)){
         I    <- I_beg[i]:I_end[i]
         # Try to remove NA values at head and tail. Fialed, Na value may not

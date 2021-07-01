@@ -1,6 +1,6 @@
 #' @param .lambda_vcurve Boolean. Whether to optimize Whittaker's parameter lambda by
 #' V-curve theory? This parameter only works when lambda not provided.
-#' 
+#'
 #' @param maxExtendMonth Previous and subsequent `maxExtendMonth` data were added
 #' for every year curve fitting.
 #' @param titlestr string for title
@@ -9,7 +9,7 @@
 #' @param len_min,len_max the minimum and maximum length (in the unit of days)
 #' of growing season
 #' @param show.legend boolean
-#' 
+#'
 #' @references
 #' 1. Kong, D., Zhang, Y., Wang, D., Chen, J., & Gu, X. (2020). Photoperiod
 #'    Explains the Asynchronization Between Vegetation Carbon Phenology and
@@ -19,9 +19,9 @@
 #' 2. Kong, D., Zhang, Y., Gu, X., & Wang, D. (2019). A robust method for
 #'    reconstructing global MODIS EVI time series on the Google Earth Engine.
 #'    ISPRS Journal of Photogrammetry and Remote Sensing, 155, 13-24.
-#' 
-#' @importFrom lubridate leap_year 
-#' @rdname season 
+#'
+#' @importFrom lubridate leap_year
+#' @rdname season
 #' @export
 # ' @param IsPlot.vc Whether to plot V-curve optimized time-series.
 # ' @param IsPlot.OnlyBad If true, only plot partial figures whose NSE < 0.3.
@@ -36,7 +36,7 @@ season_mov <- function(INPUT, rFUN, wFUN, iters = 2, wmin = 0.1,
     len_min = 45, len_max = 650,
     .check_season = TRUE,
     years.run = NULL,
-    IsPlot = FALSE, 
+    IsPlot = FALSE,
     # IsPlot.vc = FALSE, IsPlot.OnlyBad = FALSE,
     show.legend = TRUE,
     plotdat = INPUT,  titlestr = "")

@@ -4,6 +4,7 @@
 \alias{FitDL}
 \alias{FitDL.Zhang}
 \alias{FitDL.AG}
+\alias{FitDL.AG2}
 \alias{FitDL.Beck}
 \alias{FitDL.Elmore}
 \alias{FitDL.Gu}
@@ -13,6 +14,8 @@
 FitDL.Zhang(y, t = index(y), tout = t, method = "nlm", w, ...)
 
 FitDL.AG(y, t = index(y), tout = t, method = "nlminb", w, ...)
+
+FitDL.AG2(y, t = index(y), tout = t, method = "nlminb", w, ...)
 
 FitDL.Beck(y, t = index(y), tout = t, method = "nlminb", w, ...)
 

@@ -103,7 +103,6 @@ void check_season(DataFrame d,
 
         // 坡脚修复大法，IT-BCi, ending of 2005; 必须是相邻troughs
         // Rcout << peak_temp << std::endl;
-
         if (t_diff > 0 && t_diff <= 150 &&
             T2_h_left <= trs && y_end[i] < y_beg[i + 1])
         {

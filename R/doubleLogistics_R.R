@@ -85,6 +85,35 @@ attr(doubleLog.AG, 'formula') <- expression( mn + (mx - mn)*exp(- ((t0 - t)*rsp)
 
 #' @rdname logistics
 #' @export
+doubleLog.AG2 <- function(par, t){
+    t0   <- par[1]
+    mn_l <- par[2]
+    mn_r <- par[3] 
+    mx   <- par[4]
+    rsp  <- par[5]
+    a3   <- par[6]
+    rau  <- par[7]
+    a5   <- par[8]
+
+    t_l = t[t <= t0]
+    t_r = t[t > t0]
+    
+    pred_l = mn_l + (mx - mn_l)*exp(- ((t0 - t_l)*rsp) ^a3)
+    pred_r = mn_r + (mx - mn_r)*exp(- ((t_r - t0)*rau) ^a5)
+    # pred <- mn + (mx - mn)*exp(- c( ((t0 - t[t <= t0])*rsp) ^a3,
+                    # ((t[t >  t0] - t0)*rau) ^a5) )
+    # return(pred)
+    c(pred_l, pred_r)
+}
+# a3, a5 should be greater than 1
+attr(doubleLog.AG2, 'par')     <- c("t0", "mn_l", "mn_r", "mx", "rsp", "a3", "rau", "a5")
+attr(doubleLog.AG2, 'formula') <- expression( 
+    mn_l + (mx - mn_l)*exp(- ((t0 - t)*rsp) ^a3),
+    mn_r + (mx - mn_r)*exp(- ((t - t0)*rau) ^a5)
+)
+
+#' @rdname logistics
+#' @export
 doubleLog.Beck <- function(par, t) {
     mn  <- par[1]
     mx  <- par[2]

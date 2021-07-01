@@ -4,6 +4,7 @@
 \alias{Logistic}
 \alias{doubleLog.Zhang}
 \alias{doubleLog.AG}
+\alias{doubleLog.AG2}
 \alias{doubleLog.Beck}
 \alias{doubleLog.Elmore}
 \alias{doubleLog.Gu}
@@ -15,6 +16,8 @@ Logistic(par, t)
 doubleLog.Zhang(par, t)
 
 doubleLog.AG(par, t)
+
+doubleLog.AG2(par, t)
 
 doubleLog.Beck(par, t)
 
