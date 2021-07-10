@@ -127,18 +127,18 @@ lambda <- init_lambda(INPUT$y)
 #                max_MaxPeaksperyear =2.5, max_MinPeaksperyear = 3.5) #, ...
 # get growing season breaks in a 3-year moving window
 brks2 <- season_mov(INPUT, 
-                   FUN = smooth_wWHIT, wFUN = wFUN,
-                   maxExtendMonth = 6, r_min = 0.1,
-                   IsPlot = IsPlot, IsPlot.OnlyBad = FALSE, print = print)
+    list(FUN = smooth_wWHIT, wFUN = wFUN, maxExtendMonth = 6, r_min = 0.1))
+plot_season(INPUT, brks2)
 ```
 
 ## 2.4 Curve fitting
 ```{r curve fitting, fig.height=7, fig.align="center"}
 fit  <- curvefits(INPUT, brks2,
-                  methods = c("AG", "Zhang", "Beck", "Elmore"), #,"klos",, 'Gu'
-                  wFUN = wFUN,
-                  nextend = 2, maxExtendMonth = 3, minExtendMonth = 1, minPercValid = 0.2,
-                  print = print, verbose = FALSE)
+    options = list(
+        methods = c("AG", "Zhang", "Beck", "Elmore"), #,"klos",, 'Gu'
+        wFUN = wFUN,
+        nextend = 2, maxExtendMonth = 3, minExtendMonth = 1, minPercValid = 0.2
+    ))
 
 ## check the curve fitting parameters
 l_param <- get_param(fit)
@@ -154,7 +154,7 @@ print(head(d_gof))
 # print(fit$fits$AG$`2002_1`$ws)
 print(fit$`2002_1`$fFIT$AG$ws)
 ## visualization
-g <- plot_curvefits(d_fit, brks2, NULL, title.ylab = "NDVI", "Time",
+g <- plot_curvefits(d_fit, brks2, NULL, ylab = "NDVI", "Time",
                    theme = coord_cartesian(xlim = c(ymd("2000-04-01"), ymd("2017-07-31"))))
 grid::grid.newpage(); grid::grid.draw(g)# plot to check the curve fitting
 # write_fig(g, "Figure1_phenofit_curve_fitting.pdf", 10, 6)

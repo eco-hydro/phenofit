@@ -1,46 +1,78 @@
+# list2env(options_season, envir = environment())
+options_season <- list(
+    rFUN              = "smooth_wWHIT",
+    wFUN              = "wTSM",
+    iters             = 2,    # rough fitting
+    wmin              = 0.1,  # weights updating wmin
+    
+    lambda            = NULL,  # only used when rFUN = `smooth_wWHIT`
+    .lambda_vcurve    = TRUE, # if lambda not provided, will be optimized by v-curve theory
+    frame             = 11, # only used when rFUN = `smooth_wSG`
+    nf                = 4,  # only used when rFUN = `smooth_wHANTs`
+
+    minpeakdistance   = NULL, # if `null`, default is `nptperyear/6`
+    ypeak_min         = 0.1,
+
+    r_max             = 0.2,
+    r_min             = 0.05,
+    rtrough_max       = 0.6,
+
+    MaxPeaksPerYear   = 2,
+    MaxTroughsPerYear = 3,
+
+    calendarYear      = FALSE,
+    adj.param         = TRUE,  # auto adjust rough fitting parameter
+    rm.closed         = TRUE,
+    is.continuous     = TRUE,
+    .check_season     = TRUE, 
+
+    # options in `season_mov`
+    maxExtendMonth    = 12,   # in month
+    nextend           = NULL, # in point, default is `ceiling(maxExtendMonth/12*nptperyear)`
+
+    len_min           = 45, 
+    len_max           = 650, 
+
+    verbose           = FALSE
+)
+
+# fine fitting parameters
+options_fitting <- list(
+    methods            = c("AG", "Beck", "Elmore", "Zhang"),
+    wFUN               = "wTSM",
+    iters              = 2,   # iterations for fine fitting
+    wmin               = 0.1,  # weights updating wmin
+
+    use.y0             = TRUE, 
+    use.rough          = FALSE,
+
+    nextend            = 2  , # n good-points extend
+    minExtendMonth     = 0.5, # in month
+    maxExtendMonth     = 1  , # in month
+    minPercValid       = 0,   # in 0-1
+    verbose            = TRUE
+)
+
 .options <- list2env(list(
     # INPUT DATA
     file_vi            = "", 
     file_qc            = "",
     qcFUN              = "qc_summary",
     nptperyear         = 23, 
+    south              = FALSE,
     ymin               = 0.1,
     ws                 = c(0.2, 0.5, 0.8), # initial weights
     
-    # whether to use original `y0` for plot, which is before the rocess of `check_input`.
-    # 
-    use.y0             = TRUE, 
-
     # methods
     FUN_season         = "season_mov",
-    rFUN               = "smooth_wWHIT",
-    methods_fine       = c("AG", "Beck", "Elmore", "Zhang"),
     methods_pheno      = c("TRS", "DER", "Zhang", "Gu"),
-    wFUN_rough         = "wTSM",
-    wFUN_fine          = "wTSM",
-
-    frame              = 11, # only used when rFUN = `smooth_wSG`
-    lambda             = 2,  # only used when rFUN = `smooth_wWHIT`
-    nf                 = 4,  # only used when rFUN = `smooth_wHANTs`
-
-    # parameters
-    iters_rough        = 2,   # iterations for rough fitting
-    iters_fine         = 2,   # iterations for fine fitting
-    
-    r_max              = 0.2, # see details in growing season dividing
-    r_min              = 0,
-    rtrough_max        = 0.8,
-
-    nextend            = 2  , # n good-points extend
-    minExtendMonth     = 0.5, # in month
-    maxExtendMonth     = 1  , # in month
-    minPercValid       = 0,   # in 0-1
   
+    # parameters
+    season             = options_season,
+    fitting            = options_fitting,
+    
     verbose_season_mov = TRUE,
-    verbose_season     = FALSE,
-    verbose_curvefit   = TRUE, 
-    calendarYear       = TRUE,
-    south              = FALSE
+    verbose_season     = FALSE
 ))
 
 #' set and get phenofit option

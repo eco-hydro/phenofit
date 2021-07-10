@@ -8,7 +8,6 @@ plot_season(
   INPUT,
   brks,
   plotdat,
-  ylu,
   IsPlot.OnlyBad = FALSE,
   show.legend = TRUE,
   ylab = "VI",
@@ -25,9 +24,6 @@ plot_season(
 Only if \code{IsPlot=TRUE}, \code{\link[=plot_input]{plot_input()}} will be used to plot.
 Known that y and w in \code{INPUT} have been changed, we suggest using the
 original data.table.}
-
-\item{ylu}{\verb{[low, high]} of time-series y (curve fitting values are constrained
-in the range of \code{ylu}.}
 
 \item{IsPlot.OnlyBad}{If true, only plot partial figures whose NSE < 0.3.}
 

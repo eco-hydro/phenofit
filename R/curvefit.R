@@ -56,7 +56,7 @@ curvefit <- function(y, t = index(y), tout = t,
         expr = sprintf('do.call(FitDL.%s, c(params, method = "%s"))', meth, meth_optim)
         eval(parse(text = expr))
     })
-    structure(list(data = data.table(y, t), tout = tout, fFIT = fFITs),
+    structure(list(data = data.table(y, t), tout = tout, model = fFITs),
         class = 'fFITs')
     # if ('spline' %in% methods) fit.spline <- splinefit(y, t, tout)
     # if ('AG'     %in% methods) fit.AG     <- do.call(FitDL.AG,    c(params, method = "nlminb"))  #nlm

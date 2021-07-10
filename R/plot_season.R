@@ -1,7 +1,7 @@
 #' plot_season
 #'
 #' Plot growing season divding result.
-#'
+#' 
 #' @inheritParams season
 #' @inheritParams plot_input
 #' @inheritParams smooth_wHANTS
@@ -10,10 +10,16 @@
 #' @param title The main title (on top)
 #' @param IsPlot.OnlyBad If true, only plot partial figures whose NSE < 0.3.
 #' 
+#' @param plotdat (optional) A list or data.table, with `t`, `y` and `w`.
+#' Only if `IsPlot=TRUE`, [plot_input()] will be used to plot.
+#' Known that y and w in `INPUT` have been changed, we suggest using the
+#' original data.table.
+
 #' @importFrom grid viewport pushViewport grid.draw
 #' @export
 plot_season <- function(
-    INPUT, brks, plotdat, ylu,
+    INPUT, brks, plotdat, 
+    # ylu,
     IsPlot.OnlyBad = FALSE, show.legend = TRUE,
     ylab = "VI", title = NULL)
 {

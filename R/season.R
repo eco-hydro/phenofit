@@ -50,21 +50,15 @@
 #' If TroughsPerYear > MaxTroughsPerYear, then lambda = lambda*2.
 #' @param calendarYear If true, only one static calendar growing season will be
 #' returned.
-#' @param IsPlot Boolean
-#' @param plotdat (optional) A list or data.table, with `t`, `y` and `w`.
-#' Only if `IsPlot=TRUE`, [plot_input()] will be used to plot.
-#' Known that y and w in `INPUT` have been changed, we suggest using the
-#' original data.table.
 #' @param adj.param Adjust rough curve fitting function parameters automatically,
 #' if too many or to less peak and trough values.
 #' @param rm.closed boolean. Whether check the two closest peaks (or troughs).
 #' @param is.continuous boolean. Whether the input is continuous? This parameter
 #' is for fluxsite site-year data.
 #' @param .check_season not used (only for debug)
-#' @param ... For [season_mov()], Other parameters passed to
-#' [season()]; For [season()], other parameters passed to
-#' [findpeaks()].
-#'
+#' @param ... ignored.
+#' @param verbose whether to print `options_season` into console?
+#' 
 #' @return
 #' - `fit`: A data.table of Rough fitting result, with the columns of
 #' (`t`, `y`, `witer1`, ..., `witerN`, `ziter1`, ..., `ziterN`).
@@ -74,29 +68,28 @@
 #' `season`, `flag`).
 #' @seealso [findpeaks()].
 #'
-#' @example inst/examples/ex-check_input.R
 #' @example inst/examples/ex-season.R
+#' 
 #' @export
 season <- function(
     INPUT, rFUN, wFUN, iters = 2, wmin = 0.1,
     lambda, nf  = 3, frame = floor(INPUT$nptperyear/5)*2 + 1,
 
-    minpeakdistance,
+    minpeakdistance = NULL,
     ypeak_min = 0.1,
     r_max = 0.2, r_min = 0.05,
     rtrough_max = 0.6,
     MaxPeaksPerYear = 2, MaxTroughsPerYear = 3,
     calendarYear = FALSE,
-
-    IsPlot  = FALSE, plotdat = INPUT,
     adj.param = TRUE,
     rm.closed = TRUE,
     is.continuous = TRUE,
     .check_season = TRUE,
+    verbose = FALSE,
     ...)
 {
-    if (missing(wFUN)) wFUN = get(.options$wFUN_rough)
-    if (missing(rFUN)) rFUN = .options$rFUN
+    if (missing(wFUN)) wFUN = .options$season$wFUN_rough
+    if (missing(rFUN)) rFUN = .options$season$rFUN
     rFUN = check_function(rFUN)
     wFUN = check_function(wFUN)
 
@@ -112,10 +105,10 @@ season <- function(
     info  <- table(date_year) # rm years with so limited obs
     years <- info[info > nptperyear*0.2] %>% {as.numeric(names(.))}
         #.[2:(length(.)-1)] # rm head and tail filled years
-    # nyear     <- length(years)
+    # nyear <- length(years)
 
     if (missing(frame)) frame <- floor(nptperyear/5) * 2 + 1
-    if (missing(minpeakdistance)) minpeakdistance <- nptperyear/6
+    if (is.null(minpeakdistance)) minpeakdistance <- nptperyear/6
 
     if (all(is.na(y))) return(NULL)
     npt   <- sum(INPUT$w > wmin)
@@ -171,23 +164,24 @@ season <- function(
             cat(sprintf('iloop = %d: lambda = %.1f, ntrough_PerYear = %.2f, npeak_PerYear = %.2f\n',
                 iloop, lambda, ntrough_PerYear, npeak_PerYear))
         ## This module will automatically update lambda, nf and wHANTS
-        #  Not only wWHd, it has been extended to wHANT and wSG. 20180910
         if (adj.param) {
-            delta_frame <- ceiling(nptperyear/12)
-             # adjust frame in the step of `month`
-            if (is.null(npeak_PerYear) || is.null(ntrough_PerYear)) browser()
+            # auto_adjust <- function(nptperyear, npeak_PerYear, ntrough_PerYear, MaxPeaksPerYear, MaxTroughsPerYear, lambda, nf, frame) {
+              delta_frame <- ceiling(nptperyear/12)
+               # adjust frame in the step of `month`
+              if (is.null(npeak_PerYear) || is.null(ntrough_PerYear)) browser()
 
-            if (npeak_PerYear > MaxPeaksPerYear | ntrough_PerYear > MaxTroughsPerYear) {
-                lambda <- lambda*2
-                nf     <- max(1, nf - 1)
-                frame  <- min(frame + delta_frame, nptperyear*2)
-            } else if (npeak_PerYear < 0.8  | ntrough_PerYear < 0.8) {
-                lambda <- lambda/2
-                nf     <- min(5, nf + 1)
-                frame  <- max(frame - delta_frame, delta_frame)
-            } else {
-                break
-            }
+              if (npeak_PerYear > MaxPeaksPerYear | ntrough_PerYear > MaxTroughsPerYear) {
+                  lambda <- lambda*2
+                  nf     <- max(1, nf - 1)
+                  frame  <- min(frame + delta_frame, nptperyear*2)
+              } else if (npeak_PerYear < 0.8  | ntrough_PerYear < 0.8) {
+                  lambda <- lambda/2
+                  nf     <- min(5, nf + 1)
+                  frame  <- max(frame - delta_frame, delta_frame)
+              } else {
+                  break
+              }
+            # }
             iloop <- iloop + 1
         } else {
             break
@@ -239,10 +233,10 @@ season <- function(
         # fix whole year data missing in FLUXNET data, di: beg, peak and end
         dt <- di2dt(di, t, ypred)
         if (!is.continuous) dt %<>% fixYearBroken(t, ypred)
-        
+
         dt = dt[len > 45 & len < 650, ] # mask too long and short gs
         if (.check_season) {
-            dt = check_season_dt(dt, rtrough_max = rtrough_max, r_min = r_min)
+            dt %<>% check_season_dt()
             if (!is.continuous) dt %<>% fixYearBroken(t, ypred)
         }
     }
@@ -252,17 +246,15 @@ season <- function(
     if (south) dt[, year := year + as.integer(peak >= ymd(sprintf('%d0701', year))) - 1L]
     dt[, `:=`(season = as.numeric(1:.N), flag = sprintf("%d_%d", year, 1:.N)), .(year)]
     res <- list(fit = rfit, dt = dt)
-
-    ## 7. plot
-    if (IsPlot) plot_season(INPUT, res, plotdat, INPUT$ylu)
     return(res)
 }
+# if (IsPlot) plot_season(INPUT, res, plotdat, INPUT)
 
 #' Check growing season head and tail minimum values
-#' 
+#'
 #' @param pos data.frame, with the columns of `pos`, `type`, and `val`.
 #' @param minlen `nptperyear/3`, distance from peak point.
-#' 
+#'
 #' @return di
 check_GS_HeadTail <- function(pos, ypred, minlen, A = NULL,...){
     if (is.null(A)) A = diff(range(ypred))

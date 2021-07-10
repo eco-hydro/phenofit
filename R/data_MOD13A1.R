@@ -35,3 +35,19 @@
 #' @references
 #' 1. https://code.earthengine.google.com/dataset/MODIS/006/MOD13A1
 'MOD13A1'
+
+
+#' MOD13A1 EVI observations at flux site CA-NS6
+#' 
+#' Variables in CA-NS6:
+#' - `site`: site name 
+#' - `y`: EVI
+#' - `date`: date of image
+#' - `t`: date of compositing image
+#' - `w`: weights of data point
+#' - `QC_flag`: QC flag of y, in the range of `c("snow", "cloud", "shadow", "aerosol", "marginal", "good")`
+#' 
+#' @docType data
+#' @usage
+#' data('CA_NS6')
+"CA_NS6"

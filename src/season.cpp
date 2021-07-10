@@ -58,6 +58,8 @@ void check_season(DataFrame d,
     NumericVector y_peak = d["y_peak"];
 
     int n = d.nrow();
+    if (n == 1) return;
+    
     Date newdate;
     double newval;
 

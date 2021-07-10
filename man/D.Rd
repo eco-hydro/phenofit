@@ -67,7 +67,7 @@ y <- fFUN(par, t)
 
 methods <- c("AG", "Beck", "Elmore", "Gu", "Zhang") # "Klos" too slow
 fFITs <- curvefit(y, t, tout, methods)
-fFIT  <- fFITs$fFIT$AG
+fFIT  <- fFITs$model$AG
 d1 <- D1(fFIT)
 d2 <- D2(fFIT)
 d_k <- curvature(fFIT)

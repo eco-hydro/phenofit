@@ -15,9 +15,8 @@
 #' @param cex point size for VI observation.
 #' @param angle `text.x` angle
 #'
-#' @example inst/examples/ex-check_input.R
-#' @example inst/examples/ex-visual.R
-#'
+#' @example inst/examples/ex-curvefits.R
+#' 
 #' @export
 plot_curvefits <- function(
     d_fit,

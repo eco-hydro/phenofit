@@ -62,9 +62,8 @@ dividing information.}
 \item{rFUN}{Rough curve fitting function, can be one of \code{\link[=smooth_wSG]{smooth_wSG()}},
 \code{\link[=smooth_wWHIT]{smooth_wWHIT()}} and \code{\link[=smooth_wHANTS]{smooth_wHANTS()}}.}
 
-\item{wFUN}{Character or function, weights updating function of fine fitting
-function.
-If not specified, it will be determined by phenofit options \code{wFUN_fine}.}
+\item{wFUN}{weights updating function, can be one of \code{\link[=wTSM]{wTSM()}},
+\code{\link[=wChen]{wChen()}}, \code{\link[=wBisquare]{wBisquare()}} and \code{\link[=wSELF]{wSELF()}}.}
 
 \item{lambda}{The smoothing parameter of \code{\link[=smooth_wWHIT]{smooth_wWHIT()}}. For
 \code{\link[=season_mov]{season_mov()}}, if lambda is \code{NULL}, \code{\link[=init_lambda]{init_lambda()}}
@@ -73,26 +72,10 @@ and 16-day inputs respectively.}
 
 \item{iters}{How many times curve fitting is implemented.}
 
-\item{maxExtendMonth}{Search good or marginal good values in previous and
-subsequent \code{maxExtendMonth} period.}
-
-\item{minExtendMonth}{Extending perid defined by \code{nextend} and
-\code{maxExtendMonth} should be no shorter than \code{minExtendMonth}.
-When all points of the input time-series are good value, then the extending
-period will be too short. In that situation, we can't make sure the connection
-between different growing seasons is smoothing.}
-
-\item{minPercValid}{(optional, default not use). If the percentage of good
-and marginal quality points is less than \code{minPercValid}, curve fiting result
-is set to \code{NA}.}
-
 \item{south}{Boolean. In south hemisphere, growing year is 1 July to the
 following year 31 June; In north hemisphere, growing year is 1 Jan to 31 Dec.}
 
-\item{methods}{Fine curve fitting methods, can be one or more of
-\code{c('AG', 'Beck', 'Elmore', 'Zhang', 'Gu', 'Klos')}. Note that 'Gu' and 'Klos'
-are very slow.
-f not specified, it will be determined by phenofit options \code{methods_fine}.}
+\item{verbose}{whether to print \code{options_season} into console?}
 
 \item{ymin}{If specified, \code{ylu[1]} is constrained greater than ymin. This
 value is critical for bare, snow/ice land, where vegetation amplitude is quite
@@ -106,9 +89,6 @@ the weight of snow, ice and cloud.}
 Snow flag is an important flag of ending of growing
 season. Snow points is more valuable than marginal points. Hence, the weight
 of snow should be great than that of \code{marginal}.}
-
-\item{use.y0}{boolean. whether to use original \code{y0}, which is before the
-process of \code{check_input}.}
 
 \item{alpha}{Double, in \verb{[0,1]}, quantile prob of ylu_min.}
 

@@ -72,9 +72,14 @@ div_season <- function(ypred, t = seq_along(ypred),
         if (!is.continuous) dt %<>% fixYearBroken(t, ypred)
     }
     if (is_empty(dt)) return(NULL)
-    dt %<>% set_names(c("time_start", "time_peak", "time_end", "val_start", "val_peak", "val_end", "len", "year"))
+    dt %<>% rename_season()
     listk(dt0, dt)
     # get the growing season year, not only the calendar year
     # if (south) dt[, year := year + as.integer(peak >= ymd(sprintf('%d0701', year))) - 1L]
     # dt[, `:=`(season = as.numeric(1:.N), flag = sprintf("%d_%d", year, 1:.N)), .(year)]
+}
+
+rename_season <- function(d) {
+    names(d)[1:6] <- c("time_start", "time_peak", "time_end", "val_start", "val_peak", "val_end")
+    d
 }

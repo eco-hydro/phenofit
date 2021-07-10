@@ -14,5 +14,5 @@ get_param <- function(fits){
 #' @rdname get_param
 #' @export
 get_param.fFITs <- function(fFITs){
-    map(fFITs$fFIT, ~.x[["par"]] %>% as_tibble())
+    map(fFITs$model, ~.x[["par"]] %>% as_tibble())
 }

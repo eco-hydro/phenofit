@@ -51,44 +51,40 @@ of \code{t}, \code{y} and \code{QC_flag}. If not specified, it will be determine
 plot_curvefits
 }
 \examples{
-library(phenofit)
-data("MOD13A1")
+data("CA_NS6")
+d = CA_NS6
 
-df <- tidy_MOD13(MOD13A1$dt)
-st <- MOD13A1$st
-
-date_start <- as.Date('2013-01-01')
-date_end   <- as.Date('2016-12-31')
-
-sitename <- 'CA-NS6' # df$site[1]
-d     <- df[site == sitename & (date >= date_start & date <= date_end), ]
-sp    <- st[site == sitename, ]
-south <- sp$lat < 0
 nptperyear <- 23
-
-# global parameter
-IsPlot = TRUE
-print  = FALSE
-ypeak_min  = 0.05
-wFUN = wTSM
-
-# add one year in head and tail
-# d     <- add_HeadTail(d, south = south, nptperyear = nptperyear) 
-INPUT    <- check_input(d$t, d$y, d$w, QC_flag = d$QC_flag,
-     nptperyear = nptperyear, south = south, 
+INPUT <- check_input(d$t, d$y, d$w, QC_flag = d$QC_flag,
+     nptperyear = nptperyear, south = FALSE,
      maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
+# plot_input(INPUT)
+
 # Rough fitting and growing season dividing
+wFUN <- "wTSM"
 brks2 <- season_mov(INPUT,
-    rFUN = smooth_wWHIT, wFUN = wFUN,
-    plotdat = d, IsPlot = IsPlot, IsPlot.OnlyBad = FALSE)
+    options = list(
+        rFUN = smooth_wWHIT, wFUN = wFUN,
+        r_min = 0.05, ypeak_min = 0.05,
+        lambda = 10,
+        verbose = FALSE
+    ))
+# plot_season(INPUT, brks2, d)
 # Fine fitting
 fit <- curvefits(
     INPUT, brks2,
-    methods = c("AG", "Beck", "Elmore", "Zhang"), #,"klos", "Gu"
-    wFUN = wFUN,
-    nextend = 2, maxExtendMonth = 2, minExtendMonth = 1, minPercValid = 0.2)
-## visualization
-df_fit <- get_fitting(fit)
-g <- plot_curvefits(df_fit, brks2)
+    options = list(
+        methods = c("AG", "Beck", "Elmore", "Zhang"), #,"klos", "Gu"
+        wFUN = wFUN,
+        nextend = 2, maxExtendMonth = 2, minExtendMonth = 1, minPercValid = 0.2
+    )
+)
+
+r_param = get_param(fit)
+r_pheno = get_pheno(fit)
+r_gof = get_GOF(fit)
+d_fit = get_fitting(fit)
+
+g <- plot_curvefits(d_fit, brks2)
 grid::grid.newpage(); grid::grid.draw(g)
 }

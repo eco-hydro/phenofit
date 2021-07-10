@@ -4,22 +4,7 @@
 \alias{curvefits}
 \title{Fine Curve fitting}
 \usage{
-curvefits(
-  INPUT,
-  brks,
-  methods,
-  wFUN,
-  iters = 2,
-  wmin = 0.1,
-  nextend = 2,
-  maxExtendMonth = 2,
-  minExtendMonth = 1,
-  minT = 0,
-  minPercValid = 0,
-  use.rough = FALSE,
-  use.y0 = TRUE,
-  ...
-)
+curvefits(INPUT, brks, options = list(), ...)
 }
 \arguments{
 \item{INPUT}{A list object with the elements of 't', 'y', 'w', 'Tn' (optional)
@@ -29,48 +14,38 @@ and 'ylu', returned by \code{check_input}.}
 \code{season} or \code{season_mov}, which contains the growing season
 dividing information.}
 
-\item{methods}{Fine curve fitting methods, can be one or more of
-\code{c('AG', 'Beck', 'Elmore', 'Zhang', 'Gu', 'Klos')}. Note that 'Gu' and 'Klos'
+\item{options}{\itemize{
+\item \code{methods} (default \verb{c('AG', 'Beck', 'Elmore', 'Zhang')``): Fine curve fitting methods, can be one or more of }c('AG', 'Beck', 'Elmore', 'Zhang', 'Gu', 'Klos')`. Note that 'Gu' and 'Klos'
 are very slow.
-f not specified, it will be determined by phenofit options \code{methods_fine}.}
-
-\item{wFUN}{Character or function, weights updating function of fine fitting
-function.
-If not specified, it will be determined by phenofit options \code{wFUN_fine}.}
-
-\item{iters}{How many times curve fitting is implemented.}
-
-\item{wmin}{Double, minimum weigth (i.e. weight of snow, ice and cloud).}
-
-\item{nextend}{Extend curve fitting window, until \code{nextend} good or
-marginal element are found in previous and subsequent growing season.}
-
-\item{maxExtendMonth}{Search good or marginal good values in previous and
-subsequent \code{maxExtendMonth} period.}
-
-\item{minExtendMonth}{Extending perid defined by \code{nextend} and
-\code{maxExtendMonth} should be no shorter than \code{minExtendMonth}.
-When all points of the input time-series are good value, then the extending
-period will be too short. In that situation, we can't make sure the connection
-between different growing seasons is smoothing.}
-
-\item{minT}{(optional). If Tn not provided in \code{INPUT}, \code{minT} will not be used.
-\code{minT} use night temperature Tn to define backgroud value (days with \code{Tn < minT}
-treated as ungrowing season).}
-
-\item{minPercValid}{(optional, default not use). If the percentage of good
-and marginal quality points is less than \code{minPercValid}, curve fiting result
-is set to \code{NA}.}
-
-\item{use.rough}{Whether to use rough fitting smoothed time-series as input?
+\item \code{wFUN} (default \code{wTSM}): Character or function, weights updating function
+of fine fitting function.
+\item \code{iters} (default 2): max iterations of fine fitting.
+\item \code{wmin} (default 0.1): min weights in the weights updating procedure.
+\item \code{use.rough} (default FALSE): Whether to use rough fitting smoothed time-series as input?
 If \code{false}, smoothed VI by rough fitting will be used for Phenological metrics
 extraction; If \code{true}, original input \code{y} will be used (rough fitting is used
-to divide growing seasons and update weights.}
+to divide growing seasons and update weights.
+\item \code{use.y0} (default TRUE): boolean. whether to use original \code{y0} as the input of \code{plot_input},
+note that not for curve fitting. \code{y0} is the original value before the process
+of \code{check_input}.
+\item \code{nextend} (default 2): Extend curve fitting window, until \code{nextend} good or
+marginal element are found in previous and subsequent growing season.
+\item \code{maxExtendMonth} (default 1): Search good or marginal good values in previous and
+subsequent \code{maxExtendMonth} period.
+\item \code{minExtendMonth} (default 2): Extending perid defined by \code{nextend} and \code{maxExtendMonth},
+should be no shorter than \code{minExtendMonth}.
+When all points of the input time-series are good value, then the extending
+period will be too short. In that situation, we can't make sure the connection
+between different growing seasons is smoothing.
+\item \code{minPercValid}: (default 0, not use). If the percentage of good
+and marginal quality points is less than \code{minPercValid}, curve fiting result
+is set to \code{NA}.
+\item \code{minT}: (not used currently). If \code{Tn} not provided in \code{INPUT}, \code{minT} will not be used.
+\code{minT} use night temperature Tn to define backgroud value (days with \code{Tn < minT}
+treated as ungrowing season).
+}}
 
-\item{use.y0}{boolean. whether to use original \code{y0}, which is before the
-process of \code{check_input}.}
-
-\item{...}{other parameters passed to curve fitting function.}
+\item{...}{other parameters to \code{\link[=curvefit]{curvefit()}}}
 }
 \value{
 List of phenofit fitting object.
@@ -79,42 +54,42 @@ List of phenofit fitting object.
 Fine Curve fitting for INPUT time-series.
 }
 \examples{
-library(phenofit)
-data("MOD13A1")
+data("CA_NS6")
+d = CA_NS6
 
-df <- tidy_MOD13(MOD13A1$dt)
-st <- MOD13A1$st
-
-date_start <- as.Date('2013-01-01')
-date_end   <- as.Date('2016-12-31')
-
-sitename <- 'CA-NS6' # df$site[1]
-d     <- df[site == sitename & (date >= date_start & date <= date_end), ]
-sp    <- st[site == sitename, ]
-south <- sp$lat < 0
 nptperyear <- 23
-
-# global parameter
-IsPlot = TRUE
-print  = FALSE
-ypeak_min  = 0.05
-wFUN = wTSM
-
-# add one year in head and tail
-# d     <- add_HeadTail(d, south = south, nptperyear = nptperyear) 
-INPUT    <- check_input(d$t, d$y, d$w, QC_flag = d$QC_flag,
-     nptperyear = nptperyear, south = south, 
+INPUT <- check_input(d$t, d$y, d$w, QC_flag = d$QC_flag,
+     nptperyear = nptperyear, south = FALSE,
      maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
+# plot_input(INPUT)
+
 # Rough fitting and growing season dividing
+wFUN <- "wTSM"
 brks2 <- season_mov(INPUT,
-    rFUN = smooth_wWHIT, wFUN = wFUN,
-    plotdat = d, IsPlot = IsPlot, print = FALSE, IsPlot.OnlyBad = FALSE)
+    options = list(
+        rFUN = smooth_wWHIT, wFUN = wFUN,
+        r_min = 0.05, ypeak_min = 0.05,
+        lambda = 10,
+        verbose = FALSE
+    ))
+# plot_season(INPUT, brks2, d)
 # Fine fitting
 fit <- curvefits(
     INPUT, brks2,
-    methods = c("AG", "Beck", "Elmore", "Zhang"), #,"klos", "Gu"
-    wFUN = wFUN,
-    nextend = 2, maxExtendMonth = 2, minExtendMonth = 1, minPercValid = 0.2)
+    options = list(
+        methods = c("AG", "Beck", "Elmore", "Zhang"), #,"klos", "Gu"
+        wFUN = wFUN,
+        nextend = 2, maxExtendMonth = 2, minExtendMonth = 1, minPercValid = 0.2
+    )
+)
+
+r_param = get_param(fit)
+r_pheno = get_pheno(fit)
+r_gof = get_GOF(fit)
+d_fit = get_fitting(fit)
+
+g <- plot_curvefits(d_fit, brks2)
+grid::grid.newpage(); grid::grid.draw(g)
 }
 \seealso{
 \code{\link[=FitDL]{FitDL()}}

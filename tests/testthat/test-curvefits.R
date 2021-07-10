@@ -14,27 +14,23 @@ wFUN = wTSM
 # #     max_MaxPeaksperyear =2.5, max_MinPeaksperyear = 3.5
 # # )
 brks2 <- season_mov(INPUT,
-    rFUN = smooth_wWHIT, wFUN = wFUN,
-    plotdat = d, IsPlot = IsPlot, IsOnlyPlotbad = FALSE)
+    options = list(rFUN = smooth_wWHIT, wFUN = wFUN))
 
 param <- list(
     INPUT, brks2,
-    methods = c("AG", "Beck", "Elmore", "Gu", "Zhang"), #,"klos",
-    debug = F,
-    wFUN = wFUN,
-    nextend = 2, maxExtendMonth = 3, minExtendMonth = 1,
-    qc = dnew$QC_flag, minPercValid = 0.2,
-    use.rough = TRUE
+    options = list(
+        methods = c("AG", "Beck", "Elmore", "Gu", "Zhang"), #,"klos",
+        wFUN = wFUN, nextend = 2, maxExtendMonth = 3, minExtendMonth = 1,
+        minPercValid = 0.2, use.rough = TRUE, verbose = FALSE
+    )
 )
-
-set_options(verbose_curvefit = FALSE)
 
 meth <- "AG"
 test_curvefit <- function(meth){
     test_that(sprintf("`curvefits` with %s", meth), {
         expect_silent({
             suppressWarnings({
-                param$methods <- meth
+                param$options$methods <- meth
                 fit  <- do.call(curvefits, param)
             })
         })

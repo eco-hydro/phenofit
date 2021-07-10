@@ -21,24 +21,25 @@ wFUN = wTSM
 
 ## 1. check_input
 # add one year in head and tail
-dnew     <- add_HeadTail(d, south = south, nptperyear = nptperyear)
-INPUT    <- check_input(dnew$t, dnew$y, dnew$w, QC_flag = dnew$QC_flag,
+# dnew     <- add_HeadTail(d, south = south, nptperyear = nptperyear)
+INPUT <- check_input(dnew$t, dnew$y, dnew$w, QC_flag = dnew$QC_flag,
      nptperyear = nptperyear, south = south,
      maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
 
 ## 2. Rough fitting and growing season dividing
 # Rough fitting and growing season dividing
 brks2 <- season_mov(INPUT,
-    rFUN = smooth_wWHIT,
-    wFUN = wFUN,
-    plotdat = d, IsPlot = IsPlot)
+    options = list(rFUN = smooth_wWHIT, wFUN = wFUN))
+    # plotdat = d, IsPlot = IsPlot)
 
 ## 3. Fine fitting and growing season dividing
 fits <- curvefits(
     INPUT, brks2,
-    methods = c("AG", "Beck", "Elmore", "Zhang"), #,"klos", "Gu"
-    wFUN = wFUN,
-    nextend = 2, maxExtendMonth = 2, minExtendMonth = 1, minPercValid = 0.2)
+    options = list(
+        methods = c("AG", "Beck", "Elmore", "Zhang"), #,"klos", "Gu"
+        wFUN = wFUN,
+        nextend = 2, maxExtendMonth = 2, minExtendMonth = 1, minPercValid = 0.2
+    ))
 
 ## 4. Phenological metric extraction
 l_param   <- get_param(fits)

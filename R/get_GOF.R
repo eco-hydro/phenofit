@@ -29,7 +29,8 @@ get_GOF <- function(fit){
 #' @rdname get_GOF
 #' @export
 get_GOF.fFITs <- function(fFITs){
-    methods <- names(fFITs$fFIT)
+    models = fFITs$model
+    methods <- names(models)
     nmeth   <- length(methods)
 
     t     <- fFITs$data$t
@@ -43,7 +44,7 @@ get_GOF.fFITs <- function(fFITs){
 
     # The following script assume that tout in every method is equal length.
     # calculate statistic for every meth
-    info <- map_df(fFITs$fFIT, function(fFIT){
+    info <- map_df(models, function(fFIT){
         Y_sim <- last(fFIT$zs)[I_sim]
         I <- which(!(is.na(Y_obs) | is.na(Y_sim)))
 

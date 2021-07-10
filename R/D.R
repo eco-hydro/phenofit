@@ -10,7 +10,7 @@ hess.fFIT <- function(fit, tout){
 # '
 # ' @param fit A curve fitting object returned by \code{curvefit}.
 # ' @param tout A vector of time steps at which the function can be predicted.
-# '
+# ' 
 # ' @examples
 # ' FUN <- doubleLog.Beck
 # ' 
@@ -65,7 +65,7 @@ grad.fFIT <- function(fit, tout){
 #' 
 #' methods <- c("AG", "Beck", "Elmore", "Gu", "Zhang") # "Klos" too slow
 #' fFITs <- curvefit(y, t, tout, methods)
-#' fFIT  <- fFITs$fFIT$AG
+#' fFIT  <- fFITs$model$AG
 #' d1 <- D1(fFIT)
 #' d2 <- D2(fFIT)
 #' d_k <- curvature(fFIT)

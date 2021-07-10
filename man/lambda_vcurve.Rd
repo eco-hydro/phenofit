@@ -11,7 +11,7 @@ lambda_vcurve(
   w,
   d = 2,
   lg_lambda_min = 0.1,
-  lg_lambda_max = 3,
+  lg_lambda_max = 5,
   IsPlot = FALSE
 )
 

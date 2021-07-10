@@ -109,32 +109,15 @@ Check input data, interpolate NA values in y, remove spike values, and set
 weights for NA in y and w.
 }
 \examples{
-library(phenofit)
-data("MOD13A1")
+data("CA_NS6")
+d = CA_NS6
+head(d)
 
-df <- tidy_MOD13(MOD13A1$dt)
-st <- MOD13A1$st
-
-date_start <- as.Date('2013-01-01')
-date_end   <- as.Date('2016-12-31')
-
-sitename <- 'CA-NS6' # df$site[1]
-d     <- df[site == sitename & (date >= date_start & date <= date_end), ]
-sp    <- st[site == sitename, ]
-south <- sp$lat < 0
 nptperyear <- 23
-
-# global parameter
-IsPlot = TRUE
-print  = FALSE
-ypeak_min  = 0.05
-wFUN = wTSM
-
-# add one year in head and tail
-# d     <- add_HeadTail(d, south = south, nptperyear = nptperyear) 
-INPUT    <- check_input(d$t, d$y, d$w, QC_flag = d$QC_flag,
-     nptperyear = nptperyear, south = south, 
+INPUT <- check_input(d$t, d$y, d$w, QC_flag = d$QC_flag,
+     nptperyear = nptperyear, south = FALSE, 
      maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
+plot_input(INPUT)
 }
 \seealso{
 \code{\link[=backval]{backval()}}

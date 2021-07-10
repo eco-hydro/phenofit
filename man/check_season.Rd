@@ -8,9 +8,9 @@
 \usage{
 check_season(d, rm_closed = TRUE, rtrough_max = 0.7, r_min = 0.02)
 
-check_season_dt(dt, rtrough_max, r_min, len_min = 45, len_max = 650)
+check_season_dt(dt)
 
-cheak_season_list(lst_dt, rtrough_max, r_min, len_min = 45, len_max = 650)
+cheak_season_list(lst_dt)
 }
 \arguments{
 \item{d}{Data.frame of growing season dividing info}
@@ -22,12 +22,6 @@ trough value. There are two threshold (left and right). The minimum threshold
 should be greater than r_min.}
 
 \item{dt}{data.table of growing season dividing info}
-
-\item{len_min}{the minimum and maximum length (in the unit of days)
-of growing season}
-
-\item{len_max}{the minimum and maximum length (in the unit of days)
-of growing season}
 
 \item{lst_dt}{list of \code{dt}. Every year is corresponding to a \code{dt}.}
 }

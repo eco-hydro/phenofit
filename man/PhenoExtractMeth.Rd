@@ -79,7 +79,7 @@ y <- fFUN(par, t)
 
 methods <- c("AG", "Beck", "Elmore", "Gu", "Zhang") # "Klos" too slow
 fFITs <- curvefit(y, t, tout, methods)
-fFIT  <- fFITs$fFIT$AG
+fFIT  <- fFITs$model$AG
 
 par(mfrow = c(2, 2))
 PhenoTrs(fFIT)

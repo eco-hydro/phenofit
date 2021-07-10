@@ -46,7 +46,7 @@ get_pheno <- function(fits, method,
     if (class(fits) == 'fFITs')  fits <- list(fits)
 
     names   <- names(fits) # methods
-    methods <- if (missing(method)) names(fits[[1]]$fFIT) else method
+    methods <- if (missing(method)) names(fits[[1]]$model) else method
 
     # pheno_list
     res <- lapply(set_names(seq_along(methods), methods), function(k){
@@ -60,13 +60,13 @@ get_pheno <- function(fits, method,
         # fFITs
         pheno_list <- lapply(seq_along(names) %>% set_names(names), function(i){
             fFITs <- fits[[i]]
-            title_left <- names[i]
-            showName_pheno <- ifelse(i == 1, TRUE, FALSE)
-            get_pheno.fFITs(fFITs, method,
-                TRS = TRS,
-                analytical = analytical, smoothed.spline = smoothed.spline,
-                IsPlot = IsPlot,
-                title_left = title_left, showName_pheno = showName_pheno)
+            .params = listk(
+                fFITs, method, TRS,
+                analytical, smoothed.spline, IsPlot,
+                showName_pheno = ifelse(i == 1, TRUE, FALSE),
+                title_left = names[i]
+            )
+            do.call(get_pheno.fFITs, .params)
         })
 
         if (IsPlot){
@@ -92,7 +92,7 @@ get_pheno.fFITs <- function(fFITs, method,
     IsPlot = FALSE,
     title_left = "", showName_pheno = TRUE)
 {
-    meths <- names(fFITs$fFIT)
+    meths <- names(fFITs$model)
     if (missing(method)) {
         method <- meths[1]
         warning(sprintf("method is missing and set to %s!", method))
@@ -101,12 +101,12 @@ get_pheno.fFITs <- function(fFITs, method,
         warning(sprintf("%s not in methods and set to %s!", method, meths[1]))
         method <- meths[1]
     }
+    fFIT <- fFITs$model[[method]]
 
     # get_pheno methods
     methods  <- c(paste0("TRS", TRS*10),"DER","GU", "ZHANG")
     TRS_last <- last(TRS) # only display last threshold figure
 
-    fFIT   <- fFITs$fFIT[[method]]
     ypred  <- last(fFIT$zs)
     all_na <- all(is.na(ypred))
 

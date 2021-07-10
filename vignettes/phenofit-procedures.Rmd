@@ -45,7 +45,7 @@ print(d)
 `date`: image date
 `t`   : composite date
 
-`QC_flag` and `t` are optional. 
+`QC_flag` and `date` are optional. 
 
 ## phenofit parameters
 ```{r}
@@ -61,6 +61,13 @@ methods_fine <- c("AG", "Zhang", "Beck", "Elmore", "Gu")
 
 ## growing season division and fine-curve fitting
 
+Simply treating calendar year as a complete growing season will induce a considerable error for phenology extraction. A simple growing season dividing method was proposed in `phenofit`.
+
+The growing season dividing method rely on heavily in Whittaker smoother. 
+
+Procedures of initial weight, growing season dividing, curve fitting, and phenology 
+extraction are conducted separately.
+
 ```{r}
 INPUT <- check_input(d$t, d$y, d$w,
     QC_flag = d$QC_flag,
@@ -69,22 +76,24 @@ INPUT <- check_input(d$t, d$y, d$w,
 )
 
 brks <- season_mov(INPUT,
-    FUN = smooth_wWHIT, wFUN = wFUN,
-    maxExtendMonth = 3,
-    wmin = wmin, r_min = 0.1
-)
+    list(FUN = smooth_wWHIT, wFUN = wFUN,
+        maxExtendMonth = 3,
+        wmin = wmin, r_min = 0.1
+    ))
+# plot_season(INPUT, brks)
 
 ## 2.4 Curve fitting
 fit <- curvefits(INPUT, brks,
-    methods = methods_fine, # ,"klos",, 'Gu'
-    wFUN = wFUN,
-    iters = 2,
-    nextend = 2,
-    wmin = wmin,
-    # constrain = FALSE,
-    maxExtendMonth = maxExtendMonth, minExtendMonth = minExtendMonth,
-    minPercValid = minPercValid
-)
+    list(
+        methods = methods_fine, # ,"klos",, 'Gu'
+        wFUN = wFUN,
+        iters = 2,
+        wmin = wmin,
+        # constrain = FALSE,
+        nextend = 2,
+        maxExtendMonth = maxExtendMonth, minExtendMonth = minExtendMonth,
+        minPercValid = minPercValid
+    ))
 
 ## check the curve fitting parameters
 l_param <- get_param(fit)
@@ -109,7 +118,7 @@ plot_season(INPUT, brks, ylab = "EVI")
 # Ipaper::write_fig({  }, "Figure4_seasons.pdf", 9, 4)
 
 # fine curvefitting
-g <- plot_curvefits(dfit, brks, title = NULL, cex = 1.5, title.ylab = "EVI", angle = 0)
+g <- plot_curvefits(dfit, brks, title = NULL, cex = 1.5, ylab = "EVI", angle = 0)
 grid::grid.newpage()
 grid::grid.draw(g)
 # Ipaper::write_fig(g, "Figure5_curvefitting.pdf", 8, 6, show = TRUE)

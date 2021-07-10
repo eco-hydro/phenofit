@@ -2,7 +2,6 @@
 % Please edit documentation in R/season.R, R/season_mov.R
 \name{season}
 \alias{season}
-\alias{season_mov}
 \alias{stat_season}
 \title{Growing season division}
 \usage{
@@ -15,7 +14,7 @@ season(
   lambda,
   nf = 3,
   frame = floor(INPUT$nptperyear/5) * 2 + 1,
-  minpeakdistance,
+  minpeakdistance = NULL,
   ypeak_min = 0.1,
   r_max = 0.2,
   r_min = 0.05,
@@ -23,38 +22,12 @@ season(
   MaxPeaksPerYear = 2,
   MaxTroughsPerYear = 3,
   calendarYear = FALSE,
-  IsPlot = FALSE,
-  plotdat = INPUT,
   adj.param = TRUE,
   rm.closed = TRUE,
   is.continuous = TRUE,
   .check_season = TRUE,
+  verbose = FALSE,
   ...
-)
-
-season_mov(
-  INPUT,
-  rFUN,
-  wFUN,
-  iters = 2,
-  wmin = 0.1,
-  .lambda_vcurve = FALSE,
-  lambda = NULL,
-  nf = 3,
-  frame = floor(INPUT$nptperyear/5) * 2 + 1,
-  maxExtendMonth = 12,
-  calendarYear = FALSE,
-  r_min = 0.05,
-  rtrough_max = 0.6,
-  ...,
-  len_min = 45,
-  len_max = 650,
-  .check_season = TRUE,
-  years.run = NULL,
-  IsPlot = FALSE,
-  show.legend = TRUE,
-  plotdat = INPUT,
-  titlestr = ""
 )
 
 stat_season(INPUT, brks)
@@ -109,13 +82,6 @@ If TroughsPerYear > MaxTroughsPerYear, then lambda = lambda*2.}
 \item{calendarYear}{If true, only one static calendar growing season will be
 returned.}
 
-\item{IsPlot}{Boolean}
-
-\item{plotdat}{(optional) A list or data.table, with \code{t}, \code{y} and \code{w}.
-Only if \code{IsPlot=TRUE}, \code{\link[=plot_input]{plot_input()}} will be used to plot.
-Known that y and w in \code{INPUT} have been changed, we suggest using the
-original data.table.}
-
 \item{adj.param}{Adjust rough curve fitting function parameters automatically,
 if too many or to less peak and trough values.}
 
@@ -126,25 +92,9 @@ is for fluxsite site-year data.}
 
 \item{.check_season}{not used (only for debug)}
 
-\item{...}{For \code{\link[=season_mov]{season_mov()}}, Other parameters passed to
-\code{\link[=season]{season()}}; For \code{\link[=season]{season()}}, other parameters passed to
-\code{\link[=findpeaks]{findpeaks()}}.}
+\item{verbose}{whether to print \code{options_season} into console?}
 
-\item{.lambda_vcurve}{Boolean. Whether to optimize Whittaker's parameter lambda by
-V-curve theory? This parameter only works when lambda not provided.}
-
-\item{maxExtendMonth}{Previous and subsequent \code{maxExtendMonth} data were added
-for every year curve fitting.}
-
-\item{len_min, len_max}{the minimum and maximum length (in the unit of days)
-of growing season}
-
-\item{years.run}{Numeric vector. Which years to run? If not specified, it is
-all years.}
-
-\item{show.legend}{boolean}
-
-\item{titlestr}{string for title}
+\item{...}{ignored.}
 
 \item{brks}{A list object returned by \code{season} or \code{season_mov}.}
 }
@@ -174,54 +124,30 @@ If two local minimum(maximum) are too closed, then only the smaller(biger)
 is left.
 }
 \examples{
-library(phenofit)
-data("MOD13A1")
+data("CA_NS6")
+d = CA_NS6
 
-df <- tidy_MOD13(MOD13A1$dt)
-st <- MOD13A1$st
-
-date_start <- as.Date('2013-01-01')
-date_end   <- as.Date('2016-12-31')
-
-sitename <- 'CA-NS6' # df$site[1]
-d     <- df[site == sitename & (date >= date_start & date <= date_end), ]
-sp    <- st[site == sitename, ]
-south <- sp$lat < 0
 nptperyear <- 23
-
-# global parameter
-IsPlot = TRUE
-print  = FALSE
-ypeak_min  = 0.05
-wFUN = wTSM
-
-# add one year in head and tail
-# d     <- add_HeadTail(d, south = south, nptperyear = nptperyear) 
-INPUT    <- check_input(d$t, d$y, d$w, QC_flag = d$QC_flag,
-     nptperyear = nptperyear, south = south, 
+INPUT <- check_input(d$t, d$y, d$w, QC_flag = d$QC_flag,
+     nptperyear = nptperyear, south = FALSE,
      maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
+# plot_input(INPUT)
+
+wFUN = "wTSM"
 # all year as a whole
 brks  <- season(INPUT,
-    rFUN = smooth_wWHIT, wFUN = wFUN,
-    lambda = 10,
-    plotdat = d, IsPlot = IsPlot, IsPlot.OnlyBad = FALSE)
+    rFUN = smooth_wWHIT, wFUN = wFUN, lambda = 10)
+plot_season(INPUT, brks, d)
+
 # curve fitting by year
 brks2 <- season_mov(INPUT,
-    rFUN = smooth_wWHIT, wFUN = wFUN,
-    lambda = 10,
-    plotdat = d, IsPlot = IsPlot, IsPlot.OnlyBad = FALSE)
-}
-\references{
-\enumerate{
-\item Kong, D., Zhang, Y., Wang, D., Chen, J., & Gu, X. (2020). Photoperiod
-Explains the Asynchronization Between Vegetation Carbon Phenology and
-Vegetation Greenness Phenology. Journal of Geophysical Research:
-Biogeosciences, 125(8), e2020JG005636.
-https://doi.org/10.1029/2020JG005636
-\item Kong, D., Zhang, Y., Gu, X., & Wang, D. (2019). A robust method for
-reconstructing global MODIS EVI time series on the Google Earth Engine.
-ISPRS Journal of Photogrammetry and Remote Sensing, 155, 13-24.
-}
+    options = list(
+        rFUN = "smooth_wWHIT", wFUN = wFUN,
+        lambda = 10,
+        r_min = 0.05, ypeak_min = 0.05,
+        verbose = TRUE
+    ))
+plot_season(INPUT, brks2)
 }
 \seealso{
 \code{\link[=findpeaks]{findpeaks()}}.

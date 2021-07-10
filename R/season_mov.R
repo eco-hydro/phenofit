@@ -1,14 +1,49 @@
-#' @param .lambda_vcurve Boolean. Whether to optimize Whittaker's parameter lambda by
-#' V-curve theory? This parameter only works when lambda not provided.
+# ' @param IsPlot.vc Whether to plot V-curve optimized time-series.
+# ' @param IsPlot.OnlyBad If true, only plot partial figures whose NSE < 0.3.
+
+# ... could also pass to `options`
+opt_season <- function(INPUT,
+    # rFUN, wFUN, lambda,
+    options = NULL, verbose = FALSE, ...)
+{
+    # grasp all parameters
+    params = as.list(environment()) %>% {.[seq(1, length(.)-1)]} # rm the last option
+
+    # .options为全局变量，内部修改存在潜在bug
+    .options$season %<>% modifyList(options)
+    if (verbose) print(str(.options$season))
+
+    # OPTIONS_default <- getOption("phenofit.season")
+    # options = modifyList(OPTIONS_default, options)
+    dots = list(...)
+    ind <- match(names(dots), names(.options$season)) %>% rm_empty()
+    if (length(ind) > 0) {
+        .options$season %<>% modifyList(dots[ind])
+        dots = dots[-ind]
+    }
+    # all of those parameters are put in options
+    do.call(season, c(params, options, dots))
+}
+
+#' Moving growing season division
 #'
-#' @param maxExtendMonth Previous and subsequent `maxExtendMonth` data were added
-#' for every year curve fitting.
-#' @param titlestr string for title
+#' @inheritParams season
+#'
 #' @param years.run Numeric vector. Which years to run? If not specified, it is
 #' all years.
-#' @param len_min,len_max the minimum and maximum length (in the unit of days)
+#' @param options see details
+#' @param ... others to [season()]
+#'
+#' @section options:
+#' - `len_min`, `len_max`: minimum and maximum length (in the unit of days)
 #' of growing season
-#' @param show.legend boolean
+#'
+#' - `.lambda_vcurve`: Boolean. If the Whittaker's parameter lambda not provided,
+#' whether to optimize lambda by V-curve theory? This parameter only works when
+#' `lambda` not provided.
+#'
+#' - `maxExtendMonth`: Previous and subsequent `maxExtendMonth` data were added
+#' for every year curve fitting.
 #'
 #' @references
 #' 1. Kong, D., Zhang, Y., Wang, D., Chen, J., & Gu, X. (2020). Photoperiod
@@ -20,38 +55,47 @@
 #'    reconstructing global MODIS EVI time series on the Google Earth Engine.
 #'    ISPRS Journal of Photogrammetry and Remote Sensing, 155, 13-24.
 #'
+#' @example inst/examples/ex-season.R
+#'
 #' @importFrom lubridate leap_year
-#' @rdname season
 #' @export
-# ' @param IsPlot.vc Whether to plot V-curve optimized time-series.
-# ' @param IsPlot.OnlyBad If true, only plot partial figures whose NSE < 0.3.
-season_mov <- function(INPUT, rFUN, wFUN, iters = 2, wmin = 0.1,
-    .lambda_vcurve = FALSE,
-    lambda = NULL, nf  = 3, frame = floor(INPUT$nptperyear/5)*2 + 1,
-
-    calendarYear = FALSE,
-    maxExtendMonth = 12,
-    r_min = 0.05,
-    rtrough_max = 0.6,
-    len_min = 45, len_max = 650,
+season_mov <- function(INPUT,
+    # rFUN, wFUN,
+    # lambda = NULL, .lambda_vcurve = FALSE,
+    options = list(r_min = 0),
+    # nf  = 3, frame = floor(INPUT$nptperyear/5)*2 + 1,
+    # iters = 2, wmin = 0.1,
+    # calendarYear = FALSE,
+    # r_min = 0.05,
+    # rtrough_max = 0.6,
+    # .check_season = TRUE,
+    # maxExtendMonth = 12,
+    # len_min = 45, len_max = 650,
+    # verbose = FALSE,
     ...,
-
-    .check_season = TRUE,
-    years.run = NULL,
-    IsPlot = FALSE,
-    # IsPlot.vc = FALSE, IsPlot.OnlyBad = FALSE,
-    show.legend = TRUE,
-    plotdat = INPUT,  titlestr = "")
+    years.run = NULL)
 {
     # params = mget(ls()) %>% c(., list(...))
     # params = as.list(match.call())
     # params = c(as.list(environment()), list(...))
-    # print(str(params))
+    # Iparams_hide = c("INPUT", "years.run") %>%
+    #     match(names(params)) %>% rm_empty()
+    # print(str(params[-Iparams_hide]))
 
-    if (missing(wFUN)) wFUN = get(.options$wFUN_rough)
-    if (missing(rFUN)) rFUN = .options$rFUN
-    rFUN = check_function(rFUN)
-    wFUN = check_function(wFUN)
+    # if (missing(wFUN)) wFUN = .options$season$wFUN
+    # if (missing(rFUN)) rFUN = .options$season$rFUN
+    .options$season %<>% modifyList(options) %>%
+        modifyList(list(...))
+    .options$season$wFUN %<>% check_function()
+    .options$season$rFUN %<>% check_function()
+    opt = .options$season
+
+    if (opt$verbose) print(str(opt))
+
+    lambda = opt$lambda
+    has_lambda = !(is.null(lambda) || is.na(lambda))
+    # r_min = r_min * 0 # 20191128: major update, set `r_min = 0`
+    dots <- list(...)
 
     nptperyear <- INPUT$nptperyear
     south      <- INPUT$south
@@ -64,36 +108,27 @@ season_mov <- function(INPUT, rFUN, wFUN, iters = 2, wmin = 0.1,
     years <- info[info > nptperyear*0.2] %>% {as.numeric(names(.))}
     nyear <- length(years)
 
-    # 20191128: major update, set `r_min = 0`
-    params <- list(
-        rFUN = rFUN, wFUN = wFUN, iters = iters, wmin = wmin,
-        nf  = nf, frame = frame,
-        IsPlot = FALSE, plotdat = plotdat,
-        .check_season = .check_season,
-        rtrough_max = rtrough_max, r_min = r_min*0, ...)
-
-    has_lambda = !(is.null(lambda) || is.na(lambda))
-    width_ylu <- nptperyear*0 # already 3y group, moving window for ylu unnecessary
-
-    nextend   <- ceiling(maxExtendMonth/12*nptperyear)
+    nextend = .options$season$nextend
+    if (is.null(nextend)) nextend <- ceiling(.options$season$maxExtendMonth/12 * nptperyear)
+    # width_ylu <- nptperyear*0 # already 3y group, moving window for ylu unnecessary
     width_ylu <- nptperyear*2 # This is quite important, to make time-series continuous.
 
     # years0 = years[-c(1, nyear)] # original years before `add_HeadTail`
-    if (is.null(years.run)) {
-        years.run = years
-    } else years.run = intersect(years.run, years)
+    years.run = if (is.null(years.run)) years else intersect(years.run, years)
 
     brks  <- list()
     vcs   <- vector("list", length(years.run)) %>% set_names(years.run)
-
     for (year_i in years.run) {
         i = which(year_i == years)
         if (.options$verbose_season_mov) fprintf("  [season_mov] running %d ... \n", i)
 
+        ## TODO:
+        # `nextend` might be not enough, 3y moving could be an option
         # I <- which(date_year %in% years[(i-ny_extend):(i+ny_extend)]) # 3y index
-        I   <- which(date_year %in% years[i]) # 3y index, `nextend` is not enough
+        I   <- which(date_year %in% years[i])
 
-        ylu <- get_ylu(INPUT$y, date_year, INPUT$w, width = width_ylu, I, Imedian = TRUE, wmin)
+        ylu <- get_ylu(INPUT$y, date_year, INPUT$w, width = width_ylu, I, Imedian = TRUE,
+            opt$wmin)
         ylu <- merge_ylu(INPUT$ylu, ylu) # curvefits.R
 
         # extend curve fitting period, for continuity.
@@ -103,52 +138,55 @@ season_mov <- function(INPUT, rFUN, wFUN, iters = 2, wmin = 0.1,
         input <- c(input, list(ylu = ylu, nptperyear=nptperyear, south=south))
 
         if (!has_lambda) {
-            vc = guess_lambda(input, wFUN, iters, .lambda_vcurve) # IsPlot.vc
+            vc = guess_lambda(input) # IsPlot.vc
             lambda = vc$lambda; vcs[[i]] <- vc
         }
 
-        params_i = c(list(INPUT = input, lambda = lambda), params)
-        brk    <- do.call(season, params_i)
+        params_i = c(list(INPUT = input, lambda = lambda), dots)
+        brk <- do.call(opt_season, params_i)
 
         if (is_empty(brk$dt)){
             # if have no brks, try to decrease r_max
             params_i$r_max <- max(params_i$r_max-0.1, 0.05)
-            brk <- do.call(season, params_i)
+            brk <- do.call(opt_season, params_i)
         }
-        if (!is_empty(brk$dt)) 
+        if (!is_empty(brk$dt))
             brk$dt %<>% subset(year == year_i) %>% mutate(lambda = lambda)
-        
+
         brks[[i]] <- list(fit = brk$fit[date_year[I] == year_i, ], dt = brk$dt)
     }
     brks  = set_names(brks, years.run) %>% rm_empty() %>% purrr::transpose()
     brks$fit %<>% do.call(rbind, .)
 
-    if (calendarYear) {
+    if (opt$calendarYear) {
         # BUG: need to remove incomplete year
         brks$dt <- season_calendar(years.run, south)
     } else {
         dt  <- do.call(rbind, brks$dt)
         if (is_empty(dt)) {
             warning( 'No growing season found!'); return(NULL)
-        } else if (.check_season) {
-            brks$dt <- cheak_season_list(brks$dt, rtrough_max, r_min, len_min, len_max)
         }
+        if (opt$.check_season) brks$dt %<>% cheak_season_list()
     }
     brks$GOF <- stat_season(INPUT, brks)
 
-    ## VISUALIZATION
-    if (IsPlot) plot_season(INPUT, brks, plotdat, ylu = INPUT$ylu, IsPlot.OnlyBad = FALSE, show.legend = show.legend)
-    if (!has_lambda && .lambda_vcurve) brks$optim <- vcs
+    if (!has_lambda && opt$.lambda_vcurve) brks$optim <- vcs
     return(brks)
 }
 
-guess_lambda <- function(input, wFUN = wTSM, iters = 2, .lambda_vcurve = FALSE, IsPlot.vc = FALSE, ...) {
-    if (.lambda_vcurve) {
+# IsPlot.vc = FALSE, IsPlot.OnlyBad = FALSE,
+# IsPlot = FALSE, show.legend = TRUE, plotdat = INPUT,  title = ""
+# plot_season(INPUT, brks, plotdat, IsPlot.OnlyBad = FALSE, show.legend = show.legend)
+
+guess_lambda <- function(input, IsPlot.vc = FALSE, ...) {
+    opt <- .options$season
+    if (opt$.lambda_vcurve) {
         y <- input$y %>% rm_empty() # should be NA values now
         # update 20181029, add v_curve lambda optimiazaiton in season_mov
         vc <- v_curve(input,
                       lg_lambdas = seq(0, 5, by = 0.005), d = 2,
-                      wFUN = wFUN, iters = iters, IsPlot = IsPlot.vc)
+                      wFUN = opt$wFUN, iters = opt$iters,
+                      IsPlot = IsPlot.vc)
     } else {
         vc <- NULL
         vc$lambda <- init_lambda(input$y) #* 2
@@ -158,11 +196,14 @@ guess_lambda <- function(input, wFUN = wTSM, iters = 2, .lambda_vcurve = FALSE, 
 
 #' @rdname check_season
 #' @export
-check_season_dt <- function(dt, rtrough_max, r_min,
-                            len_min = 45, len_max = 650)
-{
+check_season_dt <- function(dt) {
+    # rtrough_max, r_min, len_min = 45, len_max = 650
+    len_min = .options$season$len_min
+    len_max = .options$season$len_max
+
     dt <- dt[len > len_min & len < len_max, ] # mask too long and short gs
-    check_season(dt, rtrough_max = rtrough_max, r_min = r_min)
+    check_season(dt, rtrough_max = .options$season$rtrough_max,
+                 r_min = .options$season$r_min)
     dt[y_peak != -9999.0 & (len > len_min & len < len_max), ]
 }
 
@@ -172,18 +213,17 @@ check_season_dt <- function(dt, rtrough_max, r_min,
 #' @inheritParams season_mov
 #' @rdname check_season
 #' @export
-cheak_season_list <- function(lst_dt, rtrough_max, r_min,
-                              len_min = 45, len_max = 650)
-{
+cheak_season_list <- function(lst_dt) {
     if (is.data.frame(lst_dt)) lst_dt = list(lst_dt)
     lst_dt %<>% rm_empty()
     res <- list()
     for(i in seq_along(lst_dt)) {
         dt = lst_dt[[i]]
-        res[[i]] <- check_season_dt(dt, rtrough_max, r_min, len_min, len_max)
+        res[[i]] <- check_season_dt(dt)
     }
+
     dt2 = do.call(rbind, res)
-    check_season_dt(dt2, rtrough_max, r_min, len_min, len_max)
+    check_season_dt(dt2)
 }
 
 season_calendar <- function(years, south = FALSE){
@@ -191,8 +231,7 @@ season_calendar <- function(years, south = FALSE){
     date_end   <- {if (south) paste0(years+1, "0630") else paste0(years, "1231") } %>% ymd()
 
     dt <- data.table(
-        beg = date_begin,
-        end = date_end,
+        beg = date_begin, end = date_end,
         year= years,
         len = as.numeric(difftime(date_end, date_begin, units = "days")) + 1) %>%
         cbind(season = 1, flag = sprintf("%d_1", years))
