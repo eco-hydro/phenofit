@@ -3,7 +3,7 @@
 #'
 #' @keywords internal
 #' @export
-lambda_vcurve <- function(y, w, d = 2, lg_lambda_min = 0.1, lg_lambda_max = 3,
+lambda_vcurve <- function(y, w, d = 2, lg_lambda_min = 0.1, lg_lambda_max = 5,
     IsPlot = FALSE)
 {
     lg_lambdas <- seq(lg_lambda_min, lg_lambda_max, 0.1)
@@ -120,7 +120,9 @@ v_curve = function(INPUT, lg_lambdas, d = 2, IsPlot = FALSE,
     # param$lambdas <- lambda
     # fit <- do.call(smooth_wWHIT, param)
     # d_sm <- fit %$% c(ws, zs) %>% as.data.table() %>% cbind(t = INPUT$t, .)
-    l_opt = lambda_vcurve(y, w, d = d, IsPlot = IsPlot) # optimal lambda
+    l_opt = lambda_vcurve(y, w, d = d, 
+        lg_lambda_min = min(lg_lambdas), lg_lambda_max = max(lg_lambdas),
+        IsPlot = IsPlot) # optimal lambda
     z <- whit2(y, l_opt$lambda, w)
     d_sm <- data.table(t = INPUT$t, z) # smoothed
     # browser()

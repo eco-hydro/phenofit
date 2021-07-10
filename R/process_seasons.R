@@ -84,6 +84,6 @@ divide_seasons <- function(d_obs, nptperyear = 23,
         # ypeak_min = 0.08,
         ...
     )
-    print(list(...))
+    # print(list(...))
     listk(INPUT, brks = brks2, lambda = lambda)
 }

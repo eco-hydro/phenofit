@@ -1,3 +1,4 @@
+# rm too closed peaks or troughs
 # ' @param pos data.table with the columns of `"val", "pos", "left", "right", "type"`.
 # ' @param rm.closed Boolean
 # ' - `TRUE` : remove both points (date or value of peak and trough too close)
@@ -67,35 +68,4 @@ rm_duplicate <- function(d, y, threshold){
     } else {
         d
     }
-}
-
-findpeaks_season <- function(ypred, y_max = 0, y_min = 0,
-    minpeakdistance = 0, minpeakheight = 0,
-    nyear = 1,
-    nups = 1, ndowns = nups)
-{
-    # local minimum values
-    # peak values is small for minimum values, so can't use r_min here
-    peaks <- findpeaks(-ypred, zero = "-",
-        y_max = y_max, y_min = y_min * 0,
-        minpeakdistance = minpeakdistance, nups = 0)
-    pos_min  <- peaks$X
-    if (!is.null(pos_min)) {
-        pos_min[, 1] %<>% multiply_by(-1)
-        pos_min$type <- -1
-    }
-    ntrough_PerYear <- length(peaks$gregexpr) / nyear #max peaks
-
-    # minpeakheight = 0.1*A + ylu[1]
-    # local maximum values,
-    peaks   <- findpeaks(ypred, zero = "+",
-        y_max = y_max, y_min = y_min,
-        minpeakdistance = minpeakdistance,
-        minpeakheight = minpeakheight,
-        nups = nups, ndowns = ndowns) #, ypeak_min
-    pos_max <- peaks$X
-    if (!is.null(pos_max)) pos_max$type <- 1
-
-    npeak_PerYear <- length(peaks$gregexpr) / nyear # max peaks
-    listk(pos_min, pos_max, ntrough_PerYear, npeak_PerYear)
 }

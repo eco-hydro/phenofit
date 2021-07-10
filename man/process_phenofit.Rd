@@ -11,8 +11,9 @@ process_phenofit(
   QC_flag = NULL,
   nptperyear = 36,
   brks = NULL,
+  rFUN = "smooth_wWHIT",
   wFUN = wTSM,
-  fineFit = TRUE,
+  lambda = NULL,
   TRS = c(0.1, 0.2, 0.5, 0.6, 0.8, 0.9),
   iters = 2,
   maxExtendMonth = 12,
@@ -20,7 +21,6 @@ process_phenofit(
   minPercValid = 0,
   south = FALSE,
   verbose = TRUE,
-  lambda = NULL,
   methods = c("AG", "Zhang", "Beck", "Elmore", "Gu"),
   outfile = NULL,
   title = NULL,
@@ -59,9 +59,17 @@ used for visualization in \code{\link[=get_pheno]{get_pheno()}} and \code{\link[
 \code{season} or \code{season_mov}, which contains the growing season
 dividing information.}
 
+\item{rFUN}{Rough curve fitting function, can be one of \code{\link[=smooth_wSG]{smooth_wSG()}},
+\code{\link[=smooth_wWHIT]{smooth_wWHIT()}} and \code{\link[=smooth_wHANTS]{smooth_wHANTS()}}.}
+
 \item{wFUN}{Character or function, weights updating function of fine fitting
 function.
 If not specified, it will be determined by phenofit options \code{wFUN_fine}.}
+
+\item{lambda}{The smoothing parameter of \code{\link[=smooth_wWHIT]{smooth_wWHIT()}}. For
+\code{\link[=season_mov]{season_mov()}}, if lambda is \code{NULL}, \code{\link[=init_lambda]{init_lambda()}}
+will be used. Generally, it was set as 10000, 15, and 5 for daily, 8-day
+and 16-day inputs respectively.}
 
 \item{iters}{How many times curve fitting is implemented.}
 
@@ -80,11 +88,6 @@ is set to \code{NA}.}
 
 \item{south}{Boolean. In south hemisphere, growing year is 1 July to the
 following year 31 June; In north hemisphere, growing year is 1 Jan to 31 Dec.}
-
-\item{lambda}{The smoothing parameter of \code{\link[=smooth_wWHIT]{smooth_wWHIT()}}. For
-\code{\link[=season_mov]{season_mov()}}, if lambda is \code{NULL}, \code{\link[=init_lambda]{init_lambda()}}
-will be used. Generally, it was set as 10000, 15, and 5 for daily, 8-day
-and 16-day inputs respectively.}
 
 \item{methods}{Fine curve fitting methods, can be one or more of
 \code{c('AG', 'Beck', 'Elmore', 'Zhang', 'Gu', 'Klos')}. Note that 'Gu' and 'Klos'

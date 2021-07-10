@@ -60,14 +60,14 @@ process_phenofit <- function(
         r <- v_curve(INPUT, lg_lambdas, d = 2, IsPlot = FALSE)
         lambda = r$lambda
     }
-    # print(lambda)
+    print(lambda)
     # wFUN <- "wBisquare", "wTSM", threshold_max = 0.1, IGBP = CSH
     brks2  <- season_mov(INPUT,
         rFUN = get(rFUN),
         wFUN = wFUN,
         iters = iters, wmin = 0.1,
         .lambda_vcurve = TRUE,
-        lambda = lambda, 
+        lambda = lambda,
         # nf = nf, frame = frame,
         maxExtendMonth = 12, #maxExtendMonth,
         # r_max = r_max, r_min = r_min,

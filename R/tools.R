@@ -5,6 +5,10 @@ runningId <- function(i, step = 1, N, prefix = "") {
     if (mod(i, step) == 0) cat(sprintf("[%s] running%s %d ...\n", prefix, perc, i))
 }
 
+is_empty <- function(x) {
+    is.null(x) || (is.data.frame(x) && nrow(x) == 0) || length(x) == 0
+}
+
 rm_empty <- function(x){
     if (is.list(x)){
         x[sapply(x, length) > 0]

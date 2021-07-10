@@ -7,11 +7,11 @@ env <- list2env(list(.julia = FALSE))
 #' @export
 julia_setup <- function() {
     JuliaCall::julia_setup()
-    infile <- system.file("julia/wBisquare.jl", package = "phenofit")
     # print(infile)
-    # JuliaCall::julia_library("phenofit")
+    JuliaCall::julia_library("phenofit")
     # JuliaCall::julia_library("nlminb")
-    JuliaCall::julia_source(infile)
+    # infile <- system.file("julia/wBisquare.jl", package = "phenofit")
+    # JuliaCall::julia_source(infile)
 }
 
 #' @importFrom JuliaCall julia_setup julia_source julia_call

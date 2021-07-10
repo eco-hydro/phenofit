@@ -51,20 +51,18 @@ fixYearBroken <- function(di, t, ypred){
         }
     }
 
-    dt = data.table(
-        beg   = t[I_beg]    , peak   = t[I_peak]    , end   = t[I_end],
-        y_beg = ypred[I_beg], y_peak = ypred[I_peak], y_end = ypred[I_end],
-        len   = as.integer(difftime(t[I_end], t[I_beg], units = "days") + 1),
-        year  = year(t[I_peak]))
-    dt
+    di = data.table(beg = I_beg, peak = I_peak, end = I_end)
+    di2dt(di, t, ypred)
 }
 
+# ' @param di with the columns of `beg`, `peak` and `end`
 di2dt <- function(di, t, ypred){
-    dt <- map(di, ~t[.x]) %>% as.data.table() %>%
-        .[, `:=`( y_beg  = ypred[di$beg],
-                  y_peak = ypred[di$peak],
-                  y_end  = ypred[di$end],
-                  len    = as.integer(difftime(end, beg, units = "days") + 1),
-                  year   = year(peak) )]
-    dt
+    dt = di %>% mutate(across(.fns = ~ ypred[.x], .names = "y_{.col}")) %>% 
+        mutate(across(beg:end, .fns = ~ t[.x]))
+    
+    if (is.Date(t)) {
+        dt %>% mutate(len = as.integer(difftime(end, beg, units = "days") + 1), year = year(peak))
+    } else {
+        dt %>% mutate(len = end - beg + 1, year = NA_integer_)
+    }
 }
