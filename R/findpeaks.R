@@ -54,8 +54,8 @@ findpeaks <- function (x, IsDiff = TRUE, nups = 1, ndowns = nups, zero = "0", pe
     stopifnot(is.vector(x, mode = "numeric") ||
                   is.vector(x, mode = "logical") || length(is.na(x)) == 0)
 
-    if (minpeakdistance < 1)
-        warning("Handling 'minpeakdistance < 1' is logically not possible.")
+    # if (minpeakdistance < 1)
+    #     warning("Handling 'minpeakdistance < 1' is logically not possible.")
     if (!zero %in% c("0", "+", "-"))
         stop("Argument 'zero' can only be '0', '+', or '-'.")
 
@@ -107,7 +107,7 @@ findpeaks <- function (x, IsDiff = TRUE, nups = 1, ndowns = nups, zero = "0", pe
 
     X <- X[order(X[, 2]), ,drop = F] # update 20180122; order according to index
     X <- rm_near(X) # sort index is necessary before `rm_near`
-
+    
     if (sortstr) { # || minpeakdistance > 1
         sl <- sort.list(X[, 1], na.last = NA, decreasing = TRUE)
         X <- X[sl, , drop = FALSE]
@@ -125,23 +125,31 @@ findpeaks <- function (x, IsDiff = TRUE, nups = 1, ndowns = nups, zero = "0", pe
     return(list(gregexpr = rc, X = X))
 }
 
-findpeaks_season <- function(ypred, y_max = 0, y_min = 0,
-                             minpeakdistance = 0, minpeakheight = 0,
-                             nyear = 1,
-                             nups = 1, ndowns = nups) {
+findpeaks_season <- function(
+    ypred, r_max = 0, r_min = 0,
+    minpeakdistance = 0, minpeakheight = 0,
+    nups = 1, ndowns = nups,
+    # other param
+    nyear = 1)
+{
+    A = max(ypred) - min(ypred)
+    y_max = r_max * A
+    y_min = r_min * A
     # local minimum values
     # peak values is small for minimum values, so can't use r_min here
     peaks <- findpeaks(-ypred,
         zero = "-",
         y_max = y_max, y_min = y_min * 0,
-        minpeakdistance = minpeakdistance, nups = 0
+        minpeakdistance = minpeakdistance,
+        nups = 0
     )
     pos_min <- peaks$X
     if (!is.null(pos_min)) {
         pos_min[, 1] %<>% multiply_by(-1)
         pos_min$type <- -1
     }
-    ntrough_PerYear <- length(peaks$gregexpr) / nyear # max peaks
+    ntrough_PerYear <- npeak_PerYear <- NULL
+    if (is.numeric(nyear)) ntrough_PerYear <- length(peaks$gregexpr) / nyear # max peaks
 
     # minpeakheight = 0.1*A + ylu[1]
     # local maximum values,
@@ -155,6 +163,25 @@ findpeaks_season <- function(ypred, y_max = 0, y_min = 0,
     pos_max <- peaks$X
     if (!is.null(pos_max)) pos_max$type <- 1
 
-    npeak_PerYear <- length(peaks$gregexpr) / nyear # max peaks
+    if (is.numeric(nyear)) npeak_PerYear <- length(peaks$gregexpr) / nyear # max peaks
     listk(pos_min, pos_max, ntrough_PerYear, npeak_PerYear)
 }
+
+findpeaks_season_jl <- function(
+    ypred,
+    r_max = 0, r_min = 0,
+    minpeakdistance = 0, minpeakheight = 0L,
+    nups = 1L, ndowns = nups,
+    # other param
+    nyear = 1)
+{
+    A = max(ypred) - min(ypred)
+    ans = JuliaCall::julia_call("findpeaks_season", ypred,
+        r_max = r_max, r_min = r_min,
+        # r_max = y_max/A, r_min = y_min/A,
+        minpeakdistance = as.integer(minpeakdistance), minpeakheight = minpeakheight,
+        nups = nups, ndowns = ndowns)
+    ans$threshold <- data.table(y_max = r_max*A, y_min = r_min*A, r_max, r_min)
+    ans
+}
+

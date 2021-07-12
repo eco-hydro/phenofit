@@ -17,6 +17,8 @@ rm_empty <- function(x){
     }
 }
 
+which.notna <- function(x) which(!is.na(x))
+
 contain <- function(d, pattern = "NDVI|EVI") {
     names(d) %>% .[grep(pattern, .)]
 }
@@ -105,3 +107,13 @@ check_function <- function(fun) {
     }
     return(fun)
 }
+
+#' @keywords internal
+#' @export
+zeallot::`%<-%`
+
+#' @export
+magrittr::`%>%`
+
+#' @export
+magrittr::`%<>%`

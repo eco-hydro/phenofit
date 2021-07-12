@@ -4,7 +4,7 @@ options_season <- list(
     wFUN              = "wTSM",
     iters             = 2,    # rough fitting
     wmin              = 0.1,  # weights updating wmin
-    
+
     lambda            = NULL,  # only used when rFUN = `smooth_wWHIT`
     .lambda_vcurve    = TRUE, # if lambda not provided, will be optimized by v-curve theory
     frame             = 11, # only used when rFUN = `smooth_wSG`
@@ -24,14 +24,14 @@ options_season <- list(
     adj.param         = TRUE,  # auto adjust rough fitting parameter
     rm.closed         = TRUE,
     is.continuous     = TRUE,
-    .check_season     = TRUE, 
+    .check_season     = TRUE,
 
     # options in `season_mov`
     maxExtendMonth    = 12,   # in month
     nextend           = NULL, # in point, default is `ceiling(maxExtendMonth/12*nptperyear)`
 
-    len_min           = 45, 
-    len_max           = 650, 
+    len_min           = 45,
+    len_max           = 650,
 
     verbose           = FALSE
 )
@@ -43,7 +43,7 @@ options_fitting <- list(
     iters              = 2,   # iterations for fine fitting
     wmin               = 0.1,  # weights updating wmin
 
-    use.y0             = TRUE, 
+    use.y0             = TRUE,
     use.rough          = FALSE,
 
     nextend            = 2  , # n good-points extend
@@ -55,33 +55,32 @@ options_fitting <- list(
 
 .options <- list2env(list(
     # INPUT DATA
-    file_vi            = "", 
+    file_vi            = "",
     file_qc            = "",
     qcFUN              = "qc_summary",
-    nptperyear         = 23, 
+    nptperyear         = 23,
     south              = FALSE,
     ymin               = 0.1,
     ws                 = c(0.2, 0.5, 0.8), # initial weights
-    
+
     # methods
     FUN_season         = "season_mov",
     methods_pheno      = c("TRS", "DER", "Zhang", "Gu"),
-  
+
+    verbose_season_mov = TRUE,
+    verbose_season     = FALSE,
     # parameters
     season             = options_season,
-    fitting            = options_fitting,
-    
-    verbose_season_mov = TRUE,
-    verbose_season     = FALSE
+    fitting            = options_fitting
 ))
 
 #' set and get phenofit option
-#' 
+#'
 #' @param ... list of phenofit options
 #' FUN_season: character, `season_mov` or `season`
 #' rFUN: character, rough fitting function. `smooth_wWHIT`, `smooth_wSG` or `smooth_wHANTs`.
-#' 
-#' @examples 
+#'
+#' @examples
 #' set_options(verbose_curvefit = FALSE)
 #' get_options("verbose_season")
 #' @export
@@ -92,7 +91,7 @@ set_options <- function(...) {
 }
 
 #' @param names vector of character, names of options
-#' 
+#'
 #' @rdname set_options
 #' @export
 get_options <- function(names = NULL) {
@@ -100,25 +99,28 @@ get_options <- function(names = NULL) {
     .options[[names]]
 }
 
-modifyList <- function (x, val, keep.null = FALSE) 
+modifyList <- function (x, val, keep.null = TRUE)
 {
     # stopifnot(is.list(x), is.list(val))
     xnames <- names(x)
     vnames <- names(val)
     vnames <- vnames[nzchar(vnames)]
-    if (keep.null) {
+    # if (keep.null) {
+    #     for (v in vnames) {
+    #         x[v] <- if (v %in% xnames && is.list(x[[v]]) && is.list(val[[v]]))
+    #             list(modifyList(x[[v]], val[[v]], keep.null = keep.null))
+    #         else val[v]
+    #     }
+    # } else {
         for (v in vnames) {
-            x[v] <- if (v %in% xnames && is.list(x[[v]]) && is.list(val[[v]])) 
-                list(modifyList(x[[v]], val[[v]], keep.null = keep.null))
-            else val[v]
-        }
-    } else {
-        for (v in vnames) {
-            x[[v]] <- if (v %in% xnames && is.list(x[[v]]) && 
-                is.list(val[[v]])) 
+            if (keep.null) {
+                if (is.null(val[[v]])) next()
+            }
+            x[[v]] <- if (v %in% xnames && is.list(x[[v]]) &&
+                is.list(val[[v]]))
                 modifyList(x[[v]], val[[v]], keep.null = keep.null)
             else val[[v]]
         }
-    }
+    # }
     x
 }

@@ -33,7 +33,7 @@ plot_season <- function(
     A = diff(ylu)
     # ylu2 = c(ylu[1], ylu[2] + 0.1*A)
 
-    stat <- stat_season(INPUT, brks)
+    stat <- stat_season(INPUT, brks$fit)
     stat_txt <- eval(substitute(
         expression(
             R^2 == R2 * ", NSE = " * NSE * ", " * CV[sim] ~ "= " * sim.cv *

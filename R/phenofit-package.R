@@ -6,19 +6,19 @@
 #' @description Vegetation phenology package
 #' 
 #' @import magrittr numDeriv
-#' @import tibble ggplot2 
+#' @import ggplot2 
 #' @importFrom dplyr first last nth mutate group_by group_map group_modify select
-#' ungroup across
+#' ungroup across starts_with as_tibble
 #' @importFrom gridExtra arrangeGrob
 #' @importFrom data.table data.table as.data.table := is.data.table fwrite fread 
 #' dcast
 #' @importFrom zoo na.approx index zoo
-#' @importFrom purrr map map_df %>%
+#' @importFrom purrr map map_df
 #' @importFrom lubridate ymd yday year month day dyears is.Date
 #' @importFrom utils object.size
 #' @importFrom grDevices dev.off cairo_pdf colorRampPalette
 #' @import stats graphics
-#' 
+#' @import zeallot
 #' @useDynLib phenofit, .registration = TRUE
 #' @importFrom Rcpp sourceCpp
 #' @keywords internal
@@ -31,6 +31,11 @@
 NULL
 
 .onLoad <- function (libname, pkgname){
+    opt_season <- c("rFUN", "wFUN", "iters", "wmin", "lambda", ".lambda_vcurve", 
+        "frame", "nf", "minpeakdistance", "ypeak_min", "r_max", "r_min", "rtrough_max", 
+        "MaxPeaksPerYear", "MaxTroughsPerYear", "calendarYear", "adj.param", "rm.closed", "is.continuous", ".check_season", "maxExtendMonth", "nextend", 
+        "len_min", "len_max", "verbose")
+
     if(getRversion() >= "2.15.1") {
         utils::globalVariables(
             c(".", ".SD", ".N", "..vars", 
@@ -39,7 +44,9 @@ NULL
               "DayOfYear", "SummaryQA", "site", "EVI", "w", "QC_flag", # tidy_MOD13
               "beg", "end",  # plot_curvefits
               "val", "type", "flag", "peak", # season, 
-              "i", "qc", "y", "sitename" # phenofit_TS.avhrr
+              "i", "qc", "y", "sitename",  # phenofit_TS.avhrr
+              opt_season, 
+              "years", "nyear", "d_fit", "info_peak"
             )
         )
     }

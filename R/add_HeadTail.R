@@ -14,22 +14,15 @@
 #' @note `date` is image date; `t` is compositing date.
 #'
 #' @return data.table
+#' @keywords internal
 #' @importFrom lubridate ddays
 #' 
 #' @examples
 #' library(phenofit)
-#' data("MOD13A1")
-#'
-#' dt <- tidy_MOD13(MOD13A1$dt)
-#' st <- MOD13A1$st
-#'
-#' sitename <- dt$site[1]
-#' d     <- dt[site == sitename, ] # get the first site data
-#' sp    <- st[site == sitename, ] # station point
-#'
+#' data("CA_NS6"); d = CA_NS6
+#' 
 #' nptperyear = 23
 #' dnew     <- add_HeadTail(d, nptperyear = nptperyear) # add one year in head and tail
-#'
 #' @export
 add_HeadTail <- function(d, south = FALSE, nptperyear, trs = 0.45){
     ## check dateband first

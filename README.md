@@ -2,15 +2,16 @@
 # phenofit
 
 [![Travis Build
-Status](https://travis-ci.org/kongdd/phenofit.svg?branch=master)](https://travis-ci.org/kongdd/phenofit)
+Status](https://travis-ci.org/eco-hydro/phenofit.svg?branch=master)](https://travis-ci.org/eco-hydro/phenofit)
 [![AppVeyor Build
-Status](https://ci.appveyor.com/api/projects/status/github/kongdd/phenofit?branch=master&svg=true)](https://ci.appveyor.com/project/kongdd/phenofit)
-[![codecov](https://codecov.io/gh/kongdd/phenofit/branch/master/graph/badge.svg)](https://codecov.io/gh/kongdd/phenofit)
+Status](https://ci.appveyor.com/api/projects/status/github/eco-hydro/phenofit?branch=master&svg=true)](https://ci.appveyor.com/project/eco-hydro/phenofit)
+[![codecov](https://codecov.io/gh/eco-hydro/phenofit/branch/master/graph/badge.svg)](https://codecov.io/gh/eco-hydro/phenofit)
 [![License](http://img.shields.io/badge/license-GPL%20%28%3E=%202%29-brightgreen.svg?style=flat)](http://www.gnu.org/licenses/gpl-2.0.html)
 [![CRAN](http://www.r-pkg.org/badges/version/phenofit)](https://cran.r-project.org/package=phenofit)
 [![total](http://cranlogs.r-pkg.org/badges/grand-total/phenofit)](https://www.rpackages.io/package/phenofit)
 [![monthly](http://cranlogs.r-pkg.org/badges/phenofit)](https://www.rpackages.io/package/phenofit)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3605560.svg)](https://doi.org/10.5281/zenodo.3605560)
+[![Open in VSCode](https://open.vscode.dev/badges/open-in-vscode.svg)](https://open.vscode.dev/eco-hydro/phenofit)
 
 A state-of-the-art **remote sensing vegetation phenology** extraction
 package: `phenofit`
@@ -30,7 +31,7 @@ package: `phenofit`
     regions (e.g. the North China Plain);
 -   [ ] Uncertainty analysis of curve fitting and phenological metrics;
 -   [x] shiny app has been moved to
-    [phenofit.shiny](https://github.com/kongdd/phenofit.shiny);
+    [phenofit.shiny](https://github.com/eco-hydro/phenofit.shiny);
 -   [x] Complete script automatic generating module in shinyapp;
 -   [x] `Rcpp` improve double logistics optimization efficiency by 60%;
 -   [x] Support spatial analysis;
@@ -49,7 +50,7 @@ You can install phenofit from github with:
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("kongdd/phenofit")
+devtools::install_github("eco-hydro/phenofit")
 ```
 
 # **References**

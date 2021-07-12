@@ -58,7 +58,7 @@
 #' @param .check_season not used (only for debug)
 #' @param ... ignored.
 #' @param verbose whether to print `options_season` into console?
-#' 
+#'
 #' @return
 #' - `fit`: A data.table of Rough fitting result, with the columns of
 #' (`t`, `y`, `witer1`, ..., `witerN`, `ziter1`, ..., `ziterN`).
@@ -68,8 +68,8 @@
 #' `season`, `flag`).
 #' @seealso [findpeaks()].
 #'
-#' @example inst/examples/ex-season.R
-#' 
+#' @example R/examples/ex-season.R
+#'
 #' @export
 season <- function(
     INPUT, rFUN, wFUN, iters = 2, wmin = 0.1,
@@ -88,11 +88,12 @@ season <- function(
     verbose = FALSE,
     ...)
 {
+    # message("`season` has been deprecated after v0.3.0!")
     if (missing(wFUN)) wFUN = .options$season$wFUN_rough
     if (missing(rFUN)) rFUN = .options$season$rFUN
     rFUN = check_function(rFUN)
     wFUN = check_function(wFUN)
-
+    
     nptperyear <- INPUT$nptperyear
     south      <- INPUT$south
     t          <- INPUT$t
@@ -101,24 +102,15 @@ season <- function(
     nlen       <- length(t)
 
     # 1. How many years data
-    date_year <- year(t) + ((month(t) >= 7)-1)*south
-    info  <- table(date_year) # rm years with so limited obs
-    years <- info[info > nptperyear*0.2] %>% {as.numeric(names(.))}
-        #.[2:(length(.)-1)] # rm head and tail filled years
-    # nyear <- length(years)
-
-    if (missing(frame)) frame <- floor(nptperyear/5) * 2 + 1
+    if (is.null(frame)) frame <- floor(nptperyear/5) * 2 + 1
     if (is.null(minpeakdistance)) minpeakdistance <- nptperyear/6
 
     if (all(is.na(y))) return(NULL)
-    npt   <- sum(INPUT$w > wmin)
-    if (npt == 0) npt = length(INPUT$y)
-    nyear <- ceiling(npt/nptperyear) # matter most for parameter adjustment
+    c(nyear, years) %<-% guess_nyear(INPUT)
 
     ylu0  <- INPUT$ylu
     ylu   <- ylu0
     A0    <- diff(ylu0)
-    nups  <- ifelse(nptperyear >= 100, 2, 1)
 
     # frame <- floor(nptperyear/7) * 2 + 1 #13, reference by TSM SG filter
     if (missing(lambda)) lambda <- max(nyear*frame, 15)
@@ -134,7 +126,7 @@ season <- function(
             nf     = nf,      # param for wHANTS,
             frame  = frame    # param for wSG
         )
-
+        # str(param, 1)
         yfits <- do.call(rFUN, param)
         ypred <- last(yfits$zs) #as.numeric(runmed(ypred, frame))
         alpha <- 0.01
@@ -155,8 +147,10 @@ season <- function(
         INPUT$ylu <- ylu
         A         <- diff(ylu)
         # minPeakHeight <- pmax(ypeak_min, A*0.1 + ylu[1])
-        info_peak = findpeaks_season(ypred, r_max*A, r_min*A, minpeakdistance,
-            ypeak_min, nyear, nups = nups)
+        nups <- default_nups(nptperyear)
+        info_peak = findpeaks_season(ypred, r_max, r_min,
+            minpeakdistance = 0, minpeakheight = ypeak_min,
+            nups = nups, nyear = nyear)
         npeak_PerYear   <- info_peak$npeak_PerYear
         ntrough_PerYear <- info_peak$ntrough_PerYear
 
@@ -202,25 +196,6 @@ season <- function(
     # plot(ypred, type = "b"); grid()
     # 1.1 the local minimum value should small than rtrough_max*A
 
-    if (rm.closed) {
-        pos_min <- pos_min[(val - ylu[1]) <= rtrough_max*A, ] # `y_trough <= rtrough_max*A + ylu[1]`
-        pos <- rbind(pos_min, pos_max)[order(pos), ]
-        # rm peak value if peak value smaller than the nearest trough values
-        I   <- !with(pos, (c(diff(val) > 0, FALSE) & c(diff(type) == -2, FALSE)) |
-                (c(FALSE, diff(val) < 0) & c(FALSE, diff(type) == 2)))
-        pos <- pos[I, ]
-
-        pos   <- adjust_pos(pos, rm.closed, ypred, A, y_min = r_min*A, minpeakdistance)
-        pos$t <- t[pos$pos]
-        if (nrow(pos) < 2){ # at least two points, begin and end
-            warning("Can't find a complete growing season before!"); return(res)
-        }
-        di  <- check_GS_HeadTail(pos, ypred, minlen = nptperyear/3, A)
-    } else {
-        # pos <- rbind(pos_min, pos_max)[order(pos), ]
-        # di  <- check_GS_HeadTail(pos, ypred, minlen = nptperyear / 3)
-        di = pos_max[, .(beg = left, peak = pos, end = right)]
-    }
     ## 6. divide into multiple growing seasons
     # update 20180913, commented at 201911221
     # solve the problem of growing season too long, (e.g. US-Cop).
@@ -230,6 +205,25 @@ season <- function(
         # need to remove incomplete year
         dt <- season_calendar(years, south) # [2:(nyear-1)]
     } else {
+        if (rm.closed) {
+            pos_min <- pos_min[(val - ylu[1]) <= rtrough_max*A, ] # `y_trough <= rtrough_max*A + ylu[1]`
+            pos <- rbind(pos_min, pos_max)[order(pos), ]
+            # rm peak value if peak value smaller than the nearest trough values
+            I   <- !with(pos, (c(diff(val) > 0, FALSE) & c(diff(type) == -2, FALSE)) |
+                    (c(FALSE, diff(val) < 0) & c(FALSE, diff(type) == 2)))
+            pos <- pos[I, ]
+
+            pos   <- removeClosedExtreme(pos, ypred, A, y_min = r_min*A, minpeakdistance)
+            pos$t <- t[pos$pos]
+            if (nrow(pos) < 2){ # at least two points, begin and end
+                warning("Can't find a complete growing season before!"); return(res)
+            }
+            di  <- check_GS_HeadTail(pos, ypred, minlen = nptperyear/3, A)
+        } else {
+            # pos <- rbind(pos_min, pos_max)[order(pos), ]
+            # di  <- check_GS_HeadTail(pos, ypred, minlen = nptperyear / 3)
+            di = pos_max[, .(beg = left, peak = pos, end = right)]
+        }
         # fix whole year data missing in FLUXNET data, di: beg, peak and end
         dt <- di2dt(di, t, ypred)
         if (!is.continuous) dt %<>% fixYearBroken(t, ypred)
@@ -249,45 +243,3 @@ season <- function(
     return(res)
 }
 # if (IsPlot) plot_season(INPUT, res, plotdat, INPUT)
-
-#' Check growing season head and tail minimum values
-#'
-#' @param pos data.frame, with the columns of `pos`, `type`, and `val`.
-#' @param minlen `nptperyear/3`, distance from peak point.
-#'
-#' @return di
-check_GS_HeadTail <- function(pos, ypred, minlen, A = NULL,...){
-    if (is.null(A)) A = diff(range(ypred))
-
-    nlen = length(ypred)
-    ## 5. check head and tail break point, and reform breaks
-    locals <- pos[, c("pos", "type")]
-    ns <- nrow(locals)
-
-    # tail: len( pos[end-1], nlen) > minlen, 并且ypred[end]足够小，则认为ypred[end]是trough
-    if (last(pos$type) == 1 && (nlen - nth(pos$pos, -2)) > minlen &&
-        abs(last(ypred) - nth(pos$val, -2)) < 0.15 * A) {
-        locals %<>% rbind.data.frame(., data.frame(pos = nlen, type = -1))
-    }
-    # head: len( pos[end-1], nlen) > minlen, 并且ypred[1]足够小，则认为ypred[1]是trough
-    if (pos$type[1] == 1 && pos$pos[2] > minlen && abs(ypred[1] - pos$val[2]) < 0.15 * A) {
-        locals %<>% rbind.data.frame(data.frame(pos = 1, type = -1), .)
-    }
-
-    # a complete growing season, from minimum to minimum
-    I <- which(locals$type == -1)
-    locals <- locals[I[1]:I[length(I)], ]
-
-    s <- locals$pos
-    ns <- length(s)
-    if (ns < 3) {
-        warning("Can't find a complete growing season!")
-        return(res)
-    }
-    # locals %<>% mutate(val = ypred[pos], t = t[pos])
-    # pos_max <- subset(locals, type == 1)
-    # pos_min <- subset(locals, type == -1)
-    data.table(
-        beg = s[seq(1, ns - 1, 2)], peak = s[seq(2, ns, 2)],
-        end = s[seq(3, ns, 2)])
-}

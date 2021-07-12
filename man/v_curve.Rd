@@ -26,23 +26,15 @@ V-curve is used to optimize Whittaker parameter lambda.
 Update 20180605 add weights updating to whittaker lambda selecting
 }
 \examples{
-library(phenofit)
-data("MOD13A1")
+data("CA_NS6"); d = CA_NS6
 
-dt <- tidy_MOD13(MOD13A1$dt)
-st <- MOD13A1$st
-
-sitename <- dt$site[1]
-d     <- dt[site == sitename, ] # get the first site data
-sp    <- st[site == sitename, ] # station point
 # global parameter
 IsPlot = TRUE
 nptperyear = 23
 
-dnew     <- add_HeadTail(d, nptperyear = nptperyear) # add one year in head and tail
-INPUT    <- check_input(dnew$t, dnew$y, dnew$w, nptperyear,
+INPUT    <- check_input(d$t, d$y, d$w, nptperyear,
                         maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
-# INPUT$y0 <- dnew$y   # raw time-series, for visualization
+# INPUT$y0 <- d$y   # raw time-series, for visualization
 
 lg_lambdas <- seq(0, 3, 0.1)
 r <- v_curve(INPUT, lg_lambdas, d = 2, IsPlot = TRUE)

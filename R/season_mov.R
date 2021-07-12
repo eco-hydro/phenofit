@@ -1,31 +1,8 @@
 # ' @param IsPlot.vc Whether to plot V-curve optimized time-series.
 # ' @param IsPlot.OnlyBad If true, only plot partial figures whose NSE < 0.3.
 
-# ... could also pass to `options`
-opt_season <- function(INPUT,
-    # rFUN, wFUN, lambda,
-    options = NULL, verbose = FALSE, ...)
-{
-    # grasp all parameters
-    params = as.list(environment()) %>% {.[seq(1, length(.)-1)]} # rm the last option
-
-    # .options为全局变量，内部修改存在潜在bug
-    .options$season %<>% modifyList(options)
-    if (verbose) print(str(.options$season))
-
-    # OPTIONS_default <- getOption("phenofit.season")
-    # options = modifyList(OPTIONS_default, options)
-    dots = list(...)
-    ind <- match(names(dots), names(.options$season)) %>% rm_empty()
-    if (length(ind) > 0) {
-        .options$season %<>% modifyList(dots[ind])
-        dots = dots[-ind]
-    }
-    # all of those parameters are put in options
-    do.call(season, c(params, options, dots))
-}
-
-#' Moving growing season division
+#' @name season_mov
+#' @title Moving growing season division
 #'
 #' @inheritParams season
 #'
@@ -55,7 +32,7 @@ opt_season <- function(INPUT,
 #'    reconstructing global MODIS EVI time series on the Google Earth Engine.
 #'    ISPRS Journal of Photogrammetry and Remote Sensing, 155, 13-24.
 #'
-#' @example inst/examples/ex-season.R
+#' @example R/examples/ex-season.R
 #'
 #' @importFrom lubridate leap_year
 #' @export
@@ -75,15 +52,8 @@ season_mov <- function(INPUT,
     ...,
     years.run = NULL)
 {
-    # params = mget(ls()) %>% c(., list(...))
     # params = as.list(match.call())
     # params = c(as.list(environment()), list(...))
-    # Iparams_hide = c("INPUT", "years.run") %>%
-    #     match(names(params)) %>% rm_empty()
-    # print(str(params[-Iparams_hide]))
-
-    # if (missing(wFUN)) wFUN = .options$season$wFUN
-    # if (missing(rFUN)) rFUN = .options$season$rFUN
     .options$season %<>% modifyList(options) %>%
         modifyList(list(...))
     .options$season$wFUN %<>% check_function()
@@ -126,10 +96,9 @@ season_mov <- function(INPUT,
         # `nextend` might be not enough, 3y moving could be an option
         # I <- which(date_year %in% years[(i-ny_extend):(i+ny_extend)]) # 3y index
         I   <- which(date_year %in% years[i])
-
         ylu <- get_ylu(INPUT$y, date_year, INPUT$w, width = width_ylu, I, Imedian = TRUE,
             opt$wmin)
-        ylu <- merge_ylu(INPUT$ylu, ylu) # curvefits.R
+        ylu %<>% merge_ylu(INPUT$ylu, .) # curvefits.R
 
         # extend curve fitting period, for continuity.
         I <- seq( max(1, first(I) - nextend), min(last(I) + nextend, nlen) )
@@ -153,7 +122,10 @@ season_mov <- function(INPUT,
         if (!is_empty(brk$dt))
             brk$dt %<>% subset(year == year_i) %>% mutate(lambda = lambda)
 
-        brks[[i]] <- list(fit = brk$fit[date_year[I] == year_i, ], dt = brk$dt)
+        brks[[i]] <- list(
+            fit = brk$fit[date_year[I] == year_i, ],
+            fit.raw = brk$fit,
+            dt = brk$dt)
     }
     brks  = set_names(brks, years.run) %>% rm_empty() %>% purrr::transpose()
     brks$fit %<>% do.call(rbind, .)
@@ -168,7 +140,7 @@ season_mov <- function(INPUT,
         }
         if (opt$.check_season) brks$dt %<>% cheak_season_list()
     }
-    brks$GOF <- stat_season(INPUT, brks)
+    brks$GOF <- stat_season(INPUT, brks$fit)
 
     if (!has_lambda && opt$.lambda_vcurve) brks$optim <- vcs
     return(brks)
@@ -255,18 +227,23 @@ season_calendar <- function(years, south = FALSE){
 # }
 
 #' statistics
-#' @param brks A list object returned by `season` or `season_mov`.
+#'
+#' @param d_fit A data.frame with the columns of `t`, `y`, `witer...` and `ziter...`.
 #'
 #' @keywords internal
 #' @rdname season
-stat_season <- function(INPUT, brks){
+stat_season <- function(INPUT, d_fit){
+    nseason <- ifelse(is.data.frame(d_fit), nrow(d_fit), NA)
+
+    # d_fit <- brks$fit %>% .[,.SD,.SDcols=c(1, ncol(.))] %>% set_colnames(c("t", "ypred"))
+    ypred = d_fit %>% dplyr::select(.,starts_with("ziter")) %>% last()
+    d_fit = data.table(t = d_fit$t, ypred)
+
     d_org <- if (!is.data.table(INPUT)) as.data.table(INPUT[c("t", "y0", "w")]) else INPUT
 
-    d_fit <- brks$fit %>% .[,.SD,.SDcols=c(1, ncol(.))] %>% set_colnames(c("t", "ypred"))
     d <- merge(d_org, d_fit, by = "t")
 
     stat <- with(d, GOF(y0, ypred, w, include.cv = TRUE, include.r = TRUE))# %>% as.list()
-    nseason <- ifelse(is.data.frame(brks$dt), nrow(brks$dt), NA)
     stat['nseason'] <- nseason
 
     # str_title <- sprintf("[%s] IGBP = %s, %s, lat = %.2f", sitename, IGBP_name, stat_str, lat)

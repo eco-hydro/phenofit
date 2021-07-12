@@ -5,92 +5,30 @@
 \title{Extract Vegetation Phenology at site scale}
 \usage{
 process_phenofit(
-  y,
-  t,
-  w,
-  QC_flag = NULL,
+  d_obs,
   nptperyear = 36,
-  brks = NULL,
-  rFUN = "smooth_wWHIT",
-  wFUN = wTSM,
-  lambda = NULL,
-  TRS = c(0.1, 0.2, 0.5, 0.6, 0.8, 0.9),
-  iters = 2,
-  maxExtendMonth = 12,
-  minExtendMonth = 0.5,
-  minPercValid = 0,
   south = FALSE,
-  verbose = TRUE,
-  methods = c("AG", "Zhang", "Beck", "Elmore", "Gu"),
-  outfile = NULL,
-  title = NULL,
-  ylab = "EVI",
-  yticks = NULL,
-  IsPlot.brks = FALSE,
-  write.fig = TRUE,
-  show = FALSE,
-  ymin = 0.1,
-  wmin = 0.1,
-  wsnow = 0.8,
-  use.y0 = FALSE,
-  alpha = 0.02,
-  cex = 1.5,
-  overwrite = FALSE,
   .v_curve = FALSE,
+  options_season = list(wFUN = "wTSM", maxExtendMonth = 12, MaxPeaksPerYear = 3,
+    MaxTroughsPerYear = 4),
+  options_fitting = list(methods = c("AG", "Zhang", "Beck", "Elmore", "Gu"), wFUN =
+    "wTSM", maxExtendMonth = 12, minExtendMonth = 0.5, use.y0 = FALSE),
+  brks = NULL,
   run.curvefit = TRUE,
   ...
 )
 }
 \arguments{
-\item{y}{Numeric vector, vegetation index time-series}
-
-\item{t}{Numeric vector, \code{Date} variable}
-
-\item{w}{(optional) Numeric vector, weights of \code{y}. If not specified,
-weights of all \code{NA} values will be \code{wmin}, the others will be 1.0.}
-
-\item{QC_flag}{Factor (optional) returned by \code{qcFUN}, levels should be
-in the range of \code{c("snow", "cloud", "shadow", "aerosol", "marginal", "good")}, others will be categoried into \code{others}. \code{QC_flag} is
-used for visualization in \code{\link[=get_pheno]{get_pheno()}} and \code{\link[=plot_curvefits]{plot_curvefits()}}.}
+\item{d_obs}{data.table with the columns of y, t, w and QC_flag (optional).}
 
 \item{nptperyear}{Integer, number of images per year.}
-
-\item{brks}{A list object with the elements of 'fit' and 'dt', returned by
-\code{season} or \code{season_mov}, which contains the growing season
-dividing information.}
-
-\item{rFUN}{Rough curve fitting function, can be one of \code{\link[=smooth_wSG]{smooth_wSG()}},
-\code{\link[=smooth_wWHIT]{smooth_wWHIT()}} and \code{\link[=smooth_wHANTS]{smooth_wHANTS()}}.}
-
-\item{wFUN}{weights updating function, can be one of \code{\link[=wTSM]{wTSM()}},
-\code{\link[=wChen]{wChen()}}, \code{\link[=wBisquare]{wBisquare()}} and \code{\link[=wSELF]{wSELF()}}.}
-
-\item{lambda}{The smoothing parameter of \code{\link[=smooth_wWHIT]{smooth_wWHIT()}}. For
-\code{\link[=season_mov]{season_mov()}}, if lambda is \code{NULL}, \code{\link[=init_lambda]{init_lambda()}}
-will be used. Generally, it was set as 10000, 15, and 5 for daily, 8-day
-and 16-day inputs respectively.}
-
-\item{iters}{How many times curve fitting is implemented.}
 
 \item{south}{Boolean. In south hemisphere, growing year is 1 July to the
 following year 31 June; In north hemisphere, growing year is 1 Jan to 31 Dec.}
 
-\item{verbose}{whether to print \code{options_season} into console?}
-
-\item{ymin}{If specified, \code{ylu[1]} is constrained greater than ymin. This
-value is critical for bare, snow/ice land, where vegetation amplitude is quite
-small. Generally, you can set ymin=0.08 for NDVI, ymin=0.05 for EVI,
-ymin=0.5 gC m-2 s-1 for GPP.}
-
-\item{wmin}{Double, minimum weight of bad points, which could be smaller
-the weight of snow, ice and cloud.}
-
-\item{wsnow}{Doulbe. Reset the weight of snow points, after get \code{ylu}.
-Snow flag is an important flag of ending of growing
-season. Snow points is more valuable than marginal points. Hence, the weight
-of snow should be great than that of \code{marginal}.}
-
-\item{alpha}{Double, in \verb{[0,1]}, quantile prob of ylu_min.}
+\item{brks}{A list object with the elements of 'fit' and 'dt', returned by
+\code{season} or \code{season_mov}, which contains the growing season
+dividing information.}
 
 \item{...}{other parameters to \code{\link[=curvefits]{curvefits()}}}
 }

@@ -255,9 +255,9 @@ get_ylu <- function(y, years, w0, width, I, Imedian = TRUE, wmin = 0.2){
     w0_win <- w0[I_allin]
     I_allin  <- I_allin[which(w0_win > wmin)]
 
-    if (is_empty(I_allin)){
+    if (is_empty(I_allin)) {
         ylu_max <- ylu_min <- NA
-    } else{
+    } else {
         y_win  <- y[I_allin]
 
         ylu_min <- min(y_win)

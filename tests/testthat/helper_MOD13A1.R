@@ -1,5 +1,4 @@
 library(data.table)
-# library(plyr)
 data("MOD13A1")
 
 dt <- tidy_MOD13(MOD13A1$dt)

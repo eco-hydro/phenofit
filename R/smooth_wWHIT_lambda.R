@@ -83,24 +83,16 @@ lambda_cv_jl <- function(y, w, d = 2, lg_lambda_min = 0.1, lg_lambda_max = 3) {
 #'
 #' @keywords internal
 #' @examples
-#' library(phenofit)
-#' data("MOD13A1")
-#'
-#' dt <- tidy_MOD13(MOD13A1$dt)
-#' st <- MOD13A1$st
-#'
-#' sitename <- dt$site[1]
-#' d     <- dt[site == sitename, ] # get the first site data
-#' sp    <- st[site == sitename, ] # station point
+#' data("CA_NS6"); d = CA_NS6
+#' 
 #' # global parameter
 #' IsPlot = TRUE
 #' nptperyear = 23
-#'
-#' dnew     <- add_HeadTail(d, nptperyear = nptperyear) # add one year in head and tail
-#' INPUT    <- check_input(dnew$t, dnew$y, dnew$w, nptperyear,
+#' 
+#' INPUT    <- check_input(d$t, d$y, d$w, nptperyear,
 #'                         maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
-#' # INPUT$y0 <- dnew$y   # raw time-series, for visualization
-#'
+#' # INPUT$y0 <- d$y   # raw time-series, for visualization
+#' 
 #' lg_lambdas <- seq(0, 3, 0.1)
 #' r <- v_curve(INPUT, lg_lambdas, d = 2, IsPlot = TRUE)
 #' @export
