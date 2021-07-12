@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenofit</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1.9000</span>
       </span>
     </div>
 
@@ -96,6 +96,9 @@
   <ul class="dropdown-menu" role="menu">
     <li>
       <a href="../articles/phenofit-procedures.html">Detailed procedures of phenofit</a>
+    </li>
+    <li>
+      <a href="../articles/phenofit_CA-NS6.html">UNKNOWN TITLE</a>
     </li>
   </ul>
 </li>
@@ -136,7 +139,6 @@
   <span class='va'>INPUT</span>,
   <span class='va'>brks</span>,
   <span class='va'>plotdat</span>,
-  <span class='va'>ylu</span>,
   IsPlot.OnlyBad <span class='op'>=</span> <span class='cn'>FALSE</span>,
   show.legend <span class='op'>=</span> <span class='cn'>TRUE</span>,
   ylab <span class='op'>=</span> <span class='st'>"VI"</span>,
@@ -161,11 +163,6 @@
 Only if <code>IsPlot=TRUE</code>, <code><a href='plot_input.html'>plot_input()</a></code> will be used to plot.
 Known that y and w in <code>INPUT</code> have been changed, we suggest using the
 original data.table.</p></td>
-    </tr>
-    <tr>
-      <th>ylu</th>
-      <td><p><code>[low, high]</code> of time-series y (curve fitting values are constrained
-in the range of <code>ylu</code>.</p></td>
     </tr>
     <tr>
       <th>IsPlot.OnlyBad</th>

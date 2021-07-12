@@ -73,7 +73,7 @@ weights for NA in y and w." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenofit</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1.9000</span>
       </span>
     </div>
 
@@ -97,6 +97,9 @@ weights for NA in y and w." />
   <ul class="dropdown-menu" role="menu">
     <li>
       <a href="../articles/phenofit-procedures.html">Detailed procedures of phenofit</a>
+    </li>
+    <li>
+      <a href="../articles/phenofit_CA-NS6.html">UNKNOWN TITLE</a>
     </li>
   </ul>
 </li>
@@ -274,33 +277,22 @@ points is only 10\<!-- %, we still can't set \code{w_critical=wmin}. --></p>
     <div class='dont-index'><p><code><a href='backval.html'>backval()</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://github.com/kongdd/phenofit'>phenofit</a></span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"MOD13A1"</span><span class='op'>)</span>
-
-<span class='va'>df</span> <span class='op'>&lt;-</span> <span class='fu'><a href='tidy_MOD13.html'>tidy_MOD13</a></span><span class='op'>(</span><span class='va'>MOD13A1</span><span class='op'>$</span><span class='va'>dt</span><span class='op'>)</span>
-<span class='va'>st</span> <span class='op'>&lt;-</span> <span class='va'>MOD13A1</span><span class='op'>$</span><span class='va'>st</span>
-
-<span class='va'>date_start</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/as.Date.html'>as.Date</a></span><span class='op'>(</span><span class='st'>'2013-01-01'</span><span class='op'>)</span>
-<span class='va'>date_end</span>   <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/as.Date.html'>as.Date</a></span><span class='op'>(</span><span class='st'>'2016-12-31'</span><span class='op'>)</span>
-
-<span class='va'>sitename</span> <span class='op'>&lt;-</span> <span class='st'>'CA-NS6'</span> <span class='co'># df$site[1]</span>
-<span class='va'>d</span>     <span class='op'>&lt;-</span> <span class='va'>df</span><span class='op'>[</span><span class='va'>site</span> <span class='op'>==</span> <span class='va'>sitename</span> <span class='op'>&amp;</span> <span class='op'>(</span><span class='va'>date</span> <span class='op'>&gt;=</span> <span class='va'>date_start</span> <span class='op'>&amp;</span> <span class='va'>date</span> <span class='op'>&lt;=</span> <span class='va'>date_end</span><span class='op'>)</span>, <span class='op'>]</span>
-<span class='va'>sp</span>    <span class='op'>&lt;-</span> <span class='va'>st</span><span class='op'>[</span><span class='va'>site</span> <span class='op'>==</span> <span class='va'>sitename</span>, <span class='op'>]</span>
-<span class='va'>south</span> <span class='op'>&lt;-</span> <span class='va'>sp</span><span class='op'>$</span><span class='va'>lat</span> <span class='op'>&lt;</span> <span class='fl'>0</span>
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"CA_NS6"</span><span class='op'>)</span>
+<span class='va'>d</span> <span class='op'>=</span> <span class='va'>CA_NS6</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>d</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;      site      y       date          t   w QC_flag
+#&gt; 1: CA-NS6 0.1370 2013-01-01 2013-01-11 0.2    snow
+#&gt; 2: CA-NS6 0.1140 2013-01-17 2013-01-31 0.2    snow
+#&gt; 3: CA-NS6 0.1124 2013-02-02 2013-02-15 0.2    snow
+#&gt; 4: CA-NS6 0.0750 2013-02-18 2013-03-01 0.2    snow
+#&gt; 5: CA-NS6 0.0915 2013-03-06 2013-03-15 0.2    snow
+#&gt; 6: CA-NS6 0.0832 2013-03-22 2013-04-01 0.2    snow</div><div class='input'>
 <span class='va'>nptperyear</span> <span class='op'>&lt;-</span> <span class='fl'>23</span>
-
-<span class='co'># global parameter</span>
-<span class='va'>IsPlot</span> <span class='op'>=</span> <span class='cn'>TRUE</span>
-<span class='va'>print</span>  <span class='op'>=</span> <span class='cn'>FALSE</span>
-<span class='va'>ypeak_min</span>  <span class='op'>=</span> <span class='fl'>0.05</span>
-<span class='va'>wFUN</span> <span class='op'>=</span> <span class='va'>wTSM</span>
-
-<span class='co'># add one year in head and tail</span>
-<span class='co'># d     &lt;- add_HeadTail(d, south = south, nptperyear = nptperyear) </span>
-<span class='va'>INPUT</span>    <span class='op'>&lt;-</span> <span class='fu'>check_input</span><span class='op'>(</span><span class='va'>d</span><span class='op'>$</span><span class='va'>t</span>, <span class='va'>d</span><span class='op'>$</span><span class='va'>y</span>, <span class='va'>d</span><span class='op'>$</span><span class='va'>w</span>, QC_flag <span class='op'>=</span> <span class='va'>d</span><span class='op'>$</span><span class='va'>QC_flag</span>,
-     nptperyear <span class='op'>=</span> <span class='va'>nptperyear</span>, south <span class='op'>=</span> <span class='va'>south</span>, 
+<span class='va'>INPUT</span> <span class='op'>&lt;-</span> <span class='fu'>check_input</span><span class='op'>(</span><span class='va'>d</span><span class='op'>$</span><span class='va'>t</span>, <span class='va'>d</span><span class='op'>$</span><span class='va'>y</span>, <span class='va'>d</span><span class='op'>$</span><span class='va'>w</span>, QC_flag <span class='op'>=</span> <span class='va'>d</span><span class='op'>$</span><span class='va'>QC_flag</span>,
+     nptperyear <span class='op'>=</span> <span class='va'>nptperyear</span>, south <span class='op'>=</span> <span class='cn'>FALSE</span>, 
      maxgap <span class='op'>=</span> <span class='va'>nptperyear</span><span class='op'>/</span><span class='fl'>4</span>, alpha <span class='op'>=</span> <span class='fl'>0.02</span>, wmin <span class='op'>=</span> <span class='fl'>0.2</span><span class='op'>)</span>
-</div></pre>
+<span class='fu'><a href='plot_input.html'>plot_input</a></span><span class='op'>(</span><span class='va'>INPUT</span><span class='op'>)</span>
+</div><div class='img'><img src='check_input-1.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

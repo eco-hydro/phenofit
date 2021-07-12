@@ -74,7 +74,7 @@ curvature curvature." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenofit</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1.9000</span>
       </span>
     </div>
 
@@ -98,6 +98,9 @@ curvature curvature." />
   <ul class="dropdown-menu" role="menu">
     <li>
       <a href="../articles/phenofit-procedures.html">Detailed procedures of phenofit</a>
+    </li>
+    <li>
+      <a href="../articles/phenofit_CA-NS6.html">UNKNOWN TITLE</a>
     </li>
   </ul>
 </li>
@@ -206,7 +209,7 @@ will be ignored.</p>
 
 <span class='va'>methods</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"AG"</span>, <span class='st'>"Beck"</span>, <span class='st'>"Elmore"</span>, <span class='st'>"Gu"</span>, <span class='st'>"Zhang"</span><span class='op'>)</span> <span class='co'># "Klos" too slow</span>
 <span class='va'>fFITs</span> <span class='op'>&lt;-</span> <span class='fu'><a href='curvefit.html'>curvefit</a></span><span class='op'>(</span><span class='va'>y</span>, <span class='va'>t</span>, <span class='va'>tout</span>, <span class='va'>methods</span><span class='op'>)</span>
-<span class='va'>fFIT</span>  <span class='op'>&lt;-</span> <span class='va'>fFITs</span><span class='op'>$</span><span class='va'>fFIT</span><span class='op'>$</span><span class='va'>AG</span>
+<span class='va'>fFIT</span>  <span class='op'>&lt;-</span> <span class='va'>fFITs</span><span class='op'>$</span><span class='va'>model</span><span class='op'>$</span><span class='va'>AG</span>
 <span class='va'>d1</span> <span class='op'>&lt;-</span> <span class='fu'>D1</span><span class='op'>(</span><span class='va'>fFIT</span><span class='op'>)</span>
 <span class='va'>d2</span> <span class='op'>&lt;-</span> <span class='fu'>D2</span><span class='op'>(</span><span class='va'>fFIT</span><span class='op'>)</span>
 <span class='va'>d_k</span> <span class='op'>&lt;-</span> <span class='fu'>curvature</span><span class='op'>(</span><span class='va'>fFIT</span><span class='op'>)</span>

@@ -73,7 +73,7 @@ Update 20180605 add weights updating to whittaker lambda selecting" />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenofit</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1.9000</span>
       </span>
     </div>
 
@@ -97,6 +97,9 @@ Update 20180605 add weights updating to whittaker lambda selecting" />
   <ul class="dropdown-menu" role="menu">
     <li>
       <a href="../articles/phenofit-procedures.html">Detailed procedures of phenofit</a>
+    </li>
+    <li>
+      <a href="../articles/phenofit_CA-NS6.html">UNKNOWN TITLE</a>
     </li>
   </ul>
 </li>
@@ -183,7 +186,7 @@ Update 20180605 add weights updating to whittaker lambda selecting</p>
 <span class='va'>nptperyear</span> <span class='op'>=</span> <span class='fl'>23</span>
 
 <span class='va'>dnew</span>     <span class='op'>&lt;-</span> <span class='fu'><a href='add_HeadTail.html'>add_HeadTail</a></span><span class='op'>(</span><span class='va'>d</span>, nptperyear <span class='op'>=</span> <span class='va'>nptperyear</span><span class='op'>)</span> <span class='co'># add one year in head and tail</span>
-<span class='va'>INPUT</span>    <span class='op'>&lt;-</span> <span class='fu'><a href='check_input.html'>check_input</a></span><span class='op'>(</span><span class='va'>dnew</span><span class='op'>$</span><span class='va'>t</span>, <span class='va'>dnew</span><span class='op'>$</span><span class='va'>y</span>, <span class='va'>dnew</span><span class='op'>$</span><span class='va'>w</span>, <span class='va'>nptperyear</span>, 
+<span class='va'>INPUT</span>    <span class='op'>&lt;-</span> <span class='fu'><a href='check_input.html'>check_input</a></span><span class='op'>(</span><span class='va'>dnew</span><span class='op'>$</span><span class='va'>t</span>, <span class='va'>dnew</span><span class='op'>$</span><span class='va'>y</span>, <span class='va'>dnew</span><span class='op'>$</span><span class='va'>w</span>, <span class='va'>nptperyear</span>,
                         maxgap <span class='op'>=</span> <span class='va'>nptperyear</span><span class='op'>/</span><span class='fl'>4</span>, alpha <span class='op'>=</span> <span class='fl'>0.02</span>, wmin <span class='op'>=</span> <span class='fl'>0.2</span><span class='op'>)</span>
 <span class='co'># INPUT$y0 &lt;- dnew$y   # raw time-series, for visualization</span>
 

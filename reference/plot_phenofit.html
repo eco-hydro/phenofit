@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenofit</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1.9000</span>
       </span>
     </div>
 
@@ -96,6 +96,9 @@
   <ul class="dropdown-menu" role="menu">
     <li>
       <a href="../articles/phenofit-procedures.html">Detailed procedures of phenofit</a>
+    </li>
+    <li>
+      <a href="../articles/phenofit_CA-NS6.html">UNKNOWN TITLE</a>
     </li>
   </ul>
 </li>
@@ -137,7 +140,7 @@
   type <span class='op'>=</span> <span class='st'>"all"</span>,
   <span class='va'>methods</span>,
   title <span class='op'>=</span> <span class='cn'>NULL</span>,
-  title.ylab <span class='op'>=</span> <span class='st'>"Vegetation Index"</span>,
+  ylab <span class='op'>=</span> <span class='st'>"Vegetation Index"</span>,
   IsPlot <span class='op'>=</span> <span class='cn'>TRUE</span>,
   show.legend <span class='op'>=</span> <span class='cn'>TRUE</span>,
   newpage <span class='op'>=</span> <span class='cn'>TRUE</span>,
@@ -156,18 +159,11 @@
       <td><p>one of c("season", "fitting", "pheno", "all")</p></td>
     </tr>
     <tr>
-      <th>methods</th>
-      <td><p>Fine curve fitting methods, can be one or more of
-<code><a href='https://rdrr.io/r/base/c.html'>c('AG', 'Beck', 'Elmore', 'Zhang', 'Gu', 'Klos')</a></code>. Note that 'Gu' and 'Klos'
-are very slow.
-f not specified, it will be determined by phenofit options <code>methods_fine</code>.</p></td>
-    </tr>
-    <tr>
       <th>title</th>
       <td><p>String, title of figure.</p></td>
     </tr>
     <tr>
-      <th>title.ylab</th>
+      <th>ylab</th>
       <td><p>String, title of <code>xlab</code> and <code>ylab</code>.</p></td>
     </tr>
     <tr>

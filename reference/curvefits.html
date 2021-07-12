@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenofit</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1.9000</span>
       </span>
     </div>
 
@@ -96,6 +96,9 @@
   <ul class="dropdown-menu" role="menu">
     <li>
       <a href="../articles/phenofit-procedures.html">Detailed procedures of phenofit</a>
+    </li>
+    <li>
+      <a href="../articles/phenofit_CA-NS6.html">UNKNOWN TITLE</a>
     </li>
   </ul>
 </li>
@@ -132,22 +135,7 @@
     <p>Fine Curve fitting for INPUT time-series.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>curvefits</span><span class='op'>(</span>
-  <span class='va'>INPUT</span>,
-  <span class='va'>brks</span>,
-  <span class='va'>methods</span>,
-  <span class='va'>wFUN</span>,
-  iters <span class='op'>=</span> <span class='fl'>2</span>,
-  wmin <span class='op'>=</span> <span class='fl'>0.1</span>,
-  nextend <span class='op'>=</span> <span class='fl'>2</span>,
-  maxExtendMonth <span class='op'>=</span> <span class='fl'>2</span>,
-  minExtendMonth <span class='op'>=</span> <span class='fl'>1</span>,
-  minT <span class='op'>=</span> <span class='fl'>0</span>,
-  minPercValid <span class='op'>=</span> <span class='fl'>0</span>,
-  use.rough <span class='op'>=</span> <span class='cn'>FALSE</span>,
-  use.y0 <span class='op'>=</span> <span class='cn'>TRUE</span>,
-  <span class='va'>...</span>
-<span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>curvefits</span><span class='op'>(</span><span class='va'>INPUT</span>, <span class='va'>brks</span>, options <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='va'>...</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -164,71 +152,41 @@ and 'ylu', returned by <code>check_input</code>.</p></td>
 dividing information.</p></td>
     </tr>
     <tr>
-      <th>methods</th>
-      <td><p>Fine curve fitting methods, can be one or more of
-<code><a href='https://rdrr.io/r/base/c.html'>c('AG', 'Beck', 'Elmore', 'Zhang', 'Gu', 'Klos')</a></code>. Note that 'Gu' and 'Klos'
-are very slow.
-f not specified, it will be determined by phenofit options <code>methods_fine</code>.</p></td>
-    </tr>
-    <tr>
-      <th>wFUN</th>
-      <td><p>Character or function, weights updating function of fine fitting
-function.
-If not specified, it will be determined by phenofit options <code>wFUN_fine</code>.</p></td>
-    </tr>
-    <tr>
-      <th>iters</th>
-      <td><p>How many times curve fitting is implemented.</p></td>
-    </tr>
-    <tr>
-      <th>wmin</th>
-      <td><p>Double, minimum weigth (i.e. weight of snow, ice and cloud).</p></td>
-    </tr>
-    <tr>
-      <th>nextend</th>
-      <td><p>Extend curve fitting window, until <code>nextend</code> good or
-marginal element are found in previous and subsequent growing season.</p></td>
-    </tr>
-    <tr>
-      <th>maxExtendMonth</th>
-      <td><p>Search good or marginal good values in previous and
-subsequent <code>maxExtendMonth</code> period.</p></td>
-    </tr>
-    <tr>
-      <th>minExtendMonth</th>
-      <td><p>Extending perid defined by <code>nextend</code> and
-<code>maxExtendMonth</code> should be no shorter than <code>minExtendMonth</code>.
-When all points of the input time-series are good value, then the extending
-period will be too short. In that situation, we can't make sure the connection
-between different growing seasons is smoothing.</p></td>
-    </tr>
-    <tr>
-      <th>minT</th>
-      <td><p>(optional). If Tn not provided in <code>INPUT</code>, <code>minT</code> will not be used.
-<code>minT</code> use night temperature Tn to define backgroud value (days with <code>Tn &lt; minT</code>
-treated as ungrowing season).</p></td>
-    </tr>
-    <tr>
-      <th>minPercValid</th>
-      <td><p>(optional, default not use). If the percentage of good
-and marginal quality points is less than <code>minPercValid</code>, curve fiting result
-is set to <code>NA</code>.</p></td>
-    </tr>
-    <tr>
-      <th>use.rough</th>
-      <td><p>Whether to use rough fitting smoothed time-series as input?
+      <th>options</th>
+      <td><ul>
+<li><p><code>methods</code> (default <code>c('AG', 'Beck', 'Elmore', 'Zhang')``): Fine curve fitting methods, can be one or more of </code>c('AG', 'Beck', 'Elmore', 'Zhang', 'Gu', 'Klos')`. Note that 'Gu' and 'Klos'
+are very slow.</p></li>
+<li><p><code>wFUN</code> (default <code>wTSM</code>): Character or function, weights updating function
+of fine fitting function.</p></li>
+<li><p><code>iters</code> (default 2): max iterations of fine fitting.</p></li>
+<li><p><code>wmin</code> (default 0.1): min weights in the weights updating procedure.</p></li>
+<li><p><code>use.rough</code> (default FALSE): Whether to use rough fitting smoothed time-series as input?
 If <code>false</code>, smoothed VI by rough fitting will be used for Phenological metrics
 extraction; If <code>true</code>, original input <code>y</code> will be used (rough fitting is used
-to divide growing seasons and update weights.</p></td>
-    </tr>
-    <tr>
-      <th>use.y0</th>
-      <td><p>boolean. whether to use original <code>y0</code>, which is before the
-process of <code>check_input</code>.</p></td>
+to divide growing seasons and update weights.</p></li>
+<li><p><code>use.y0</code> (default TRUE): boolean. whether to use original <code>y0</code> as the input of <code>plot_input</code>,
+note that not for curve fitting. <code>y0</code> is the original value before the process
+of <code>check_input</code>.</p></li>
+<li><p><code>nextend</code> (default 2): Extend curve fitting window, until <code>nextend</code> good or
+marginal element are found in previous and subsequent growing season.</p></li>
+<li><p><code>maxExtendMonth</code> (default 1): Search good or marginal good values in previous and
+subsequent <code>maxExtendMonth</code> period.</p></li>
+<li><p><code>minExtendMonth</code> (default 2): Extending perid defined by <code>nextend</code> and <code>maxExtendMonth</code>,
+should be no shorter than <code>minExtendMonth</code>.
+When all points of the input time-series are good value, then the extending
+period will be too short. In that situation, we can't make sure the connection
+between different growing seasons is smoothing.</p></li>
+<li><p><code>minPercValid</code>: (default 0, not use). If the percentage of good
+and marginal quality points is less than <code>minPercValid</code>, curve fiting result
+is set to <code>NA</code>.</p></li>
+<li><p><code>minT</code>: (not used currently). If <code>Tn</code> not provided in <code>INPUT</code>, <code>minT</code> will not be used.
+<code>minT</code> use night temperature Tn to define backgroud value (days with <code>Tn &lt; minT</code>
+treated as ungrowing season).</p></li>
+</ul></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>other parameters passed to curve fitting function.</p></td>
+      <td><p>other parameters to <code><a href='curvefit.html'>curvefit()</a></code></p></td>
     </tr>
     </table>
 
@@ -240,49 +198,49 @@ process of <code>check_input</code>.</p></td>
     <div class='dont-index'><p><code><a href='FitDL.html'>FitDL()</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://github.com/kongdd/phenofit'>phenofit</a></span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"MOD13A1"</span><span class='op'>)</span>
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"CA_NS6"</span><span class='op'>)</span>
+<span class='va'>d</span> <span class='op'>=</span> <span class='va'>CA_NS6</span>
 
-<span class='va'>df</span> <span class='op'>&lt;-</span> <span class='fu'><a href='tidy_MOD13.html'>tidy_MOD13</a></span><span class='op'>(</span><span class='va'>MOD13A1</span><span class='op'>$</span><span class='va'>dt</span><span class='op'>)</span>
-<span class='va'>st</span> <span class='op'>&lt;-</span> <span class='va'>MOD13A1</span><span class='op'>$</span><span class='va'>st</span>
-
-<span class='va'>date_start</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/as.Date.html'>as.Date</a></span><span class='op'>(</span><span class='st'>'2013-01-01'</span><span class='op'>)</span>
-<span class='va'>date_end</span>   <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/as.Date.html'>as.Date</a></span><span class='op'>(</span><span class='st'>'2016-12-31'</span><span class='op'>)</span>
-
-<span class='va'>sitename</span> <span class='op'>&lt;-</span> <span class='st'>'CA-NS6'</span> <span class='co'># df$site[1]</span>
-<span class='va'>d</span>     <span class='op'>&lt;-</span> <span class='va'>df</span><span class='op'>[</span><span class='va'>site</span> <span class='op'>==</span> <span class='va'>sitename</span> <span class='op'>&amp;</span> <span class='op'>(</span><span class='va'>date</span> <span class='op'>&gt;=</span> <span class='va'>date_start</span> <span class='op'>&amp;</span> <span class='va'>date</span> <span class='op'>&lt;=</span> <span class='va'>date_end</span><span class='op'>)</span>, <span class='op'>]</span>
-<span class='va'>sp</span>    <span class='op'>&lt;-</span> <span class='va'>st</span><span class='op'>[</span><span class='va'>site</span> <span class='op'>==</span> <span class='va'>sitename</span>, <span class='op'>]</span>
-<span class='va'>south</span> <span class='op'>&lt;-</span> <span class='va'>sp</span><span class='op'>$</span><span class='va'>lat</span> <span class='op'>&lt;</span> <span class='fl'>0</span>
 <span class='va'>nptperyear</span> <span class='op'>&lt;-</span> <span class='fl'>23</span>
-
-<span class='co'># global parameter</span>
-<span class='va'>IsPlot</span> <span class='op'>=</span> <span class='cn'>TRUE</span>
-<span class='va'>print</span>  <span class='op'>=</span> <span class='cn'>FALSE</span>
-<span class='va'>ypeak_min</span>  <span class='op'>=</span> <span class='fl'>0.05</span>
-<span class='va'>wFUN</span> <span class='op'>=</span> <span class='va'>wTSM</span>
-
-<span class='co'># add one year in head and tail</span>
-<span class='co'># d     &lt;- add_HeadTail(d, south = south, nptperyear = nptperyear) </span>
-<span class='va'>INPUT</span>    <span class='op'>&lt;-</span> <span class='fu'><a href='check_input.html'>check_input</a></span><span class='op'>(</span><span class='va'>d</span><span class='op'>$</span><span class='va'>t</span>, <span class='va'>d</span><span class='op'>$</span><span class='va'>y</span>, <span class='va'>d</span><span class='op'>$</span><span class='va'>w</span>, QC_flag <span class='op'>=</span> <span class='va'>d</span><span class='op'>$</span><span class='va'>QC_flag</span>,
-     nptperyear <span class='op'>=</span> <span class='va'>nptperyear</span>, south <span class='op'>=</span> <span class='va'>south</span>, 
+<span class='va'>INPUT</span> <span class='op'>&lt;-</span> <span class='fu'><a href='check_input.html'>check_input</a></span><span class='op'>(</span><span class='va'>d</span><span class='op'>$</span><span class='va'>t</span>, <span class='va'>d</span><span class='op'>$</span><span class='va'>y</span>, <span class='va'>d</span><span class='op'>$</span><span class='va'>w</span>, QC_flag <span class='op'>=</span> <span class='va'>d</span><span class='op'>$</span><span class='va'>QC_flag</span>,
+     nptperyear <span class='op'>=</span> <span class='va'>nptperyear</span>, south <span class='op'>=</span> <span class='cn'>FALSE</span>,
      maxgap <span class='op'>=</span> <span class='va'>nptperyear</span><span class='op'>/</span><span class='fl'>4</span>, alpha <span class='op'>=</span> <span class='fl'>0.02</span>, wmin <span class='op'>=</span> <span class='fl'>0.2</span><span class='op'>)</span>
+<span class='co'># plot_input(INPUT)</span>
+
 <span class='co'># Rough fitting and growing season dividing</span>
-<span class='va'>brks2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='season.html'>season_mov</a></span><span class='op'>(</span><span class='va'>INPUT</span>,
-    rFUN <span class='op'>=</span> <span class='va'>smooth_wWHIT</span>, wFUN <span class='op'>=</span> <span class='va'>wFUN</span>,
-    plotdat <span class='op'>=</span> <span class='va'>d</span>, IsPlot <span class='op'>=</span> <span class='va'>IsPlot</span>, print <span class='op'>=</span> <span class='cn'>FALSE</span>, IsPlot.OnlyBad <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
+<span class='va'>wFUN</span> <span class='op'>&lt;-</span> <span class='st'>"wTSM"</span>
+<span class='va'>brks2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='season_mov.html'>season_mov</a></span><span class='op'>(</span><span class='va'>INPUT</span>,
+    options <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>
+        rFUN <span class='op'>=</span> <span class='va'>smooth_wWHIT</span>, wFUN <span class='op'>=</span> <span class='va'>wFUN</span>,
+        r_min <span class='op'>=</span> <span class='fl'>0.05</span>, ypeak_min <span class='op'>=</span> <span class='fl'>0.05</span>,
+        lambda <span class='op'>=</span> <span class='fl'>10</span>,
+        verbose <span class='op'>=</span> <span class='cn'>FALSE</span>
+    <span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;   [season_mov] running 1 ... 
 #&gt;   [season_mov] running 2 ... 
 #&gt;   [season_mov] running 3 ... 
-#&gt;   [season_mov] running 4 ... </div><div class='img'><img src='curvefits-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='co'># Fine fitting</span>
+#&gt;   [season_mov] running 4 ... </div><div class='input'><span class='co'># plot_season(INPUT, brks2, d)</span>
+<span class='co'># Fine fitting</span>
 <span class='va'>fit</span> <span class='op'>&lt;-</span> <span class='fu'>curvefits</span><span class='op'>(</span>
     <span class='va'>INPUT</span>, <span class='va'>brks2</span>,
-    methods <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"AG"</span>, <span class='st'>"Beck"</span>, <span class='st'>"Elmore"</span>, <span class='st'>"Zhang"</span><span class='op'>)</span>, <span class='co'>#,"klos", "Gu"</span>
-    wFUN <span class='op'>=</span> <span class='va'>wFUN</span>,
-    nextend <span class='op'>=</span> <span class='fl'>2</span>, maxExtendMonth <span class='op'>=</span> <span class='fl'>2</span>, minExtendMonth <span class='op'>=</span> <span class='fl'>1</span>, minPercValid <span class='op'>=</span> <span class='fl'>0.2</span><span class='op'>)</span>
+    options <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>
+        methods <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"AG"</span>, <span class='st'>"Beck"</span>, <span class='st'>"Elmore"</span>, <span class='st'>"Zhang"</span><span class='op'>)</span>, <span class='co'>#,"klos", "Gu"</span>
+        wFUN <span class='op'>=</span> <span class='va'>wFUN</span>,
+        nextend <span class='op'>=</span> <span class='fl'>2</span>, maxExtendMonth <span class='op'>=</span> <span class='fl'>2</span>, minExtendMonth <span class='op'>=</span> <span class='fl'>1</span>, minPercValid <span class='op'>=</span> <span class='fl'>0.2</span>
+    <span class='op'>)</span>
+<span class='op'>)</span>
 </div><div class='output co'>#&gt;   [curvefits] running 1 ... 
 #&gt;   [curvefits] running 2 ... 
 #&gt;   [curvefits] running 3 ... 
-#&gt;   [curvefits] running 4 ... </div></pre>
+#&gt;   [curvefits] running 4 ... </div><div class='input'>
+<span class='va'>r_param</span> <span class='op'>=</span> <span class='fu'><a href='get_param.html'>get_param</a></span><span class='op'>(</span><span class='va'>fit</span><span class='op'>)</span>
+<span class='va'>r_pheno</span> <span class='op'>=</span> <span class='fu'><a href='get_pheno.html'>get_pheno</a></span><span class='op'>(</span><span class='va'>fit</span><span class='op'>)</span>
+<span class='va'>r_gof</span> <span class='op'>=</span> <span class='fu'><a href='get_GOF.html'>get_GOF</a></span><span class='op'>(</span><span class='va'>fit</span><span class='op'>)</span>
+<span class='va'>d_fit</span> <span class='op'>=</span> <span class='fu'><a href='get_fitting.html'>get_fitting</a></span><span class='op'>(</span><span class='va'>fit</span><span class='op'>)</span>
+
+<span class='va'>g</span> <span class='op'>&lt;-</span> <span class='fu'><a href='plot_curvefits.html'>plot_curvefits</a></span><span class='op'>(</span><span class='va'>d_fit</span>, <span class='va'>brks2</span><span class='op'>)</span>
+<span class='fu'>grid</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/r/grid/grid.newpage.html'>grid.newpage</a></span><span class='op'>(</span><span class='op'>)</span>; <span class='fu'>grid</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/r/grid/grid.draw.html'>grid.draw</a></span><span class='op'>(</span><span class='va'>g</span><span class='op'>)</span>
+</div><div class='img'><img src='curvefits-1.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

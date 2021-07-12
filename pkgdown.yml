@@ -3,5 +3,6 @@ pkgdown: 1.6.1
 pkgdown_sha: ~
 articles:
   phenofit-procedures: phenofit-procedures.html
-last_built: 2021-06-27T00:31Z
+  phenofit_CA-NS6: phenofit_CA-NS6.html
+last_built: 2021-07-12T05:52Z
 

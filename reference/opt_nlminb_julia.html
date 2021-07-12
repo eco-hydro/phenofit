@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenofit</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1.9000</span>
       </span>
     </div>
 
@@ -96,6 +96,9 @@
   <ul class="dropdown-menu" role="menu">
     <li>
       <a href="../articles/phenofit-procedures.html">Detailed procedures of phenofit</a>
+    </li>
+    <li>
+      <a href="../articles/phenofit_CA-NS6.html">UNKNOWN TITLE</a>
     </li>
   </ul>
 </li>
@@ -219,7 +222,7 @@ range of <code>ylu</code>.</p></td>
 <span class='va'>ypred</span> <span class='op'>=</span> <span class='va'>t</span><span class='op'>*</span><span class='fl'>0</span>
 <span class='va'>y</span>     <span class='op'>=</span> <span class='fu'>fun</span><span class='op'>(</span><span class='va'>par</span>, <span class='va'>t</span><span class='op'>)</span>
 
-<span class='fu'><a href='julia_init.html'>julia_init</a></span><span class='op'>(</span><span class='op'>)</span>
+<span class='fu'>julia_init</span><span class='op'>(</span><span class='op'>)</span>
 <span class='va'>r_julia</span>  <span class='op'>&lt;-</span> <span class='fu'>opt_nlminb_julia</span><span class='op'>(</span><span class='va'>par0</span>, <span class='st'>"doubleLog_Beck"</span>, <span class='va'>y</span>, <span class='va'>t</span><span class='op'>)</span>
 <span class='va'>r_R</span> <span class='op'>&lt;-</span> <span class='fu'><a href='opt_FUN.html'>opt_nlminb</a></span><span class='op'>(</span><span class='va'>par0</span>, <span class='va'>f_goal</span>, fun <span class='op'>=</span> <span class='va'>fun</span>, y <span class='op'>=</span> <span class='va'>y</span>, t <span class='op'>=</span> <span class='va'>t</span>, pred <span class='op'>=</span> <span class='va'>ypred</span><span class='op'>)</span>
 

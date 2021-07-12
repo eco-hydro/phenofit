@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenofit</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1.9000</span>
       </span>
     </div>
 
@@ -96,6 +96,9 @@
   <ul class="dropdown-menu" role="menu">
     <li>
       <a href="../articles/phenofit-procedures.html">Detailed procedures of phenofit</a>
+    </li>
+    <li>
+      <a href="../articles/phenofit_CA-NS6.html">UNKNOWN TITLE</a>
     </li>
   </ul>
 </li>
@@ -134,9 +137,9 @@
 
     <pre class="usage"><span class='fu'>check_season</span><span class='op'>(</span><span class='va'>d</span>, rm_closed <span class='op'>=</span> <span class='cn'>TRUE</span>, rtrough_max <span class='op'>=</span> <span class='fl'>0.7</span>, r_min <span class='op'>=</span> <span class='fl'>0.02</span><span class='op'>)</span>
 
-<span class='fu'>check_season_dt</span><span class='op'>(</span><span class='va'>dt</span>, <span class='va'>rtrough_max</span>, <span class='va'>r_min</span>, len_min <span class='op'>=</span> <span class='fl'>45</span>, len_max <span class='op'>=</span> <span class='fl'>650</span><span class='op'>)</span>
+<span class='fu'>check_season_dt</span><span class='op'>(</span><span class='va'>dt</span><span class='op'>)</span>
 
-<span class='fu'>cheak_season_list</span><span class='op'>(</span><span class='va'>lst_dt</span>, <span class='va'>rtrough_max</span>, <span class='va'>r_min</span>, len_min <span class='op'>=</span> <span class='fl'>45</span>, len_max <span class='op'>=</span> <span class='fl'>650</span><span class='op'>)</span></pre>
+<span class='fu'>cheak_season_list</span><span class='op'>(</span><span class='va'>lst_dt</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -158,16 +161,6 @@ should be greater than r_min.</p></td>
     <tr>
       <th>dt</th>
       <td><p>data.table of growing season dividing info</p></td>
-    </tr>
-    <tr>
-      <th>len_min</th>
-      <td><p>the minimum and maximum length (in the unit of days)
-of growing season</p></td>
-    </tr>
-    <tr>
-      <th>len_max</th>
-      <td><p>the minimum and maximum length (in the unit of days)
-of growing season</p></td>
     </tr>
     <tr>
       <th>lst_dt</th>
