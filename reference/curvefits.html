@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenofit</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1</span>
       </span>
     </div>
 
@@ -98,7 +98,7 @@
       <a href="../articles/phenofit-procedures.html">Detailed procedures of phenofit</a>
     </li>
     <li>
-      <a href="../articles/phenofit_CA-NS6.html">UNKNOWN TITLE</a>
+      <a href="../articles/phenofit_CA-NS6.html">Extract vegetation phenology from MOD13A1 EVI</a>
     </li>
   </ul>
 </li>
@@ -209,7 +209,7 @@ treated as ungrowing season).</p></li>
 
 <span class='co'># Rough fitting and growing season dividing</span>
 <span class='va'>wFUN</span> <span class='op'>&lt;-</span> <span class='st'>"wTSM"</span>
-<span class='va'>brks2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='season_mov.html'>season_mov</a></span><span class='op'>(</span><span class='va'>INPUT</span>,
+<span class='va'>brks2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='process_season.html'>season_mov</a></span><span class='op'>(</span><span class='va'>INPUT</span>,
     options <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>
         rFUN <span class='op'>=</span> <span class='va'>smooth_wWHIT</span>, wFUN <span class='op'>=</span> <span class='va'>wFUN</span>,
         r_min <span class='op'>=</span> <span class='fl'>0.05</span>, ypeak_min <span class='op'>=</span> <span class='fl'>0.05</span>,

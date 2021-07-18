@@ -5,13 +5,13 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title> • phenofit</title>
+<title>Extract vegetation phenology from MOD13A1 EVI • phenofit</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
 <script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><meta property="og:title" content="">
+<script src="../pkgdown.js"></script><meta property="og:title" content="Extract vegetation phenology from MOD13A1 EVI">
 <meta property="og:description" content="phenofit">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenofit</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1</span>
       </span>
     </div>
 
@@ -57,7 +57,7 @@
       <a href="../articles/phenofit-procedures.html">Detailed procedures of phenofit</a>
     </li>
     <li>
-      <a href="../articles/phenofit_CA-NS6.html">UNKNOWN TITLE</a>
+      <a href="../articles/phenofit_CA-NS6.html">Extract vegetation phenology from MOD13A1 EVI</a>
     </li>
   </ul>
 </li>
@@ -85,7 +85,7 @@
       </header><script src="phenofit_CA-NS6_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip></h1>
+      <h1 data-toc-skip>Extract vegetation phenology from MOD13A1 EVI</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/kongdd/phenofit/blob/master/vignettes/phenofit_CA-NS6.Rmd"><code>vignettes/phenofit_CA-NS6.Rmd</code></a></small>
@@ -100,7 +100,6 @@
 <a href="#example" class="anchor"></a>Example</h1>
 <p>Here, we illustrate how to use <code>phenofit</code> to extract vegetation phenology from MOD13A1 in the sampled points. Regional analysis also can be conducted in the similar way.</p>
 <!-- ## 1.1 Download MOD13A1 data
-
 Upload point shapefile into GEE, clip MOD13A1 and download vegetation index
 data. [Here](https://code.earthengine.google.com/ee3ec39cf3061374dab435c358d008a3) is the corresponding GEE script. 
  -->
@@ -229,7 +228,7 @@ data. [Here](https://code.earthengine.google.com/ee3ec39cf3061374dab435c358d008a
 <span class="co">#                rymin_less = 0.6, ymax_min = ymax_min,</span>
 <span class="co">#                max_MaxPeaksperyear =2.5, max_MinPeaksperyear = 3.5) #, ...</span>
 <span class="co"># get growing season breaks in a 3-year moving window</span>
-<span class="va">brks2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/season_mov.html">season_mov</a></span><span class="op">(</span><span class="va">INPUT</span>, 
+<span class="va">brks2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/process_season.html">season_mov</a></span><span class="op">(</span><span class="va">INPUT</span>, 
     <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>FUN <span class="op">=</span> <span class="va">smooth_wWHIT</span>, wFUN <span class="op">=</span> <span class="va">wFUN</span>, maxExtendMonth <span class="op">=</span> <span class="fl">6</span>, r_min <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <pre><code>##   [season_mov] running 1 ... 
 ##   [season_mov] running 2 ... 
@@ -298,28 +297,28 @@ data. [Here](https://code.earthengine.google.com/ee3ec39cf3061374dab435c358d008a
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">l_param</span><span class="op">$</span><span class="va">AG</span><span class="op">)</span></code></pre></div>
 <pre><code>## # A tibble: 20 x 8
-##    flag      t0    mn    mx    rsp    a3     rau    a5
-##    &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;
-##  1 1999_1 -166. 0.170 0.397 0.0192  4.69 0.0179   6   
-##  2 2000_1  199. 0.167 0.407 0.0348  3.17 0.0146   6   
-##  3 2001_1  566. 0.169 0.398 0.0193  4.38 0.0176   6   
-##  4 2002_1  934. 0.168 0.528 0.0329  2    0.0161   2   
-##  5 2003_1 1275. 0.167 0.432 0.0268  2    0.0123   3.73
-##  6 2004_1 1689. 0.168 0.446 0.0167  5.04 0.0370   2   
-##  7 2005_1 2025. 0.172 0.450 0.0223  6    0.0162   3.62
-##  8 2006_1 2375. 0.166 0.433 0.0252  2    0.0120   3.06
-##  9 2007_1 2752. 0.166 0.483 0.0210  2    0.0150   2.90
-## 10 2008_1 3154. 0.170 0.481 0.0131  5.18 0.0304   6   
-## 11 2009_1 3522. 0.168 0.479 0.0142  6    0.0277   2   
-## 12 2010_1 3840. 0.167 0.489 0.0228  2    0.0131   2   
-## 13 2011_1 4208. 0.175 0.468 0.0288  2    0.0133   5.00
-## 14 2012_1 4558. 0.166 0.507 0.0478  2    0.0109   4.12
-## 15 2013_1 4965. 0.166 0.486 0.0145  6    0.0191   2.44
-## 16 2014_1 5321. 0.169 0.500 0.0195  2.98 0.0153   2.55
-## 17 2015_1 5701. 0.186 0.485 0.0146  5.80 0.0283   2   
-## 18 2016_1 6023. 0.180 0.483 0.0385  2    0.0125   5.25
-## 19 2017_1 6381. 0.168 0.442 0.0403  2.94 0.00976  5.97
-## 20 2018_1 6774. 0.165 0.451 0.0155  3.22 0.0164   3.07</code></pre>
+##    flag      t0    mn    mx    rsp    a3    rau    a5
+##    &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;
+##  1 1999_1 -166. 0.170 0.397 0.0192  4.69 0.0179  6   
+##  2 2000_1  199. 0.167 0.407 0.0348  3.17 0.0146  6   
+##  3 2001_1  566. 0.169 0.398 0.0193  4.38 0.0176  6   
+##  4 2002_1  934. 0.168 0.528 0.0329  2    0.0161  2   
+##  5 2003_1 1275. 0.167 0.432 0.0268  2    0.0123  3.73
+##  6 2004_1 1689. 0.168 0.446 0.0167  5.04 0.0369  2   
+##  7 2005_1 2025. 0.172 0.449 0.0224  6    0.0161  3.62
+##  8 2006_1 2370. 0.166 0.420 0.0280  2.02 0.0112  3.12
+##  9 2007_1 2752. 0.166 0.483 0.0210  2    0.0150  2.90
+## 10 2008_1 3123. 0.170 0.481 0.0215  2.74 0.0165  6   
+## 11 2009_1 3522. 0.168 0.479 0.0142  6    0.0277  2   
+## 12 2010_1 3840. 0.167 0.489 0.0227  2    0.0131  2   
+## 13 2011_1 4208. 0.175 0.468 0.0288  2    0.0133  5.00
+## 14 2012_1 4558. 0.166 0.507 0.0478  2    0.0109  4.12
+## 15 2013_1 4965. 0.166 0.483 0.0144  6    0.0190  2.47
+## 16 2014_1 5306. 0.169 0.507 0.0281  2    0.0127  2.70
+## 17 2015_1 5701. 0.184 0.486 0.0145  5.62 0.0280  2   
+## 18 2016_1 6023. 0.179 0.483 0.0381  2    0.0125  5.22
+## 19 2017_1 6384. 0.167 0.445 0.0368  3.07 0.0100  5.36
+## 20 2018_1 6774. 0.165 0.451 0.0155  3.22 0.0164  3.07</code></pre>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">d_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_fitting.html">get_fitting</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span>
 <span class="co">## Get GOF information</span>
@@ -382,7 +381,7 @@ data. [Here](https://code.earthengine.google.com/ee3ec39cf3061374dab435c358d008a
 ## 3:     153     202     256 138 170 242 269     131      177        237      274
 ## 4:     182     204     248 161 196 222 292     153      203        219      307
 ## 5:     153     180     254 127 170 228 282     118      179        197      294
-## 6:     172     228     248 157 189 235 268     150      196        274      376</code></pre>
+## 6:     172     228     248 157 189 235 268     150      196        274      377</code></pre>
 </div>
 </div>
   </div>

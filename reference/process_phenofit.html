@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenofit</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1</span>
       </span>
     </div>
 
@@ -98,7 +98,7 @@
       <a href="../articles/phenofit-procedures.html">Detailed procedures of phenofit</a>
     </li>
     <li>
-      <a href="../articles/phenofit_CA-NS6.html">UNKNOWN TITLE</a>
+      <a href="../articles/phenofit_CA-NS6.html">Extract vegetation phenology from MOD13A1 EVI</a>
     </li>
   </ul>
 </li>
@@ -136,38 +136,15 @@
     </div>
 
     <pre class="usage"><span class='fu'>process_phenofit</span><span class='op'>(</span>
-  <span class='va'>y</span>,
-  <span class='va'>t</span>,
-  <span class='va'>w</span>,
-  QC_flag <span class='op'>=</span> <span class='cn'>NULL</span>,
+  <span class='va'>d_obs</span>,
   nptperyear <span class='op'>=</span> <span class='fl'>36</span>,
-  brks <span class='op'>=</span> <span class='cn'>NULL</span>,
-  rFUN <span class='op'>=</span> <span class='st'>"smooth_wWHIT"</span>,
-  wFUN <span class='op'>=</span> <span class='va'>wTSM</span>,
-  lambda <span class='op'>=</span> <span class='cn'>NULL</span>,
-  TRS <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0.1</span>, <span class='fl'>0.2</span>, <span class='fl'>0.5</span>, <span class='fl'>0.6</span>, <span class='fl'>0.8</span>, <span class='fl'>0.9</span><span class='op'>)</span>,
-  iters <span class='op'>=</span> <span class='fl'>2</span>,
-  maxExtendMonth <span class='op'>=</span> <span class='fl'>12</span>,
-  minExtendMonth <span class='op'>=</span> <span class='fl'>0.5</span>,
-  minPercValid <span class='op'>=</span> <span class='fl'>0</span>,
   south <span class='op'>=</span> <span class='cn'>FALSE</span>,
-  verbose <span class='op'>=</span> <span class='cn'>TRUE</span>,
-  methods <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"AG"</span>, <span class='st'>"Zhang"</span>, <span class='st'>"Beck"</span>, <span class='st'>"Elmore"</span>, <span class='st'>"Gu"</span><span class='op'>)</span>,
-  outfile <span class='op'>=</span> <span class='cn'>NULL</span>,
-  title <span class='op'>=</span> <span class='cn'>NULL</span>,
-  ylab <span class='op'>=</span> <span class='st'>"EVI"</span>,
-  yticks <span class='op'>=</span> <span class='cn'>NULL</span>,
-  IsPlot.brks <span class='op'>=</span> <span class='cn'>FALSE</span>,
-  write.fig <span class='op'>=</span> <span class='cn'>TRUE</span>,
-  show <span class='op'>=</span> <span class='cn'>FALSE</span>,
-  ymin <span class='op'>=</span> <span class='fl'>0.1</span>,
-  wmin <span class='op'>=</span> <span class='fl'>0.1</span>,
-  wsnow <span class='op'>=</span> <span class='fl'>0.8</span>,
-  use.y0 <span class='op'>=</span> <span class='cn'>FALSE</span>,
-  alpha <span class='op'>=</span> <span class='fl'>0.02</span>,
-  cex <span class='op'>=</span> <span class='fl'>1.5</span>,
-  overwrite <span class='op'>=</span> <span class='cn'>FALSE</span>,
   .v_curve <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  options_season <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>wFUN <span class='op'>=</span> <span class='st'>"wTSM"</span>, maxExtendMonth <span class='op'>=</span> <span class='fl'>12</span>, MaxPeaksPerYear <span class='op'>=</span> <span class='fl'>3</span>,
+    MaxTroughsPerYear <span class='op'>=</span> <span class='fl'>4</span><span class='op'>)</span>,
+  options_fitting <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>methods <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"AG"</span>, <span class='st'>"Zhang"</span>, <span class='st'>"Beck"</span>, <span class='st'>"Elmore"</span>, <span class='st'>"Gu"</span><span class='op'>)</span>, wFUN <span class='op'>=</span>
+    <span class='st'>"wTSM"</span>, maxExtendMonth <span class='op'>=</span> <span class='fl'>12</span>, minExtendMonth <span class='op'>=</span> <span class='fl'>0.5</span>, use.y0 <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>,
+  brks <span class='op'>=</span> <span class='cn'>NULL</span>,
   run.curvefit <span class='op'>=</span> <span class='cn'>TRUE</span>,
   <span class='va'>...</span>
 <span class='op'>)</span></pre>
@@ -176,54 +153,12 @@
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>y</th>
-      <td><p>Numeric vector, vegetation index time-series</p></td>
-    </tr>
-    <tr>
-      <th>t</th>
-      <td><p>Numeric vector, <code>Date</code> variable</p></td>
-    </tr>
-    <tr>
-      <th>w</th>
-      <td><p>(optional) Numeric vector, weights of <code>y</code>. If not specified,
-weights of all <code>NA</code> values will be <code>wmin</code>, the others will be 1.0.</p></td>
-    </tr>
-    <tr>
-      <th>QC_flag</th>
-      <td><p>Factor (optional) returned by <code>qcFUN</code>, levels should be
-in the range of <code><a href='https://rdrr.io/r/base/c.html'>c("snow", "cloud", "shadow", "aerosol", "marginal", "good")</a></code>, others will be categoried into <code>others</code>. <code>QC_flag</code> is
-used for visualization in <code><a href='get_pheno.html'>get_pheno()</a></code> and <code><a href='plot_curvefits.html'>plot_curvefits()</a></code>.</p></td>
+      <th>d_obs</th>
+      <td><p>data.table with the columns of y, t, w and QC_flag (optional).</p></td>
     </tr>
     <tr>
       <th>nptperyear</th>
       <td><p>Integer, number of images per year.</p></td>
-    </tr>
-    <tr>
-      <th>brks</th>
-      <td><p>A list object with the elements of 'fit' and 'dt', returned by
-<code>season</code> or <code>season_mov</code>, which contains the growing season
-dividing information.</p></td>
-    </tr>
-    <tr>
-      <th>rFUN</th>
-      <td><p>Rough curve fitting function, can be one of <code><a href='smooth_wSG.html'>smooth_wSG()</a></code>,
-<code><a href='smooth_wWHIT.html'>smooth_wWHIT()</a></code> and <code><a href='smooth_wHANTS.html'>smooth_wHANTS()</a></code>.</p></td>
-    </tr>
-    <tr>
-      <th>wFUN</th>
-      <td><p>weights updating function, can be one of <code><a href='wSELF.html'>wTSM()</a></code>,
-<code><a href='wSELF.html'>wChen()</a></code>, <code><a href='wSELF.html'>wBisquare()</a></code> and <code><a href='wSELF.html'>wSELF()</a></code>.</p></td>
-    </tr>
-    <tr>
-      <th>lambda</th>
-      <td><p>The smoothing parameter of <code><a href='smooth_wWHIT.html'>smooth_wWHIT()</a></code>. For
-<code><a href='season_mov.html'>season_mov()</a></code>, if lambda is <code>NULL</code>, <code><a href='init_lambda.html'>init_lambda()</a></code>
-will be used. Generally, it was set as 10000, 15, and 5 for daily, 8-day
-and 16-day inputs respectively.</p></td>
-    </tr>
-    <tr>
-      <th>iters</th>
-      <td><p>How many times curve fitting is implemented.</p></td>
     </tr>
     <tr>
       <th>south</th>
@@ -231,31 +166,10 @@ and 16-day inputs respectively.</p></td>
 following year 31 June; In north hemisphere, growing year is 1 Jan to 31 Dec.</p></td>
     </tr>
     <tr>
-      <th>verbose</th>
-      <td><p>whether to print <code>options_season</code> into console?</p></td>
-    </tr>
-    <tr>
-      <th>ymin</th>
-      <td><p>If specified, <code>ylu[1]</code> is constrained greater than ymin. This
-value is critical for bare, snow/ice land, where vegetation amplitude is quite
-small. Generally, you can set ymin=0.08 for NDVI, ymin=0.05 for EVI,
-ymin=0.5 gC m-2 s-1 for GPP.</p></td>
-    </tr>
-    <tr>
-      <th>wmin</th>
-      <td><p>Double, minimum weight of bad points, which could be smaller
-the weight of snow, ice and cloud.</p></td>
-    </tr>
-    <tr>
-      <th>wsnow</th>
-      <td><p>Doulbe. Reset the weight of snow points, after get <code>ylu</code>.
-Snow flag is an important flag of ending of growing
-season. Snow points is more valuable than marginal points. Hence, the weight
-of snow should be great than that of <code>marginal</code>.</p></td>
-    </tr>
-    <tr>
-      <th>alpha</th>
-      <td><p>Double, in <code>[0,1]</code>, quantile prob of ylu_min.</p></td>
+      <th>brks</th>
+      <td><p>A list object with the elements of 'fit' and 'dt', returned by
+<code>season</code> or <code>season_mov</code>, which contains the growing season
+dividing information.</p></td>
     </tr>
     <tr>
       <th>...</th>

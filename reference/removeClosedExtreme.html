@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>getRealDate — getRealDate • phenofit</title>
+<title>rm too closed peaks or troughs — removeClosedExtreme • phenofit</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="getRealDate — getRealDate" />
-<meta property="og:description" content="convert MODIS DayOfYear to the exact compositing date." />
+<meta property="og:title" content="rm too closed peaks or troughs — removeClosedExtreme" />
+<meta property="og:description" content="rm too closed peaks or troughs" />
 
 
 
@@ -126,40 +126,34 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>getRealDate</h1>
-    <small class="dont-index">Source: <a href='https://github.com/kongdd/phenofit/blob/master/R/tidy_MODIS.R'><code>R/tidy_MODIS.R</code></a></small>
-    <div class="hidden name"><code>getRealDate.Rd</code></div>
+    <h1>rm too closed peaks or troughs</h1>
+    <small class="dont-index">Source: <a href='https://github.com/kongdd/phenofit/blob/master/R/season_tools.R'><code>R/season_tools.R</code></a></small>
+    <div class="hidden name"><code>removeClosedExtreme.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>convert MODIS <code>DayOfYear</code> to the exact compositing date.</p>
+    <p>rm too closed peaks or troughs</p>
     </div>
 
-    <pre class="usage"><span class='fu'>getRealDate</span><span class='op'>(</span><span class='va'>date</span>, <span class='va'>DayOfYear</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>removeClosedExtreme</span><span class='op'>(</span><span class='va'>pos</span>, <span class='va'>ypred</span>, A <span class='op'>=</span> <span class='cn'>NULL</span>, <span class='va'>y_min</span>, <span class='va'>minpeakdistance</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>date</th>
-      <td><p>Date vector, the first day of the 16-day composite period.</p></td>
-    </tr>
-    <tr>
-      <th>DayOfYear</th>
-      <td><p>Numeric vector, exact composite day of year.</p></td>
+      <th>pos</th>
+      <td><p>data.table with the columns of <code>"val", "pos", "left", "right", "type"</code>.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A data.table with a new column <code>t</code>, which is the exact compositing date.</p>
+    <p>A data.table with the columns of:
+<code>"val", "pos", "left", "right", "type"</code></p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://github.com/kongdd/phenofit'>phenofit</a></span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"MOD13A1"</span><span class='op'>)</span>
+    <pre class="examples"><div class='input'><span class='co'>#removeClosedExtreme(pos, ypred, A, y_min, minpeakdistance)</span>
 
-<span class='va'>df</span>  <span class='op'>&lt;-</span> <span class='va'>MOD13A1</span><span class='op'>$</span><span class='va'>dt</span>
-<span class='va'>df</span><span class='op'>$</span><span class='va'>t</span> <span class='op'>&lt;-</span> <span class='fu'>getRealDate</span><span class='op'>(</span><span class='va'>df</span><span class='op'>$</span><span class='va'>date</span>, <span class='va'>df</span><span class='op'>$</span><span class='va'>DayOfYear</span><span class='op'>)</span>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
