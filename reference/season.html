@@ -401,19 +401,20 @@ is for fluxsite site-year data.</p></li>
 <span class='fu'><a href='plot_season.html'>plot_season</a></span><span class='op'>(</span><span class='va'>INPUT</span>, <span class='va'>brks</span>, <span class='va'>d</span><span class='op'>)</span>
 </div><div class='img'><img src='season-1.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='va'>brks2</span> <span class='op'>=</span> <span class='fu'>opt_season</span><span class='op'>(</span><span class='va'>INPUT</span>, <span class='va'>options</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='error'>Error in opt_season(INPUT, options): could not find function "opt_season"</span></div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/base/all.equal.html'>all.equal</a></span><span class='op'>(</span><span class='va'>brks2</span>, <span class='va'>brks</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] TRUE</div><div class='input'>
 <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>d_fit</span>, <span class='va'>info_peak</span><span class='op'>)</span> <span class='op'>%&lt;-%</span> <span class='fu'>rough_fitting</span><span class='op'>(</span><span class='va'>INPUT</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span class='error'>Error in c(d_fit, info_peak) %&lt;-% rough_fitting(INPUT): could not find function "%&lt;-%"</span></div><div class='input'><span class='va'>d_season</span> <span class='op'>=</span> <span class='fu'><a href='find_season.peaks.html'>find_season.peaks</a></span><span class='op'>(</span><span class='va'>d_fit</span>, <span class='va'>info_peak</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span class='error'>Error in nth(x, -1L, order_by = order_by, default = default): object 'd_fit' not found</span></div><div class='input'>
 <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>t</span>, <span class='va'>ypred</span><span class='op'>)</span> <span class='op'>%&lt;-%</span> <span class='va'>d_fit</span><span class='op'>[</span>, <span class='fu'>.</span><span class='op'>(</span><span class='va'>t</span>, <span class='va'>ziter2</span><span class='op'>)</span><span class='op'>]</span>
-</div><div class='output co'>#&gt; <span class='error'>Error in c(t, ypred) %&lt;-% d_fit[, .(t, ziter2)]: could not find function "%&lt;-%"</span></div><div class='input'><span class='va'>brks3</span> <span class='op'>=</span> <span class='fu'><a href='find_season.peaks.html'>find_season.default</a></span><span class='op'>(</span><span class='va'>ypred</span>, <span class='va'>t</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='error'>Error in findpeaks_season(ypred, opt$r_max, opt$r_min, minpeakdistance = opt$minpeakdistance,     minpeakheight = opt$ypeak_min, nups = nups, nyear = NULL): object 'ypred' not found</span></div><div class='input'>
+</div><div class='output co'>#&gt; <span class='error'>Error in c(t, ypred) %&lt;-% d_fit[, .(t, ziter2)]: could not find function "%&lt;-%"</span></div><div class='input'><span class='va'>d_season</span> <span class='op'>=</span> <span class='fu'><a href='find_season.peaks.html'>find_season.default</a></span><span class='op'>(</span><span class='va'>ypred</span>, <span class='va'>t</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='error'>Error in findpeaks_season(ypred, opt$r_max, opt$r_min, minpeakdistance = opt$minpeakdistance,     minpeakheight = opt$ypeak_min, nups = nups, nyear = NULL): object 'ypred' not found</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/all.equal.html'>all.equal</a></span><span class='op'>(</span><span class='va'>brks</span><span class='op'>$</span><span class='va'>dt</span>, <span class='va'>d_season</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='error'>Error in is.data.table(current): object 'd_season' not found</span></div><div class='input'>
 <span class='va'>opt</span> <span class='op'>&lt;-</span> <span class='va'>.options</span><span class='op'>$</span><span class='va'>season</span>
 </div><div class='output co'>#&gt; <span class='error'>Error in eval(expr, envir, enclos): object '.options' not found</span></div><div class='input'><span class='co'># brks$fit - d_fit # function passed test</span>
-<span class='fu'><a href='https://rdrr.io/r/base/all.equal.html'>all.equal</a></span><span class='op'>(</span><span class='va'>brks2</span>, <span class='va'>brks</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='error'>Error in all.equal(brks2, brks): object 'brks2' not found</span></div><div class='input'>
+
 <span class='co'># curve fitting by year</span>
-<span class='va'>brks2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='process_season.html'>season_mov</a></span><span class='op'>(</span><span class='va'>INPUT</span>,
+<span class='va'>brks_mov</span> <span class='op'>&lt;-</span> <span class='fu'><a href='process_season.html'>season_mov</a></span><span class='op'>(</span><span class='va'>INPUT</span>,
     options <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>
         rFUN <span class='op'>=</span> <span class='st'>"smooth_wWHIT"</span>, wFUN <span class='op'>=</span> <span class='va'>wFUN</span>,
         lambda <span class='op'>=</span> <span class='fl'>10</span>,
@@ -454,7 +455,7 @@ is for fluxsite site-year data.</p></li>
 #&gt;   [season_mov] running 1 ... 
 #&gt;   [season_mov] running 2 ... 
 #&gt;   [season_mov] running 3 ... 
-#&gt;   [season_mov] running 4 ... </div><div class='input'><span class='fu'><a href='plot_season.html'>plot_season</a></span><span class='op'>(</span><span class='va'>INPUT</span>, <span class='va'>brks2</span><span class='op'>)</span>
+#&gt;   [season_mov] running 4 ... </div><div class='input'><span class='fu'><a href='plot_season.html'>plot_season</a></span><span class='op'>(</span><span class='va'>INPUT</span>, <span class='va'>brks_mov</span><span class='op'>)</span>
 </div><div class='img'><img src='season-2.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"CA_NS6"</span><span class='op'>)</span>
 <span class='va'>d</span> <span class='op'>&lt;-</span> <span class='va'>CA_NS6</span>
 
@@ -473,29 +474,20 @@ is for fluxsite site-year data.</p></li>
 <span class='fu'><a href='plot_season.html'>plot_season</a></span><span class='op'>(</span><span class='va'>INPUT</span>, <span class='va'>brks</span>, <span class='va'>d</span><span class='op'>)</span>
 </div><div class='img'><img src='season-3.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='va'>brks2</span> <span class='op'>=</span> <span class='fu'>opt_season</span><span class='op'>(</span><span class='va'>INPUT</span>, <span class='va'>options</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='error'>Error in opt_season(INPUT, options): could not find function "opt_season"</span></div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/base/all.equal.html'>all.equal</a></span><span class='op'>(</span><span class='va'>brks2</span>, <span class='va'>brks</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] TRUE</div><div class='input'>
 <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>d_fit</span>, <span class='va'>info_peak</span><span class='op'>)</span> <span class='op'>%&lt;-%</span> <span class='fu'>rough_fitting</span><span class='op'>(</span><span class='va'>INPUT</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span class='error'>Error in c(d_fit, info_peak) %&lt;-% rough_fitting(INPUT): could not find function "%&lt;-%"</span></div><div class='input'><span class='va'>d_season</span> <span class='op'>=</span> <span class='fu'><a href='find_season.peaks.html'>find_season.peaks</a></span><span class='op'>(</span><span class='va'>d_fit</span>, <span class='va'>info_peak</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span class='error'>Error in nth(x, -1L, order_by = order_by, default = default): object 'd_fit' not found</span></div><div class='input'>
 <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>t</span>, <span class='va'>ypred</span><span class='op'>)</span> <span class='op'>%&lt;-%</span> <span class='va'>d_fit</span><span class='op'>[</span>, <span class='fu'>.</span><span class='op'>(</span><span class='va'>t</span>, <span class='va'>ziter2</span><span class='op'>)</span><span class='op'>]</span>
-</div><div class='output co'>#&gt; <span class='error'>Error in c(t, ypred) %&lt;-% d_fit[, .(t, ziter2)]: could not find function "%&lt;-%"</span></div><div class='input'><span class='va'>brks3</span> <span class='op'>=</span> <span class='fu'><a href='find_season.peaks.html'>find_season.default</a></span><span class='op'>(</span><span class='va'>ypred</span>, <span class='va'>t</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='error'>Error in findpeaks_season(ypred, opt$r_max, opt$r_min, minpeakdistance = opt$minpeakdistance,     minpeakheight = opt$ypeak_min, nups = nups, nyear = NULL): object 'ypred' not found</span></div><div class='input'>
+</div><div class='output co'>#&gt; <span class='error'>Error in c(t, ypred) %&lt;-% d_fit[, .(t, ziter2)]: could not find function "%&lt;-%"</span></div><div class='input'><span class='va'>d_season</span> <span class='op'>=</span> <span class='fu'><a href='find_season.peaks.html'>find_season.default</a></span><span class='op'>(</span><span class='va'>ypred</span>, <span class='va'>t</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='error'>Error in findpeaks_season(ypred, opt$r_max, opt$r_min, minpeakdistance = opt$minpeakdistance,     minpeakheight = opt$ypeak_min, nups = nups, nyear = NULL): object 'ypred' not found</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/all.equal.html'>all.equal</a></span><span class='op'>(</span><span class='va'>brks</span><span class='op'>$</span><span class='va'>dt</span>, <span class='va'>d_season</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='error'>Error in is.data.table(current): object 'd_season' not found</span></div><div class='input'>
 <span class='va'>opt</span> <span class='op'>&lt;-</span> <span class='va'>.options</span><span class='op'>$</span><span class='va'>season</span>
 </div><div class='output co'>#&gt; <span class='error'>Error in eval(expr, envir, enclos): object '.options' not found</span></div><div class='input'><span class='co'># brks$fit - d_fit # function passed test</span>
-<span class='fu'><a href='https://rdrr.io/r/base/all.equal.html'>all.equal</a></span><span class='op'>(</span><span class='va'>brks2</span>, <span class='va'>brks</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;  [1] "Names: 1 string mismatch"                                                      
-#&gt;  [2] "Length mismatch: comparison on first 2 components"                             
-#&gt;  [3] "Component “fit”: Different number of rows"                                     
-#&gt;  [4] "Component 2: Names: 4 string mismatches"                                       
-#&gt;  [5] "Component 2: Attributes: &lt; names for current but not for target &gt;"             
-#&gt;  [6] "Component 2: Attributes: &lt; Length mismatch: comparison on first 0 components &gt;"
-#&gt;  [7] "Component 2: Length mismatch: comparison on first 4 components"                
-#&gt;  [8] "Component 2: Component 1: target is data.table, current is Date"               
-#&gt;  [9] "Component 2: Component 2: target is data.table, current is Date"               
-#&gt; [10] "Component 2: Component 3: target is data.table, current is Date"               
-#&gt; [11] "Component 2: Component 4: target is data.table, current is numeric"            </div><div class='input'>
+
 <span class='co'># curve fitting by year</span>
-<span class='va'>brks2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='process_season.html'>season_mov</a></span><span class='op'>(</span><span class='va'>INPUT</span>,
+<span class='va'>brks_mov</span> <span class='op'>&lt;-</span> <span class='fu'><a href='process_season.html'>season_mov</a></span><span class='op'>(</span><span class='va'>INPUT</span>,
     options <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>
         rFUN <span class='op'>=</span> <span class='st'>"smooth_wWHIT"</span>, wFUN <span class='op'>=</span> <span class='va'>wFUN</span>,
         lambda <span class='op'>=</span> <span class='fl'>10</span>,
@@ -536,7 +528,7 @@ is for fluxsite site-year data.</p></li>
 #&gt;   [season_mov] running 1 ... 
 #&gt;   [season_mov] running 2 ... 
 #&gt;   [season_mov] running 3 ... 
-#&gt;   [season_mov] running 4 ... </div><div class='input'><span class='fu'><a href='plot_season.html'>plot_season</a></span><span class='op'>(</span><span class='va'>INPUT</span>, <span class='va'>brks2</span><span class='op'>)</span>
+#&gt;   [season_mov] running 4 ... </div><div class='input'><span class='fu'><a href='plot_season.html'>plot_season</a></span><span class='op'>(</span><span class='va'>INPUT</span>, <span class='va'>brks_mov</span><span class='op'>)</span>
 </div><div class='img'><img src='season-4.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
