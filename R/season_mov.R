@@ -110,7 +110,6 @@ season_mov <- function(INPUT,
             vc = guess_lambda(input) # IsPlot.vc
             lambda = vc$lambda; vcs[[i]] <- vc
         }
-
         params_i = c(list(INPUT = input, lambda = lambda), dots)
         brk <- do.call(opt_season, params_i)
 
@@ -122,10 +121,9 @@ season_mov <- function(INPUT,
         if (!is_empty(brk$dt))
             brk$dt %<>% subset(year == year_i) %>% mutate(lambda = lambda)
 
-        brks[[i]] <- list(
-            fit = brk$fit[date_year[I] == year_i, ],
-            fit.raw = brk$fit,
-            dt = brk$dt)
+        ans = list(fit = brk$fit[date_year[I] == year_i, ], dt = brk$dt)
+        if (.options$debug) ans %<>% c(list(fit.raw = brk$fit), .)
+        brks[[i]] <- ans
     }
     brks  = set_names(brks, years.run) %>% rm_empty() %>% purrr::transpose()
     brks$fit %<>% do.call(rbind, .)
@@ -166,7 +164,8 @@ guess_lambda <- function(input, IsPlot.vc = FALSE, ...) {
     vc
 }
 
-#' @rdname check_season
+#' @keywords internal
+#' @rdname rcpp_season_filter
 #' @export
 check_season_dt <- function(dt) {
     # rtrough_max, r_min, len_min = 45, len_max = 650
@@ -174,27 +173,23 @@ check_season_dt <- function(dt) {
     len_max = .options$season$len_max
 
     dt <- dt[len > len_min & len < len_max, ] # mask too long and short gs
-    check_season(dt, rtrough_max = .options$season$rtrough_max,
-                 r_min = .options$season$r_min)
-    dt[y_peak != -9999.0 & (len > len_min & len < len_max), ]
+    rcpp_season_filter(dt, .options$season$rm.closed, 
+        rtrough_max = .options$season$rtrough_max, 
+        r_min = .options$season$r_min)
+    dt[y_peak >= .options$season$ypeak_min & (len > len_min & len < len_max), ]
 }
 
 #' @param dt data.table of growing season dividing info
 #' @param lst_dt list of `dt`. Every year is corresponding to a `dt`.
-#'
+#' 
 #' @inheritParams season_mov
-#' @rdname check_season
+#' @rdname rcpp_season_filter
 #' @export
 cheak_season_list <- function(lst_dt) {
     if (is.data.frame(lst_dt)) lst_dt = list(lst_dt)
     lst_dt %<>% rm_empty()
-    res <- list()
-    for(i in seq_along(lst_dt)) {
-        dt = lst_dt[[i]]
-        res[[i]] <- check_season_dt(dt)
-    }
-
-    dt2 = do.call(rbind, res)
+    dt2 = map(lst_dt, ~ check_season_dt(.x)) %>% 
+        do.call(rbind, .)
     check_season_dt(dt2)
 }
 
@@ -209,22 +204,6 @@ season_calendar <- function(years, south = FALSE){
         cbind(season = 1, flag = sprintf("%d_1", years))
     dt
 }
-
-# triplicate HANTS test, 2018-09-19
-# Not perfect at all for regions with multiple growing season.
-# No one method can cope with all the situation.
-# {
-#     nextend <- length(I)
-#     I_beg <- max(1, first(I) - nextend)
-#     I_end <- min(last(I) + nextend, nlen)
-
-#     yi <- INPUT$y[I]
-#     yhead <- I_beg:(first(I) - 1) %>% { . - .[1] + 1} %>% yi[.]
-#     ytail <- (last(I)+1):I_end %>% { . - .[1] + 1} %>% yi[.]
-#     yi <- c(yhead, yi, ytail)
-#     I <- I_beg:I_end
-#     input$y <- yi
-# }
 
 #' statistics
 #'
@@ -252,3 +231,19 @@ stat_season <- function(INPUT, d_fit){
     # cv  <- stat$cv
     stat
 }
+
+# triplicate HANTS test, 2018-09-19
+# Not perfect at all for regions with multiple growing season.
+# No one method can cope with all the situation.
+# {
+#     nextend <- length(I)
+#     I_beg <- max(1, first(I) - nextend)
+#     I_end <- min(last(I) + nextend, nlen)
+
+#     yi <- INPUT$y[I]
+#     yhead <- I_beg:(first(I) - 1) %>% { . - .[1] + 1} %>% yi[.]
+#     ytail <- (last(I)+1):I_end %>% { . - .[1] + 1} %>% yi[.]
+#     yi <- c(yhead, yi, ytail)
+#     I <- I_beg:I_end
+#     input$y <- yi
+# }

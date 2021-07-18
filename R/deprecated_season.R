@@ -69,7 +69,6 @@
 #' @seealso [findpeaks()].
 #'
 #' @example R/examples/ex-season.R
-#'
 #' @export
 season <- function(
     INPUT, rFUN, wFUN, iters = 2, wmin = 0.1,
@@ -181,7 +180,6 @@ season <- function(
             break
         }
     }
-
     pos_max = info_peak$pos_max
     pos_min = info_peak$pos_min
 

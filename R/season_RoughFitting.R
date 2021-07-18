@@ -95,14 +95,13 @@ rough_fitting <- function(INPUT,
                           options = list(),
                           frame = floor(INPUT$nptperyear / 5) * 2 + 1,
                           ...) {
-    if (all(is.na(INPUT$y))) {
-        return(NULL)
-    }
+    if (all(is.na(INPUT$y))) return(NULL)
+    
     south <- INPUT$south
     t <- INPUT$t
     y <- INPUT$y
     nlen <- length(t)
-
+    
     .options$season %<>% modifyList(options) %>%
         modifyList(list(frame = frame, ...))
     .options$season$wFUN %<>% check_function()
@@ -116,18 +115,11 @@ rough_fitting <- function(INPUT,
     if (is.null(frame)) frame <- floor(nptperyear / 5) * 2 + 1
     if (is.null(lambda)) lambda <- max(nyear * frame, 15)
 
-    # nyear <- length(years)
-    # npt   <- sum(INPUT$w > wmin)
-    # if (npt == 0) npt = length(INPUT$y)
-    # nyear <- ceiling(npt/nptperyear) # matter most for parameter adjustment
-
     ylu0 <- INPUT$ylu
     A0 <- diff(ylu0)
     ylu <- ylu0
 
     nups <- default_nups(nptperyear)
-    ## 1. weighted curve fitting help to divide growing season
-    iloop <- 1
     for (iloop in 1:3) {
         param <- c(
             INPUT[c("y", "t", "w", "ylu", "nptperyear")],
@@ -144,21 +136,18 @@ rough_fitting <- function(INPUT,
             b <- get_ylu.default(ypred, t) # boundary
             # If multiple years are completely missing, ylu_min possiable equals ylu_max
             if (b$A > A0 * 0.2) {
-                ylu <- c(
-                    pmax(b$ylu_min, INPUT$ylu[1]), # quantile(ypred, alpha/2)
-                    pmin(b$ylu_max, INPUT$ylu[2])
-                )
+                ylu <- c(pmax(b$ylu_min, INPUT$ylu[1]), # quantile(ypred, alpha/2)
+                        pmin(b$ylu_max, INPUT$ylu[2]))
             }
         }
-
         INPUT$ylu <- ylu
         A <- diff(ylu)
         # minPeakHeight <- pmax(ypeak_min, A*0.1 + ylu[1])
         info_peak <- findpeaks_season(ypred,
             opt$r_max, opt$r_min,
             minpeakdistance = 0, minpeakheight = opt$ypeak_min,
-            nups = nups, nyear = nyear
-        )
+            nups = nups, nyear = nyear)
+        
         if (.options$verbose_season) {
             cat(sprintf(
                 "iloop = %d: lambda = %.1f, ntrough_PerYear = %.2f, npeak_PerYear = %.2f\n",
@@ -171,7 +160,6 @@ rough_fitting <- function(INPUT,
         if (pars$status == FALSE) break
         list2env(pars[c("lambda", "nf", "frame")], environment())
     }
-
     rfit <- as.data.table(c(list(t = t, y = y), yfits$ws, yfits$zs))
     # years is used get calendar break points
     info_peak %<>% c(listk(year = years, nptperyear, south))

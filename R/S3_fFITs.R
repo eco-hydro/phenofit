@@ -57,13 +57,11 @@ NULL
 #' @keywords internal
 #' @export
 plot.fFITs <- function(x, method, ...){
-
     if (missing(method)) {
         methods <- names(x$fFIT)
     } else {
         methods <- method
     }
-
     nmeth   <- length(methods)
 
     t    <- x$tout

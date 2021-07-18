@@ -33,9 +33,10 @@ NULL
 .onLoad <- function (libname, pkgname){
     opt_season <- c("rFUN", "wFUN", "iters", "wmin", "lambda", ".lambda_vcurve", 
         "frame", "nf", "minpeakdistance", "ypeak_min", "r_max", "r_min", "rtrough_max", 
-        "MaxPeaksPerYear", "MaxTroughsPerYear", "calendarYear", "adj.param", "rm.closed", "is.continuous", ".check_season", "maxExtendMonth", "nextend", 
-        "len_min", "len_max", "verbose")
-
+        "MaxPeaksPerYear", "MaxTroughsPerYear", "calendarYear", "adj.param", 
+        "rm.closed", "is.continuous", ".check_season", "maxExtendMonth", 
+        "nextend", "len_min", "len_max", "verbose")
+    
     if(getRversion() >= "2.15.1") {
         utils::globalVariables(
             c(".", ".SD", ".N", "..vars", 

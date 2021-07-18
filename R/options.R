@@ -69,6 +69,7 @@ options_fitting <- list(
 
     verbose_season_mov = TRUE,
     verbose_season     = FALSE,
+    debug              = FALSE,
     # parameters
     season             = options_season,
     fitting            = options_fitting
