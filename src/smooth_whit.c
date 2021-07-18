@@ -1,3 +1,9 @@
+/* Program 2. Smoothing and interpolation with second differences. */
+/* Contribution to Graphic Gems IV */
+
+/* Paul H. C. Eilers, DCMR Milieudienst Rijnmond, 's-Gravelandseweg 565,
+   3119 XT Schiedam, The Netherlands, E-Mail: paul@dcmr.nl */
+
 // #ifndef WHIT_H
 // #define WHIT_H
 
