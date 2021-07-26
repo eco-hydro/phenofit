@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>find_season — find_season.peaks • phenofit</title>
+<title>season_filter — rcpp_season_filter • phenofit</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="find_season — find_season.peaks" />
-<meta property="og:description" content="find_season" />
+<meta property="og:title" content="season_filter — rcpp_season_filter" />
+<meta property="og:description" content="season_filter" />
 
 
 
@@ -126,33 +126,45 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>find_season</h1>
-    <small class="dont-index">Source: <a href='https://github.com/kongdd/phenofit/blob/master/R/season_find.R'><code>R/season_find.R</code></a></small>
-    <div class="hidden name"><code>find_season.peaks.Rd</code></div>
+    <h1>season_filter</h1>
+    <small class="dont-index">Source: <a href='https://github.com/kongdd/phenofit/blob/master/R/RcppExports.R'><code>R/RcppExports.R</code></a>, <a href='https://github.com/kongdd/phenofit/blob/master/R/season_mov.R'><code>R/season_mov.R</code></a></small>
+    <div class="hidden name"><code>rcpp_season_filter.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>find_season</p>
+    <p>season_filter</p>
     </div>
 
-    <pre class="usage"><span class='fu'>find_season.peaks</span><span class='op'>(</span><span class='va'>rfit</span>, <span class='va'>info_peak</span>, options <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='va'>...</span><span class='op'>)</span>
+    <pre class="usage"><span class='fu'>rcpp_season_filter</span><span class='op'>(</span><span class='va'>d</span>, rm_closed <span class='op'>=</span> <span class='cn'>TRUE</span>, rtrough_max <span class='op'>=</span> <span class='fl'>0.7</span>, r_min <span class='op'>=</span> <span class='fl'>0.02</span><span class='op'>)</span>
 
-<span class='fu'>find_season.default</span><span class='op'>(</span>
-  <span class='va'>ypred</span>,
-  t <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq_along</a></span><span class='op'>(</span><span class='va'>ypred</span><span class='op'>)</span>,
-  nptperyear <span class='op'>=</span> <span class='cn'>NULL</span>,
-  south <span class='op'>=</span> <span class='cn'>NULL</span>,
-  options <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='op'>)</span>,
-  <span class='va'>...</span>
-<span class='op'>)</span></pre>
+<span class='fu'>check_season_dt</span><span class='op'>(</span><span class='va'>dt</span><span class='op'>)</span>
+
+<span class='fu'>cheak_season_list</span><span class='op'>(</span><span class='va'>lst_dt</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>rfit</th>
-      <td><p>data.frame with the columns of t and <code>ziter...</code>, the first column
-should be <code>t</code>, and the last should be <code>ziter...</code>.</p></td>
+      <th>d</th>
+      <td><p>Data.frame of growing season dividing info</p></td>
+    </tr>
+    <tr>
+      <th>rtrough_max</th>
+      <td><p><code>ytrough &lt;= rtrough_max*A</code>, A is the amplitude of y.</p></td>
+    </tr>
+    <tr>
+      <th>r_min</th>
+      <td><p>Threshold is defined as the difference of peak value with
+trough value. There are two threshold (left and right). The minimum threshold
+should be greater than r_min.</p></td>
+    </tr>
+    <tr>
+      <th>dt</th>
+      <td><p>data.table of growing season dividing info</p></td>
+    </tr>
+    <tr>
+      <th>lst_dt</th>
+      <td><p>list of <code>dt</code>. Every year is corresponding to a <code>dt</code>.</p></td>
     </tr>
     </table>
 
