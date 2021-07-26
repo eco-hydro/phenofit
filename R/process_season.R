@@ -41,13 +41,14 @@ process_season <- function(
     if (.v_curve) {
         lg_lambdas <- seq(3.3, 5, 0.1) # 2000-
         r <- v_curve(INPUT, lg_lambdas, d = 2, IsPlot = FALSE)
-        lambda <- r$lambda
+        # lambda <- r$lambda
+        options %<>% modifyList(r["lambda"])
     }
     # print(lambda)
     # wFUN <- "wBisquare", "wTSM", threshold_max = 0.1, IGBP = CSH
     brks2 <- season_mov(INPUT, options, ...)
     # if (!is.null(brks)) brks2$dt <- brks$dt
     # plot_season(INPUT, brks2)
-    listk(INPUT, brks = brks2, data = d_obs) # , INPUT
+    listk(INPUT, brks = brks2, data = d_obs, lambda = options$lambda) # , INPUT
     # listk(INPUT, brks = brks2, lambda = lambda)
 }

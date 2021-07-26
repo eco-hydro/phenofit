@@ -22,6 +22,9 @@ find_season.peaks <- function(
     # verbose = FALSE,
     ...)
 {
+    old <- .options$season
+    on.exit(options$season <- old)
+
     .options$season %<>% modifyList(options) %>%
         modifyList(list(...))
     list2env(.options$season, envir = environment())
@@ -50,6 +53,7 @@ find_season.peaks <- function(
         # need to remove incomplete year
         dt <- season_calendar(info_peak$year, info_peak$south) # [2:(nyear-1)]
     } else {
+        # peaks and toughs put together, and eliminate feaks
         if (rm.closed) {
             # 1.1 the local minimum value should small than rtrough_max*A
             pos_min <- pos_min[(val - min(ypred)) <= rtrough_max * A, ] # `y_trough <= rtrough_max*A + ylu[1]`
@@ -70,12 +74,13 @@ find_season.peaks <- function(
             # di  <- check_GS_HeadTail(pos, ypred, minlen = nptperyear / 3)
             di = pos_max[, .(beg = left, peak = pos, end = right)]
         }
+        # browser()
 
         # fix whole year data missing in FLUXNET data, di: beg, peak and end
         dt <- di2dt(di, t, ypred)
         if (!is.continuous) dt %<>% fixYearBroken(t, ypred)
-
         dt = dt[len > 45 & len < 650, ] # mask too long and short gs
+
         if (.check_season) {
             dt %<>% check_season_dt()
             if (!is.continuous) dt %<>% fixYearBroken(t, ypred)
@@ -103,6 +108,9 @@ find_season.default <- function(
     # .check_season = TRUE,
     ...)
 {
+    old <- .options$season
+    on.exit(options$season <- old)
+
     .options$season %<>% modifyList(options) %>%
         modifyList(list(...))
     opt = .options$season
@@ -135,7 +143,6 @@ opt_season <- function(INPUT,
                        options = NULL, verbose = FALSE, ...) {
     # grasp all parameters
     # params = as.list(environment()) %>% {.[seq(1, length(.)-1)]} # rm the last option
-
     # .options为全局变量，内部修改存在潜在bug
     .options$season %<>% modifyList(options)
 

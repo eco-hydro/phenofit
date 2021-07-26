@@ -108,23 +108,34 @@ removeClosedExtreme <- function(pos, ypred, A = NULL, y_min, minpeakdistance)
 # 如果在指定阈值之内，则进行合并；
 # 否则，仅保留最大的极值
 # merge_duplicate duplicated max or min values
-merge_duplicate <- function(d, y, threshold){
+merge_duplicate <- function(d, y, threshold, max_gap = 180){
     # d <- d[, 1:5]
     if (nrow(d) > 1) {
         type <- d$type[1] #1(-1) represent max(min)
         # if range amplitude less than TRS, get median
-        if (diff(range(d$val)) < threshold) {
-            ## BUG found for CRO, 20191120
-            #  修改限定，不移除min
-            # if (d$type[1] == -1) return(d)
-            I <- floor(median(d$pos))
-            data.table(val = y[I], pos = I,
-                       left = min(d$left),
-                       right = max(d$right), type = type)
+
+        # 如果距离过远则不进行融合
+        diff_val = diff(range(d$val))
+        diff_gap = diff(range(d$pos))
+        if ( diff_gap < max_gap) {
+            if (diff_val < threshold) {
+                ## BUG found for CRO, 20191120
+                #  修改限定，不移除min
+                # if (d$type[1] == -1) return(d)
+                I <- floor(median(d$pos))
+                data.table(
+                    val = y[I], pos = I,
+                    left = min(d$left),
+                    right = max(d$right), type = type
+                )
+            } else {
+                # else, get the local extreme value
+                fun <- ifelse(type == 1, which.max, which.min)
+                d[fun(d$val), ]
+            }
         } else {
-            # else, get the local extreme value
-            fun <- ifelse(type == 1, which.max, which.min)
-            d[fun(d$val), ]
+            # bug might exist
+            d[1, ]
         }
     } else {
         d
@@ -197,7 +208,7 @@ fixYearBroken <- function(di, t, ypred) {
 #'
 #' @param pos data.frame, with the columns of `pos`, `type`, and `val`.
 #' @param minlen `nptperyear/3`, distance from peak point.
-#' 
+#'
 #' @keywords internal
 #' @return di
 check_GS_HeadTail <- function(pos, ypred, minlen, A = NULL, ...) {

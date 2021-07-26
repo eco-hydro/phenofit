@@ -54,6 +54,9 @@ season_mov <- function(INPUT,
 {
     # params = as.list(match.call())
     # params = c(as.list(environment()), list(...))
+    opt_old = .options$season
+    on.exit(.options$season <- opt_old)
+
     .options$season %<>% modifyList(options) %>%
         modifyList(list(...))
     .options$season$wFUN %<>% check_function()

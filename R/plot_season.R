@@ -29,10 +29,11 @@ plot_season <- function(
     if (is.data.frame(brks$dt[[1]])) {
         brks$dt %<>% do.call(rbind, .)
     }
+    
     ylu = INPUT$ylu
     A = diff(ylu)
-    # ylu2 = c(ylu[1], ylu[2] + 0.1*A)
-
+    # ylim = c(min(INPUT$y, na.rm = TRUE), )
+    
     stat <- stat_season(INPUT, brks$fit)
     stat_txt <- eval(substitute(
         expression(
@@ -56,16 +57,18 @@ plot_season <- function(
     # if (!is.null(INPUT$y0)) plotdat$y <- INPUT$y0
     # par.old <- par()
     bottom = ifelse(show.legend, 3.2, 1) + 0.5
-    par.old <- par(mar = c(bottom, 3, 1, 1), mgp = c(1.2, 0.6, 0))
+    par.old <- par(mar = c(bottom, 3, 1.6, 1), mgp = c(1.2, 0.6, 0))
     on.exit(par(par.old))
 
     if (is.null(INPUT$y0)) INPUT$y0 = INPUT$y
     ymin = min(INPUT$y0, na.rm = TRUE)
     ymax = max(INPUT$y0, na.rm = TRUE)
-    ylim = c(ymin, (ymax - ymin)*0.08 + ymax)
+    # ylim = c(ymin, (ymax - ymin)*0.12 + ymax)
+    ylim = c(ymin, ylu[2] + 0.35 * A)
+
     plot_input(plotdat, ylab = ylab, ylim = ylim)
     plot_season_boundary(dt)
-
+    
     NITER  <- ncol(zs)
     lines_colors <- iter_colors(NITER)
     if (NITER == 1) lines_colors <- c("red")
@@ -79,10 +82,10 @@ plot_season <- function(
     points(dt$beg , dt$y_beg , pch=20, cex = 1.8, col="blue")
     points(dt$end , dt$y_end , pch=20, cex = 1.8, col="blue")
 
-    if (!missing(ylu)) abline(h=ylu, col="red", lty=2) # show ylims
+    if (!is.null(ylu)) abline(h=ylu, col="red", lty=2) # show ylims
     legend('topleft', stat_txt, adj = c(0.05, 0.4), bty='n', text.col = "red")
 
-    if (!is.null(title)) title(title, line = -1)
+    if (!is.null(title)) title(title, line = 0.5, adj = 0) # line = -1
     if (show.legend){
         lgd <- make_legend_nmax(paste0("iter", 1:NITER), lines_colors, plotdat$QC_flag)
         # fix in the futher
