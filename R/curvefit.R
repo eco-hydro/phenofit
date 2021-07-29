@@ -1,5 +1,5 @@
 phenonames <- c('TRS2.SOS', 'TRS2.EOS', 'TRS5.SOS', 'TRS5.EOS', 'TRS6.SOS', 'TRS6.EOS',
-    'DER.SOS', 'DER.POP', 'DER.EOS',
+    'DER.SOS', 'DER.POS', 'DER.EOS',
     'UD', 'SD', 'DD','RD',
     'GreenUp', 'Maturity', 'Senescence', 'Dormancy')
 

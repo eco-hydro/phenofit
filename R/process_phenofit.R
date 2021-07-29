@@ -5,7 +5,8 @@
 #' @inheritParams curvefits
 #' @inheritParams season
 #' @param ... other parameters to [curvefits()]
-#' 
+#'
+#' @keywords internal
 #' @export
 process_phenofit <- function(
     d_obs,
@@ -14,7 +15,7 @@ process_phenofit <- function(
     .v_curve = FALSE,
     options_season = list(
         # rFUN = "smooth_wWHIT",
-        wFUN = "wTSM", 
+        wFUN = "wTSM",
         # wmin = 0.1,
         # iters = 2,
         # .lambda_vcurve = TRUE, lambda = NULL,
@@ -33,14 +34,17 @@ process_phenofit <- function(
         use.y0 = FALSE
     ),
     brks = NULL,
-    # TRS = c(0.1, 0.2, 0.5, 0.6, 0.8, 0.9),
+    TRS = c(0.1, 0.2, 0.5, 0.6, 0.8, 0.9),
     # ymin = 0.1, used for check_input
     # wsnow = 0.8,
     # use.y0 = FALSE,
     # overwrite = FALSE,
     run.curvefit = TRUE,
-    ...) 
+    ...)
 {
+    options_season %<>% modifyList(list(...))
+    options_fitting %<>% modifyList(list(...))
+
     ## 2.1 load site data
     # d_obs <- listk(t, y, w, QC_flag) %>% as.data.table()
     if (!("QC_flag" %in% colnames(d_obs))) {
@@ -60,7 +64,6 @@ process_phenofit <- function(
         r <- v_curve(INPUT, lg_lambdas, d = 2, IsPlot = FALSE)
         lambda <- r$lambda
     }
-    print(lambda)
     # wFUN <- "wBisquare", "wTSM", threshold_max = 0.1, IGBP = CSH
 
     brks2 <- season_mov(INPUT, options_season, ...)

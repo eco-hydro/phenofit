@@ -13,7 +13,7 @@
 #' IsPlot = TRUE
 #' nptperyear = 23
 #' ypeak_min  = 0.05
-#' 
+#'
 #' INPUT    <- check_input(d$t, d$y, d$w, d$QC_flag, nptperyear,
 #'                         maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
 #' plot_input(INPUT)
@@ -65,7 +65,11 @@ plot_input <- function(INPUT, wmin = 0.2, show.y0 = TRUE, ylab = "VI", ...){
         plot(t[I], y[I], type = "l", xaxt = "n", ylab = ylab, xlab = "Time", main = main, ...) # , ann = FALSE
         axis.Date(1, at=seq(min(t), max(t), by="month"), format="%Y-%m")
     } else {
-        plot(t[I], y[I], type = "l", ylab = ylab, xlab = "Time", main = main, ...)
+        plot(t[I], y[I], type = "l", ylab = ylab, xlab = "Time", main = main, xlim = xlim, ...)
+        year_min = min(years)
+        year_max = max(years)
+        axis.Date(1, at=seq(make_date(year_min), make_date(year_max), by="year"),
+                  format="%Y")
     }
 
     show.goodPoints = INPUT$nptperyear < 90
@@ -87,7 +91,7 @@ plot_input <- function(INPUT, wmin = 0.2, show.y0 = TRUE, ylab = "VI", ...){
         t_grids  <- seq.Date(date_beg, date_end, by = "year")
         abline(v = t_grids, col = "grey60", lty = 3)
     }
-    grid(nx = NA, NULL)
+    # grid(nx = NA, NULL)
     ylu <- INPUT$ylu
     if (!is.null(ylu)) abline(h=ylu, col="red", lty=2) # show ylims
 }

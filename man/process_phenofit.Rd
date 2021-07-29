@@ -14,6 +14,7 @@ process_phenofit(
   options_fitting = list(methods = c("AG", "Zhang", "Beck", "Elmore", "Gu"), wFUN =
     "wTSM", maxExtendMonth = 12, minExtendMonth = 0.5, use.y0 = FALSE),
   brks = NULL,
+  TRS = c(0.1, 0.2, 0.5, 0.6, 0.8, 0.9),
   run.curvefit = TRUE,
   ...
 )
@@ -35,3 +36,4 @@ dividing information.}
 \description{
 Extract Vegetation Phenology at site scale
 }
+\keyword{internal}

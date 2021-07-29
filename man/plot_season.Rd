@@ -11,7 +11,9 @@ plot_season(
   IsPlot.OnlyBad = FALSE,
   show.legend = TRUE,
   ylab = "VI",
-  title = NULL
+  title = NULL,
+  show.shade = TRUE,
+  margin = 0.35
 )
 }
 \arguments{
@@ -32,6 +34,10 @@ original data.table.}
 \item{ylab}{y axis title}
 
 \item{title}{The main title (on top)}
+
+\item{show.shade}{Boolean, period inside growing cycle colored as shade?}
+
+\item{margin}{\verb{ylim = c(ymin, ymax + margin * A); A = ymax - ymin}.}
 }
 \description{
 Plot growing season divding result.

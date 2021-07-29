@@ -117,3 +117,7 @@ magrittr::`%>%`
 
 #' @export
 magrittr::`%<>%`
+
+#' @importFrom lubridate make_date
+#' @export
+lubridate::make_date

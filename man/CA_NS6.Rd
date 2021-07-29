@@ -5,7 +5,7 @@
 \alias{CA_NS6}
 \title{MOD13A1 EVI observations at flux site CA-NS6}
 \format{
-An object of class \code{data.table} (inherits from \code{data.frame}) with 92 rows and 6 columns.
+An object of class \code{data.table} (inherits from \code{data.frame}) with 161 rows and 6 columns.
 }
 \usage{
 data('CA_NS6')

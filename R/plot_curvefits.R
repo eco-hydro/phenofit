@@ -1,3 +1,5 @@
+# ' @param theme ggplot theme to be applied
+
 #' plot_curvefits
 #'
 #' @param d_fit data.frame of curve fittings returned by [get_fitting()].
@@ -10,11 +12,12 @@
 #' @param yticks ticks of y axis
 #' @param font.size Font size of axis.text
 #' @param show.legend Boolean
-#' @param theme ggplot theme to be applied
 #' @param shape the shape of input VI observation? `line` or `point`
 #' @param cex point size for VI observation.
 #' @param angle `text.x` angle
-#'
+#' @param layer_extra (not used) extra ggplot layers
+#' @param ... ignored
+#' 
 #' @example inst/examples/ex-curvefits.R
 #' 
 #' @export
@@ -29,7 +32,9 @@ plot_curvefits <- function(
     theme = NULL,
     cex = 2,
     shape = "point", angle = 30,
-    show.legend = TRUE)
+    show.legend = TRUE, 
+    layer_extra = NULL, 
+    ...)
 {
     methods <- d_fit$meth %>% unique() %>% rm_empty() # in case of NA
     nmethod <- length(methods) # how many curve fitting methods?
@@ -69,8 +74,7 @@ plot_curvefits <- function(
         p <- p + geom_point(
             data = d_obs,
             aes_string("t", "y", shape = "QC_flag", color = "QC_flag", fill = "QC_flag"),
-            size = cex, alpha = 0.7
-        )
+            size = cex, alpha = 0.7)
     } else {
         p <- if (shape == "point") {
             p + geom_point(data = d_obs, aes_string("t", "y"), size = cex, alpha = 0.6, color = "grey60")
@@ -92,13 +96,13 @@ plot_curvefits <- function(
         scale_shape_manual(values = qc_shapes, drop = F) +
         coord_cartesian(xlim = xlim)
 
-    if (!is.null(theme)) p <- p + theme
     if (!is.null(yticks)) p <- p + scale_y_continuous(breaks = yticks)
     if  (is.null(title)) p <- p + theme(plot.title = element_blank())
-
+    if (!is.null(layer_extra)) p <- p + layer_extra
+    
     if (show.legend) {
-        iters_name_fine = c("Rough fitting", "Fine fitting")
-        lines_colors = c("black", "red")
+        iters_name_fine = c("Rough fitting", "iter1", "iter2")
+        lines_colors = c("black", "blue", "red")
         lgd <- make_legend_nmax(iters_name_fine, lines_colors, d_obs$QC_flag)
         p <- p + theme(legend.position = "none")
         p <- arrangeGrob(p, lgd,

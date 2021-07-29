@@ -1,6 +1,3 @@
-colors    <- c("blue", "green3", "orange", "red")
-linewidth <- 1.2
-
 # ' PhenoPlot
 # '
 # ' @inheritParams check_input
@@ -11,8 +8,8 @@ linewidth <- 1.2
 PhenoPlot <- function(t, y, main = "", ...){
     plot(t, y, main = main, ...,
              type= "l", cex = 2, col = "black", lwd = linewidth) #pch = 20,
-    # grid(nx = NA)
-    grid(ny = 4, nx = NA)
+    grid(nx = NA)
+    # grid(ny = 4, nx = NA)
 }
 
 #' get_pheno
@@ -52,9 +49,13 @@ get_pheno <- function(fits, method,
     res <- lapply(set_names(seq_along(methods), methods), function(k){
         method <- methods[k]
         if (IsPlot){
-            oma <- if (show_title) c(1, 2, 4, 1) else c(1, 2, 2, 1)
-            op <- par(mfrow = c(length(fits), 5), oma = oma,
-                mar = rep(0, 4), yaxt = "n", xaxt = "n")
+            op <- par(mfrow = c(length(fits), 5),
+                mgp = c(3, 0.6, 0), mar = rep(0, 4), yaxt = "n", xaxt = "n")
+            if (isTRUE(all.equal(par("oma"), c(0, 0, 0, 0)))) {
+                margin_l = 5.5
+                oma <- if (show_title) c(1, margin_l, 4, 1) else c(1, margin_l, 2, 1)
+                par(oma = oma)
+            }
         }
 
         # fFITs
@@ -121,7 +122,7 @@ get_pheno.fFITs <- function(fFITs, method,
         ylim     <- ylim0 + c(-1, 0.2) * 0.05 *A
         ylim_trs <- (ylim - ylim0) / A # TRS:0-1
 
-        PhenoPlot(fFITs$tout, ypred, ylim = ylim)
+        PhenoPlot(fFITs$tout, ypred, ylim = ylim, yaxt = "s")
         lines(ti, yi, lwd = 1, col = "grey60")
 
         QC_flag <- fFITs$data$QC_flag
@@ -153,9 +154,10 @@ get_pheno.fFITs <- function(fFITs, method,
         )
 
         legend('topleft', do.call(expression, exprs), adj = c(0.2, 0.2), bty='n', text.col = "red")
-        mtext(title_left, side = 2, line = 0.2)
+        # mtext(title_left, side = 2, line = 0.2)
+        mtext(title_left, side = 2, line = 1.8)
     }
-    if (showName_pheno && IsPlot) mtext("Fitting", line = 0.2)
+    if (showName_pheno && IsPlot) mtext("Fine fitting", line = 0.2)
 
     p_TRS <- lapply(TRS, function(trs) {
         PhenoTrs(fFIT, approach = "White", trs = trs, IsPlot = FALSE)
@@ -171,9 +173,14 @@ get_pheno.fFITs <- function(fFITs, method,
         IsPlot, ylim = ylim)
     param_common2 <- c(param_common, list(show.lgd = show.lgd))
 
-    der   <- do.call(PhenoDeriv, param_common2);  if (showName_pheno && IsPlot) mtext("DER", line = 0.2)
-    gu    <- do.call(PhenoGu, param_common)[1:4]; if (showName_pheno && IsPlot) mtext("GU", line = 0.2)
-    zhang <- do.call(PhenoKl, param_common2);     if (showName_pheno && IsPlot) mtext("ZHANG", line = 0.2)
+    der <- do.call(PhenoDeriv, param_common2)
+    if (showName_pheno && IsPlot) mtext("DER", line = 0.2)
+
+    zhang <- do.call(PhenoKl, param_common2)
+    if (showName_pheno && IsPlot) mtext("Inflexion ", line = 0.2)
+
+    gu <- do.call(PhenoGu, param_common)[1:4]
+    if (showName_pheno && IsPlot) mtext("Gu", line = 0.2)
 
     c(p_TRS, list(der, gu, zhang)) %>% set_names(methods)
 }

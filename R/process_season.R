@@ -7,8 +7,8 @@
 #' parameter, lambda.
 #'
 #' @note site-year may be not continuous.
-#'
-#' @rdname season_mov
+#' 
+#' @keywords internal
 #' @export
 process_season <- function(
     d_obs,

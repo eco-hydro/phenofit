@@ -14,18 +14,22 @@
 #' Only if `IsPlot=TRUE`, [plot_input()] will be used to plot.
 #' Known that y and w in `INPUT` have been changed, we suggest using the
 #' original data.table.
-
+#' 
+#' @param show.shade Boolean, period inside growing cycle colored as shade?
+#' @param margin `ylim = c(ymin, ymax + margin * A); A = ymax - ymin`.
+#' 
 #' @importFrom grid viewport pushViewport grid.draw
 #' @export
 plot_season <- function(
     INPUT, brks, plotdat, 
     # ylu,
     IsPlot.OnlyBad = FALSE, show.legend = TRUE,
-    ylab = "VI", title = NULL)
+    ylab = "VI", title = NULL, 
+    show.shade = TRUE,
+    margin = 0.35)
 {
-    if (missing(plotdat)) {
-        plotdat <- INPUT
-    }
+    if (missing(plotdat)) plotdat <- INPUT
+    
     if (is.data.frame(brks$dt[[1]])) {
         brks$dt %<>% do.call(rbind, .)
     }
@@ -64,10 +68,10 @@ plot_season <- function(
     ymin = min(INPUT$y0, na.rm = TRUE)
     ymax = max(INPUT$y0, na.rm = TRUE)
     # ylim = c(ymin, (ymax - ymin)*0.12 + ymax)
-    ylim = c(ymin, ylu[2] + 0.35 * A)
+    ylim = c(ymin, ylu[2] + margin * A)
 
     plot_input(plotdat, ylab = ylab, ylim = ylim)
-    plot_season_boundary(dt)
+    if (show.shade) plot_season_boundary(dt)
     
     NITER  <- ncol(zs)
     lines_colors <- iter_colors(NITER)

@@ -176,7 +176,7 @@ findpeaks_season_jl <- function(
     nyear = 1)
 {
     A = max(ypred) - min(ypred)
-    ans = JuliaCall::julia_call("findpeaks_season", ypred,
+    ans = JuliaCall::julia_call("phenofit.findpeaks_season", ypred,
         r_max = r_max, r_min = r_min,
         # r_max = y_max/A, r_min = y_min/A,
         minpeakdistance = as.integer(minpeakdistance), minpeakheight = minpeakheight,
@@ -184,4 +184,3 @@ findpeaks_season_jl <- function(
     ans$threshold <- data.table(y_max = r_max*A, y_min = r_min*A, r_max, r_min)
     ans
 }
-

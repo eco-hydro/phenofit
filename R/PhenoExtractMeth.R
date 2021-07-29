@@ -1,3 +1,7 @@
+# colors    <- c("blue", "green3", "orange", "red")
+colors <- c("green3", "darkgreen", "darkorange3", "red")
+linewidth <- 1.2
+
 #' @name PhenoExtractMeth
 #' @title Phenology Extraction methods
 #'
@@ -16,7 +20,7 @@
 #' # simulate vegetation time-series
 #' fFUN = doubleLog.Beck
 #' par  = c( mn  = 0.1 , mx  = 0.7 , sos = 50 , rsp = 0.1 , eos = 250, rau = 0.1)
-#' 
+#'
 #' t    <- seq(1, 365, 8)
 #' tout <- seq(1, 365, 1)
 #' y <- fFUN(par, t)
@@ -57,7 +61,7 @@ PhenoTrs <- function(fFIT, approach = c("White", "Trs"), trs = 0.5, #, min.mean 
 
     # get peak of season position
     half.season <- median(which.max(values)) %>% round() # + 20, half season + 20 was unreasonable
-    pop <- t[half.season]
+    pos <- t[half.season]
 
     if (all(is.na(values))) return(metrics)
     if (half.season < 5 || half.season > (n - 5)) return(metrics)
@@ -107,8 +111,8 @@ PhenoTrs <- function(fFIT, approach = c("White", "Trs"), trs = 0.5, #, min.mean 
     # sos <- round(median(sose os[greenup & bool], na.rm = TRUE))
     # eos <- round(median(soseos[!greenup & bool], na.rm = TRUE))
 
-    sos <- round(median(t[ greenup & bool & t < pop], na.rm = TRUE))
-    eos <- round(median(t[!greenup & bool & t > pop], na.rm = TRUE))
+    sos <- round(median(t[ greenup & bool & t < pos], na.rm = TRUE))
+    eos <- round(median(t[!greenup & bool & t > pos], na.rm = TRUE))
     # los <- eos - sos#los < 0 indicate that error
     # los[los < 0] <- n + (eos[los < 0] - sos[los < 0])
 
@@ -125,7 +129,7 @@ PhenoTrs <- function(fFIT, approach = c("White", "Trs"), trs = 0.5, #, min.mean 
     #     id <- id[(id > 0) & (id < n)]
     #     mau <- mean(x[which(index(x) %in% id == TRUE)], na.rm = TRUE)
     # }
-    # metrics <- c(sos = sos, eos = eos, los = los, pop = pop, mgs = mgs,
+    # metrics <- c(sos = sos, eos = eos, los = los, pos = pos, mgs = mgs,
     #   rsp = NA, rau = NA, peak = peak, msp = msp, mau = mau)
     metrics <- c(sos = sos, eos = eos)#, los = los
 
@@ -134,15 +138,14 @@ PhenoTrs <- function(fFIT, approach = c("White", "Trs"), trs = 0.5, #, min.mean 
         PhenoPlot(t, values, main = main, ...)
 
         lines(t, trs*ampl + mn, lwd = linewidth)
-        lines(t, trs.low*ampl + mn, lty = 2, lwd = linewidth)
-        lines(t, trs.up*ampl + mn, lty = 2, lwd = linewidth)
-
+        # lines(t, trs.low*ampl + mn, lty = 2, lwd = linewidth)
+        # lines(t, trs.up*ampl + mn, lty = 2, lwd = linewidth)
         abline(v = metrics, col = colors[c(1, 4)], lwd = linewidth)
         text(metrics[1] - 5, min(trs + 0.15, 1)*ampl[1] + mn[1], "SOS", col = colors[1], adj = c(1, 0))
         text(metrics[2] + 5, min(trs + 0.15, 1)*last(ampl) + last(mn), "EOS", col = colors[4], adj = c(0, 0))
     }
     return(metrics)
-    ### The function returns a vector with SOS, EOS, LOS, POP, MGS, rsp, rau, PEAK, MSP and MAU. }
+    ### The function returns a vector with SOS, EOS, LOS, POS, MGS, rsp, rau, PEAK, MSP and MAU. }
 }
 
 # identify greenup or dormancy(brown) period
@@ -164,16 +167,16 @@ PhenoDeriv <- function(fFIT,
     analytical = TRUE, smoothed.spline = FALSE,
     IsPlot = TRUE, show.lgd = TRUE, ...)
 {
-    PhenoNames <- c("SOS", "POP", "EOS")
-    metrics <- setNames(rep(NA, 3), c("sos", "pop", "eos")) # template
+    PhenoNames <- c("SOS", "POS", "EOS")
+    metrics <- setNames(rep(NA, 3), c("sos", "pos", "eos")) # template
 
     t      <- fFIT$tout
     values <- last(fFIT$zs)
     n      <- length(t)
 
     # get peak of season position
-    half.season <- median(which.max(values)) # deal with multiple pop values
-    pop <- t[half.season]
+    half.season <- median(which.max(values)) # deal with multiple pos values
+    pos <- t[half.season]
 
     if (all(is.na(values))) return(metrics)
     if (half.season < 5 || half.season > (n - 5)) return(metrics)
@@ -197,7 +200,7 @@ PhenoDeriv <- function(fFIT,
     if (is_empty(sos)) sos <- NA
     if (is_empty(eos)) eos <- NA
 
-    metrics <- c(sos = sos, pop = pop, eos = eos)#, los = los
+    metrics <- c(sos = sos, pos = pos, eos = eos)#, los = los
 
     if (IsPlot){
         main  <- ifelse(all(par("mar") == 0), "", "DER")
@@ -205,21 +208,21 @@ PhenoDeriv <- function(fFIT,
         if (show.lgd) legend('topright', c("f(t)'"), lty = 2, col = "black", bty='n')
 
         abline(v = c(sos, eos), col = colors[c(1, 4)], lwd = linewidth)
-        abline(v = pop, col ="darkgreen", lty = 1, lwd = linewidth)
+        abline(v = pos, col ="blue", lty = 1, lwd = linewidth)
 
         A <- diff(range(values))
         I_metrics <- match(metrics, t)
         if (all(is.na(I_metrics))) {
             ylons <- I_metrics
         }else{
-            ylons <- values[I_metrics] + c(1, -1, 1)*0.1*A
+            ylons <- values[I_metrics] + c(1, -2, 1)*0.1*A
         }
         xlons <- metrics + c(-1, 1, 1)*5
         xlons[xlons < min(t)] <- min(t)
         xlons[xlons > max(t)] <- max(t)
 
         I <- c(1); text(xlons[I], ylons[I], PhenoNames[I], col = colors[I], adj = c(1, 0))
-        I <- 2:3 ; text(xlons[I], ylons[I], PhenoNames[I], col = c("darkgreen", colors[3]), adj = c(0, 0))
+        I <- 2:3 ; text(xlons[I], ylons[I], PhenoNames[I], col = c("blue", colors[4]), adj = c(0, 0))
 
         #der1 last plot
         op <- par(new = TRUE)
@@ -245,8 +248,8 @@ PhenoGu <- function(fFIT,
     n      <- length(t)
 
     # get peak of season position
-    half.season <- median(which.max(values)) # deal with multiple pop values
-    pop <- t[half.season]
+    half.season <- median(which.max(values)) # deal with multiple pos values
+    pos <- t[half.season]
 
     if (all(is.na(values))) return(metrics)
     if (half.season < 5 || half.season > (n - 5)) return(metrics)
@@ -329,6 +332,7 @@ PhenoGu <- function(fFIT,
         xlons <- metrics[1:4] + c(-1, -1, 1, 1)*5
         xlons[xlons < min(t)] <- min(t)
         xlons[xlons > max(t)] <- max(t)
+
         I <- c(1, 2); text(xlons[I], ylons[I], PhenoNames[I], col = colors[I], adj = c(1, 0))
         I <- c(3, 4); text(xlons[I], ylons[I], PhenoNames[I], col = colors[I], adj = c(0, 0))
     }
@@ -352,7 +356,7 @@ PhenoKl <- function(fFIT,
 
     # get peak of season position
     half.season <- median(which.max(values)) # + 20, half season + 20 was unreasonable
-    pop <- t[half.season]
+    pos <- t[half.season]
 
     if (all(is.na(values))) return(metrics)
     if (half.season < 5 || half.season > (n - 5)) return(metrics)
@@ -429,12 +433,15 @@ PhenoKl <- function(fFIT,
             legend('topright', c("K'"), lty = c(3), col = c("black"), bty='n') ##pch =c(20, 1),
         }
 
-        pop     <- t[half.season]
+        pos     <- t[half.season]
         abline(v = metrics, col = colors, lwd = linewidth)
-        # abline(v = pop, col ="darkgreen", lty = 1, lwd = linewidth)
-        # abline(v = pop + 20, col ="darkgreen", lty = 2, lwd = linewidth)
-        I <- c(1, 3); text(xlons[I], ylons[I], PhenoNames[I], col = colors[I], adj = c(0, 0))
-        I <- c(2, 4); text(xlons[I], ylons[I], PhenoNames[I], col = colors[I], adj = c(1, 0))
+        # abline(v = pos, col ="darkgreen", lty = 1, lwd = linewidth)
+        # abline(v = pos + 20, col ="darkgreen", lty = 2, lwd = linewidth)
+        PhenoNames2 <- c("Greenup", "Maturity", "Senescence", "Dormancy")
+        # PhenoNames2 <- c("G", "M", "S", "D")
+
+        I <- c(1, 3); text(xlons[I], ylons[I], PhenoNames2[I], col = colors[I], adj = c(0, 0))
+        I <- c(2, 4); text(xlons[I], ylons[I], PhenoNames2[I], col = colors[I], adj = c(1, 0))
         # der.k last plot
         op <- par(new = TRUE)
         plot(t, der.k, xlim = xlim, type= "l",

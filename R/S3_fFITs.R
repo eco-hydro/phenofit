@@ -72,7 +72,7 @@ plot.fFITs <- function(x, method, ...){
 
         pred   <- last(fFIT$zs)
 
-        pop    <- t[which.max(pred)]
+        pos    <- t[which.max(pred)]
         derivs <- curvature(fFIT)
 
         # plot for every method
@@ -84,7 +84,7 @@ plot.fFITs <- function(x, method, ...){
             type= "b", pch = 20, cex = 1.3, col = "grey",
             main = "curve fitting VI", xlab = "Index", ylab = "VI")
         lines(t, pred); grid()
-        abline(v = pop, col ="green")
+        abline(v = pos, col ="green")
 
         maxd_der1 <- t[which.max(derivs$der1)]
         mind_der1 <- t[which.min(derivs$der1)]
@@ -92,14 +92,14 @@ plot.fFITs <- function(x, method, ...){
         plot(t, derivs$der1, main = "D1"); grid()
         abline(v = maxd_der1, col ="blue")
         abline(v = mind_der1, col ="red")
-        abline(v = pop, col ="green")
+        abline(v = pos, col ="green")
 
         plot(t, derivs$der2, main = "D2"); grid()
         plot(t, derivs$k, main = "k")    ; grid()
         abline(v = maxd_der1, col ="blue")
         abline(v = mind_der1, col ="red")
-        abline(v = pop, col ="green")
-        abline(v = pop + 20, col ="green", lty = 2)
+        abline(v = pos, col ="green")
+        abline(v = pos + 20, col ="green", lty = 2)
         # plot(diff(der1_diff), main = "diff2")
 
         # k <- derivs$k

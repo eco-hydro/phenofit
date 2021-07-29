@@ -6,6 +6,7 @@
 \alias{\%<-\%}
 \alias{\%>\%}
 \alias{\%<>\%}
+\alias{make_date}
 \title{Objects exported from other packages}
 \keyword{internal}
 \description{
@@ -13,6 +14,8 @@ These objects are imported from other packages. Follow the links
 below to see their documentation.
 
 \describe{
+  \item{lubridate}{\code{\link[lubridate:make_datetime]{make_date}}}
+
   \item{magrittr}{\code{\link[magrittr:compound]{\%<>\%}}, \code{\link[magrittr:pipe]{\%>\%}}}
 
   \item{zeallot}{\code{\link[zeallot:operator]{\%<-\%}}}

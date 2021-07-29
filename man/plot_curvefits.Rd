@@ -17,7 +17,9 @@ plot_curvefits(
   cex = 2,
   shape = "point",
   angle = 30,
-  show.legend = TRUE
+  show.legend = TRUE,
+  layer_extra = NULL,
+  ...
 )
 }
 \arguments{
@@ -37,8 +39,6 @@ of \code{t}, \code{y} and \code{QC_flag}. If not specified, it will be determine
 
 \item{font.size}{Font size of axis.text}
 
-\item{theme}{ggplot theme to be applied}
-
 \item{cex}{point size for VI observation.}
 
 \item{shape}{the shape of input VI observation? \code{line} or \code{point}}
@@ -46,6 +46,10 @@ of \code{t}, \code{y} and \code{QC_flag}. If not specified, it will be determine
 \item{angle}{\code{text.x} angle}
 
 \item{show.legend}{Boolean}
+
+\item{layer_extra}{(not used) extra ggplot layers}
+
+\item{...}{ignored}
 }
 \description{
 plot_curvefits
