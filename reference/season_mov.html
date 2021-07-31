@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>divide_seasons — process_season • phenofit</title>
+<title>Moving growing season division — season_mov • phenofit</title>
 
 
 <!-- jquery -->
@@ -39,9 +39,8 @@
 
 
 
-<meta property="og:title" content="divide_seasons — process_season" />
-<meta property="og:description" content="divide_seasons
-Moving growing season division" />
+<meta property="og:title" content="Moving growing season division — season_mov" />
+<meta property="og:description" content="Moving growing season division" />
 
 
 
@@ -127,76 +126,40 @@ Moving growing season division" />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>divide_seasons</h1>
-    <small class="dont-index">Source: <a href='https://github.com/kongdd/phenofit/blob/master/R/process_season.R'><code>R/process_season.R</code></a>, <a href='https://github.com/kongdd/phenofit/blob/master/R/season_mov.R'><code>R/season_mov.R</code></a></small>
+    <h1>Moving growing season division</h1>
+    <small class="dont-index">Source: <a href='https://github.com/kongdd/phenofit/blob/master/R/season_mov.R'><code>R/season_mov.R</code></a></small>
     <div class="hidden name"><code>season_mov.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>divide_seasons</p>
-<p>Moving growing season division</p>
+    <p>Moving growing season division</p>
     </div>
 
-    <pre class="usage"><span class='fu'>process_season</span><span class='op'>(</span>
-  <span class='va'>d_obs</span>,
-  options <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>wFUN <span class='op'>=</span> <span class='st'>"wTSM"</span>, maxExtendMonth <span class='op'>=</span> <span class='fl'>12</span>, MaxPeaksPerYear <span class='op'>=</span> <span class='fl'>3</span>,
-    MaxTroughsPerYear <span class='op'>=</span> <span class='fl'>4</span><span class='op'>)</span>,
-  nptperyear <span class='op'>=</span> <span class='fl'>36</span>,
-  south <span class='op'>=</span> <span class='cn'>FALSE</span>,
-  .v_curve <span class='op'>=</span> <span class='cn'>FALSE</span>,
-  <span class='va'>...</span>
-<span class='op'>)</span>
-
-<span class='fu'>season_mov</span><span class='op'>(</span><span class='va'>INPUT</span>, options <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>r_min <span class='op'>=</span> <span class='fl'>0</span><span class='op'>)</span>, <span class='va'>...</span>, years.run <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>season_mov</span><span class='op'>(</span><span class='va'>INPUT</span>, options <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>r_min <span class='op'>=</span> <span class='fl'>0</span><span class='op'>)</span>, <span class='va'>...</span>, years.run <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>options</th>
-      <td><p>see details</p></td>
-    </tr>
-    <tr>
-      <th>nptperyear</th>
-      <td><p>Integer, number of images per year.</p></td>
-    </tr>
-    <tr>
-      <th>south</th>
-      <td><p>Boolean. In south hemisphere, growing year is 1 July to the
-following year 31 June; In north hemisphere, growing year is 1 Jan to 31 Dec.</p></td>
-    </tr>
-    <tr>
-      <th>.v_curve</th>
-      <td><p>If true, it will use V-curve theory to optimize Whittaker
-parameter, lambda.</p></td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td><p>others to <code><a href='season.html'>season()</a></code></p></td>
-    </tr>
     <tr>
       <th>INPUT</th>
       <td><p>A list object with the elements of <code>t</code>, <code>y</code>, <code>w</code>,
 <code>Tn</code> (optional) and <code>ylu</code>, returned by <code><a href='check_input.html'>check_input()</a></code>.</p></td>
     </tr>
     <tr>
+      <th>options</th>
+      <td><p>see details</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>others to <code><a href='season.html'>season()</a></code></p></td>
+    </tr>
+    <tr>
       <th>years.run</th>
       <td><p>Numeric vector. Which years to run? If not specified, it is
 all years.</p></td>
     </tr>
-    <tr>
-      <th>d</th>
-      <td><p>data.frame, with the columns of <code>t</code>, <code>y</code> and <code>w</code>.</p></td>
-    </tr>
-    <tr>
-      <th>options_season</th>
-      <td><p>options of <code>season_mov()</code></p></td>
-    </tr>
     </table>
 
-    <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
-
-    <p>site-year may be not continuous.</p>
     <h2 class="hasAnchor" id="options"><a class="anchor" href="#options"></a>options</h2>
 
     
@@ -299,7 +262,10 @@ ISPRS Journal of Photogrammetry and Remote Sensing, 155, 13-24.</p></li>
 #&gt;   [season_mov] running 1 ... 
 #&gt;   [season_mov] running 2 ... 
 #&gt;   [season_mov] running 3 ... 
-#&gt;   [season_mov] running 4 ... </div><div class='input'><span class='fu'><a href='plot_season.html'>plot_season</a></span><span class='op'>(</span><span class='va'>INPUT</span>, <span class='va'>brks_mov</span><span class='op'>)</span>
+#&gt;   [season_mov] running 4 ... 
+#&gt;   [season_mov] running 5 ... 
+#&gt;   [season_mov] running 6 ... 
+#&gt;   [season_mov] running 7 ... </div><div class='input'><span class='fu'><a href='plot_season.html'>plot_season</a></span><span class='op'>(</span><span class='va'>INPUT</span>, <span class='va'>brks_mov</span><span class='op'>)</span>
 </div><div class='img'><img src='season_mov-2.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

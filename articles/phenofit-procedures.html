@@ -158,7 +158,7 @@
     maxgap <span class="op">=</span> <span class="va">nptperyear</span> <span class="op">/</span> <span class="fl">4</span>, wmin <span class="op">=</span> <span class="fl">0.2</span>
 <span class="op">)</span>
 
-<span class="va">brks</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/process_season.html">season_mov</a></span><span class="op">(</span><span class="va">INPUT</span>,
+<span class="va">brks</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/season_mov.html">season_mov</a></span><span class="op">(</span><span class="va">INPUT</span>,
     <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>FUN <span class="op">=</span> <span class="va">smooth_wWHIT</span>, wFUN <span class="op">=</span> <span class="va">wFUN</span>,
         maxExtendMonth <span class="op">=</span> <span class="fl">3</span>,
         wmin <span class="op">=</span> <span class="va">wmin</span>, r_min <span class="op">=</span> <span class="fl">0.1</span>
@@ -233,7 +233,7 @@
 <span class="co">#&gt; 5: 2014_1 2014-01-01      143      272      151      268      163      263</span>
 <span class="co">#&gt; 6: 2015_1 2015-01-01      144      260      151      254      161      246</span>
 <span class="co">#&gt; 7: 2016_1 2016-01-01      147      282      151      271      159      253</span>
-<span class="co">#&gt;    DER.sos DER.pop DER.eos  UD  SD  DD  RD Greenup Maturity Senescence Dormancy</span>
+<span class="co">#&gt;    DER.sos DER.pos DER.eos  UD  SD  DD  RD Greenup Maturity Senescence Dormancy</span>
 <span class="co">#&gt; 1:     156     192     242 132 175 211 287     128      184        212      294</span>
 <span class="co">#&gt; 2:     163     210     258 145 181 240 276     141      185        236      280</span>
 <span class="co">#&gt; 3:     160     196     261 149 170 241 282     145      175        236      286</span>

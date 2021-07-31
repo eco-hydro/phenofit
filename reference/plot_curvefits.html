@@ -148,7 +148,9 @@
   cex <span class='op'>=</span> <span class='fl'>2</span>,
   shape <span class='op'>=</span> <span class='st'>"point"</span>,
   angle <span class='op'>=</span> <span class='fl'>30</span>,
-  show.legend <span class='op'>=</span> <span class='cn'>TRUE</span>
+  show.legend <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  layer_extra <span class='op'>=</span> <span class='cn'>NULL</span>,
+  <span class='va'>...</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -161,7 +163,7 @@
     <tr>
       <th>seasons</th>
       <td><p>Growing season dividing object returned by <code><a href='season.html'>season()</a></code>
-and <code><a href='process_season.html'>season_mov()</a></code>.</p></td>
+and <code><a href='season_mov.html'>season_mov()</a></code>.</p></td>
     </tr>
     <tr>
       <th>d_obs</th>
@@ -185,10 +187,6 @@ of <code>t</code>, <code>y</code> and <code>QC_flag</code>. If not specified, it
       <td><p>Font size of axis.text</p></td>
     </tr>
     <tr>
-      <th>theme</th>
-      <td><p>ggplot theme to be applied</p></td>
-    </tr>
-    <tr>
       <th>cex</th>
       <td><p>point size for VI observation.</p></td>
     </tr>
@@ -203,6 +201,14 @@ of <code>t</code>, <code>y</code> and <code>QC_flag</code>. If not specified, it
     <tr>
       <th>show.legend</th>
       <td><p>Boolean</p></td>
+    </tr>
+    <tr>
+      <th>layer_extra</th>
+      <td><p>(not used) extra ggplot layers</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>ignored</p></td>
     </tr>
     </table>
 
@@ -219,7 +225,7 @@ of <code>t</code>, <code>y</code> and <code>QC_flag</code>. If not specified, it
 
 <span class='co'># Rough fitting and growing season dividing</span>
 <span class='va'>wFUN</span> <span class='op'>&lt;-</span> <span class='st'>"wTSM"</span>
-<span class='va'>brks2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='process_season.html'>season_mov</a></span><span class='op'>(</span><span class='va'>INPUT</span>,
+<span class='va'>brks2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='season_mov.html'>season_mov</a></span><span class='op'>(</span><span class='va'>INPUT</span>,
     options <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>
         rFUN <span class='op'>=</span> <span class='va'>smooth_wWHIT</span>, wFUN <span class='op'>=</span> <span class='va'>wFUN</span>,
         r_min <span class='op'>=</span> <span class='fl'>0.05</span>, ypeak_min <span class='op'>=</span> <span class='fl'>0.05</span>,
@@ -229,7 +235,10 @@ of <code>t</code>, <code>y</code> and <code>QC_flag</code>. If not specified, it
 </div><div class='output co'>#&gt;   [season_mov] running 1 ... 
 #&gt;   [season_mov] running 2 ... 
 #&gt;   [season_mov] running 3 ... 
-#&gt;   [season_mov] running 4 ... </div><div class='input'><span class='co'># plot_season(INPUT, brks2, d)</span>
+#&gt;   [season_mov] running 4 ... 
+#&gt;   [season_mov] running 5 ... 
+#&gt;   [season_mov] running 6 ... 
+#&gt;   [season_mov] running 7 ... </div><div class='input'><span class='co'># plot_season(INPUT, brks2, d)</span>
 <span class='co'># Fine fitting</span>
 <span class='va'>fit</span> <span class='op'>&lt;-</span> <span class='fu'><a href='curvefits.html'>curvefits</a></span><span class='op'>(</span>
     <span class='va'>INPUT</span>, <span class='va'>brks2</span>,
@@ -242,7 +251,10 @@ of <code>t</code>, <code>y</code> and <code>QC_flag</code>. If not specified, it
 </div><div class='output co'>#&gt;   [curvefits] running 1 ... 
 #&gt;   [curvefits] running 2 ... 
 #&gt;   [curvefits] running 3 ... 
-#&gt;   [curvefits] running 4 ... </div><div class='input'>
+#&gt;   [curvefits] running 4 ... 
+#&gt;   [curvefits] running 5 ... 
+#&gt;   [curvefits] running 6 ... 
+#&gt;   [curvefits] running 7 ... </div><div class='input'>
 <span class='va'>r_param</span> <span class='op'>=</span> <span class='fu'><a href='get_param.html'>get_param</a></span><span class='op'>(</span><span class='va'>fit</span><span class='op'>)</span>
 <span class='va'>r_pheno</span> <span class='op'>=</span> <span class='fu'><a href='get_pheno.html'>get_pheno</a></span><span class='op'>(</span><span class='va'>fit</span><span class='op'>)</span>
 <span class='va'>r_gof</span> <span class='op'>=</span> <span class='fu'><a href='get_GOF.html'>get_GOF</a></span><span class='op'>(</span><span class='va'>fit</span><span class='op'>)</span>

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>MOD13A1 EVI observations at flux site CA-NS6 — CA_NS6 • phenofit</title>
+<title>divide_seasons — process_season • phenofit</title>
 
 
 <!-- jquery -->
@@ -39,16 +39,8 @@
 
 
 
-<meta property="og:title" content="MOD13A1 EVI observations at flux site CA-NS6 — CA_NS6" />
-<meta property="og:description" content="Variables in CA-NS6:
-site: site name
-y: EVI
-date: date of image
-t: date of compositing image
-w: weights of data point
-QC_flag: QC flag of y, in the range of c(&quot;snow&quot;, &quot;cloud&quot;, &quot;shadow&quot;, &quot;aerosol&quot;, &quot;marginal&quot;, &quot;good&quot;)
-
-" />
+<meta property="og:title" content="divide_seasons — process_season" />
+<meta property="og:description" content="divide_seasons" />
 
 
 
@@ -134,29 +126,59 @@ QC_flag: QC flag of y, in the range of c(&quot;snow&quot;, &quot;cloud&quot;, &q
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>MOD13A1 EVI observations at flux site CA-NS6</h1>
-    <small class="dont-index">Source: <a href='https://github.com/kongdd/phenofit/blob/master/R/data_MOD13A1.R'><code>R/data_MOD13A1.R</code></a></small>
-    <div class="hidden name"><code>CA_NS6.Rd</code></div>
+    <h1>divide_seasons</h1>
+    <small class="dont-index">Source: <a href='https://github.com/kongdd/phenofit/blob/master/R/process_season.R'><code>R/process_season.R</code></a></small>
+    <div class="hidden name"><code>process_season.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Variables in CA-NS6:</p><ul>
-<li><p><code>site</code>: site name</p></li>
-<li><p><code>y</code>: EVI</p></li>
-<li><p><code>date</code>: date of image</p></li>
-<li><p><code>t</code>: date of compositing image</p></li>
-<li><p><code>w</code>: weights of data point</p></li>
-<li><p><code>QC_flag</code>: QC flag of y, in the range of <code><a href='https://rdrr.io/r/base/c.html'>c("snow", "cloud", "shadow", "aerosol", "marginal", "good")</a></code></p></li>
-</ul>
-
+    <p>divide_seasons</p>
     </div>
 
-    <pre class="usage"><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>'CA_NS6'</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>process_season</span><span class='op'>(</span>
+  <span class='va'>d_obs</span>,
+  options <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>wFUN <span class='op'>=</span> <span class='st'>"wTSM"</span>, maxExtendMonth <span class='op'>=</span> <span class='fl'>12</span>, MaxPeaksPerYear <span class='op'>=</span> <span class='fl'>3</span>,
+    MaxTroughsPerYear <span class='op'>=</span> <span class='fl'>4</span><span class='op'>)</span>,
+  nptperyear <span class='op'>=</span> <span class='fl'>36</span>,
+  south <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  .v_curve <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span></pre>
 
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>nptperyear</th>
+      <td><p>Integer, number of images per year.</p></td>
+    </tr>
+    <tr>
+      <th>south</th>
+      <td><p>Boolean. In south hemisphere, growing year is 1 July to the
+following year 31 June; In north hemisphere, growing year is 1 Jan to 31 Dec.</p></td>
+    </tr>
+    <tr>
+      <th>.v_curve</th>
+      <td><p>If true, it will use V-curve theory to optimize Whittaker
+parameter, lambda.</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>Others will be ignored.</p></td>
+    </tr>
+    <tr>
+      <th>d</th>
+      <td><p>data.frame, with the columns of <code>t</code>, <code>y</code> and <code>w</code>.</p></td>
+    </tr>
+    <tr>
+      <th>options_season</th>
+      <td><p>options of <code><a href='season_mov.html'>season_mov()</a></code></p></td>
+    </tr>
+    </table>
 
-    <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
+    <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
 
-    <p>An object of class <code>data.table</code> (inherits from <code>data.frame</code>) with 161 rows and 6 columns.</p>
+    <p>site-year may be not continuous.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

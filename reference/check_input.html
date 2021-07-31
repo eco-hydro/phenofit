@@ -281,12 +281,12 @@ points is only 10\<!-- %, we still can't set \code{w_critical=wmin}. --></p>
 <span class='va'>d</span> <span class='op'>=</span> <span class='va'>CA_NS6</span>
 <span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>d</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;      site      y       date          t   w QC_flag
-#&gt; 1: CA-NS6 0.1370 2013-01-01 2013-01-11 0.2    snow
-#&gt; 2: CA-NS6 0.1140 2013-01-17 2013-01-31 0.2    snow
-#&gt; 3: CA-NS6 0.1124 2013-02-02 2013-02-15 0.2    snow
-#&gt; 4: CA-NS6 0.0750 2013-02-18 2013-03-01 0.2    snow
-#&gt; 5: CA-NS6 0.0915 2013-03-06 2013-03-15 0.2    snow
-#&gt; 6: CA-NS6 0.0832 2013-03-22 2013-04-01 0.2    snow</div><div class='input'>
+#&gt; 1: CA-NS6 0.1531 2010-01-01 2010-01-08 0.2    snow
+#&gt; 2: CA-NS6 0.1196 2010-01-17 2010-01-25 0.2    snow
+#&gt; 3: CA-NS6 0.1637 2010-02-02 2010-02-13 0.2    snow
+#&gt; 4: CA-NS6 0.1301 2010-02-18 2010-02-25 0.2    snow
+#&gt; 5: CA-NS6 0.1076 2010-03-06 2010-03-21 0.2    snow
+#&gt; 6: CA-NS6 0.0990 2010-03-22 2010-03-23 0.2    snow</div><div class='input'>
 <span class='va'>nptperyear</span> <span class='op'>&lt;-</span> <span class='fl'>23</span>
 <span class='va'>INPUT</span> <span class='op'>&lt;-</span> <span class='fu'>check_input</span><span class='op'>(</span><span class='va'>d</span><span class='op'>$</span><span class='va'>t</span>, <span class='va'>d</span><span class='op'>$</span><span class='va'>y</span>, <span class='va'>d</span><span class='op'>$</span><span class='va'>w</span>, QC_flag <span class='op'>=</span> <span class='va'>d</span><span class='op'>$</span><span class='va'>QC_flag</span>,
      nptperyear <span class='op'>=</span> <span class='va'>nptperyear</span>, south <span class='op'>=</span> <span class='cn'>FALSE</span>, 

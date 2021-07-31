@@ -228,7 +228,7 @@ data. [Here](https://code.earthengine.google.com/ee3ec39cf3061374dab435c358d008a
 <span class="co">#                rymin_less = 0.6, ymax_min = ymax_min,</span>
 <span class="co">#                max_MaxPeaksperyear =2.5, max_MinPeaksperyear = 3.5) #, ...</span>
 <span class="co"># get growing season breaks in a 3-year moving window</span>
-<span class="va">brks2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/process_season.html">season_mov</a></span><span class="op">(</span><span class="va">INPUT</span>, 
+<span class="va">brks2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/season_mov.html">season_mov</a></span><span class="op">(</span><span class="va">INPUT</span>, 
     <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>FUN <span class="op">=</span> <span class="va">smooth_wWHIT</span>, wFUN <span class="op">=</span> <span class="va">wFUN</span>, maxExtendMonth <span class="op">=</span> <span class="fl">6</span>, r_min <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <pre><code>##   [season_mov] running 1 ... 
 ##   [season_mov] running 2 ... 
@@ -340,18 +340,17 @@ data. [Here](https://code.earthengine.google.com/ee3ec39cf3061374dab435c358d008a
 <code class="sourceCode R"><span class="co">## visualization</span>
 <span class="va">g</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/plot_curvefits.html">plot_curvefits</a></span><span class="op">(</span><span class="va">d_fit</span>, <span class="va">brks2</span>, <span class="cn">NULL</span>, ylab <span class="op">=</span> <span class="st">"NDVI"</span>, <span class="st">"Time"</span>,
                    theme <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_cartesian.html">coord_cartesian</a></span><span class="op">(</span>xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fu">ymd</span><span class="op">(</span><span class="st">"2000-04-01"</span><span class="op">)</span>, <span class="fu">ymd</span><span class="op">(</span><span class="st">"2017-07-31"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<pre><code>## Coordinate system already present. Adding new coordinate system, which will replace the existing one.</code></pre>
 <pre><code>## Warning: Removed 4 rows containing missing values (geom_point).</code></pre>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">grid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grid/grid.newpage.html">grid.newpage</a></span><span class="op">(</span><span class="op">)</span>; <span class="fu">grid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grid/grid.draw.html">grid.draw</a></span><span class="op">(</span><span class="va">g</span><span class="op">)</span><span class="co"># plot to check the curve fitting</span></code></pre></div>
 <p><img src="phenofit_CA-NS6_files/figure-html/curve%20fitting-1.png" width="700" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># write_fig(g, "Figure1_phenofit_curve_fitting.pdf", 10, 6)</span></code></pre></div>
 </div>
 <div id="extract-phenology" class="section level2">
 <h2 class="hasAnchor">
 <a href="#extract-phenology" class="anchor"></a>2.5 Extract phenology</h2>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># pheno: list(p_date, p_doy)</span>
 <span class="va">l_pheno</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_pheno.html">get_pheno</a></span><span class="op">(</span><span class="va">fit</span>, IsPlot <span class="op">=</span> <span class="cn">F</span><span class="op">)</span> <span class="co">#%&gt;% map(~melt_list(., "meth"))</span>
 
@@ -365,7 +364,7 @@ data. [Here](https://code.earthengine.google.com/ee3ec39cf3061374dab435c358d008a
 <span class="co">## check the extracted phenology</span>
 <span class="va">pheno</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_pheno.html">get_pheno</a></span><span class="op">(</span><span class="va">fit</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span>, <span class="st">"Elmore"</span>, IsPlot <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></code></pre></div>
 <p><img src="phenofit_CA-NS6_files/figure-html/Extract%20phenology-1.png" width="768" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># print(str(pheno, 1))</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">l_pheno</span><span class="op">$</span><span class="va">doy</span><span class="op">$</span><span class="va">AG</span><span class="op">)</span></code></pre></div>
 <pre><code>##      flag     origin TRS2.sos TRS2.eos TRS5.sos TRS5.eos TRS6.sos TRS6.eos
@@ -375,7 +374,7 @@ data. [Here](https://code.earthengine.google.com/ee3ec39cf3061374dab435c358d008a
 ## 4: 2002_1 2002-01-01      164      284      178      256      182      248
 ## 5: 2003_1 2003-01-01      132      273      149      253      153      247
 ## 6: 2004_1 2004-01-01      162      264      173      252      176      248
-##    DER.sos DER.pop DER.eos  UD  SD  DD  RD Greenup Maturity Senescence Dormancy
+##    DER.sos DER.pos DER.eos  UD  SD  DD  RD Greenup Maturity Senescence Dormancy
 ## 1:     151     200     254 137 167 240 267     130      174        235      272
 ## 2:     174     200     266 163 186 249 281     156      194        243      287
 ## 3:     153     202     256 138 170 242 269     131      177        237      274
