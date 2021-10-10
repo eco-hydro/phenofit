@@ -200,37 +200,38 @@ NumericVector movmean(
     }
 
     // main script of moving average
-    int i_begin, i_end, n_i;
-    double sum, sum_w;
-    for (int i = 0; i < n; i++){
-        if (i < halfwin) {
-            i_begin = 0;
-            i_end = i + halfwin;
-        } else if (i >= n - halfwin - 1) {
-            i_begin = i - halfwin;
-            i_end = n-1;
-        } else {
-            i_begin = i - halfwin;
-            i_end = i + halfwin;
-        }
-
-        n_i   = 0; // number
-        sum   = 0.0; // sum of values in window
-        sum_w = 0.0; // sum of weights in window
-
-        for (int j = i_begin; j <= i_end; j++) {
-            if (Rcpp::traits::is_finite<REALSXP>(yy[j])) {
-                n_i++;
-                sum += yy[j];
-                sum_w += ww[j];
-                // sum += ww[k] * yy[j];
-                // sum_wtNA += ww[k];
+    if (!SG_style) {
+        int i_begin, i_end, n_i;
+        double sum, sum_w;
+        for (int i = 0; i < n; i++){
+            if (i < halfwin) {
+                i_begin = 0;
+                i_end = i + halfwin;
+            } else if (i >= n - halfwin - 1) {
+                i_begin = i - halfwin;
+                i_end = n-1;
+            } else {
+                i_begin = i - halfwin;
+                i_end = i + halfwin;
             }
-        }
-        if (sum_w > 0) ma[i] = sum/sum_w; // else NA_real_
-    }
 
-    if (SG_style) {
+            n_i   = 0; // number
+            sum   = 0.0; // sum of values in window
+            sum_w = 0.0; // sum of weights in window
+
+            for (int j = i_begin; j <= i_end; j++) {
+                if (Rcpp::traits::is_finite<REALSXP>(yy[j])) {
+                    n_i++;
+                    sum += yy[j];
+                    sum_w += ww[j];
+                    // sum += ww[k] * yy[j];
+                    // sum_wtNA += ww[k];
+                }
+            }
+            if (sum_w > 0) ma[i] = sum/sum_w; // else NA_real_
+        } 
+    } else {
+        /** SG style -------------------------------------------------------- */
         arma::mat S = sgmat_S(halfwin, d);
         arma::mat B = sgmat_wB(S, ww.subvec(0, frame-1));
         // Rcpp::Rcout << B << y << std::endl;
