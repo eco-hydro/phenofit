@@ -1,3 +1,17 @@
+# phenofit 0.3.2 (2021-10-15)
+
+- Parameters of `season_mov` and `curvefits`  are wrapped into options. Scripts of phenofit v2.0 will not work anymore.
+- Add global options
+- Growing season division was improved. Rough fitting and growing season division are separated. 
+- In the package dependency, plyr was replaced with dplyr.
+- Add `doubleLog.AG2`, which allows unbalanced background value in the first half and the second half.
+- Add `lambda_vcurve` and `lambda_cv_jl` to optimize Whittaker's parameter `lambda`
+- Add pkgdown, http://phenofit.top/.
+- Growing season division was further tested on FLUXNET daily GPP estimations.
+
+- Julia interface is ready to go, https://github.com/eco-hydro/phenofit.jl.
+- phenofit script was separated into a another repository, https://github.com/eco-hydro/phenofit-scripts.
+
 # phenofit 0.3.0 (2021-06-26)
 
 - The rough fitting result returned by [season_mov()] and [season()] was renamed

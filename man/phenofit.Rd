@@ -12,8 +12,8 @@ Vegetation phenology package
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://github.com/kongdd/phenofit}
-  \item Report bugs at \url{https://github.com/kongdd/phenofit/issues}
+  \item \url{https://github.com/eco-hydro/phenofit}
+  \item Report bugs at \url{https://github.com/eco-hydro/phenofit/issues}
 }
 
 }

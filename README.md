@@ -2,13 +2,12 @@
 # phenofit
 
 [![R-CMD-check](https://github.com/eco-hydro/phenofit/workflows/R-CMD-check/badge.svg)](https://github.com/eco-hydro/phenofit/actions)
-[![codecov](https://codecov.io/gh/eco-hydro/phenofit/branch/master/graph/badge.svg)](https://codecov.io/gh/eco-hydro/phenofit)
+[![codecov](https://codecov.io/gh/eco-hydro/phenofit/branch/master/graph/badge.svg)](https://app.codecov.io/gh/eco-hydro/phenofit)
 [![License](http://img.shields.io/badge/license-GPL%20%28%3E=%202%29-brightgreen.svg?style=flat)](http://www.gnu.org/licenses/gpl-2.0.html)
 [![CRAN](http://www.r-pkg.org/badges/version/phenofit)](https://cran.r-project.org/package=phenofit)
 [![total](http://cranlogs.r-pkg.org/badges/grand-total/phenofit)](https://www.rpackages.io/package/phenofit)
 [![monthly](http://cranlogs.r-pkg.org/badges/phenofit)](https://www.rpackages.io/package/phenofit)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3605560.svg)](https://doi.org/10.5281/zenodo.3605560)
-[![Open in VSCode](https://open.vscode.dev/badges/open-in-vscode.svg)](https://open.vscode.dev/eco-hydro/phenofit)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5150204.svg)](https://doi.org/10.5281/zenodo.5150204)
 
 A state-of-the-art **remote sensing vegetation phenology** extraction
 package: `phenofit`
@@ -64,8 +63,8 @@ devtools::install_github("eco-hydro/phenofit")
 > 13–24.
 >
 > [3] Kong, D., (2020). R package: A state-of-the-art Vegetation
-> Phenology extraction package, `phenofit` version 0.2.6,
-> <https://doi.org/10.5281/zenodo.3605560>
+> Phenology extraction package, `phenofit` version 0.3.1,
+> <https://doi.org/10.5281/zenodo.5150204>
 >
 > [4] Zhang, Q., Kong, D., Shi, P., Singh, V.P., Sun, P., 2018.
 > Vegetation phenology on the Qinghai-Tibetan Plateau and its response

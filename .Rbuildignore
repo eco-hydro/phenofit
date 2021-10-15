@@ -35,3 +35,9 @@
 ^_pkgdown\.yml$
 ^docs$
 ^pkgdown$
+^OUTPUT$
+^debug$
+^R/deprecated$
+^R/examples$
+^R/temp$
+^tests/testthat/Rplots\.pdf$
