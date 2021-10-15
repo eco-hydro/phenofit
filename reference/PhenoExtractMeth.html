@@ -151,6 +151,7 @@ PhenoKl Inflection method
 
     <pre class="usage"><span class='fu'>PhenoTrs</span><span class='op'>(</span>
   <span class='va'>fFIT</span>,
+  t <span class='op'>=</span> <span class='cn'>NULL</span>,
   approach <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"White"</span>, <span class='st'>"Trs"</span><span class='op'>)</span>,
   trs <span class='op'>=</span> <span class='fl'>0.5</span>,
   asymmetric <span class='op'>=</span> <span class='cn'>TRUE</span>,
@@ -160,6 +161,7 @@ PhenoKl Inflection method
 
 <span class='fu'>PhenoDeriv</span><span class='op'>(</span>
   <span class='va'>fFIT</span>,
+  t <span class='op'>=</span> <span class='cn'>NULL</span>,
   analytical <span class='op'>=</span> <span class='cn'>TRUE</span>,
   smoothed.spline <span class='op'>=</span> <span class='cn'>FALSE</span>,
   IsPlot <span class='op'>=</span> <span class='cn'>TRUE</span>,
@@ -167,10 +169,18 @@ PhenoKl Inflection method
   <span class='va'>...</span>
 <span class='op'>)</span>
 
-<span class='fu'>PhenoGu</span><span class='op'>(</span><span class='va'>fFIT</span>, analytical <span class='op'>=</span> <span class='cn'>TRUE</span>, smoothed.spline <span class='op'>=</span> <span class='cn'>FALSE</span>, IsPlot <span class='op'>=</span> <span class='cn'>TRUE</span>, <span class='va'>...</span><span class='op'>)</span>
+<span class='fu'>PhenoGu</span><span class='op'>(</span>
+  <span class='va'>fFIT</span>,
+  t <span class='op'>=</span> <span class='cn'>NULL</span>,
+  analytical <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  smoothed.spline <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  IsPlot <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span>
 
 <span class='fu'>PhenoKl</span><span class='op'>(</span>
   <span class='va'>fFIT</span>,
+  t <span class='op'>=</span> <span class='cn'>NULL</span>,
   analytical <span class='op'>=</span> <span class='cn'>TRUE</span>,
   smoothed.spline <span class='op'>=</span> <span class='cn'>FALSE</span>,
   IsPlot <span class='op'>=</span> <span class='cn'>TRUE</span>,

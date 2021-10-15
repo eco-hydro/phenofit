@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>plot_phenofit — plot_phenofit • phenofit</title>
+<title>Growing season division (unstable version) — opt_season • phenofit</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="plot_phenofit — plot_phenofit" />
-<meta property="og:description" content="plot_phenofit" />
+<meta property="og:title" content="Growing season division (unstable version) — opt_season" />
+<meta property="og:description" content="Growing season division (unstable version)" />
 
 
 
@@ -126,66 +126,32 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>plot_phenofit</h1>
-    <small class="dont-index">Source: <a href='https://github.com/kongdd/phenofit/blob/master/R/plot_phenofit.R'><code>R/plot_phenofit.R</code></a></small>
-    <div class="hidden name"><code>plot_phenofit.Rd</code></div>
+    <h1>Growing season division (unstable version)</h1>
+    <small class="dont-index">Source: <a href='https://github.com/kongdd/phenofit/blob/master/R/season_find.R'><code>R/season_find.R</code></a></small>
+    <div class="hidden name"><code>opt_season.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>plot_phenofit</p>
+    <p>Growing season division (unstable version)</p>
     </div>
 
-    <pre class="usage"><span class='fu'>plot_phenofit</span><span class='op'>(</span>
-  <span class='va'>obj</span>,
-  type <span class='op'>=</span> <span class='st'>"all"</span>,
-  <span class='va'>methods</span>,
-  title <span class='op'>=</span> <span class='cn'>NULL</span>,
-  ylab <span class='op'>=</span> <span class='st'>"Vegetation Index"</span>,
-  IsPlot <span class='op'>=</span> <span class='cn'>TRUE</span>,
-  show.legend <span class='op'>=</span> <span class='cn'>TRUE</span>,
-  newpage <span class='op'>=</span> <span class='cn'>TRUE</span>,
-  <span class='va'>...</span>
-<span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>opt_season</span><span class='op'>(</span><span class='va'>INPUT</span>, options <span class='op'>=</span> <span class='cn'>NULL</span>, verbose <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='va'>...</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>obj</th>
-      <td><p><code>phenofit</code> object, list(INPUT, fit, seasons)</p></td>
+      <th>INPUT</th>
+      <td><p>A list object with the elements of <code>t</code>, <code>y</code>, <code>w</code>,
+<code>Tn</code> (optional) and <code>ylu</code>, returned by <code><a href='check_input.html'>check_input()</a></code>.</p></td>
     </tr>
     <tr>
-      <th>type</th>
-      <td><p>one of c("season", "fitting", "pheno", "all")</p></td>
-    </tr>
-    <tr>
-      <th>methods</th>
-      <td><p>fine fitting functions, e.g., <code><a href='https://rdrr.io/r/base/c.html'>c("AG", "Zhang", "Beck", "Elmore", "Gu")</a></code></p></td>
-    </tr>
-    <tr>
-      <th>title</th>
-      <td><p>String, title of figure.</p></td>
-    </tr>
-    <tr>
-      <th>ylab</th>
-      <td><p>String, title of <code>xlab</code> and <code>ylab</code>.</p></td>
-    </tr>
-    <tr>
-      <th>IsPlot</th>
-      <td><p>boolean. If false, a ggplot object will be returned.</p></td>
-    </tr>
-    <tr>
-      <th>show.legend</th>
-      <td><p>If now show legend, ggplot object will be returned, else
-grid object will be returned.</p></td>
-    </tr>
-    <tr>
-      <th>newpage</th>
-      <td><p>boolean, whether draw figure in a new page?</p></td>
+      <th>options</th>
+      <td><p>see details</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>other parameters to <code><a href='plot_curvefits.html'>plot_curvefits()</a></code></p></td>
+      <td><p>others to <code><a href='season.html'>season()</a></code></p></td>
     </tr>
     </table>
 

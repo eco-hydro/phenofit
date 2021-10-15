@@ -139,27 +139,31 @@ curvature curvature." />
 <code>curvature</code> curvature.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>D1</span><span class='op'>(</span><span class='va'>fit</span>, analytical <span class='op'>=</span> <span class='cn'>TRUE</span>, smoothed.spline <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='va'>...</span><span class='op'>)</span>
+    <pre class="usage"><span class='fu'>D1</span><span class='op'>(</span><span class='va'>fit</span>, t <span class='op'>=</span> <span class='cn'>NULL</span>, analytical <span class='op'>=</span> <span class='cn'>TRUE</span>, smoothed.spline <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='va'>...</span><span class='op'>)</span>
 
-<span class='fu'>D2</span><span class='op'>(</span><span class='va'>fit</span>, analytical <span class='op'>=</span> <span class='cn'>TRUE</span>, smoothed.spline <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='va'>...</span><span class='op'>)</span>
-
-<span class='co'># S3 method for fFIT</span>
-<span class='fu'>D1</span><span class='op'>(</span><span class='va'>fit</span>, analytical <span class='op'>=</span> <span class='cn'>TRUE</span>, smoothed.spline <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='va'>...</span><span class='op'>)</span>
+<span class='fu'>D2</span><span class='op'>(</span><span class='va'>fit</span>, t <span class='op'>=</span> <span class='cn'>NULL</span>, analytical <span class='op'>=</span> <span class='cn'>TRUE</span>, smoothed.spline <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S3 method for fFIT</span>
-<span class='fu'>D2</span><span class='op'>(</span><span class='va'>fit</span>, analytical <span class='op'>=</span> <span class='cn'>TRUE</span>, smoothed.spline <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='va'>...</span><span class='op'>)</span>
-
-<span class='fu'>curvature</span><span class='op'>(</span><span class='va'>fit</span>, analytical <span class='op'>=</span> <span class='cn'>TRUE</span>, smoothed.spline <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='va'>...</span><span class='op'>)</span>
+<span class='fu'>D1</span><span class='op'>(</span><span class='va'>fit</span>, t <span class='op'>=</span> <span class='cn'>NULL</span>, analytical <span class='op'>=</span> <span class='cn'>TRUE</span>, smoothed.spline <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S3 method for fFIT</span>
-<span class='fu'>curvature</span><span class='op'>(</span><span class='va'>fit</span>, analytical <span class='op'>=</span> <span class='cn'>TRUE</span>, smoothed.spline <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='va'>...</span><span class='op'>)</span></pre>
+<span class='fu'>D2</span><span class='op'>(</span><span class='va'>fit</span>, t <span class='op'>=</span> <span class='cn'>NULL</span>, analytical <span class='op'>=</span> <span class='cn'>TRUE</span>, smoothed.spline <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='va'>...</span><span class='op'>)</span>
+
+<span class='fu'>curvature</span><span class='op'>(</span><span class='va'>fit</span>, t <span class='op'>=</span> <span class='cn'>NULL</span>, analytical <span class='op'>=</span> <span class='cn'>TRUE</span>, smoothed.spline <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='va'>...</span><span class='op'>)</span>
+
+<span class='co'># S3 method for fFIT</span>
+<span class='fu'>curvature</span><span class='op'>(</span><span class='va'>fit</span>, t <span class='op'>=</span> <span class='cn'>NULL</span>, analytical <span class='op'>=</span> <span class='cn'>TRUE</span>, smoothed.spline <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='va'>...</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>fit</th>
-      <td><p>A curve fitting object returned by <code>curvefit</code>.</p></td>
+      <td><p>A curve fitting object returned by <code>curvefit</code>, with the object of:</p><ul>
+<li><p><code>par</code>: parameters of curve fitting function</p></li>
+<li><p><code>fun</code>: curve fitting function name, e.g., "doubleLog_AG"</p></li>
+<li><p><code>zs</code>: predicted values, vector or data.frame</p></li>
+</ul></td>
     </tr>
     <tr>
       <th>analytical</th>
