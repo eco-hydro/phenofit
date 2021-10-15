@@ -6,8 +6,11 @@ linewidth <- 1.2
 #' @title Phenology Extraction methods
 #'
 #' @inheritParams D
-#'
+#' 
 #' @param fFIT `fFIT` object returned by [optim_pheno()].
+#' @param t `date` or `doy` vector, with the same length as `ypred`. This parameter 
+#' is for the Julia version `curvefits`.
+#' 
 #' @param approach to be used to calculate phenology metrics.
 #' 'White' (White et al. 1997) or 'Trs' for simple threshold.
 #' @param trs threshold to be used for approach "Trs", in (0, 1).
@@ -28,7 +31,7 @@ linewidth <- 1.2
 #' methods <- c("AG", "Beck", "Elmore", "Gu", "Zhang") # "Klos" too slow
 #' fFITs <- curvefit(y, t, tout, methods)
 #' fFIT  <- fFITs$model$AG
-#'
+#' 
 #' par(mfrow = c(2, 2))
 #' PhenoTrs(fFIT)
 #' PhenoDeriv(fFIT)

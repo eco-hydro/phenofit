@@ -108,7 +108,7 @@ get_pheno.fFITs <- function(fFITs, method,
     methods  <- c(paste0("TRS", TRS*10),"DER","GU", "ZHANG")
     TRS_last <- last(TRS) # only display last threshold figure
 
-    ypred  <- if (!is.vector(model$zs)) last(model$zs) else model$zs
+    ypred  <- last2(model$zs)
     all_na <- all(is.na(ypred))
 
     show.lgd = FALSE

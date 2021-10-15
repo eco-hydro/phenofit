@@ -50,6 +50,9 @@ PhenoKl(
 \arguments{
 \item{fFIT}{\code{fFIT} object returned by \code{\link[=optim_pheno]{optim_pheno()}}.}
 
+\item{t}{\code{date} or \code{doy} vector, with the same length as \code{ypred}. This parameter
+is for the Julia version \code{curvefits}.}
+
 \item{approach}{to be used to calculate phenology metrics.
 'White' (White et al. 1997) or 'Trs' for simple threshold.}
 
