@@ -10,10 +10,10 @@ hess.fFIT <- function(fit, tout){
 # '
 # ' @param fit A curve fitting object returned by \code{curvefit}.
 # ' @param tout A vector of time steps at which the function can be predicted.
-# ' 
+# '
 # ' @examples
 # ' FUN <- doubleLog.Beck
-# ' 
+# '
 # ' @rdname derivative
 # ' @export
 grad.fFIT <- function(fit, tout){
@@ -24,30 +24,34 @@ grad.fFIT <- function(fit, tout){
 
 #' @title D
 #' @name D
-#' 
+#'
 #' @description Get derivative of `phenofit` object.
 #' `D1` first order derivative, `D2` second order derivative, n
 #' `curvature` curvature.
 #'
-#' @details If `fit$fun` has no gradient function or `smoothed.spline = TRUE`, 
-#' time-series smoothed by spline first, and get derivatives at last. 
-#' If `fit$fun` exists and `analytical = TRUE`, `smoothed.spline` 
+#' @details If `fit$fun` has no gradient function or `smoothed.spline = TRUE`,
+#' time-series smoothed by spline first, and get derivatives at last.
+#' If `fit$fun` exists and `analytical = TRUE`, `smoothed.spline`
 #' will be ignored.
-#'  
-#' @param fit A curve fitting object returned by `curvefit`.
+#'
+#' @param fit A curve fitting object returned by `curvefit`, with the object of:
+#' - `par`: parameters of curve fitting function
+#' - `fun`: curve fitting function name, e.g., "doubleLog_AG"
+#' - `zs`: predicted values, vector or data.frame
+#' 
 #' @param analytical If true, `numDeriv` package `grad` and `hess`
 #' will be used; if false, `D1` and `D2` will be used.
 #' @param smoothed.spline Whether apply `smooth.spline` first?
 #' @param ... Other parameters will be ignored.
-#' 
+#'
 #' @keywords internal
-#' @return 
+#' @return
 #' \itemize{
 #' \item der1 First order derivative
 #' \item der2 Second order derivative
 #' \item k    Curvature
 #' }
-#' 
+#'
 #' @examples
 #' library(phenofit)
 #' # simulate vegetation time-series
@@ -62,7 +66,7 @@ grad.fFIT <- function(fit, tout){
 #' t    <- seq(1, 365, 8)
 #' tout <- seq(1, 365, 1)
 #' y <- fFUN(par, t)
-#' 
+#'
 #' methods <- c("AG", "Beck", "Elmore", "Gu", "Zhang") # "Klos" too slow
 #' fFITs <- curvefit(y, t, tout, methods)
 #' fFIT  <- fFITs$model$AG
@@ -74,18 +78,18 @@ NULL
 
 #' @rdname D
 #' @export
-D1 <- function(fit, analytical = TRUE, smoothed.spline = FALSE, ...) UseMethod('D1', fit)
+D1 <- function(fit, t = NULL, analytical = TRUE, smoothed.spline = FALSE, ...) UseMethod('D1', fit)
 
 #' @rdname D
 #' @export
-D2 <- function(fit, analytical = TRUE, smoothed.spline = FALSE, ...) UseMethod('D2', fit)
+D2 <- function(fit, t = NULL, analytical = TRUE, smoothed.spline = FALSE, ...) UseMethod('D2', fit)
 
 #' @keywords internal
 #' @rdname D
 #' @export
-D1.fFIT <- function(fit, analytical = TRUE, smoothed.spline = FALSE, ...){
-    pred <- last(fit$zs)
-    t    <- fit$tout
+D1.fFIT <- function(fit, t = NULL, analytical = TRUE, smoothed.spline = FALSE, ...){
+    pred <- last2(fit$zs)
+    # t    <- fit$tout
     par  <- fit$par
 
     FUN <- get(fit$fun, mode = 'function')
@@ -105,7 +109,7 @@ D1.fFIT <- function(fit, analytical = TRUE, smoothed.spline = FALSE, ...){
         der1 <- D1(par, t)[, 1] # the default option
     } else {
         # numerical approximation
-        der1 <- grad.fFIT(fit, t)     
+        der1 <- grad.fFIT(fit, t)
     }
 
     der1[is.infinite(der1)] <- NA
@@ -117,9 +121,9 @@ D1.fFIT <- function(fit, analytical = TRUE, smoothed.spline = FALSE, ...){
 #' @keywords internal
 #' @rdname D
 #' @export
-D2.fFIT <- function(fit, analytical = TRUE, smoothed.spline = FALSE, ...){
-    pred <- last(fit$zs)
-    t    <- fit$tout
+D2.fFIT <- function(fit, t = NULL, analytical = TRUE, smoothed.spline = FALSE, ...){
+    pred <- last2(fit$zs)
+    # t    <- fit$tout
     par  <- fit$par
 
     FUN  <- get(fit$fun, mode = 'function')
@@ -141,7 +145,7 @@ D2.fFIT <- function(fit, analytical = TRUE, smoothed.spline = FALSE, ...){
         der1 <- grad.fFIT(fit, t)
         der2 <- hess.fFIT(fit, t)
     }
-    
+
     ## in case for NA values
     der1[is.infinite(der1)] <- NA
     der2[is.infinite(der2)] <- NA
@@ -153,13 +157,13 @@ D2.fFIT <- function(fit, analytical = TRUE, smoothed.spline = FALSE, ...){
 
 #' @rdname D
 #' @export
-curvature <- function(fit, analytical = TRUE, smoothed.spline = FALSE, ...) UseMethod('curvature', fit)
+curvature <- function(fit, t = NULL, analytical = TRUE, smoothed.spline = FALSE, ...) UseMethod('curvature', fit)
 
 #' @keywords internal
 #' @rdname D
 #' @export
-curvature.fFIT <- function(fit, analytical = TRUE, smoothed.spline = FALSE, ...){
-    derivs <- D2.fFIT(fit, analytical, smoothed.spline)
+curvature.fFIT <- function(fit, t = NULL, analytical = TRUE, smoothed.spline = FALSE, ...){
+    derivs <- D2.fFIT(fit, t, analytical, smoothed.spline)
     k      <- derivs$der2 / (1 + derivs$der1 ^ 2) ^ (3 / 2)
     c(derivs, list(k = k))
 }

@@ -90,9 +90,8 @@ curvefits <- function(
     # Tn for background module
     w  <- w0 <- INPUT$w
     y0 <- if (opt$use.y0) INPUT$y0 else INPUT$y
-
-    Tn <- INPUT$Tn # if has no Tn, NULL will be return
-    has_Tn <- ifelse(is_empty(Tn), FALSE, TRUE)
+    # Tn <- INPUT$Tn # if has no Tn, NULL will be return
+    # has_Tn <- ifelse(is_empty(Tn), FALSE, TRUE)
 
     # possible snow or cloud, replaced with Whittaker smoothing.
     I_all <- match(brks$fit$t, t) %>% rm_empty()
@@ -114,8 +113,8 @@ curvefits <- function(
                       peak = getDateId_before(brks$dt$peak, t),
                       end  = getDateId_after(brks$dt$end, t)) #%>% na.omit()
 
-    width_ylu      = nptperyear*2
-
+    width_ylu = nptperyear*2
+    
     y    <- INPUT$y
     fits <- vector(nrow(di), mode = "list")
     for (i in 1:nrow(di)){
@@ -138,16 +137,16 @@ curvefits <- function(
         ylu <- merge_ylu(INPUT$ylu, ylu)
         # yi[yi < ylu[1]] <- ylu[1] # update y value
 
-        if (has_Tn){
-            # add background module here, 20180513
-            Tni        <- Tn[I_extend]
-            back_value <- backval(yi, ti, wi, Tni, opt$minT, nptperyear)
-            if (!is.na(back_value)){
-                I_back     <- yi < back_value
-                yi[I_back] <- back_value
-                wi[I_back] <- 0.5
-            }
-        }
+        # if (has_Tn){
+        #     # add background module here, 20180513
+        #     Tni        <- Tn[I_extend]
+        #     back_value <- backval(yi, ti, wi, Tni, opt$minT, nptperyear)
+        #     if (!is.na(back_value)){
+        #         I_back     <- yi < back_value
+        #         yi[I_back] <- back_value
+        #         wi[I_back] <- 0.5
+        #     }
+        # }
         beginI <- ifelse(i == 1, 1, 2) # make sure no overlap
         tout   <- doys[I] %>% {.[beginI]:last(.)} # make sure return the same length result.
 

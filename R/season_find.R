@@ -135,6 +135,10 @@ find_season.default <- function(
 
 # ... could also pass to `options`
 
+#' Growing season division (unstable version)
+#' 
+#' @inheritParams season_mov
+#' 
 #' @keywords internal
 #' @importFrom utils str
 #' @export

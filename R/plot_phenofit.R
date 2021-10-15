@@ -4,12 +4,15 @@
 #' @param type one of c("season", "fitting", "pheno", "all")
 #' @inheritParams curvefits
 #' @inheritParams plot_curvefits
+#' 
+#' @param methods fine fitting functions, e.g., `c("AG", "Zhang", "Beck", "Elmore", "Gu")`
 #' @param IsPlot boolean. If false, a ggplot object will be returned.
 #' @param show.legend If now show legend, ggplot object will be returned, else
 #' grid object will be returned.
 #' @param newpage boolean, whether draw figure in a new page?
 #' @param ... other parameters to [plot_curvefits()]
-#' @keywords internel
+#' 
+#' @keywords internal
 #' @export
 plot_phenofit <- function(obj, type = "all",
                           methods,

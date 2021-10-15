@@ -17,6 +17,10 @@ rm_empty <- function(x){
     }
 }
 
+last2 <- function(x) {
+    if (is.list(x)) last(x) else x
+}
+
 which.notna <- function(x) which(!is.na(x))
 
 contain <- function(d, pattern = "NDVI|EVI") {

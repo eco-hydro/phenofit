@@ -22,214 +22,215 @@
 #' 
 #' @rdname logistics
 #' @export
-Logistic <- function(par, t){
-    mn   <- par[1]
-    mx   <- par[2]
-    sos  <- par[3]
-    rsp  <- par[4]
-    pred <- (mx - mn)/(1 + exp(-rsp*(t - sos))) + mn
-    # pred <- c/(1 + exp(a + b * t)) + d
+Logistic = function(par, t){
+    mn   = par[1]
+    mx   = par[2]
+    sos  = par[3]
+    rsp  = par[4]
+    pred = (mx - mn)/(1 + exp(-rsp*(t - sos))) + mn
+    # pred = c/(1 + exp(a + b * t)) + d
     return(pred)
 }
-attr(Logistic, 'par')     <- c("mn", "mx", "sos", "rsp")
-attr(Logistic, 'formula') <- expression((mx - mn)/(1 + exp(-rsp*(t - sos))) + mn)
+attr(Logistic, 'par')     = c("mn", "mx", "sos", "rsp")
+attr(Logistic, 'formula') = expression((mx - mn)/(1 + exp(-rsp*(t - sos))) + mn)
 
 # piecewise function
 #' @rdname logistics
 #' @export
-doubleLog.Zhang <- function(par, t){
-    t0  <- par[1]
-    mn  <- par[2]
-    mx  <- par[3]
-    sos <- par[4]
-    rsp <- par[5]
-    eos <- par[6]
-    rau <- par[7]
+doubleLog.Zhang = function(par, t){
+    t0  = par[1]
+    mn  = par[2]
+    mx  = par[3]
+    sos = par[4]
+    rsp = par[5]
+    eos = par[6]
+    rau = par[7]
 
     if (t0 - sos <= 1 || t0 - eos >= -1) return(rep(99.0, length(t)))
     # In order to make sure the shape of S curve, should be satisfy:
     # t0 < eos, t0 > sos
 
-    # xpred1 <- (mx - mn)/(1 + exp(-rsp*(t - sos))) + mn
-    # xpred2 <- (mx - mn)/(1 + exp(rau*(t - eos))) + mn
-    # pred  <- xpred1*(t <= t0) + xpred2*(t > t0)
+    # xpred1 = (mx - mn)/(1 + exp(-rsp*(t - sos))) + mn
+    # xpred2 = (mx - mn)/(1 + exp(rau*(t - eos))) + mn
+    # pred  = xpred1*(t <= t0) + xpred2*(t > t0)
 
     # above expressions cost 1.5 times as the below
-    pred <- (mx - mn)/c(1 + exp(-rsp*(t[t <= t0] - sos)),
+    pred = (mx - mn)/c(1 + exp(-rsp*(t[t <= t0] - sos)),
                          1 + exp( rau*(t[t >  t0] - eos))) + mn
     return(pred)
 }
-attr(doubleLog.Zhang, 'par')     <- c("t0", "mn", "mx", "sos", "rsp", "eos", "rau")
-attr(doubleLog.Zhang, 'formula') <- expression( (mx - mn)/(1 + exp(-rsp*(t - sos))),
+attr(doubleLog.Zhang, 'par')     = c("t0", "mn", "mx", "sos", "rsp", "eos", "rau")
+attr(doubleLog.Zhang, 'formula') = expression( (mx - mn)/(1 + exp(-rsp*(t - sos))),
                                                 (mx - mn)/(1 + exp( rau*(t - eos))) )
 
 #' @rdname logistics
 #' @export
-doubleLog.AG <- function(par, t){
-    t0  <- par[1]
-    mn  <- par[2]
-    mx  <- par[3]
-    rsp <- par[4]
-    a3  <- par[5]
-    rau <- par[6]
-    a5  <- par[7]
+doubleLog.AG = function(par, t){
+    t0  = par[1]
+    mn  = par[2]
+    mx  = par[3]
+    rsp = par[4]
+    a3  = par[5]
+    rau = par[6]
+    a5  = par[7]
 
-    pred <- mn + (mx - mn)*exp(- c( ((t0 - t[t <= t0])*rsp) ^a3,
-                    ((t[t >  t0] - t0)*rau) ^a5) )
+    pred = mn + (mx - mn)*exp(- c( 
+        ((t0 - t[t <= t0])*rsp) ^a3,
+        ((t[t >  t0] - t0)*rau) ^a5) )
     return(pred)
 }
 # a3, a5 should be greater than 1
-attr(doubleLog.AG, 'par')     <- c("t0", "mn", "mx", "rsp", "a3", "rau", "a5")
-attr(doubleLog.AG, 'formula') <- expression( mn + (mx - mn)*exp(- ((t0 - t)*rsp) ^a3 ),
+attr(doubleLog.AG, 'par')     = c("t0", "mn", "mx", "rsp", "a3", "rau", "a5")
+attr(doubleLog.AG, 'formula') = expression( mn + (mx - mn)*exp(- ((t0 - t)*rsp) ^a3 ),
                                          mn + (mx - mn)*exp(- ((t - t0)*rau) ^a5 ))
 
 #' @rdname logistics
 #' @export
-doubleLog.AG2 <- function(par, t){
-    t0   <- par[1]
-    mn_l <- par[2]
-    mn_r <- par[3] 
-    mx   <- par[4]
-    rsp  <- par[5]
-    a3   <- par[6]
-    rau  <- par[7]
-    a5   <- par[8]
+doubleLog.AG2 = function(par, t){
+    t0   = par[1]
+    mn_l = par[2]
+    mn_r = par[3] 
+    mx   = par[4]
+    rsp  = par[5]
+    a3   = par[6]
+    rau  = par[7]
+    a5   = par[8]
 
     t_l = t[t <= t0]
     t_r = t[t > t0]
     
     pred_l = mn_l + (mx - mn_l)*exp(- ((t0 - t_l)*rsp) ^a3)
     pred_r = mn_r + (mx - mn_r)*exp(- ((t_r - t0)*rau) ^a5)
-    # pred <- mn + (mx - mn)*exp(- c( ((t0 - t[t <= t0])*rsp) ^a3,
+    # pred = mn + (mx - mn)*exp(- c( ((t0 - t[t <= t0])*rsp) ^a3,
                     # ((t[t >  t0] - t0)*rau) ^a5) )
     # return(pred)
     c(pred_l, pred_r)
 }
 # a3, a5 should be greater than 1
-attr(doubleLog.AG2, 'par')     <- c("t0", "mn_l", "mn_r", "mx", "rsp", "a3", "rau", "a5")
-attr(doubleLog.AG2, 'formula') <- expression( 
+attr(doubleLog.AG2, 'par')     = c("t0", "mn_l", "mn_r", "mx", "rsp", "a3", "rau", "a5")
+attr(doubleLog.AG2, 'formula') = expression( 
     mn_l + (mx - mn_l)*exp(- ((t0 - t)*rsp) ^a3),
     mn_r + (mx - mn_r)*exp(- ((t - t0)*rau) ^a5)
 )
 
 #' @rdname logistics
 #' @export
-doubleLog.Beck <- function(par, t) {
-    mn  <- par[1]
-    mx  <- par[2]
-    sos <- par[3]
-    rsp <- par[4]
-    eos <- par[5]
-    rau <- par[6]
+doubleLog.Beck = function(par, t) {
+    mn  = par[1]
+    mx  = par[2]
+    sos = par[3]
+    rsp = par[4]
+    eos = par[5]
+    rau = par[6]
     # if (sos >= eos) return(rep(9999, length(t)))
     # if (eos < sos) return(rep(99.0, length(t)))
     if (!all(is.finite(par)) || eos < sos) return(rep(99.0, length(t)))
 
-    pred <- mn + (mx - mn)*(1/(1 + exp(-rsp*(t - sos))) + 1/(1 + exp(rau*(t - eos))) - 1)
+    pred = mn + (mx - mn)*(1/(1 + exp(-rsp*(t - sos))) + 1/(1 + exp(rau*(t - eos))) - 1)
     return(pred)
 }
-attr(doubleLog.Beck, 'par')  <- c("mn", "mx", "sos", "rsp", "eos", "rau")
-attr(doubleLog.Beck, 'formula') <- expression(mn + (mx - mn)*(1/(1 + exp(-rsp*(t - sos))) + 1/(1 + exp(rau*(t - eos)))) - 1)
+attr(doubleLog.Beck, 'par')  = c("mn", "mx", "sos", "rsp", "eos", "rau")
+attr(doubleLog.Beck, 'formula') = expression(mn + (mx - mn)*(1/(1 + exp(-rsp*(t - sos))) + 1/(1 + exp(rau*(t - eos)))) - 1)
 
 #' @rdname logistics
 #' @export
-doubleLog.Elmore <- function(par, t) {
-    mn  <- par[1]
-    mx  <- par[2]
-    # m3  <- par[3]
-    # m4  <- par[4]
-    # m5  <- par[5]
-    # m6  <- par[6]
-    # m3l <- m3/m4
-    # m4l <- 1/m4
-    # m5l <- m5/m6
-    # m6l <- 1/m6
-    sos  <- par[3] # SOS
-    rsp  <- par[4] # 1/rsp
-    eos  <- par[5] # EOS
-    rau  <- par[6] # 1/rau
-    m7   <- par[7]
-    pred <- mn + (mx - m7*t)*( 1/(1 + exp(-rsp*(t-sos))) - 1/(1 + exp(-rau*(t-eos))) )
+doubleLog.Elmore = function(par, t) {
+    mn  = par[1]
+    mx  = par[2]
+    # m3  = par[3]
+    # m4  = par[4]
+    # m5  = par[5]
+    # m6  = par[6]
+    # m3l = m3/m4
+    # m4l = 1/m4
+    # m5l = m5/m6
+    # m6l = 1/m6
+    sos  = par[3] # SOS
+    rsp  = par[4] # 1/rsp
+    eos  = par[5] # EOS
+    rau  = par[6] # 1/rau
+    m7   = par[7]
+    pred = mn + (mx - m7*t)*( 1/(1 + exp(-rsp*(t-sos))) - 1/(1 + exp(-rau*(t-eos))) )
     return(pred)
 }
-attr(doubleLog.Elmore, 'par')     <- c("mn", "mx", "sos", "rsp", "eos", "rau", "m7")
-attr(doubleLog.Elmore, 'formula') <- expression( mn + (mx - m7*t)*( 1/(1 + exp(-rsp*(t-sos))) - 1/(1 + exp(-rau*(t-eos))) ) )
+attr(doubleLog.Elmore, 'par')     = c("mn", "mx", "sos", "rsp", "eos", "rau", "m7")
+attr(doubleLog.Elmore, 'formula') = expression( mn + (mx - m7*t)*( 1/(1 + exp(-rsp*(t-sos))) - 1/(1 + exp(-rau*(t-eos))) ) )
 
 #' @rdname logistics
 #' @export
-doubleLog.Gu <- function(par, t) {
-    y0  <- par[1]
-    a1  <- par[2]
-    a2  <- par[3]
-    sos <- par[4]
-    rsp <- par[5]
-    eos <- par[6]
-    rau <- par[7]
-    # t1  <- par[4]
-    # t2  <- par[5]
-    # b1  <- par[6]
-    # b2  <- par[7]
-    c1  <- par[8]
-    c2  <- par[9]
-    # pred <- y0 + (a1/(1 + exp(-(t - t1)/b1))^c1) - (a2/(1 + exp(-(t - t2)/b2))^c2)
-    pred <- y0 + (a1/(1 + exp(-rsp*(t - sos)))^c1) - (a2/(1 + exp(-rau*(t - eos)))^c2)
+doubleLog.Gu = function(par, t) {
+    y0  = par[1]
+    a1  = par[2]
+    a2  = par[3]
+    sos = par[4]
+    rsp = par[5]
+    eos = par[6]
+    rau = par[7]
+    # t1  = par[4]
+    # t2  = par[5]
+    # b1  = par[6]
+    # b2  = par[7]
+    c1  = par[8]
+    c2  = par[9]
+    # pred = y0 + (a1/(1 + exp(-(t - t1)/b1))^c1) - (a2/(1 + exp(-(t - t2)/b2))^c2)
+    pred = y0 + (a1/(1 + exp(-rsp*(t - sos)))^c1) - (a2/(1 + exp(-rau*(t - eos)))^c2)
     return(pred)
 }
-attr(doubleLog.Gu, 'par')     <- c('y0', 'a1', 'a2', 'sos', 'rsp', 'eos', 'rau', 'c1', 'c2')
-attr(doubleLog.Gu, 'formula') <- expression(y0 + (a1/(1 + exp(-rsp*(t - sos)))^c1) - (a2/(1 + exp(-rau*(t - eos)))^c2))
+attr(doubleLog.Gu, 'par')     = c('y0', 'a1', 'a2', 'sos', 'rsp', 'eos', 'rau', 'c1', 'c2')
+attr(doubleLog.Gu, 'formula') = expression(y0 + (a1/(1 + exp(-rsp*(t - sos)))^c1) - (a2/(1 + exp(-rau*(t - eos)))^c2))
 
 #' @rdname logistics
 #' @export
-doubleLog.Klos <- function(par, t) {
-    a1 <- par[1]
-    a2 <- par[2]
-    b1 <- par[3]
-    b2 <- par[4]
-    c  <- par[5]
-    B1 <- par[6]
-    B2 <- par[7]
-    m1 <- par[8]
-    m2 <- par[9]
-    q1 <- par[10]
-    q2 <- par[11]
-    v1 <- par[12]
-    v2 <- par[13]
-    pred <- (a1*t + b1) + (a2*t^2 + b2*t + c) * (1/(1 + q1 * exp(-B1 * (t - m1)))^v1
+doubleLog.Klos = function(par, t) {
+    a1 = par[1]
+    a2 = par[2]
+    b1 = par[3]
+    b2 = par[4]
+    c  = par[5]
+    B1 = par[6]
+    B2 = par[7]
+    m1 = par[8]
+    m2 = par[9]
+    q1 = par[10]
+    q2 = par[11]
+    v1 = par[12]
+    v2 = par[13]
+    pred = (a1*t + b1) + (a2*t^2 + b2*t + c) * (1/(1 + q1 * exp(-B1 * (t - m1)))^v1
         - 1/(1 + q2 * exp(-B2 * (t - m2)))^v2)
     return(pred)
 }
-attr(doubleLog.Klos, 'par')     <- c('a1', 'a2', 'b1', 'b2', 'c', 'B1', 'B2',
+attr(doubleLog.Klos, 'par')     = c('a1', 'a2', 'b1', 'b2', 'c', 'B1', 'B2',
     'm1', 'm2', 'q1', 'q2', 'v1', 'v2')
-attr(doubleLog.Klos, 'formula') <- expression((a1*t + b1) + (a2*t^2 + b2*t + c) * (1/(1 + q1 * exp(-B1 * (t - m1)))^v1
+attr(doubleLog.Klos, 'formula') = expression((a1*t + b1) + (a2*t^2 + b2*t + c) * (1/(1 + q1 * exp(-B1 * (t - m1)))^v1
         - 1/(1 + q2 * exp(-B2 * (t - m2)))^v2))
 
-.qr.solve <- function(a, b, tol = 1e-07, LAPACK = TRUE) {
-    if (!is.qr(a)) a <- qr(a, tol = tol, LAPACK = LAPACK)
-    nc <- ncol(a$qr)
-    nr <- nrow(a$qr)
+.qr.solve = function(a, b, tol = 1e-07, LAPACK = TRUE) {
+    if (!is.qr(a)) a = qr(a, tol = tol, LAPACK = LAPACK)
+    nc = ncol(a$qr)
+    nr = nrow(a$qr)
     if (a$rank != min(nc, nr)) stop("singular matrix 'a' in solve")
     if (missing(b)) {
         if (nc != nr) stop("only square matrices can be inverted")
-        b <- diag(1, nc)
+        b = diag(1, nc)
     }
-    res <- qr.coef(a, b)
-    res[is.na(res)] <- 0
+    res = qr.coef(a, b)
+    res[is.na(res)] = 0
     res
 }
-# vc <- .qr.solve(opt$hessian)
-# npar <- nrow(vc)
-# s2 <- opt.df$cost[best]^2 / (n - npar)
-# std.errors <- sqrt(diag(vc) * s2)     # standard errors
+# vc = .qr.solve(opt$hessian)
+# npar = nrow(vc)
+# s2 = opt.df$cost[best]^2 / (n - npar)
+# std.errors = sqrt(diag(vc) * s2)     # standard errors
 
 # attach gradient and hessian analytical function to curve fitting functions
-.dls <- lapply(
+.dls = lapply(
     c("doubleLog.Beck", "doubleLog.Elmore", "doubleLog.Gu",
       "doubleLog.Klos", "doubleLog.Zhang", "doubleLog.AG"),
     function (FUN){
-        # FUN <- deparse(substitute(fun))
-        fun <- get(FUN)
-        attr(fun, 'gradient') <- gradf_t(fun) # gradient
-        attr(fun, 'hessian')  <- hessf_t(fun) # hessian
+        # FUN = deparse(substitute(fun))
+        fun = get(FUN)
+        attr(fun, 'gradient') = gradf_t(fun) # gradient
+        attr(fun, 'hessian')  = hessf_t(fun) # hessian
         # print(environment(fun))
         assign(FUN, fun, envir = environment(fun)) #environment("namespace:phenofit"))#
         # fun

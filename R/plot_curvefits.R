@@ -11,6 +11,7 @@
 #' @param xlab,ylab String, title of `xlab` and `ylab`.
 #' @param yticks ticks of y axis
 #' @param font.size Font size of axis.text
+#' @param theme ggplot theme
 #' @param show.legend Boolean
 #' @param shape the shape of input VI observation? `line` or `point`
 #' @param cex point size for VI observation.

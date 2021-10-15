@@ -125,7 +125,8 @@ optim_pheno <- function(
                 warning("Not convergent!")
             }else{
                 par   <- opt[1, 1:npar, drop = FALSE]
-                # put opt par into prior for the next iteration
+                # put opt par into prior for the next iteration, 
+                # This step not consider in Julia, the induced difference is tiny.
                 prior <- rbind(prior[1:(nrow(prior)-1), ], par, deparse.level = 0) %>%
                     unique.matrix()
                 ypred = FUN(par, tout)
@@ -139,6 +140,7 @@ optim_pheno <- function(
                         message(sprintf('[%s]: %s', sFUN, e$message))
                         return(w) #return original w
                     })
+                
                 ypred %<>% check_ylu(ylu) #values out of ylu are set as NA
             }
         }

@@ -49,14 +49,14 @@ NULL
 #'
 #' @rdname PhenoExtractMeth
 #' @export
-PhenoTrs <- function(fFIT, approach = c("White", "Trs"), trs = 0.5, #, min.mean = 0.1
+PhenoTrs <- function(fFIT, t = NULL, approach = c("White", "Trs"), trs = 0.5, #, min.mean = 0.1
     asymmetric = TRUE,
     IsPlot = TRUE, ...)
 {
     metrics <- c(sos = NA, eos = NA)
+    if (!is.null(fFIT$tout)) t <- fFIT$tout
 
-    t      <- fFIT$tout
-    values <- last(fFIT$zs)
+    values <- last2(fFIT$zs)
     n      <- length(t)
 
     # get peak of season position
@@ -163,15 +163,16 @@ PhenoTrs <- function(fFIT, approach = c("White", "Trs"), trs = 0.5, #, min.mean 
 #'
 #' @rdname PhenoExtractMeth
 #' @export
-PhenoDeriv <- function(fFIT,
+PhenoDeriv <- function(fFIT, t = NULL,
     analytical = TRUE, smoothed.spline = FALSE,
     IsPlot = TRUE, show.lgd = TRUE, ...)
 {
     PhenoNames <- c("SOS", "POS", "EOS")
     metrics <- setNames(rep(NA, 3), c("sos", "pos", "eos")) # template
 
-    t      <- fFIT$tout
-    values <- last(fFIT$zs)
+    # t      <- fFIT$tout
+    if (!is.null(fFIT$tout)) t <- fFIT$tout
+    values <- last2(fFIT$zs)
     n      <- length(t)
 
     # get peak of season position
@@ -181,7 +182,7 @@ PhenoDeriv <- function(fFIT,
     if (all(is.na(values))) return(metrics)
     if (half.season < 5 || half.season > (n - 5)) return(metrics)
 
-    der1   <- D1.fFIT(fFIT, analytical, smoothed.spline)
+    der1   <- D1.fFIT(fFIT, t, analytical, smoothed.spline)
     # get SOS and EOS according to first order derivative
     # fixed 20180510, ±5 to make sure sos and eos are not in the POP.
     # I_sos <- median(which.max(der1[1:(half.season - 5)]))
@@ -236,15 +237,16 @@ PhenoDeriv <- function(fFIT,
 #' @inheritParams PhenoTrs
 #' @rdname PhenoExtractMeth
 #' @export
-PhenoGu <- function(fFIT,
+PhenoGu <- function(fFIT, t = NULL,
     analytical = TRUE, smoothed.spline = FALSE,
     IsPlot = TRUE, ...)
 {
     PhenoNames <- c("UD", "SD", "DD", "RD")
     metrics <- setNames(rep(NA, 4), c("UD", "SD", "DD", "RD"))
 
-    t      <- fFIT$tout
-    values <- last(fFIT$zs)
+    # t      <- fFIT$tout
+    if (!is.null(fFIT$tout)) t <- fFIT$tout
+    values <- last2(fFIT$zs)
     n      <- length(t)
 
     # get peak of season position
@@ -254,7 +256,7 @@ PhenoGu <- function(fFIT,
     if (all(is.na(values))) return(metrics)
     if (half.season < 5 || half.season > (n - 5)) return(metrics)
 
-    der1   <- D1.fFIT(fFIT, analytical, smoothed.spline)
+    der1   <- D1.fFIT(fFIT, t, analytical, smoothed.spline)
     # get SOS and EOS according to first order derivative
     sos.index <- median(which.max(der1[1:(half.season-5)]))
     eos.index <- median(which.min(der1[(half.season+5):length(der1)])) + half.season
@@ -342,15 +344,15 @@ PhenoGu <- function(fFIT,
 #' @inheritParams PhenoTrs
 #' @rdname PhenoExtractMeth
 #' @export
-PhenoKl <- function(fFIT,
+PhenoKl <- function(fFIT, t = NULL,
     analytical = TRUE, smoothed.spline = FALSE,
     IsPlot = TRUE, show.lgd = TRUE, ...)
 {
     PhenoNames <- c("Greenup", "Maturity", "Senescence", "Dormancy")
     metrics <- setNames(rep(NA, 4), PhenoNames)
 
-    t      <- fFIT$tout
-    values <- last(fFIT$zs)
+    if (!is.null(fFIT$tout)) t <- fFIT$tout
+    values <- last2(fFIT$zs)
     n      <- length(t)
     xlim   <- range(t)
 
@@ -361,7 +363,7 @@ PhenoKl <- function(fFIT,
     if (all(is.na(values))) return(metrics)
     if (half.season < 5 || half.season > (n - 5)) return(metrics)
 
-    derivs <- curvature.fFIT(fFIT, analytical, smoothed.spline)
+    derivs <- curvature.fFIT(fFIT, t, analytical, smoothed.spline)
     k      <- derivs$k
     # define cutoff date for spline functions
 

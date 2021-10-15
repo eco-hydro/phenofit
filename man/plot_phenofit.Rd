@@ -21,6 +21,8 @@ plot_phenofit(
 
 \item{type}{one of c("season", "fitting", "pheno", "all")}
 
+\item{methods}{fine fitting functions, e.g., \code{c("AG", "Zhang", "Beck", "Elmore", "Gu")}}
+
 \item{title}{String, title of figure.}
 
 \item{ylab}{String, title of \code{xlab} and \code{ylab}.}
@@ -37,4 +39,4 @@ grid object will be returned.}
 \description{
 plot_phenofit
 }
-\keyword{internel}
+\keyword{internal}

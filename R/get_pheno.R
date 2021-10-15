@@ -102,13 +102,13 @@ get_pheno.fFITs <- function(fFITs, method,
         warning(sprintf("%s not in methods and set to %s!", method, meths[1]))
         method <- meths[1]
     }
-    fFIT <- fFITs$model[[method]]
+    model <- fFITs$model[[method]]
 
     # get_pheno methods
     methods  <- c(paste0("TRS", TRS*10),"DER","GU", "ZHANG")
     TRS_last <- last(TRS) # only display last threshold figure
 
-    ypred  <- last(fFIT$zs)
+    ypred  <- if (!is.vector(model$zs)) last(model$zs) else model$zs
     all_na <- all(is.na(ypred))
 
     show.lgd = FALSE
@@ -160,15 +160,15 @@ get_pheno.fFITs <- function(fFITs, method,
     if (showName_pheno && IsPlot) mtext("Fine fitting", line = 0.2)
 
     p_TRS <- lapply(TRS, function(trs) {
-        PhenoTrs(fFIT, approach = "White", trs = trs, IsPlot = FALSE)
+        PhenoTrs(model, t = fFITs$tout, approach = "White", trs = trs, IsPlot = FALSE)
     })
 
     if (IsPlot && !all_na) {
-        p_TRS_last <- PhenoTrs(fFIT, approach="White", trs=TRS_last, IsPlot = IsPlot, ylim = ylim)
+        p_TRS_last <- PhenoTrs(model, approach="White", trs=TRS_last, IsPlot = IsPlot, ylim = ylim)
         if (showName_pheno) mtext(sprintf('TRS%d', TRS_last*10))
     }
 
-    param_common  <- list(fFIT,
+    param_common  <- list(model, t = fFITs$tout,
         analytical = analytical, smoothed.spline = smoothed.spline,
         IsPlot, ylim = ylim)
     param_common2 <- c(param_common, list(show.lgd = show.lgd))

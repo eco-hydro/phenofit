@@ -10,20 +10,25 @@
 \alias{curvature.fFIT}
 \title{D}
 \usage{
-D1(fit, analytical = TRUE, smoothed.spline = FALSE, ...)
+D1(fit, t = NULL, analytical = TRUE, smoothed.spline = FALSE, ...)
 
-D2(fit, analytical = TRUE, smoothed.spline = FALSE, ...)
+D2(fit, t = NULL, analytical = TRUE, smoothed.spline = FALSE, ...)
 
-\method{D1}{fFIT}(fit, analytical = TRUE, smoothed.spline = FALSE, ...)
+\method{D1}{fFIT}(fit, t = NULL, analytical = TRUE, smoothed.spline = FALSE, ...)
 
-\method{D2}{fFIT}(fit, analytical = TRUE, smoothed.spline = FALSE, ...)
+\method{D2}{fFIT}(fit, t = NULL, analytical = TRUE, smoothed.spline = FALSE, ...)
 
-curvature(fit, analytical = TRUE, smoothed.spline = FALSE, ...)
+curvature(fit, t = NULL, analytical = TRUE, smoothed.spline = FALSE, ...)
 
-\method{curvature}{fFIT}(fit, analytical = TRUE, smoothed.spline = FALSE, ...)
+\method{curvature}{fFIT}(fit, t = NULL, analytical = TRUE, smoothed.spline = FALSE, ...)
 }
 \arguments{
-\item{fit}{A curve fitting object returned by \code{curvefit}.}
+\item{fit}{A curve fitting object returned by \code{curvefit}, with the object of:
+\itemize{
+\item \code{par}: parameters of curve fitting function
+\item \code{fun}: curve fitting function name, e.g., "doubleLog_AG"
+\item \code{zs}: predicted values, vector or data.frame
+}}
 
 \item{analytical}{If true, \code{numDeriv} package \code{grad} and \code{hess}
 will be used; if false, \code{D1} and \code{D2} will be used.}

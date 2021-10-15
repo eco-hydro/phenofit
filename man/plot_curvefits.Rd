@@ -39,6 +39,8 @@ of \code{t}, \code{y} and \code{QC_flag}. If not specified, it will be determine
 
 \item{font.size}{Font size of axis.text}
 
+\item{theme}{ggplot theme}
+
 \item{cex}{point size for VI observation.}
 
 \item{shape}{the shape of input VI observation? \code{line} or \code{point}}

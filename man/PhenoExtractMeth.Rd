@@ -10,6 +10,7 @@
 \usage{
 PhenoTrs(
   fFIT,
+  t = NULL,
   approach = c("White", "Trs"),
   trs = 0.5,
   asymmetric = TRUE,
@@ -19,6 +20,7 @@ PhenoTrs(
 
 PhenoDeriv(
   fFIT,
+  t = NULL,
   analytical = TRUE,
   smoothed.spline = FALSE,
   IsPlot = TRUE,
@@ -26,10 +28,18 @@ PhenoDeriv(
   ...
 )
 
-PhenoGu(fFIT, analytical = TRUE, smoothed.spline = FALSE, IsPlot = TRUE, ...)
+PhenoGu(
+  fFIT,
+  t = NULL,
+  analytical = TRUE,
+  smoothed.spline = FALSE,
+  IsPlot = TRUE,
+  ...
+)
 
 PhenoKl(
   fFIT,
+  t = NULL,
   analytical = TRUE,
   smoothed.spline = FALSE,
   IsPlot = TRUE,
