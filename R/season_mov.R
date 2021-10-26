@@ -52,8 +52,6 @@ season_mov <- function(INPUT,
     ...,
     years.run = NULL)
 {
-    # params = as.list(match.call())
-    # params = c(as.list(environment()), list(...))
     opt_old = .options$season
     on.exit(.options$season <- opt_old)
 
@@ -91,9 +89,10 @@ season_mov <- function(INPUT,
 
     brks  <- list()
     vcs   <- vector("list", length(years.run)) %>% set_names(years.run)
+
     for (year_i in years.run) {
         i = which(year_i == years)
-        if (.options$verbose_season_mov) fprintf("  [season_mov] running %d ... \n", i)
+        if (.options$season$verbose) fprintf("  [season_mov] running %d ... \n", i)
 
         ## TODO:
         # `nextend` might be not enough, 3y moving could be an option
@@ -114,12 +113,13 @@ season_mov <- function(INPUT,
             lambda = vc$lambda; vcs[[i]] <- vc
         }
         params_i = c(list(INPUT = input, lambda = lambda), dots)
-        brk <- do.call(opt_season, params_i)
+        # assign("params_i", params_i, envir = .GlobalEnv)
+        brk <- do.call(season_input, params_i)
 
         if (is_empty(brk$dt)){
             # if have no brks, try to decrease r_max
             params_i$r_max <- max(params_i$r_max-0.1, 0.05)
-            brk <- do.call(opt_season, params_i)
+            brk <- do.call(season_input, params_i)
         }
         if (!is_empty(brk$dt))
             brk$dt %<>% subset(year == year_i) %>% mutate(lambda = lambda)
@@ -176,22 +176,22 @@ check_season_dt <- function(dt) {
     len_max = .options$season$len_max
 
     dt <- dt[len > len_min & len < len_max, ] # mask too long and short gs
-    rcpp_season_filter(dt, .options$season$rm.closed, 
-        rtrough_max = .options$season$rtrough_max, 
+    rcpp_season_filter(dt, .options$season$rm.closed,
+        rtrough_max = .options$season$rtrough_max,
         r_min = .options$season$r_min)
     dt[y_peak >= .options$season$ypeak_min & (len > len_min & len < len_max), ]
 }
 
 #' @param dt data.table of growing season dividing info
 #' @param lst_dt list of `dt`. Every year is corresponding to a `dt`.
-#' 
+#'
 #' @inheritParams season_mov
 #' @rdname rcpp_season_filter
 #' @export
 cheak_season_list <- function(lst_dt) {
     if (is.data.frame(lst_dt)) lst_dt = list(lst_dt)
     lst_dt %<>% rm_empty()
-    dt2 = map(lst_dt, ~ check_season_dt(.x)) %>% 
+    dt2 = map(lst_dt, ~ check_season_dt(.x)) %>%
         do.call(rbind, .)
     check_season_dt(dt2)
 }
@@ -221,8 +221,11 @@ stat_season <- function(INPUT, d_fit){
     ypred = d_fit %>% dplyr::select(.,starts_with("ziter")) %>% last()
     d_fit = data.table(t = d_fit$t, ypred)
 
-    d_org <- if (!is.data.table(INPUT)) as.data.table(INPUT[c("t", "y0", "w")]) else INPUT
-
+    d_org <- if (!is.data.table(INPUT)) {
+        ans = as.data.table(INPUT[c("t", "y0", "w")])
+        if(is.null(INPUT$y0)) ans$y0 = INPUT$y
+        ans
+    } else INPUT
     d <- merge(d_org, d_fit, by = "t")
 
     stat <- with(d, GOF(y0, ypred, w, include.cv = TRUE, include.r = TRUE))# %>% as.list()

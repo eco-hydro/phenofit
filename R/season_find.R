@@ -74,7 +74,7 @@ find_season.peaks <- function(
             # di  <- check_GS_HeadTail(pos, ypred, minlen = nptperyear / 3)
             di = pos_max[, .(beg = left, peak = pos, end = right)]
         }
-        # browser()
+        if (is.null(di)) return(NULL)
 
         # fix whole year data missing in FLUXNET data, di: beg, peak and end
         dt <- di2dt(di, t, ypred)
@@ -136,13 +136,13 @@ find_season.default <- function(
 # ... could also pass to `options`
 
 #' Growing season division (unstable version)
-#' 
+#'
 #' @inheritParams season_mov
-#' 
+#'
 #' @keywords internal
 #' @importFrom utils str
 #' @export
-opt_season <- function(INPUT,
+season_input <- function(INPUT,
                        # rFUN, wFUN, lambda,
                        options = NULL, verbose = FALSE, ...) {
     # grasp all parameters

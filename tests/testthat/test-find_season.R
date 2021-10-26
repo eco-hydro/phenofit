@@ -16,7 +16,7 @@ test_that("find_season works", {
     brks <- season(INPUT, lambda = 10)
     plot_season(INPUT, brks, d)
 
-    brks2 = opt_season(INPUT, options)
+    brks2 = season_input(INPUT, options)
     expect_equal(brks2, brks)
 
     c(d_fit, info_peak) %<-% rough_fitting(INPUT)

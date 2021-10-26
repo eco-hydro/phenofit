@@ -31,7 +31,7 @@
 NULL
 
 .onLoad <- function (libname, pkgname){
-    opt_season <- c("rFUN", "wFUN", "iters", "wmin", "lambda", ".lambda_vcurve", 
+    season_input <- c("rFUN", "wFUN", "iters", "wmin", "lambda", ".lambda_vcurve", 
         "frame", "nf", "minpeakdistance", "ypeak_min", "r_max", "r_min", "rtrough_max", 
         "MaxPeaksPerYear", "MaxTroughsPerYear", "calendarYear", "adj.param", 
         "rm.closed", "is.continuous", ".check_season", "maxExtendMonth", 
@@ -46,7 +46,7 @@ NULL
               "beg", "end",  # plot_curvefits
               "val", "type", "flag", "peak", # season, 
               "i", "qc", "y", "sitename",  # phenofit_TS.avhrr
-              opt_season, 
+              season_input, 
               "years", "nyear", "d_fit", "info_peak"
             )
         )
