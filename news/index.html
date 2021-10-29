@@ -71,7 +71,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenofit</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.3</span>
       </span>
     </div>
 
@@ -129,6 +129,18 @@
       <small>Source: <a href='https://github.com/eco-hydro/phenofit/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="phenofit-033-2021-10-26" class="section level1">
+<h1 class="page-header" data-toc-text="0.3.3">
+<a href="#phenofit-033-2021-10-26" class="anchor"></a>phenofit 0.3.3 (2021-10-26)<small> Unreleased </small>
+</h1>
+<ul>
+<li><p>Fix typo error in curvefits’ document.</p></li>
+<li><p>Rename function <code>opt_season</code> to <code>season_input</code></p></li>
+<li><p>In the case of none growing season division information, <code>find_season.peaks</code> will be error. Fixed now.</p></li>
+<li><p>Fix the bug of <code>init_param</code> in the approximately monotonous time-sereis (e.g. fast harvest leads to a very short senescence period, and hence approximately monotonic in the whole growing season). In previous version, the parameter boundary of <code>sos</code> might exceed that of <code>eos</code>.</p></li>
+<li><p>Improved the phenology extraction method <code>PhenoTrs</code>, <code>PhenoDeriv</code> and <code>PhenoGu</code> in the approximately monotonous time-sereis. In the previous version <code>NA</code> value will be return. In the current version, if the time series is monotonously increasing, EOS will be the mean value of <code>t[n]</code> and peak date of season (<code>POP</code>). But <code>PhenoKlos</code> has no method to avoid <code>NA</code> values, because it used the strict mathematical solution to find the extreme values in the curve of curvature’s change rate.</p></li>
+</ul>
+</div>
     <div id="phenofit-032-2021-10-15" class="section level1">
 <h1 class="page-header" data-toc-text="0.3.2">
 <a href="#phenofit-032-2021-10-15" class="anchor"></a>phenofit 0.3.2 (2021-10-15)<small> 2021-10-15 </small>

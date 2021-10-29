@@ -51,7 +51,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">phenofit</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.3</span>
       </span>
     </div>
 
@@ -123,7 +123,7 @@
 <p><strong><em>Task lists</em></strong></p>
 <ul>
 <li>
-<input type="checkbox" disabled>
+<input type="checkbox" disabled checked>
 Test the performance of <code>phenofit</code> in multiple growing season regions (e.g. the North China Plain);</li>
 <li>
 <input type="checkbox" disabled>
@@ -160,6 +160,16 @@ Asymmetric of Threshold method</li>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># install.packages("devtools")</span>
 <span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"eco-hydro/phenofit"</span><span class="op">)</span></code></pre></div>
+</div>
+<div id="note" class="section level1">
+<h1 class="hasAnchor">
+<a href="#note" class="anchor"></a>Note</h1>
+<p>Users can through the following options to improve the performance of phenofit in multiple growing season regions:</p>
+<ul>
+<li><p>Users can decrease those three parameters <code>nextend</code>, <code>minExtendMonth</code> and <code>maxExtendMonth</code> to a relative low value, by setting option <code><a href="reference/set_options.html">set_options(fitting = list(nextend = 1, minExtendMonth = 0, maxExtendMonth = 0.5))</a></code>.</p></li>
+<li><p>Use <code>wHANTS</code> as the rough fitting function. Due to nature of fourier functions, <code>wHANTS</code> is more stable for multiple growing seasons, but it is less flexible than <code>wWHIT.</code> <code>wHANTS</code> is suitable for regions with the static growing season pattern accoss multiple years, <code>wWHIT</code> is more suitable for regions with the dynamic growing season pattern. Dynamic growing season pattern is the most challenging task, which also means that large uncertainty might be exists.</p></li>
+<li><p>Use only one iteration in fine fitting procedure.</p></li>
+</ul>
 </div>
 <div id="references" class="section level1">
 <h1 class="hasAnchor">
