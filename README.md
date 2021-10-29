@@ -23,7 +23,7 @@ package: `phenofit`
 
 ***Task lists***
 
--   [ ] Test the performance of `phenofit` in multiple growing season
+-   [x] Test the performance of `phenofit` in multiple growing season
     regions (e.g. the North China Plain);
 -   [ ] Uncertainty analysis of curve fitting and phenological metrics;
 -   [x] shiny app has been moved to
@@ -48,6 +48,26 @@ You can install phenofit from github with:
 # install.packages("devtools")
 devtools::install_github("eco-hydro/phenofit")
 ```
+
+# Note
+
+Users can through the following options to improve the performance of phenofit in multiple growing 
+season regions:
+
+- Users can decrease those three parameters `nextend`, `minExtendMonth` and
+  `maxExtendMonth` to a relative low value, by setting option 
+  `set_options(fitting = list(nextend = 1, minExtendMonth = 0, maxExtendMonth = 0.5))`.
+
+- Use `wHANTS` as the rough fitting function. Due to nature of fourier functions,
+  `wHANTS` is more stable for multiple growing seasons, but it is less flexible
+  than `wWHIT.` `wHANTS` is suitable for regions with the static growing season
+  pattern accoss multiple years, `wWHIT` is more suitable for regions with the
+  dynamic growing season pattern. 
+  Dynamic growing season pattern is the most challenging task, which also means
+  that large uncertainty might be exists.
+
+- Use only one iteration in fine fitting procedure.
+
 
 # **References**
 

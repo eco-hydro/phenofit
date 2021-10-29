@@ -1,3 +1,27 @@
+# phenofit 0.3.3 (2021-10-26)
+
+- Fix typo error in curvefits' document.
+
+- Fix the error of `plot.fFITs`, due to `fFIT` renamed to `model`.
+  
+- Rename function `opt_season` to `season_input`
+  
+- In the case of none growing season division information, `find_season.peaks` will be error. Fixed now.
+  
+- Fix the bug of `init_param` in the approximately monotonous time-sereis (e.g. fast harvest
+  leads to a very short senescence period, and hence approximately monotonic in
+  the whole growing season). In previous version, the parameter boundary of `sos`
+  might exceed that of `eos`.
+
+- Improved the phenology extraction method `PhenoTrs`, `PhenoDeriv` and
+  `PhenoGu` in the approximately monotonous time-sereis. In the previous version
+  `NA` value will be return. In the current version, if the time series is
+  monotonously increasing, EOS will be the mean value of `t[n]` and peak date of
+  season (`POP`). 
+  But `PhenoKlos` has no method to avoid `NA` values, because it
+  used the strict mathematical solution to find the extreme values in the curve
+  of curvature's change rate.
+
 # phenofit 0.3.2 (2021-10-15)
 
 - Parameters of `season_mov` and `curvefits`  are wrapped into options. Scripts of phenofit v2.0 will not work anymore.

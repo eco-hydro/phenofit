@@ -58,7 +58,7 @@ NULL
 #' @export
 plot.fFITs <- function(x, method, ...){
     if (missing(method)) {
-        methods <- names(x$fFIT)
+        methods <- names(x$model)
     } else {
         methods <- method
     }
@@ -68,12 +68,12 @@ plot.fFITs <- function(x, method, ...){
     # Need to cal derivatives first
     for (i in seq_along(methods)){
         method <- methods[i]
-        fFIT   <- x$fFIT[[i]]
+        fFIT   <- x$model[[i]]
 
-        pred   <- last(fFIT$zs)
+        pred   <- last2(fFIT$zs)
 
         pos    <- t[which.max(pred)]
-        derivs <- curvature(fFIT)
+        derivs <- curvature(fFIT, t)
 
         # plot for every method
         multi_p <- max(par()$mfrow) == 1
@@ -114,16 +114,16 @@ plot.fFITs <- function(x, method, ...){
         text(1, 1, method, font = 2, cex = 1.3)
         par(op)
     }
-
-    # e <- environment(D1)
-    # der1_diff <- c(NA, diff(pred))
-    # microbenchmark::microbenchmark(
-    #     gradient <- numDeriv::grad(x$fun,  t, par = x$par),
-    #     der1     <- D2(x),
-    #     diff1 <- c(NA, NA, diff(diff(values)))
-    # )
-    # summary(der1 - gradient)
-    # summary(c(NA, diff1) - gradient)
-    # diff <- der1 - der1_diff
-    # der <- data.frame(der1_diff, der1 = der1, diff = diff)
 }
+
+# e <- environment(D1)
+# der1_diff <- c(NA, diff(pred))
+# microbenchmark::microbenchmark(
+#     gradient <- numDeriv::grad(x$fun,  t, par = x$par),
+#     der1     <- D2(x),
+#     diff1 <- c(NA, NA, diff(diff(values)))
+# )
+# summary(der1 - gradient)
+# summary(c(NA, diff1) - gradient)
+# diff <- der1 - der1_diff
+# der <- data.frame(der1_diff, der1 = der1, diff = diff)

@@ -25,6 +25,9 @@
 #' * `QC_flag`: Factor vector, with the level of 
 #' `c("snow", "cloud", "shadow", "aerosol", "marginal", "good")`
 #' 
+#' @note
+#' `qc_5l` and `qc_NDVIv4` only returns `weight`, without `QC_flag`.
+#' 
 #' @references
 #' https://developers.google.com/earth-engine/datasets/catalog/MODIS_006_MOD13A1
 #' 
@@ -107,20 +110,6 @@ qc_StateQA <- function(QA, wmin = 0.2, wmid = 0.5, wmax = 1){
     list(QC_flag = QC_flag, w = w) # quickly return
 }
 
-#' @rdname qcFUN
-#' @export
-qc_5l <- function(QA, wmin = 0.2, wmid = 0.5, wmax = 1){
-    # bit5-7, five-level confidence score
-    # QA <- bitwShiftR(bitwAnd(QA, 224), 5) #1110 0000=224L
-    QA <- getBits(QA, 5, 7)
-    w  <- rep(NA, length(QA)) #default zero
-    
-    w[QA <= 1] <- wmax          #clear, good
-    w[QA >= 2 & QA <=3] <- wmid #geometry problems or others
-    w[QA >  4] <- wmin
-    return(w)
-}
-
 # MODIS_006_MCD15A3H
 #' @rdname qcFUN
 #' @param FparLai_QC Another QC flag of `MCD15A3H`
@@ -169,6 +158,33 @@ qc_FparLai <- function(QA, FparLai_QC = NULL, wmin = 0.2, wmid = 0.5, wmax = 1){
 
 #' @rdname qcFUN
 #' @export
+qc_5l <- function(QA, wmin = 0.2, wmid = 0.5, wmax = 1) {
+    # bit5-7, five-level confidence score
+    # QA <- bitwShiftR(bitwAnd(QA, 224), 5) #1110 0000=224L
+    QA <- getBits(QA, 5, 7)
+    w <- rep(NA, length(QA)) # default zero
+
+    w[QA <= 1] <- wmax # clear, good
+    w[QA >= 2 & QA <= 3] <- wmid # geometry problems or others
+    w[QA > 4] <- wmin
+    return(w)
+}
+
+#' @rdname qcFUN
+#' @export
+qc_NDVIv4 <- function(QA, wmin = 0.2, wmid = 0.5, wmax = 1) {
+    # bit1-2: cloudy, cloud shadow
+    QA <- bitwShiftR(bitwAnd(QA, 7), 1)
+
+    w <- rep(NA, length(QA))
+    w[QA == 0] <- wmax # clear, good
+    w[QA == 2] <- 0.5 # cloud shadow
+    return(w)
+}
+
+
+#' @rdname qcFUN
+#' @export
 qc_NDVI3g <- function(QA, wmin = 0.2, wmid = 0.5, wmax = 1){
     # bit1-2: cloudy, cloud shadow
     
@@ -181,18 +197,6 @@ qc_NDVI3g <- function(QA, wmin = 0.2, wmid = 0.5, wmax = 1){
     list(QC_flag = QC_flag, w = w) # quickly return
 }
 
-
-#' @rdname qcFUN
-#' @export
-qc_NDVIv4 <- function(QA, wmin = 0.2, wmid = 0.5, wmax = 1){
-    # bit1-2: cloudy, cloud shadow
-    QA <- bitwShiftR(bitwAnd(QA, 7), 1) 
-    
-    w  <- rep(NA, length(QA))
-    w[QA == 0] <- wmax   #clear, good
-    w[QA == 2] <- 0.5 #cloud shadow
-    return(w)
-}
 
 #' @rdname qcFUN
 #' @export

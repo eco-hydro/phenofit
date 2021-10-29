@@ -6,11 +6,11 @@ linewidth <- 1.2
 #' @title Phenology Extraction methods
 #'
 #' @inheritParams D
-#' 
+#'
 #' @param fFIT `fFIT` object returned by [optim_pheno()].
-#' @param t `date` or `doy` vector, with the same length as `ypred`. This parameter 
+#' @param t `date` or `doy` vector, with the same length as `ypred`. This parameter
 #' is for the Julia version `curvefits`.
-#' 
+#'
 #' @param approach to be used to calculate phenology metrics.
 #' 'White' (White et al. 1997) or 'Trs' for simple threshold.
 #' @param trs threshold to be used for approach "Trs", in (0, 1).
@@ -31,7 +31,7 @@ linewidth <- 1.2
 #' methods <- c("AG", "Beck", "Elmore", "Gu", "Zhang") # "Klos" too slow
 #' fFITs <- curvefit(y, t, tout, methods)
 #' fFIT  <- fFITs$model$AG
-#' 
+#'
 #' par(mfrow = c(2, 2))
 #' PhenoTrs(fFIT)
 #' PhenoDeriv(fFIT)
@@ -116,6 +116,18 @@ PhenoTrs <- function(fFIT, t = NULL, approach = c("White", "Trs"), trs = 0.5, #,
 
     sos <- round(median(t[ greenup & bool & t < pos], na.rm = TRUE))
     eos <- round(median(t[!greenup & bool & t > pos], na.rm = TRUE))
+
+    # greenup <- .Greenup(ratio)
+    if (is.na(sos + eos)) {
+        bool2 <- ratio >= (trs-0.1) & ratio <= (trs+0.1)
+        if (is.na(sos)) sos <- round(median(t[ greenup & bool2 & t < pos], na.rm = TRUE))
+        if (is.na(eos)) eos <- round(median(t[!greenup & bool2 & t > pos], na.rm = TRUE))
+
+        # if still is NA
+        if (is.na(sos)) sos <- round((t[1] + pos)/2)
+        if (is.na(eos)) eos <- round((t[n] + pos)/2)
+    }
+    # monotonous = length(unique(greenup[2:n]) %>% rm_empty()) == 1
     # los <- eos - sos#los < 0 indicate that error
     # los[los < 0] <- n + (eos[los < 0] - sos[los < 0])
 
@@ -193,17 +205,33 @@ PhenoDeriv <- function(fFIT, t = NULL,
 
     # der.sos (eos) is impossible to occur near the pop.
     nmin  <- 5
-    I_sos <- findpeaks( der1[1:(half.season - 5)], nups=nmin,
-        ndowns=nmin, npeaks=1, sortstr=TRUE)$X$pos
+    I_sos <- findpeaks( der1[1:(half.season - 5)],
+        nups=nmin, ndowns=nmin, npeaks=1, sortstr=TRUE)$X$pos
     I_eos <- findpeaks(-der1[(half.season+5):length(der1)],
         nups=nmin, ndowns=nmin, npeaks=1, sortstr=TRUE)$X$pos + half.season + 4
 
     # if half.season > length(der1), error will be occur
     sos <- t[I_sos]
     eos <- t[I_eos]
-    if (is_empty(sos)) sos <- NA
-    if (is_empty(eos)) eos <- NA
-
+    if (is_empty(sos)) {
+        I_sos <- findpeaks( der1[1:(half.season - 5)],
+            nups=nmin, ndowns=0, npeaks=1, sortstr=TRUE)$X$pos
+        sos <- t[I_sos]
+        if (is_empty(sos)) sos <- round((t[1] + pos)/2)
+    }
+    if (is_empty(eos)) {
+        I_eos <- findpeaks(-der1[(half.season+5):length(der1)],
+                           nups=nmin, ndowns=0, npeaks=1, sortstr=TRUE)$X$pos + half.season + 4
+        eos <- t[I_eos]
+        if (is_empty(eos)) eos <- round((t[n] + pos)/2)
+    }
+    # greenup <- .Greenup(values)
+    # if (is.na(sos)) {
+    #     if (all(!rm_empty(greenup))) sos = pos
+    # }
+    # if (is.na(eos)) {
+    #     if (all(rm_empty(greenup)))  eos = pos
+    # }
     metrics <- c(sos = sos, pos = pos, eos = eos)#, los = los
 
     if (IsPlot){
@@ -306,8 +334,11 @@ PhenoGu <- function(fFIT, t = NULL,
     # cut.x <- days[which(days>=UD & days<=RD)]
     # cut.y <- offset.y[which(days>=UD & days<=RD)]
     # the.fun <- function(t) {eval(retrieved.formula, envir=as.list(params))}
+
+    ## Avoid NA values by using `clamp` instead
+    # sapply(function(x){ ifelse(x < min(t) || x > max(t), NA, x) }) %>%
     metrics   <- round(c(UD, SD, DD, RD)) %>%
-        sapply(function(x){ ifelse(x < min(t) || x > max(t), NA, x) }) %>%
+        sapply(clamp, lims = c(t[1], t[n])) %>%
         set_names(PhenoNames)
     # c("UD", "SD", "DD", "RD", "maxline", "baseline", "rsp", "rau", "plateau.slope")
     # c(pheno, maxline, baseline, rsp, rau, plateau.slope)
@@ -397,9 +428,9 @@ PhenoKl <- function(fFIT, t = NULL,
         pos <- sort(pos)
         pos <- c(rep(NA, 2 - length(pos)), pos) #at least two values
         I_asc <- asc.k.d[pos]
-        if (all(is.na(pos))){
+        if (all(is.na(pos))) {
             I_asc <- pos
-        }else{
+        } else {
             I_asc <- asc.k.d[pos]
         }
 
@@ -407,9 +438,9 @@ PhenoKl <- function(fFIT, t = NULL,
         pos <- findpeaks(-des.k, minpeakdistance = 15, npeaks = 2, sortstr = TRUE, minpeakheight)$X$pos
         pos <- sort(pos);
         pos <- c(pos, rep(NA, 2 - length(pos)))
-        if (all(is.na(pos))){
+        if (all(is.na(pos))) {
             I_dec <- pos
-        }else{
+        } else {
             I_dec <- des.k.d[pos]
         }
         metrics <- c(I_asc, I_dec)

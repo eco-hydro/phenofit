@@ -4,7 +4,7 @@
 \alias{season_mov}
 \title{Moving growing season division}
 \usage{
-season_mov(INPUT, options = list(r_min = 0), ..., years.run = NULL)
+season_mov(INPUT, options = list(), ..., years.run = NULL)
 }
 \arguments{
 \item{INPUT}{A list object with the elements of \code{t}, \code{y}, \code{w},

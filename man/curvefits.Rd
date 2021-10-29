@@ -32,7 +32,7 @@ of \code{check_input}.
 marginal element are found in previous and subsequent growing season.
 \item \code{maxExtendMonth} (default 1): Search good or marginal good values in previous and
 subsequent \code{maxExtendMonth} period.
-\item \code{minExtendMonth} (default 2): Extending perid defined by \code{nextend} and \code{maxExtendMonth},
+\item \code{minExtendMonth} (default 0.5): Extending perid defined by \code{nextend} and \code{maxExtendMonth},
 should be no shorter than \code{minExtendMonth}.
 When all points of the input time-series are good value, then the extending
 period will be too short. In that situation, we can't make sure the connection

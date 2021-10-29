@@ -27,7 +27,7 @@ init_param <- function(y, t, w){
         stop("NA in the time series are not allowed: fill them with e.g. na.approx()")
     if (missing(w)) w <- rep(1, length(y))
 
-    # t      <- t - t[1] # (20190103) seq_along(y)  
+    # t      <- t - t[1] # (20190103) seq_along(y)
     w_min  <- 0.5 # weights greater than w_min are treated as good values.
     # fixed 2018-07-25, If have no enough good points, then set w_min=0
     if (sum(w >= w_min)/length(y) < .4) w_min <- 0
@@ -49,21 +49,26 @@ init_param <- function(y, t, w){
     deltaY <- ampl*0.1
     half   <- (max(t) - min(t))/2
     deltaT <- half/4
-    
+
     k      <- 4/half*2.67 #approximate value
     # k limits: about 0.004 - 0.2
     # kmin <- 4 / (half * 5), half = 200, k = 0.004
     # kmax <- 4 / (half / 5), half = 100, k = 0.2
 
     # parameters limit
+    # constrain parameter in a reasonable range
+    tmax = max(t)
     lims = list(
         t0  = c(doy.mx - deltaT, doy.mx + deltaT),
         mn  = c(mn - deltaY    , mn + deltaY),
         mx  = c(mx - deltaY*2  , mx + deltaY*2),
         r   = c(k/1.2, k*5),
-        sos = c(min(t)         , doy.mx + deltaT),
-        eos = c(doy.mx - deltaT, max(t))
+        sos = c(min(t)         , pmin(doy.mx + deltaT), tmax),
+        eos = c(doy.mx - deltaT, tmax)
     )
+    # plot(t, y, main = "init_param")
+    # print(str(lims))
+    
     res <- listk( mx, mn, ampl, doy, doy.mx,
         deltaT, deltaY, half, t1, t2,
         k, lims)

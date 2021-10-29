@@ -14,7 +14,7 @@ options_season <- list(
     ypeak_min         = 0.1,
 
     r_max             = 0.2,
-    r_min             = 0.05,
+    r_min             = 0.05, # 0
     rtrough_max       = 0.6,
 
     MaxPeaksPerYear   = 2,

@@ -125,3 +125,14 @@ magrittr::`%<>%`
 #' @importFrom lubridate make_date
 #' @export
 lubridate::make_date
+
+clamp <- function(x, lims = c(0, 1), fill.na = FALSE) {
+    if (fill.na) {
+        x[x < lims[1]] <- NA_real_
+        x[x > lims[2]] <- NA_real_
+    } else {
+        x[x < lims[1]] <- lims[1]
+        x[x > lims[2]] <- lims[2]
+    }
+    x
+}

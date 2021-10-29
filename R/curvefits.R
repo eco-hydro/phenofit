@@ -36,7 +36,7 @@
 #' - `maxExtendMonth` (default 1): Search good or marginal good values in previous and
 #' subsequent `maxExtendMonth` period.
 #'
-#' - `minExtendMonth` (default 2): Extending perid defined by `nextend` and `maxExtendMonth`,
+#' - `minExtendMonth` (default 0.5): Extending perid defined by `nextend` and `maxExtendMonth`,
 #' should be no shorter than `minExtendMonth`.
 #' When all points of the input time-series are good value, then the extending
 #' period will be too short. In that situation, we can't make sure the connection
@@ -114,9 +114,10 @@ curvefits <- function(
                       end  = getDateId_after(brks$dt$end, t)) #%>% na.omit()
 
     width_ylu = nptperyear*2
-    
+
     y    <- INPUT$y
     fits <- vector(nrow(di), mode = "list")
+
     for (i in 1:nrow(di)){
         if (opt$verbose) fprintf("  [curvefits] running %d ... \n", i)
 
@@ -137,22 +138,12 @@ curvefits <- function(
         ylu <- merge_ylu(INPUT$ylu, ylu)
         # yi[yi < ylu[1]] <- ylu[1] # update y value
 
-        # if (has_Tn){
-        #     # add background module here, 20180513
-        #     Tni        <- Tn[I_extend]
-        #     back_value <- backval(yi, ti, wi, Tni, opt$minT, nptperyear)
-        #     if (!is.na(back_value)){
-        #         I_back     <- yi < back_value
-        #         yi[I_back] <- back_value
-        #         wi[I_back] <- 0.5
-        #     }
-        # }
         beginI <- ifelse(i == 1, 1, 2) # make sure no overlap
         tout   <- doys[I] %>% {.[beginI]:last(.)} # make sure return the same length result.
 
         fFITs  <- curvefit(yi, ti, tout, nptperyear = nptperyear,
                          w = wi, ylu = ylu,
-                         iters = opt$iters, methods = opt$methods, wFUN = opt$wFUN, 
+                         iters = opt$iters, methods = opt$methods, wFUN = opt$wFUN,
                          ...)
         # add original input data here, global calculation can comment this line
         # `y` is original time-series without checked, This for plot
@@ -174,6 +165,17 @@ curvefits <- function(
     # return(list(tout = t[first(di$beg):last(di$end)],  # dates for OUTPUT curve fitting VI
     #             fits = fits))
 }
+
+# if (has_Tn){
+#     # add background module here, 20180513
+#     Tni        <- Tn[I_extend]
+#     back_value <- backval(yi, ti, wi, Tni, opt$minT, nptperyear)
+#     if (!is.na(back_value)){
+#         I_back     <- yi < back_value
+#         yi[I_back] <- back_value
+#         wi[I_back] <- 0.5
+#     }
+# }
 
 getDateId <- function(dates, t){
     match(dates, t) #%>% rm_empty()

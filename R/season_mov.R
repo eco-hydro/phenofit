@@ -39,7 +39,7 @@
 season_mov <- function(INPUT,
     # rFUN, wFUN,
     # lambda = NULL, .lambda_vcurve = FALSE,
-    options = list(r_min = 0),
+    options = list(),
     # nf  = 3, frame = floor(INPUT$nptperyear/5)*2 + 1,
     # iters = 2, wmin = 0.1,
     # calendarYear = FALSE,
@@ -93,9 +93,7 @@ season_mov <- function(INPUT,
     for (year_i in years.run) {
         i = which(year_i == years)
         if (.options$season$verbose) fprintf("  [season_mov] running %d ... \n", i)
-
-        ## TODO:
-        # `nextend` might be not enough, 3y moving could be an option
+        
         # I <- which(date_year %in% years[(i-ny_extend):(i+ny_extend)]) # 3y index
         I   <- which(date_year %in% years[i])
         ylu <- get_ylu(INPUT$y, date_year, INPUT$w, width = width_ylu, I, Imedian = TRUE,
