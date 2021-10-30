@@ -57,24 +57,24 @@ doubleLog_Klos <- function(par, t, pred) {
     doubleLogMain(`_phenofit_cdoubleLog_Klos`, par, t, pred)
 }
 
-# REWRITE IN R VERSION, BECAUSE NEED TO IGNORE ADDITIONAL PARAMETERS.
-#' objective function of double logistics
-#' 
-#' @inheritParams f_goal
-#' 
-#' @keywords internal
-#' @export
-f_goal2 <- function(par, fun, y, t, ypred, w = NULL, ylu = NULL, ...) {
-    .Call(`_phenofit_f_goal_cpp`, par, fun, y, t, ypred, w, ylu)
-}
-
 # set par and names for double Logistics functions
 funcs = lsf.str(pattern = "^doubleLog_")
-
 for (func in funcs) {
     funr = gsub("_", ".", func)
     eval(parse(text = sprintf("attr(%s, 'name') <- '%s'", func, func)))
-    eval(parse(text = sprintf("attr(%s, 'name') <- '%s'", funr, funr)))
+    # eval(parse(text = sprintf("attr(%s, 'name') <- '%s'", funr, funr)))
+    eval(parse(text = sprintf("attr(%s, 'par')  <- attr(%s, 'par')", func, funr)))
+    eval(parse(text = sprintf("attr(%s, 'formula')  <- attr(%s, 'formula')", func, funr)))
+    eval(parse(text = sprintf("attr(%s, 'gradient') <- attr(%s, 'gradient')", func, funr)))
+    eval(parse(text = sprintf("attr(%s, 'hessian')  <- attr(%s, 'hessian')", func, funr)))
+}
+
+## C++ version -----------------------------------------------------------------
+funcs <- lsf.str(pattern = "^cdoubleLog_")
+for (func in funcs) {
+    funr <- gsub("_", ".", func) %>% gsub("^c", "", .)
+    eval(parse(text = sprintf("attr(%s, 'name') <- '%s'", func, func)))
+    # eval(parse(text = sprintf("attr(%s, 'name') <- '%s'", funr, funr)))
     eval(parse(text = sprintf("attr(%s, 'par')  <- attr(%s, 'par')", func, funr)))
     eval(parse(text = sprintf("attr(%s, 'formula')  <- attr(%s, 'formula')", func, funr)))
     eval(parse(text = sprintf("attr(%s, 'gradient') <- attr(%s, 'gradient')", func, funr)))

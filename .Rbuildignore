@@ -41,3 +41,4 @@
 ^R/examples$
 ^R/temp$
 ^tests/testthat/Rplots\.pdf$
+^\.covrignore$

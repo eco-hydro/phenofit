@@ -14,7 +14,8 @@ phenonames <- c('TRS2.SOS', 'TRS2.EOS', 'TRS5.SOS', 'TRS5.EOS', 'TRS6.SOS', 'TRS
 #' @param methods Fine curve fitting methods, can be one or more of `c('AG',
 #' 'Beck', 'Elmore', 'Gu', 'Klos', 'Zhang')`.
 #' @param ... other parameters passed to curve fitting function.
-#'
+#' @inheritParams optim_pheno
+#' 
 #' @note 'Klos' have too many parameters. It will be slow and not stable.
 #'
 #' @return fFITs S3 object, see [fFITs()] for details.
@@ -41,7 +42,7 @@ phenonames <- c('TRS2.SOS', 'TRS2.EOS', 'TRS5.SOS', 'TRS5.EOS', 'TRS6.SOS', 'TRS
 #' @export
 curvefit <- function(y, t = index(y), tout = t,
     methods = c('AG', 'Beck', 'Elmore', 'Gu', 'Klos', 'Zhang'), 
-    w = NULL, ..., use.cpp = TRUE)
+    w = NULL, ..., use.cpp = FALSE)
 {
     if (all(is.na(y))) return(NULL)
     if (is.null(w)) w = rep(1, length(y))
@@ -50,7 +51,7 @@ curvefit <- function(y, t = index(y), tout = t,
 
     params <- list(y, t, tout, optimFUN = I_optim, ...)
 
-    str_DL <- ifelse(use.cpp, "doubleLog_", "doubleLog.")
+    str_DL <- ifelse(use.cpp, "cdoubleLog_", "doubleLog.")
     fFITs = lapply(methods %>% set_names(., .), function(meth){
         meth_optim = ifelse(meth == "Klos", "BFGS", "nlminb")
 
@@ -59,7 +60,7 @@ curvefit <- function(y, t = index(y), tout = t,
         fun_name = paste0(str_DL, meth)
         lims <- fun_init(y, t, w)
         optim_pheno(lims$prior, fun_name, y, t, tout, meth_optim, w, 
-            lower = lims$lower, upper = lims$upper, ...)
+            lower = lims$lower, upper = lims$upper, ..., use.cpp = use.cpp)
         # eval(parse(text = expr))
     })
     structure(list(data = data.table(y, t), tout = tout, model = fFITs), class = 'fFITs')

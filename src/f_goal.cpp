@@ -17,37 +17,37 @@ bool all_finite(NumericVector x) {
 
 // [[Rcpp::export]]
 double f_goal_cpp(NumericVector par, Function fun, 
-    NumericVector y, NumericVector t, NumericVector ypred,
+    NumericVector y, NumericVector t, NumericVector pred,
     Nullable<NumericVector> w   = R_NilValue,
     Nullable<NumericVector> ylu = R_NilValue)
 {
     // Function FUN(fun);
     if ( !all_finite(par) ) return(9999.0);
 
-    // NumericVector ypred = 
-    fun(par, t, ypred);
-    if ( !all_finite(ypred) )  return(9999.0);
+    // NumericVector pred = 
+    fun(par, t, pred);
+    if ( !all_finite(pred) )  return(9999.0);
 
     double SSE;
     int len = y.size();
     if (w.isNotNull()) {
         NumericVector w_(w);
+        // IGNORE YLU
+        // if ( ylu.isNotNull() ) {
+        //     NumericVector ylu_(ylu);
+        //     double lower = ylu_[0];
+        //     double upper = ylu_[1];
 
-        if ( ylu.isNotNull() ) {
-            NumericVector ylu_(ylu);
-            double lower = ylu_[0];
-            double upper = ylu_[1];
-
-            for (int i = 0; i < len; i++) {
-                if (ypred[i] < lower || ypred[i] > upper) {
-                    w_[i] = 0.0;
-                }
-            }
-            // w[ypred < ylu[0] | ypred > ylu[1]] = 0.0;
-        }
-        SSE = sum( pow(y - ypred, 2.0) * w_ );
+        //     for (int i = 0; i < len; i++) {
+        //         if (pred[i] < lower || pred[i] > upper) {
+        //             w_[i] = 0.0;
+        //         }
+        //     }
+        //     // w[pred < ylu[0] | pred > ylu[1]] = 0.0;
+        // }
+        SSE = sum( pow(y - pred, 2.0) * w_ );
     } else {
-        SSE = sum( pow(y - ypred, 2.0) );
+        SSE = sum( pow(y - pred, 2.0) );
     }
 
     double RMSE = sqrt(SSE/len);

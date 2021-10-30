@@ -25,8 +25,8 @@ e.g. \verb{'spg','Rcgmin','Rvmmin', 'newuoa','bobyqa','nmkb','hjkb'}.}
 
 \item{...}{other parameters passed to \code{\link[=I_optim]{I_optim()}} or \code{\link[=I_optimx]{I_optimx()}}.}
 
-\item{use.cpp}{boolean, whether to use c++ defined fine fitting function? If
-\code{FALSE}, R version will be used.}
+\item{use.cpp}{(unstable, not used) boolean, whether to use c++ defined fine
+fitting function? If \code{FALSE}, R version will be used.}
 
 \item{verbose}{If \code{TRUE}, all optimization methods in
 \code{\link[optimx:optimx]{optimx::optimx()}} are used, and print optimization information

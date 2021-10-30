@@ -13,18 +13,22 @@ t    <- seq(1, 365, 8)
 tout <- seq(1, 365, 1)
 y <- fFUN(par, t)
 
-methods <- c("AG", "Beck", "Elmore", "Gu", "Zhang", "Klos")
-suppressWarnings(fit_cpp <- curvefit(y, t, tout = tout, methods))
-suppressWarnings(fit   <- curvefit0(y, t, tout = tout, methods))
+methods <- c("AG", "Beck", "Elmore", "Gu", "Zhang", "Klos")[1:5]
+
+system.time(suppressWarnings(fit     <- curvefit0(y, t, tout = tout, methods)))
+# weird: cpp is much slower
+system.time(suppressWarnings(fit_cpp <- curvefit(y, t, tout = tout, methods, use.cpp = TRUE)))
 
 
 test_that("curvefit works", {
-    expect_equal(get_param(fit_cpp)[1:5], get_param(fit)[methods][1:5])
+    p1 = get_param(fit_cpp)[1:5]
+    p2 = get_param(fit)[methods][1:5]
+    expect_true(all.equal(p1, p2, tolerance = 1e-6))
     expect_silent(r <- get_param(list(fit)))
 
     # For Klos, the result of C++ is slightly different from that of R version.
     diff = get_fitting(fit_cpp)$ziter2 - get_fitting(fit)$ziter2
-    expect_true(max(abs(diff)) <= 1e-3)
+    expect_true(max(abs(diff)) <= 1e-6)
     expect_silent(dfit <- get_param(list(fit)))
 })
 

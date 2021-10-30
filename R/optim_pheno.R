@@ -83,7 +83,8 @@ optim_pheno <- function(
     ws   <- list() #record weights for every iteration
     ## 1. add weights updating methods here
     par   <- setNames(numeric(length(parnames))*NA, parnames)
-    ypred <- rep(NA, length(tout))
+    ypred <- rep(NA_real_, length(tout))
+    pred  <- rep(NA_real_, length(t))
 
     if (verbose){
         boundary <- list(...)[c('lower', 'upper')] %>% do.call(rbind, .) %>%
@@ -137,7 +138,8 @@ optim_pheno <- function(
                 # to adapt wTS, set iter = i-1; #20180910
                 # nptperyear, wfact = 0.5)
                 w <- tryCatch({
-                    wFUN(y, FUN(par, t), w, i, nptperyear, ...)
+                    if (use.cpp) FUN(par, t, pred) else pred = FUN(par, t)
+                    wFUN(y, pred, w, i, nptperyear, ...)
                 }, error = function(e) {
                     message(sprintf('[%s]: %s', sFUN, e$message))
                     return(w) #return original w

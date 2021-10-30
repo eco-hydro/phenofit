@@ -29,8 +29,8 @@ cdoubleLog_Klos <- function(par, t, pred) {
     invisible(.Call(`_phenofit_cdoubleLog_Klos`, par, t, pred))
 }
 
-f_goal_cpp <- function(par, fun, y, t, ypred, w = NULL, ylu = NULL) {
-    .Call(`_phenofit_f_goal_cpp`, par, fun, y, t, ypred, w, ylu)
+f_goal_cpp <- function(par, fun, y, t, pred, w = NULL, ylu = NULL) {
+    .Call(`_phenofit_f_goal_cpp`, par, fun, y, t, pred, w, ylu)
 }
 
 #' season_filter

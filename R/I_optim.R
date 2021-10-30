@@ -18,8 +18,8 @@ methods <- c(
 #' 'L-BFGS-B', 'nlm', 'nlminb', 'ucminf'`. \cr
 #' For `I_optimx`, other methods are also supported,
 #' e.g. `'spg','Rcgmin','Rvmmin', 'newuoa','bobyqa','nmkb','hjkb'`.
-#' @param use.cpp boolean, whether to use c++ defined fine fitting function? If
-#' `FALSE`, R version will be used.
+#' @param use.cpp (unstable, not used) boolean, whether to use c++ defined fine 
+#' fitting function? If `FALSE`, R version will be used.
 #' 
 #' @inherit opt_optim return
 #'

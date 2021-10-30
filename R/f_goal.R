@@ -16,11 +16,11 @@
 #' @export
 f_goal <- function(par, fun, y, t, pred, w, ylu, ...) {
 
-    if (missing(pred)) pred = y*0
     # FUN <- match.fun(fun)
     if (!all(is.finite(par))) return(9999)
 
     # fun is c++ function, pred address will be reused
+    # if (missing(pred)) pred = y*0
     # fun(par, t, pred)
     pred = fun(par, t)
     # If have no finite values, return 9999
@@ -37,6 +37,17 @@ f_goal <- function(par, fun, y, t, pred, w, ylu, ...) {
         SSE  <- sum((y - pred)^2)
     }
     return(SSE)
+}
+
+# REWRITE IN R VERSION, BECAUSE NEED TO IGNORE ADDITIONAL PARAMETERS.
+#' objective function of double logistics
+#'
+#' @inheritParams f_goal
+#'
+#' @keywords internal
+#' @export
+f_goal2 <- function(par, fun, y, t, pred, w = NULL, ylu = NULL, ...) {
+    .Call(`_phenofit_f_goal_cpp`, par, fun, y, t, pred, w, ylu)
 }
 
 # if (missing(w)) w <- rep(1, length(y))

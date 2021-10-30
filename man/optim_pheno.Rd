@@ -73,8 +73,8 @@ range of \code{ylu}.}
 
 \item{...}{other parameters passed to \code{\link[=I_optim]{I_optim()}} or \code{\link[=I_optimx]{I_optimx()}}.}
 
-\item{use.cpp}{boolean, whether to use c++ defined fine fitting function? If
-\code{FALSE}, R version will be used.}
+\item{use.cpp}{(unstable, not used) boolean, whether to use c++ defined fine
+fitting function? If \code{FALSE}, R version will be used.}
 }
 \value{
 A \code{\link[=fFIT]{fFIT()}} object, with the element of:

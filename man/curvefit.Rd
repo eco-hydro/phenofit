@@ -12,7 +12,7 @@ curvefit(
   methods = c("AG", "Beck", "Elmore", "Gu", "Klos", "Zhang"),
   w = NULL,
   ...,
-  use.cpp = TRUE
+  use.cpp = FALSE
 )
 
 curvefit0(
@@ -33,7 +33,13 @@ curvefit0(
 
 \item{methods}{Fine curve fitting methods, can be one or more of \code{c('AG', 'Beck', 'Elmore', 'Gu', 'Klos', 'Zhang')}.}
 
+\item{w}{(optional) Numeric vector, weights of \code{y}. If not specified,
+weights of all \code{NA} values will be \code{wmin}, the others will be 1.0.}
+
 \item{...}{other parameters passed to curve fitting function.}
+
+\item{use.cpp}{(unstable, not used) boolean, whether to use c++ defined fine
+fitting function? If \code{FALSE}, R version will be used.}
 }
 \value{
 fFITs S3 object, see \code{\link[=fFITs]{fFITs()}} for details.
