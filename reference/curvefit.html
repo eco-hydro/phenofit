@@ -144,7 +144,7 @@ fine curve fitting methods.</p>
   methods <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"AG"</span>, <span class='st'>"Beck"</span>, <span class='st'>"Elmore"</span>, <span class='st'>"Gu"</span>, <span class='st'>"Klos"</span>, <span class='st'>"Zhang"</span><span class='op'>)</span>,
   w <span class='op'>=</span> <span class='cn'>NULL</span>,
   <span class='va'>...</span>,
-  use.cpp <span class='op'>=</span> <span class='cn'>TRUE</span>
+  use.cpp <span class='op'>=</span> <span class='cn'>FALSE</span>
 <span class='op'>)</span>
 
 <span class='fu'>curvefit0</span><span class='op'>(</span>
@@ -176,8 +176,18 @@ fine curve fitting methods.</p>
       <td><p>Fine curve fitting methods, can be one or more of <code><a href='https://rdrr.io/r/base/c.html'>c('AG', 'Beck', 'Elmore', 'Gu', 'Klos', 'Zhang')</a></code>.</p></td>
     </tr>
     <tr>
+      <th>w</th>
+      <td><p>(optional) Numeric vector, weights of <code>y</code>. If not specified,
+weights of all <code>NA</code> values will be <code>wmin</code>, the others will be 1.0.</p></td>
+    </tr>
+    <tr>
       <th>...</th>
       <td><p>other parameters passed to curve fitting function.</p></td>
+    </tr>
+    <tr>
+      <th>use.cpp</th>
+      <td><p>(unstable, not used) boolean, whether to use c++ defined fine
+fitting function? If <code>FALSE</code>, R version will be used.</p></td>
     </tr>
     </table>
 

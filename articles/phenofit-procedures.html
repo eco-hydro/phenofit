@@ -194,7 +194,7 @@
 <span class="co">#&gt; 1 2010_1 0.191 0.538 3808. 0.0824 3893. 0.0440</span>
 <span class="co">#&gt; 2 2011_1 0.193 0.477 4180. 0.112  4275. 0.111 </span>
 <span class="co">#&gt; 3 2012_1 0.187 0.510 4542. 0.193  4643. 0.0970</span>
-<span class="co">#&gt; 4 2013_1 0.190 0.492 4903. 0.194  5010. 0.0723</span>
+<span class="co">#&gt; 4 2013_1 0.193 0.492 4904. 0.235  5009. 0.0746</span>
 <span class="co">#&gt; 5 2014_1 0.196 0.495 5275. 0.120  5375. 0.239 </span>
 <span class="co">#&gt; 6 2015_1 0.212 0.494 5639. 0.143  5725. 0.183 </span>
 <span class="co">#&gt; 7 2016_1 0.198 0.499 6002. 0.190  6095. 0.0781</span>
@@ -202,17 +202,17 @@
 <span class="va">dfit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_fitting.html">get_fitting</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">dfit</span><span class="op">)</span>
 <span class="co">#&gt;        flag          t      y QC_flag   meth    ziter1    ziter2</span>
-<span class="co">#&gt;   1: 2010_1 2010-02-13 0.1637    snow     AG 0.1904816 0.1904816</span>
-<span class="co">#&gt;   2: 2010_1 2010-02-13 0.1637    snow  Zhang 0.1896877 0.1896877</span>
-<span class="co">#&gt;   3: 2010_1 2010-02-13 0.1637    snow   Beck 0.1907506 0.1907506</span>
-<span class="co">#&gt;   4: 2010_1 2010-02-13 0.1637    snow Elmore 0.1905156 0.1905156</span>
-<span class="co">#&gt;   5: 2010_1 2010-02-13 0.1637    snow     Gu 0.1882405 0.1882405</span>
+<span class="co">#&gt;   1: 2010_1 2010-02-13 0.1637    snow     AG 0.1888952 0.1904816</span>
+<span class="co">#&gt;   2: 2010_1 2010-02-13 0.1637    snow  Zhang 0.1882279 0.1896877</span>
+<span class="co">#&gt;   3: 2010_1 2010-02-13 0.1637    snow   Beck 0.1889462 0.1907506</span>
+<span class="co">#&gt;   4: 2010_1 2010-02-13 0.1637    snow Elmore 0.1881396 0.1905156</span>
+<span class="co">#&gt;   5: 2010_1 2010-02-13 0.1637    snow     Gu 0.1877073 0.1883330</span>
 <span class="co">#&gt;  ---                                                            </span>
-<span class="co">#&gt; 741: 2016_1 2016-11-25 0.0711   cloud     AG 0.1960628 0.1960628</span>
-<span class="co">#&gt; 742: 2016_1 2016-11-25 0.0711   cloud  Zhang 0.1984970 0.1984970</span>
-<span class="co">#&gt; 743: 2016_1 2016-11-25 0.0711   cloud   Beck 0.1986940 0.1986940</span>
-<span class="co">#&gt; 744: 2016_1 2016-11-25 0.0711   cloud Elmore 0.1987223 0.1987223</span>
-<span class="co">#&gt; 745: 2016_1 2016-11-25 0.0711   cloud     Gu 0.1870382 0.1872110</span>
+<span class="co">#&gt; 741: 2016_1 2016-11-25 0.0711   cloud     AG 0.1931919 0.1960628</span>
+<span class="co">#&gt; 742: 2016_1 2016-11-25 0.0711   cloud  Zhang 0.1939346 0.1984970</span>
+<span class="co">#&gt; 743: 2016_1 2016-11-25 0.0711   cloud   Beck 0.1939838 0.1986943</span>
+<span class="co">#&gt; 744: 2016_1 2016-11-25 0.0711   cloud Elmore 0.1940210 0.1987223</span>
+<span class="co">#&gt; 745: 2016_1 2016-11-25 0.0711   cloud     Gu 0.1872110 0.1872110</span>
 
 <span class="co">## 2.5 Extract phenology</span>
 <span class="va">TRS</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.2</span>, <span class="fl">0.5</span><span class="op">)</span>
@@ -222,7 +222,7 @@
 <span class="co">#&gt; 1: 2010_1 2010-01-01      126      298      138      278      154      248</span>
 <span class="co">#&gt; 2: 2011_1 2011-01-01      142      279      151      271      163      257</span>
 <span class="co">#&gt; 3: 2012_1 2012-01-01      148      285      152      276      160      261</span>
-<span class="co">#&gt; 4: 2013_1 2013-01-01      142      294      147      282      154      262</span>
+<span class="co">#&gt; 4: 2013_1 2013-01-01      146      292      150      280      156      261</span>
 <span class="co">#&gt; 5: 2014_1 2014-01-01      143      272      151      268      163      263</span>
 <span class="co">#&gt; 6: 2015_1 2015-01-01      144      260      151      254      161      246</span>
 <span class="co">#&gt; 7: 2016_1 2016-01-01      147      282      151      271      159      253</span>
@@ -230,7 +230,7 @@
 <span class="co">#&gt; 1:     156     192     242 132 175 211 287     128      184        212      294</span>
 <span class="co">#&gt; 2:     163     210     258 145 181 240 276     141      185        236      280</span>
 <span class="co">#&gt; 3:     160     196     261 149 170 241 282     145      175        236      286</span>
-<span class="co">#&gt; 4:     155     187     262 144 165 237 290     139      170        230      294</span>
+<span class="co">#&gt; 4:     156     185     261 147 164 237 288     142      169        229      292</span>
 <span class="co">#&gt; 5:     162     227     262 146 179 252 274     142      183        249      276</span>
 <span class="co">#&gt; 6:     161     208     247 147 175 235 259     143      179        231      262</span>
 <span class="co">#&gt; 7:     159     190     252 149 169 229 279     144      174        223      282</span>
