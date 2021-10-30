@@ -82,6 +82,7 @@ get_pheno <- function(fits, method,
     lapply(res, tidy_pheno) %>% purrr::transpose()
 }
 
+#' @param fFITs `fFITs` object returned by [curvefit()]
 #' @param title_left String of growing season flag.
 #' @param showName_pheno Whether to show phenological methods names in the top panel?
 #'

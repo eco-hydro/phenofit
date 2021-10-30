@@ -71,13 +71,9 @@ curvefits <- function(
     ...)
 {
     if (all(is.na(INPUT$y))) return(NULL)
-
-    .options$fitting %<>% modifyList(options)
-    # if (missing(methods)) methods = .options$methods_fine
-    # if (missing(wFUN)) wFUN = get(.options$wFUN_fine)
-    .options$fitting$wFUN %<>% check_function()
+    set_options(fitting = options)
     opt = .options$fitting
-
+    
     QC_flag    <- INPUT$QC_flag
     nptperyear <- INPUT$nptperyear
     t          <- INPUT$t

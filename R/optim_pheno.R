@@ -14,8 +14,7 @@
 #' @param nptperyear Integer, number of images per year, passed to `wFUN`.
 #' Only [wTSM()] needs `nptperyear`. If not specified,
 #' `nptperyear` will be calculated based on `t`.
-#' @param ylu `ymin, ymax`, which is used to force `ypred` in the
-#' range of `ylu`.
+#' @param ylu `[ymin, ymax]`, which is used to force `ypred` in the range of `ylu`.
 #' @param tout Corresponding doy of prediction.
 #' @param method The name of optimization method to solve fine fitting, one of
 #' `'BFGS','CG','Nelder-Mead', 'L-BFGS-B', 'nlm', 'nlminb', 'ucminf'` and
@@ -41,9 +40,7 @@ optim_pheno <- function(
     y, t, tout, method,
     w, nptperyear, ylu,
     iters = 2, wFUN = wTSM,
-    lower = -Inf, upper = Inf,
-    constrain = TRUE,
-    verbose = FALSE, ..., use.cpp = FALSE)
+    lower = -Inf, upper = Inf, constrain = TRUE, verbose = FALSE, ..., use.cpp = FALSE)
 {
     if (!constrain) { lower = -Inf; upper = Inf}
     # sFUN = gsub("\\.", "_", sFUN )
@@ -124,7 +121,7 @@ optim_pheno <- function(
             # check whether convergence, only 1 row now
             if (opt[1, J_CONVCODE] != 0 & RMSE > 0.1*A) {
                 warning("Not convergent!")
-            }else{
+            } else {
                 par   <- opt[1, 1:npar, drop = FALSE]
                 # put opt par into prior for the next iteration,
                 # This step not consider in Julia, the induced difference is tiny.

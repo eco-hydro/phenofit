@@ -12,7 +12,7 @@ season_mov(INPUT, options = list(), ..., years.run = NULL)
 
 \item{options}{see details}
 
-\item{...}{others to \code{\link[=season]{season()}}}
+\item{...}{others parameter to \code{\link[=set_options]{set_options()}}}
 
 \item{years.run}{Numeric vector. Which years to run? If not specified, it is
 all years.}
@@ -54,7 +54,7 @@ plot_season(INPUT, brks, d)
 brks2 = season_input(INPUT, options)
 all.equal(brks2, brks)
 
-c(d_fit, info_peak) \%<-\% rough_fitting(INPUT)
+c(d_fit, info_peak) \%<-\% roughFit(INPUT)
 d_season = find_season.peaks(d_fit, info_peak)
 
 c(t, ypred) \%<-\% d_fit[, .(t, ziter2)]

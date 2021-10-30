@@ -9,7 +9,7 @@
 #' @param years.run Numeric vector. Which years to run? If not specified, it is
 #' all years.
 #' @param options see details
-#' @param ... others to [season()]
+#' @param ... others parameter to [set_options()]
 #'
 #' @section options:
 #' - `len_min`, `len_max`: minimum and maximum length (in the unit of days)
@@ -52,16 +52,12 @@ season_mov <- function(INPUT,
     ...,
     years.run = NULL)
 {
-    opt_old = .options$season
-    on.exit(.options$season <- opt_old)
-
-    .options$season %<>% modifyList(options) %>%
-        modifyList(list(...))
-    .options$season$wFUN %<>% check_function()
-    .options$season$rFUN %<>% check_function()
+    ## side effect on global parameter
+    # opt_old = .options$season
+    # on.exit(.options$season <- opt_old)
+    set_options(season = options, ...)
     opt = .options$season
-
-    if (opt$verbose) print(str(opt))
+    # if (opt$verbose) print(str(opt))
 
     lambda = opt$lambda
     has_lambda = !(is.null(lambda) || is.na(lambda))

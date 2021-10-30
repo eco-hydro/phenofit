@@ -47,6 +47,8 @@ in top title?}
 
 \item{...}{ignored.}
 
+\item{fFITs}{\code{fFITs} object returned by \code{\link[=curvefit]{curvefit()}}}
+
 \item{title_left}{String of growing season flag.}
 
 \item{showName_pheno}{Whether to show phenological methods names in the top panel?}

@@ -73,7 +73,7 @@
 #' @example inst/examples/ex-check_input.R
 #' @export
 check_input <- function(t, y, w, QC_flag,
-    nptperyear, south = FALSE, Tn = NULL,
+    nptperyear, south = FALSE, 
     wmin = 0.2,
     wsnow = 0.8,
     ymin, missval,
@@ -168,10 +168,8 @@ check_input <- function(t, y, w, QC_flag,
     # If still have na values after na.approx, just replace it with `missval`.
     y[is.na(y)] <- missval
 
-    if (!is_empty(Tn)){
-        Tn <- na.approx(Tn, maxgap = maxgap, na.rm = FALSE)
-    }
-    list(t = t, y0 = y0, y = y, w = w, QC_flag = QC_flag, Tn = Tn, ylu = ylu,
+    # if (!is_empty(Tn)) Tn <- na.approx(Tn, maxgap = maxgap, na.rm = FALSE)
+    list(t = t, y0 = y0, y = y, w = w, QC_flag = QC_flag, ylu = ylu,
         nptperyear = nptperyear, south = south,
         date_start = date_start, date_end = date_end)
 }

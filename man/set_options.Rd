@@ -20,6 +20,6 @@ rFUN: character, rough fitting function. \code{smooth_wWHIT}, \code{smooth_wSG} 
 set and get phenofit option
 }
 \examples{
-set_options(verbose_curvefit = FALSE)
-get_options("verbose_season")
+set_options(verbose = FALSE)
+get_options("season") \%>\% str()
 }

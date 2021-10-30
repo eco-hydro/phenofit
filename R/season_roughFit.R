@@ -19,6 +19,7 @@
 #'
 #' @param INPUT A list object with the elements of `t`, `y`, `w`,
 #' `Tn` (optional) and `ylu`, returned by [check_input()].
+#' @param options see details
 #' @param  ... ignored.
 #'
 #' @section options:
@@ -91,10 +92,9 @@
 #'
 #' @keywords internal
 #' @export
-rough_fitting <- function(INPUT,
-                          options = list(),
-                          frame = floor(INPUT$nptperyear / 5) * 2 + 1,
-                          ...) {
+roughFit <- function(INPUT, options = list(),
+    frame = floor(INPUT$nptperyear / 5) * 2 + 1, ...) 
+{
     if (all(is.na(INPUT$y))) return(NULL)
     
     south <- INPUT$south
@@ -102,10 +102,8 @@ rough_fitting <- function(INPUT,
     y <- INPUT$y
     nlen <- length(t)
     
-    .options$season %<>% modifyList(options) %>%
-        modifyList(list(frame = frame, ...))
-    .options$season$wFUN %<>% check_function()
-    .options$season$rFUN %<>% check_function()
+    set_options(season = options)
+    .options$season %<>% modifyList(list(frame = frame))
     opt <- .options$season
 
     c(nyear, years) %<-% guess_nyear(INPUT)
@@ -125,7 +123,6 @@ rough_fitting <- function(INPUT,
             INPUT[c("y", "t", "w", "ylu", "nptperyear")],
             opt[c("wFUN", "wmin", "iters")], listk(lambda, nf, frame)
         )
-        # str(param, 1)
         yfits <- do.call(opt$rFUN, param)
         ypred <- last(yfits$zs) # as.numeric(runmed(ypred, frame))
         alpha <- 0.01
@@ -148,13 +145,12 @@ rough_fitting <- function(INPUT,
             minpeakdistance = 0, minpeakheight = opt$ypeak_min,
             nups = nups, nyear = nyear)
         
-        if (.options$verbose_season) {
+        if (.options$season$verbose) {
             cat(sprintf(
                 "iloop = %d: lambda = %.1f, ntrough_PerYear = %.2f, npeak_PerYear = %.2f\n",
                 iloop, lambda, info_peak$ntrough_PerYear, info_peak$npeak_PerYear
             ))
         }
-
         if (!opt$adj.param) break
         pars <- adjustRoughParam(lambda, nf, frame, info_peak, nptperyear, opt$MaxPeaksPerYear, opt$MaxTroughsPerYear)
         if (pars$status == FALSE) break

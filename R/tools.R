@@ -103,15 +103,6 @@ select_vars <- function(x, pattern) {
     }
 }
 
-check_function <- function(fun) {
-    if (is.character(fun)) {
-        name = fun
-        fun = get(name)
-        attr(fun, "name") = name
-    }
-    return(fun)
-}
-
 #' @keywords internal
 #' @export
 zeallot::`%<-%`

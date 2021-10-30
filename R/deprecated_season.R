@@ -153,7 +153,7 @@ season <- function(
         npeak_PerYear   <- info_peak$npeak_PerYear
         ntrough_PerYear <- info_peak$ntrough_PerYear
 
-        if (.options$verbose_season)
+        if (verbose)
             cat(sprintf('iloop = %d: lambda = %.1f, ntrough_PerYear = %.2f, npeak_PerYear = %.2f\n',
                 iloop, lambda, ntrough_PerYear, npeak_PerYear))
         ## This module will automatically update lambda, nf and wHANTS

@@ -25,8 +25,7 @@ find_season.peaks <- function(
     old <- .options$season
     on.exit(options$season <- old)
 
-    .options$season %<>% modifyList(options) %>%
-        modifyList(list(...))
+    set_options(season = options, ...)
     list2env(.options$season, envir = environment())
 
     ypred = rfit %>% last() # ypred has no NA
@@ -111,8 +110,7 @@ find_season.default <- function(
     old <- .options$season
     on.exit(options$season <- old)
 
-    .options$season %<>% modifyList(options) %>%
-        modifyList(list(...))
+    set_options(season = options, ...)
     opt = .options$season
 
     if (is.null(nptperyear)) nptperyear = .options$nptperyear
@@ -120,7 +118,7 @@ find_season.default <- function(
 
     nups <- default_nups(nptperyear)
     info_peak = findpeaks_season(ypred, opt$r_max, opt$r_min,
-        minpeakdistance = opt$minpeakdistance, minpeakheight = opt$ypeak_min,
+        minpeakdistance = opt$minpeakdistance, minpeakheight = opt$ypeak_min, 
         nups = nups, nyear = NULL)
 
     years = NULL
@@ -142,28 +140,12 @@ find_season.default <- function(
 #' @keywords internal
 #' @importFrom utils str
 #' @export
-season_input <- function(INPUT,
-                       # rFUN, wFUN, lambda,
-                       options = NULL, verbose = FALSE, ...) {
-    # grasp all parameters
-    # params = as.list(environment()) %>% {.[seq(1, length(.)-1)]} # rm the last option
-    # .options为全局变量，内部修改存在潜在bug
-    .options$season %<>% modifyList(options)
-
-    # OPTIONS_default <- getOption("phenofit.season")
-    # options = modifyList(OPTIONS_default, options)
-    dots <- list(...)
-    ind <- match(names(dots), names(.options$season)) %>% which.notna()
-    if (length(ind) > 0) {
-        .options$season %<>% modifyList(dots[ind])
-        dots <- dots[-ind]
-    }
+season_input <- function(INPUT, options = NULL, verbose = FALSE, ...) 
+{
+    set_options(season = options, ...)
     if (verbose) print(str(.options$season))
-    # all of those parameters are put in options
 
-    # separate rough_fitting and find_season
-    c(d_fit, info_peak) %<-% rough_fitting(INPUT)
+    c(d_fit, info_peak) %<-% roughFit(INPUT)
     d_season = find_season.peaks(d_fit, info_peak)
     listk(fit = d_fit, dt = d_season)
-    # do.call(season, c(listk(INPUT), .options$season, dots))
 }

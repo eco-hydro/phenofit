@@ -19,7 +19,7 @@ test_that("find_season works", {
     brks2 = season_input(INPUT, options)
     expect_equal(brks2, brks)
 
-    c(d_fit, info_peak) %<-% rough_fitting(INPUT)
+    c(d_fit, info_peak) %<-% roughFit(INPUT)
     d_season1 = find_season.peaks(d_fit, info_peak)
 
     c(t, ypred) %<-% d_fit[, .(t, ziter2)]

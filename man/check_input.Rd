@@ -11,7 +11,6 @@ check_input(
   QC_flag,
   nptperyear,
   south = FALSE,
-  Tn = NULL,
   wmin = 0.2,
   wsnow = 0.8,
   ymin,

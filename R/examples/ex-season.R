@@ -18,7 +18,7 @@ plot_season(INPUT, brks, d)
 brks2 = season_input(INPUT, options)
 all.equal(brks2, brks)
 
-c(d_fit, info_peak) %<-% rough_fitting(INPUT)
+c(d_fit, info_peak) %<-% roughFit(INPUT)
 d_season = find_season.peaks(d_fit, info_peak)
 
 c(t, ypred) %<-% d_fit[, .(t, ziter2)]

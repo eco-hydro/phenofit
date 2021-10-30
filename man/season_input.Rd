@@ -12,7 +12,7 @@ season_input(INPUT, options = NULL, verbose = FALSE, ...)
 
 \item{options}{see details}
 
-\item{...}{others to \code{\link[=season]{season()}}}
+\item{...}{others parameter to \code{\link[=set_options]{set_options()}}}
 }
 \description{
 Growing season division (unstable version)

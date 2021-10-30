@@ -23,8 +23,7 @@ for details.}
 \item{w}{(optional) Numeric vector, weights of \code{y}. If not specified,
 weights of all \code{NA} values will be \code{wmin}, the others will be 1.0.}
 
-\item{ylu}{\verb{ymin, ymax}, which is used to force \code{ypred} in the
-range of \code{ylu}.}
+\item{ylu}{\verb{[ymin, ymax]}, which is used to force \code{ypred} in the range of \code{ylu}.}
 
 \item{...}{others will be ignored.}
 }

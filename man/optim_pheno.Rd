@@ -47,8 +47,7 @@ weights of all \code{NA} values will be \code{wmin}, the others will be 1.0.}
 Only \code{\link[=wTSM]{wTSM()}} needs \code{nptperyear}. If not specified,
 \code{nptperyear} will be calculated based on \code{t}.}
 
-\item{ylu}{\verb{ymin, ymax}, which is used to force \code{ypred} in the
-range of \code{ylu}.}
+\item{ylu}{\verb{[ymin, ymax]}, which is used to force \code{ypred} in the range of \code{ylu}.}
 
 \item{iters}{How many times curve fitting is implemented.}
 
