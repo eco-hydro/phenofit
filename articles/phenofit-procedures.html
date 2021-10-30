@@ -177,13 +177,6 @@
         maxExtendMonth <span class="op">=</span> <span class="va">maxExtendMonth</span>, minExtendMonth <span class="op">=</span> <span class="va">minExtendMonth</span>,
         minPercValid <span class="op">=</span> <span class="va">minPercValid</span>
     <span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt;   [curvefits] running 1 ... </span>
-<span class="co">#&gt;   [curvefits] running 2 ... </span>
-<span class="co">#&gt;   [curvefits] running 3 ... </span>
-<span class="co">#&gt;   [curvefits] running 4 ... </span>
-<span class="co">#&gt;   [curvefits] running 5 ... </span>
-<span class="co">#&gt;   [curvefits] running 6 ... </span>
-<span class="co">#&gt;   [curvefits] running 7 ...</span>
 
 <span class="co">## check the curve fitting parameters</span>
 <span class="va">l_param</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_param.html">get_param</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span>
@@ -191,49 +184,49 @@
 <span class="co">#&gt; # A tibble: 7 × 7</span>
 <span class="co">#&gt;   flag      mn    mx   sos    rsp   eos    rau</span>
 <span class="co">#&gt;   &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;</span>
-<span class="co">#&gt; 1 2010_1 0.191 0.538 3808. 0.0824 3893. 0.0440</span>
-<span class="co">#&gt; 2 2011_1 0.193 0.477 4180. 0.112  4275. 0.111 </span>
-<span class="co">#&gt; 3 2012_1 0.187 0.510 4542. 0.193  4643. 0.0970</span>
-<span class="co">#&gt; 4 2013_1 0.193 0.492 4904. 0.235  5009. 0.0746</span>
-<span class="co">#&gt; 5 2014_1 0.196 0.495 5275. 0.120  5375. 0.239 </span>
-<span class="co">#&gt; 6 2015_1 0.212 0.494 5639. 0.143  5725. 0.183 </span>
-<span class="co">#&gt; 7 2016_1 0.198 0.499 6002. 0.190  6095. 0.0781</span>
+<span class="co">#&gt; 1 2010_1 0.190 0.538 3808. 0.0827 3894. 0.0424</span>
+<span class="co">#&gt; 2 2011_1 0.194 0.477 4180. 0.113  4274. 0.113 </span>
+<span class="co">#&gt; 3 2012_1 0.189 0.514 4542. 0.196  4643. 0.0864</span>
+<span class="co">#&gt; 4 2013_1 0.190 0.493 4903. 0.190  5011. 0.0672</span>
+<span class="co">#&gt; 5 2014_1 0.198 0.494 5276. 0.122  5375. 0.289 </span>
+<span class="co">#&gt; 6 2015_1 0.212 0.493 5639. 0.142  5726. 0.169 </span>
+<span class="co">#&gt; 7 2016_1 0.198 0.501 6002. 0.186  6095. 0.0729</span>
 
 <span class="va">dfit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_fitting.html">get_fitting</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">dfit</span><span class="op">)</span>
 <span class="co">#&gt;        flag          t      y QC_flag   meth    ziter1    ziter2</span>
-<span class="co">#&gt;   1: 2010_1 2010-02-13 0.1637    snow     AG 0.1888952 0.1904816</span>
-<span class="co">#&gt;   2: 2010_1 2010-02-13 0.1637    snow  Zhang 0.1882279 0.1896877</span>
-<span class="co">#&gt;   3: 2010_1 2010-02-13 0.1637    snow   Beck 0.1889462 0.1907506</span>
-<span class="co">#&gt;   4: 2010_1 2010-02-13 0.1637    snow Elmore 0.1881396 0.1905156</span>
-<span class="co">#&gt;   5: 2010_1 2010-02-13 0.1637    snow     Gu 0.1877073 0.1883330</span>
+<span class="co">#&gt;   1: 2010_1 2010-01-25 0.1196    snow     AG 0.1887106 0.1900416</span>
+<span class="co">#&gt;   2: 2010_1 2010-01-25 0.1196    snow  Zhang 0.1879665 0.1893982</span>
+<span class="co">#&gt;   3: 2010_1 2010-01-25 0.1196    snow   Beck 0.1887318 0.1902582</span>
+<span class="co">#&gt;   4: 2010_1 2010-01-25 0.1196    snow Elmore 0.1880555 0.1902376</span>
+<span class="co">#&gt;   5: 2010_1 2010-01-25 0.1196    snow     Gu 0.1876624 0.1880027</span>
 <span class="co">#&gt;  ---                                                            </span>
-<span class="co">#&gt; 741: 2016_1 2016-11-25 0.0711   cloud     AG 0.1931919 0.1960628</span>
-<span class="co">#&gt; 742: 2016_1 2016-11-25 0.0711   cloud  Zhang 0.1939346 0.1984970</span>
-<span class="co">#&gt; 743: 2016_1 2016-11-25 0.0711   cloud   Beck 0.1939838 0.1986943</span>
-<span class="co">#&gt; 744: 2016_1 2016-11-25 0.0711   cloud Elmore 0.1940210 0.1987223</span>
-<span class="co">#&gt; 745: 2016_1 2016-11-25 0.0711   cloud     Gu 0.1872110 0.1872110</span>
+<span class="co">#&gt; 766: 2016_1 2016-12-12 0.1372    snow     AG 0.1932683 0.1962146</span>
+<span class="co">#&gt; 767: 2016_1 2016-12-12 0.1372    snow  Zhang 0.1938416 0.1979743</span>
+<span class="co">#&gt; 768: 2016_1 2016-12-12 0.1372    snow   Beck 0.1939461 0.1983255</span>
+<span class="co">#&gt; 769: 2016_1 2016-12-12 0.1372    snow Elmore 0.1940137 0.1983899</span>
+<span class="co">#&gt; 770: 2016_1 2016-12-12 0.1372    snow     Gu 0.1872110 0.1872110</span>
 
 <span class="co">## 2.5 Extract phenology</span>
 <span class="va">TRS</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.2</span>, <span class="fl">0.5</span><span class="op">)</span>
 <span class="va">l_pheno</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_pheno.html">get_pheno</a></span><span class="op">(</span><span class="va">fit</span>, TRS <span class="op">=</span> <span class="va">TRS</span>, IsPlot <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="co"># %&gt;% map(~melt_list(., "meth"))</span>
 <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">l_pheno</span><span class="op">$</span><span class="va">doy</span><span class="op">$</span><span class="va">Beck</span><span class="op">)</span>
 <span class="co">#&gt;      flag     origin TRS1.sos TRS1.eos TRS2.sos TRS2.eos TRS5.sos TRS5.eos</span>
-<span class="co">#&gt; 1: 2010_1 2010-01-01      126      298      138      278      154      248</span>
-<span class="co">#&gt; 2: 2011_1 2011-01-01      142      279      151      271      163      257</span>
-<span class="co">#&gt; 3: 2012_1 2012-01-01      148      285      152      276      160      261</span>
-<span class="co">#&gt; 4: 2013_1 2013-01-01      146      292      150      280      156      261</span>
-<span class="co">#&gt; 5: 2014_1 2014-01-01      143      272      151      268      163      263</span>
-<span class="co">#&gt; 6: 2015_1 2015-01-01      144      260      151      254      161      246</span>
-<span class="co">#&gt; 7: 2016_1 2016-01-01      147      282      151      271      159      253</span>
+<span class="co">#&gt; 1: 2010_1 2010-01-01      126      302      137      280      154      250</span>
+<span class="co">#&gt; 2: 2011_1 2011-01-01      143      278      151      270      163      257</span>
+<span class="co">#&gt; 3: 2012_1 2012-01-01      148      288      153      277      160      261</span>
+<span class="co">#&gt; 4: 2013_1 2013-01-01      142      298      147      284      154      262</span>
+<span class="co">#&gt; 5: 2014_1 2014-01-01      143      271      151      267      163      262</span>
+<span class="co">#&gt; 6: 2015_1 2015-01-01      144      262      150      256      161      248</span>
+<span class="co">#&gt; 7: 2016_1 2016-01-01      147      285      151      272      159      253</span>
 <span class="co">#&gt;    DER.sos DER.pos DER.eos  UD  SD  DD  RD Greenup Maturity Senescence Dormancy</span>
-<span class="co">#&gt; 1:     156     192     242 132 175 211 287     128      184        212      294</span>
-<span class="co">#&gt; 2:     163     210     258 145 181 240 276     141      185        236      280</span>
-<span class="co">#&gt; 3:     160     196     261 149 170 241 282     145      175        236      286</span>
-<span class="co">#&gt; 4:     156     185     261 147 164 237 288     142      169        229      292</span>
-<span class="co">#&gt; 5:     162     227     262 146 179 252 274     142      183        249      276</span>
-<span class="co">#&gt; 6:     161     208     247 147 175 235 259     143      179        231      262</span>
-<span class="co">#&gt; 7:     159     190     252 149 169 229 279     144      174        223      282</span>
+<span class="co">#&gt; 1:     155     191     243 132 175 211 290     128      184        214      296</span>
+<span class="co">#&gt; 2:     163     210     257 146 181 240 277     142      185        236      279</span>
+<span class="co">#&gt; 3:     160     194     261 150 170 239 284     145      175        233      288</span>
+<span class="co">#&gt; 4:     155     187     263 144 165 236 293     139      170        228      297</span>
+<span class="co">#&gt; 5:     163     230     262 146 179 253 273     142      183        250      274</span>
+<span class="co">#&gt; 6:     161     207     248 147 175 235 261     143      179        231      264</span>
+<span class="co">#&gt; 7:     159     189     252 148 170 228 281     144      175        221      284</span>
 
 <span class="va">pheno</span> <span class="op">&lt;-</span> <span class="va">l_pheno</span><span class="op">$</span><span class="va">doy</span> <span class="op">%&gt;%</span> <span class="fu"><a href="../reference/melt_list.html">melt_list</a></span><span class="op">(</span><span class="st">"meth"</span><span class="op">)</span></code></pre></div>
 </div>
