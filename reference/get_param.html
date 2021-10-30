@@ -135,23 +135,28 @@
     <p>Get parameters from curve fitting result</p>
     </div>
 
-    <pre class="usage"><span class='fu'>get_param</span><span class='op'>(</span><span class='va'>fits</span><span class='op'>)</span>
+    <pre class="usage"><span class='fu'>get_param</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
 
-<span class='fu'>get_param.fFITs</span><span class='op'>(</span><span class='va'>fFITs</span><span class='op'>)</span></pre>
+<span class='co'># S3 method for list</span>
+<span class='fu'>get_param</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
+
+<span class='co'># S3 method for fFITs</span>
+<span class='fu'>get_param</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>fits</th>
-      <td><p>Multiple methods curve fitting results by <code>curvefits</code> result.</p></td>
-    </tr>
-    <tr>
-      <th>fFITs</th>
-      <td><p><code>fFITs</code> object returned by <code><a href='curvefit.html'>curvefit()</a></code>.</p></td>
+      <th>x</th>
+      <td><p><code>fFITs</code> object returned by <code><a href='curvefit.html'>curvefit()</a></code>, or list of <code>fFITs</code> objects</p></td>
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>A list of <code>tibble</code> with the length being equal to the number of methods.
+Each line of <code>tibble</code> cotains the corresponding parameters of each growing
+season.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://github.com/eco-hydro/phenofit'>phenofit</a></span><span class='op'>)</span>

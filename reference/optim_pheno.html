@@ -153,7 +153,8 @@ curve fitting functions.</p>
   upper <span class='op'>=</span> <span class='cn'>Inf</span>,
   constrain <span class='op'>=</span> <span class='cn'>TRUE</span>,
   verbose <span class='op'>=</span> <span class='cn'>FALSE</span>,
-  <span class='va'>...</span>
+  <span class='va'>...</span>,
+  use.cpp <span class='op'>=</span> <span class='cn'>FALSE</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -235,14 +236,26 @@ range of <code>ylu</code>.</p></td>
       <th>...</th>
       <td><p>other parameters passed to <code><a href='I_optim.html'>I_optim()</a></code> or <code><a href='I_optim.html'>I_optimx()</a></code>.</p></td>
     </tr>
+    <tr>
+      <th>use.cpp</th>
+      <td><p>boolean, whether to use c++ defined fine fitting function? If
+<code>FALSE</code>, R version will be used.</p></td>
+    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>fFIT object, see <code><a href='fFIT.html'>fFIT()</a></code> for details.</p>
+    <p>A <code><a href='fFIT.html'>fFIT()</a></code> object, with the element of:</p><ul>
+<li><p><code>tout</code>: The time of output curve fitting time-series.</p></li>
+<li><p><code>zs</code>  : Smoothed vegetation time-series of every iteration.</p></li>
+<li><p><code>ws</code>  : Weights of every iteration.</p></li>
+<li><p><code>par</code> : Final optimized parameter of fine fitting.</p></li>
+<li><p><code>fun</code> : The name of fine fitting.</p></li>
+</ul>
+
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='FitDL.html'>FitDL()</a></code>, <code><a href='https://rdrr.io/r/stats/nlminb.html'>stats::nlminb()</a></code></p></div>
+    <div class='dont-index'><p><code><a href='fFIT.html'>fFIT()</a></code>, <code><a href='https://rdrr.io/r/stats/nlminb.html'>stats::nlminb()</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># library(magrittr)</span>

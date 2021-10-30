@@ -143,9 +143,9 @@ I_optimx: deprecated, which is about 10 times slower than I_optim.
 
     </div>
 
-    <pre class="usage"><span class='fu'>I_optim</span><span class='op'>(</span><span class='va'>prior</span>, <span class='va'>FUN</span>, <span class='va'>y</span>, <span class='va'>t</span>, method <span class='op'>=</span> <span class='st'>"BFGS"</span>, fn <span class='op'>=</span> <span class='va'>f_goal</span>, <span class='va'>...</span>, use.julia <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
+    <pre class="usage"><span class='fu'>I_optim</span><span class='op'>(</span><span class='va'>prior</span>, <span class='va'>FUN</span>, <span class='va'>y</span>, <span class='va'>t</span>, method <span class='op'>=</span> <span class='st'>"BFGS"</span>, <span class='va'>...</span>, use.cpp <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
 
-<span class='fu'>I_optimx</span><span class='op'>(</span><span class='va'>prior</span>, <span class='va'>FUN</span>, <span class='va'>y</span>, <span class='va'>t</span>, <span class='va'>method</span>, verbose <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='va'>...</span><span class='op'>)</span></pre>
+<span class='fu'>I_optimx</span><span class='op'>(</span><span class='va'>prior</span>, <span class='va'>FUN</span>, <span class='va'>y</span>, <span class='va'>t</span>, <span class='va'>method</span>, verbose <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='va'>...</span>, use.cpp <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -178,8 +178,9 @@ e.g. <code>'spg','Rcgmin','Rvmmin', 'newuoa','bobyqa','nmkb','hjkb'</code>.</p><
       <td><p>other parameters passed to <code>I_optim()</code> or <code>I_optimx()</code>.</p></td>
     </tr>
     <tr>
-      <th>use.julia</th>
-      <td><p>whether use julia nlminb optimization?</p></td>
+      <th>use.cpp</th>
+      <td><p>boolean, whether to use c++ defined fine fitting function? If
+<code>FALSE</code>, R version will be used.</p></td>
     </tr>
     <tr>
       <th>verbose</th>

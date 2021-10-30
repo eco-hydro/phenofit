@@ -135,20 +135,20 @@
     <p>Get curve fitting data.frame</p>
     </div>
 
-    <pre class="usage"><span class='fu'>get_fitting</span><span class='op'>(</span><span class='va'>fit</span><span class='op'>)</span>
+    <pre class="usage"><span class='fu'>get_fitting</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
 
-<span class='fu'>get_fitting.fFITs</span><span class='op'>(</span><span class='va'>fFITs</span><span class='op'>)</span></pre>
+<span class='co'># S3 method for list</span>
+<span class='fu'>get_fitting</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
+
+<span class='co'># S3 method for fFITs</span>
+<span class='fu'>get_fitting</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>fit</th>
-      <td><p>Object returned by <code>curvefits</code>.</p></td>
-    </tr>
-    <tr>
-      <th>fFITs</th>
-      <td><p><code>fFITs</code> object returned by <code><a href='curvefit.html'>curvefit()</a></code>.</p></td>
+      <th>x</th>
+      <td><p><code>fFITs</code> object returned by <code><a href='curvefit.html'>curvefit()</a></code>, or list of <code>fFITs</code> objects</p></td>
     </tr>
     </table>
 

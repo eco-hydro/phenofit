@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Double logistics functions — Logistic • phenofit</title>
+<title>Fine fitting functions — Logistic • phenofit</title>
 
 
 <!-- jquery -->
@@ -39,20 +39,9 @@
 
 
 
-<meta property="og:title" content="Double logistics functions — Logistic" />
-<meta property="og:description" content="Define double logistics, piecewise logistics and many other functions to
-curve fit VI time-series
-Logistic The traditional simplest logistic function. It can
-be only used in half growing season, i.e. vegetation green-up or senescence
-period.
-doubleLog.Zhang Piecewise logistics, (Zhang Xiaoyang, RSE, 2003).
-doubleAG Asymmetric Gaussian.
-doubleLog.Beck Beck logistics.
-doubleLog.Gu Gu logistics.
-doubleLog.Elmore Elmore logistics.
-doubleLog.Klos Klos logistics.
-
-" />
+<meta property="og:title" content="Fine fitting functions — Logistic" />
+<meta property="og:description" content="double logistics, piecewise logistics and many other functions to
+curve fit VI time-series." />
 
 
 
@@ -138,25 +127,14 @@ doubleLog.Klos Klos logistics.
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Double logistics functions</h1>
+    <h1>Fine fitting functions</h1>
     <small class="dont-index">Source: <a href='https://github.com/eco-hydro/phenofit/blob/master/R/doubleLogistics_R.R'><code>R/doubleLogistics_R.R</code></a></small>
     <div class="hidden name"><code>logistics.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Define double logistics, piecewise logistics and many other functions to
-curve fit VI time-series</p><ul>
-<li><p><code>Logistic</code> The traditional simplest logistic function. It can
-be only used in half growing season, i.e. vegetation green-up or senescence
-period.</p></li>
-<li><p><code>doubleLog.Zhang</code> Piecewise logistics, (Zhang Xiaoyang, RSE, 2003).</p></li>
-<li><p><code>doubleAG</code> Asymmetric Gaussian.</p></li>
-<li><p><code>doubleLog.Beck</code> Beck logistics.</p></li>
-<li><p><code>doubleLog.Gu</code> Gu logistics.</p></li>
-<li><p><code>doubleLog.Elmore</code> Elmore logistics.</p></li>
-<li><p><code>doubleLog.Klos</code> Klos logistics.</p></li>
-</ul>
-
+    <p>double logistics, piecewise logistics and many other functions to
+curve fit VI time-series.</p>
     </div>
 
     <pre class="usage"><span class='fu'>Logistic</span><span class='op'>(</span><span class='va'>par</span>, <span class='va'>t</span><span class='op'>)</span>
@@ -190,12 +168,60 @@ period.</p></li>
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>All of those function have <code>par</code> and <code>formula</code> attributes for the
+    
+<ul>
+<li><p><code>Logistic</code> The traditional simplest logistic function. It can
+be only used in half growing season, i.e. vegetation green-up or senescence
+period.</p></li>
+<li><p><code>doubleLog.Zhang</code> Piecewise logistics, (Zhang Xiaoyang, RSE, 2003).</p></li>
+<li><p><code>doubleAG</code> Asymmetric Gaussian.</p></li>
+<li><p><code>doubleLog.Beck</code> Beck logistics.</p></li>
+<li><p><code>doubleLog.Gu</code> Gu logistics.</p></li>
+<li><p><code>doubleLog.Elmore</code> Elmore logistics.</p></li>
+<li><p><code>doubleLog.Klos</code> Klos logistics.</p></li>
+</ul>
+
+<p>All of those function have <code>par</code> and <code>formula</code> attributes for the
 convenience for analytical D1 and D2</p>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
-    <p>Peter M. Atkinson, et al., 2012, RSE, 123:400-417</p>
+    
+<ol>
+<li><p>Beck, P.S.A., Atzberger, C., Hogda, K.A., Johansen, B., Skidmore, A.K.,
+2006. Improved monitoring of vegetation dynamics at very high latitudes:
+A new method using MODIS NDVI. Remote Sens. Environ.
+https://doi.org/10.1016/j.rse.2005.10.021.</p></li>
+<li><p>Elmore, A.J., Guinn, S.M., Minsley, B.J., Richardson, A.D., 2012.
+Landscape controls on the timing of spring, autumn, and growing season
+length in mid-Atlantic forests. Glob. Chang. Biol. 18, 656-674.
+https://doi.org/10.1111/j.1365-2486.2011.02521.x. <br /></p></li>
+<li><p>Gu, L., Post, W.M., Baldocchi, D.D., Black, TRUE.A., Suyker, A.E., Verma,
+S.B., Vesala, TRUE., Wofsy, S.C., 2009. Characterizing the Seasonal Dynamics
+of Plant Community Photosynthesis Across a Range of Vegetation Types,
+in: Noormets, A. (Ed.), Phenology of Ecosystem Processes: Applications
+in Global Change Research. Springer New York, New York, NY, pp. 35-58.
+https://doi.org/10.1007/978-1-4419-0026-5_2. <br /></p></li>
+<li><p>Peter M. Atkinson, et al., 2012, RSE, 123:400-417</p></li>
+<li><p>https://github.com/cran/phenopix/blob/master/R/FitDoubleLogGu.R</p></li>
+</ol>
 
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://github.com/eco-hydro/phenofit'>phenofit</a></span><span class='op'>)</span>
+<span class='co'># simulate vegetation time-series</span>
+<span class='va'>fFUN</span> <span class='op'>=</span> <span class='va'>doubleLog.Beck</span>
+<span class='va'>par</span>  <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span> mn  <span class='op'>=</span> <span class='fl'>0.1</span>, mx  <span class='op'>=</span> <span class='fl'>0.7</span>, sos <span class='op'>=</span> <span class='fl'>50</span>, rsp <span class='op'>=</span> <span class='fl'>0.1</span>, eos <span class='op'>=</span> <span class='fl'>250</span>, rau <span class='op'>=</span> <span class='fl'>0.1</span><span class='op'>)</span>
+<span class='va'>t</span>    <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>365</span>, <span class='fl'>8</span><span class='op'>)</span>
+<span class='va'>tout</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>365</span>, <span class='fl'>1</span><span class='op'>)</span>
+<span class='va'>y</span> <span class='op'>&lt;-</span> <span class='fu'>fFUN</span><span class='op'>(</span><span class='va'>par</span>, <span class='va'>t</span><span class='op'>)</span>
+<span class='va'>methods</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"AG"</span>, <span class='st'>"Beck"</span>, <span class='st'>"Elmore"</span>, <span class='st'>"Gu"</span>, <span class='st'>"Zhang"</span><span class='op'>)</span>
+
+<span class='va'>r</span> <span class='op'>&lt;-</span> <span class='fu'><a href='FitDL.html'>FitDL.AG</a></span><span class='op'>(</span><span class='va'>y</span>, <span class='va'>t</span>, <span class='va'>tout</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>t</span>, <span class='va'>y</span><span class='op'>)</span>
+</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/lines.html'>lines</a></span><span class='op'>(</span><span class='va'>tout</span>, <span class='va'>r</span><span class='op'>$</span><span class='va'>zs</span><span class='op'>$</span><span class='va'>iter2</span>, col <span class='op'>=</span> <span class='st'>"red"</span><span class='op'>)</span>
+</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/legend.html'>legend</a></span><span class='op'>(</span><span class='st'>'topright'</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>'Original time-series'</span>, <span class='st'>'AG smoothed'</span><span class='op'>)</span>, 
+    lty <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0</span>, <span class='fl'>1</span><span class='op'>)</span>, pch <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>16</span>, <span class='cn'>NA</span><span class='op'>)</span>, col <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"black"</span>, <span class='st'>"red"</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='img'><img src='logistics-1.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

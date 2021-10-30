@@ -167,13 +167,13 @@ and MOD16A2(ET, ET_QC).</p></li>
 
 <span class='fu'>qc_StateQA</span><span class='op'>(</span><span class='va'>QA</span>, wmin <span class='op'>=</span> <span class='fl'>0.2</span>, wmid <span class='op'>=</span> <span class='fl'>0.5</span>, wmax <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>
 
-<span class='fu'>qc_5l</span><span class='op'>(</span><span class='va'>QA</span>, wmin <span class='op'>=</span> <span class='fl'>0.2</span>, wmid <span class='op'>=</span> <span class='fl'>0.5</span>, wmax <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>
-
 <span class='fu'>qc_FparLai</span><span class='op'>(</span><span class='va'>QA</span>, FparLai_QC <span class='op'>=</span> <span class='cn'>NULL</span>, wmin <span class='op'>=</span> <span class='fl'>0.2</span>, wmid <span class='op'>=</span> <span class='fl'>0.5</span>, wmax <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>
 
-<span class='fu'>qc_NDVI3g</span><span class='op'>(</span><span class='va'>QA</span>, wmin <span class='op'>=</span> <span class='fl'>0.2</span>, wmid <span class='op'>=</span> <span class='fl'>0.5</span>, wmax <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>
+<span class='fu'>qc_5l</span><span class='op'>(</span><span class='va'>QA</span>, wmin <span class='op'>=</span> <span class='fl'>0.2</span>, wmid <span class='op'>=</span> <span class='fl'>0.5</span>, wmax <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>
 
 <span class='fu'>qc_NDVIv4</span><span class='op'>(</span><span class='va'>QA</span>, wmin <span class='op'>=</span> <span class='fl'>0.2</span>, wmid <span class='op'>=</span> <span class='fl'>0.5</span>, wmax <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>
+
+<span class='fu'>qc_NDVI3g</span><span class='op'>(</span><span class='va'>QA</span>, wmin <span class='op'>=</span> <span class='fl'>0.2</span>, wmid <span class='op'>=</span> <span class='fl'>0.5</span>, wmax <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>
 
 <span class='fu'>qc_SPOT</span><span class='op'>(</span><span class='va'>QA</span>, wmin <span class='op'>=</span> <span class='fl'>0.2</span>, wmid <span class='op'>=</span> <span class='fl'>0.5</span>, wmax <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span></pre>
 
@@ -225,6 +225,9 @@ and MOD16A2(ET, ET_QC).</p></li>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>If <code>FparLai_QC</code> specified, <code>I_margin = SCF_QC &gt;= 2 &amp; SCF_QC &lt;= 3</code>.</p>
+    <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
+
+    <p><code>qc_5l</code> and <code>qc_NDVIv4</code> only returns <code>weight</code>, without <code>QC_flag</code>.</p>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
     <p>https://developers.google.com/earth-engine/datasets/catalog/MODIS_006_MOD13A1</p>
