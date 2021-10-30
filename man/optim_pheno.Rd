@@ -20,7 +20,8 @@ optim_pheno(
   upper = Inf,
   constrain = TRUE,
   verbose = FALSE,
-  ...
+  ...,
+  use.cpp = FALSE
 )
 }
 \arguments{
@@ -71,9 +72,19 @@ range of \code{ylu}.}
 \item{verbose}{Whether to display intermediate variables?}
 
 \item{...}{other parameters passed to \code{\link[=I_optim]{I_optim()}} or \code{\link[=I_optimx]{I_optimx()}}.}
+
+\item{use.cpp}{boolean, whether to use c++ defined fine fitting function? If
+\code{FALSE}, R version will be used.}
 }
 \value{
-fFIT object, see \code{\link[=fFIT]{fFIT()}} for details.
+A \code{\link[=fFIT]{fFIT()}} object, with the element of:
+\itemize{
+\item \code{tout}: The time of output curve fitting time-series.
+\item \code{zs}  : Smoothed vegetation time-series of every iteration.
+\item \code{ws}  : Weights of every iteration.
+\item \code{par} : Final optimized parameter of fine fitting.
+\item \code{fun} : The name of fine fitting.
+}
 }
 \description{
 Interface of optimization functions for double logistics and other parametric
@@ -101,5 +112,5 @@ r <- optim_pheno(par0, sFUN, y, t, tout, method = methods[4],
                  nptperyear = 46, iters = 2, wFUN = wTSM, verbose = FALSE, use.julia = FALSE)
 }
 \seealso{
-\code{\link[=FitDL]{FitDL()}}, \code{\link[stats:nlminb]{stats::nlminb()}}
+\code{\link[=fFIT]{fFIT()}}, \code{\link[stats:nlminb]{stats::nlminb()}}
 }

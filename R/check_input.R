@@ -4,14 +4,17 @@
 
 # ' @param perc_wc critical percentage of good- and marginal- quality points for
 # ' `wc`.
+# ' @param Tn Numeric vector, night temperature, default is null. If provided,
+# ' Tn is used to help divide ungrowing period, and then get background value in
+# ' ungrowing season (see details in [phenofit::backval()]).
 
 #' check_input
 #'
 #' Check input data, interpolate NA values in y, remove spike values, and set
 #' weights for NA in y and w.
 #'
-#' @param t Numeric vector, `Date` variable
 #' @param y Numeric vector, vegetation index time-series
+#' @param t Numeric vector, `Date` variable
 #' @param w (optional) Numeric vector, weights of `y`. If not specified,
 #' weights of all `NA` values will be `wmin`, the others will be 1.0.
 #' @param QC_flag Factor (optional) returned by `qcFUN`, levels should be
@@ -21,9 +24,6 @@
 #' @param nptperyear Integer, number of images per year.
 #' @param south Boolean. In south hemisphere, growing year is 1 July to the
 #' following year 31 June; In north hemisphere, growing year is 1 Jan to 31 Dec.
-#' @param Tn Numeric vector, night temperature, default is null. If provided,
-#' Tn is used to help divide ungrowing period, and then get background value in
-#' ungrowing season (see details in [phenofit::backval()]).
 #' @param wmin Double, minimum weight of bad points, which could be smaller
 #' the weight of snow, ice and cloud.
 #' @param wsnow Doulbe. Reset the weight of snow points, after get `ylu`.
@@ -70,7 +70,6 @@
 #'      `y_good = y[w >= w_critical]`,  \cr
 #'      `ymin = pmax( quantile(y_good, alpha/2), 0)`  \cr `ymax = max(y_good)`.
 #'
-#' @seealso [phenofit::backval()]
 #' @example inst/examples/ex-check_input.R
 #' @export
 check_input <- function(t, y, w, QC_flag,

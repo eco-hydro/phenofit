@@ -51,7 +51,7 @@ process_phenofit <- function(
         d_obs %<>% mutate(QC_flag = ifelse(w >= 0.5, "good", "cloud"))
     }
 
-    INPUT <- check_input(d_obs$t, d_obs$y, d_obs$w,
+    INPUT <- check_input(d_obs$y, d_obs$t, d_obs$w,
         QC_flag = d_obs$QC_flag, nptperyear,
         maxgap = ceiling(nptperyear / 12 * 1.5),
         south = south,

@@ -1,7 +1,8 @@
-#' Double logistics functions
+#' Fine fitting functions
 #'
-#' Define double logistics, piecewise logistics and many other functions to
-#' curve fit VI time-series
+#' double logistics, piecewise logistics and many other functions to
+#' curve fit VI time-series.
+#' 
 #' * `Logistic` The traditional simplest logistic function. It can
 #'      be only used in half growing season, i.e. vegetation green-up or senescence
 #'      period.
@@ -11,15 +12,33 @@
 #' * `doubleLog.Gu` Gu logistics.
 #' * `doubleLog.Elmore` Elmore logistics.
 #' * `doubleLog.Klos` Klos logistics.
-#'
+#' 
 #' All of those function have `par` and `formula` attributes for the
 #' convenience for analytical D1 and D2
 #' 
 #' @param par A vector of parameters
 #' @param t A `Date` or numeric vector
-#' @references
-#' Peter M. Atkinson, et al., 2012, RSE, 123:400-417
 #' 
+#' @references
+#' 1. Beck, P.S.A., Atzberger, C., Hogda, K.A., Johansen, B., Skidmore, A.K.,
+#'      2006. Improved monitoring of vegetation dynamics at very high latitudes:
+#'      A new method using MODIS NDVI. Remote Sens. Environ.
+#'      https://doi.org/10.1016/j.rse.2005.10.021.
+#' 2. Elmore, A.J., Guinn, S.M., Minsley, B.J., Richardson, A.D., 2012.
+#'      Landscape controls on the timing of spring, autumn, and growing season
+#'      length in mid-Atlantic forests. Glob. Chang. Biol. 18, 656-674.
+#'      https://doi.org/10.1111/j.1365-2486.2011.02521.x. \cr
+#'
+#' 3. Gu, L., Post, W.M., Baldocchi, D.D., Black, TRUE.A., Suyker, A.E., Verma,
+#'      S.B., Vesala, TRUE., Wofsy, S.C., 2009. Characterizing the Seasonal Dynamics
+#'      of Plant Community Photosynthesis Across a Range of Vegetation Types,
+#'      in: Noormets, A. (Ed.), Phenology of Ecosystem Processes: Applications
+#'      in Global Change Research. Springer New York, New York, NY, pp. 35-58.
+#'      https://doi.org/10.1007/978-1-4419-0026-5_2. \cr
+#' 4. Peter M. Atkinson, et al., 2012, RSE, 123:400-417
+#'
+#' 5. https://github.com/cran/phenopix/blob/master/R/FitDoubleLogGu.R
+#' @example inst/examples/ex-FitDL.R
 #' @rdname logistics
 #' @export
 Logistic = function(par, t){
@@ -195,8 +214,9 @@ doubleLog.Klos = function(par, t) {
     q2 = par[11]
     v1 = par[12]
     v2 = par[13]
-    pred = (a1*t + b1) + (a2*t^2 + b2*t + c) * (1/(1 + q1 * exp(-B1 * (t - m1)))^v1
-        - 1/(1 + q2 * exp(-B2 * (t - m2)))^v2)
+    pred = (a1*t + b1) + (a2*t^2 + b2*t + c) * 
+        (1/(1 + q1 * exp(-B1 * (t - m1)))^v1 - 
+         1/(1 + q2 * exp(-B2 * (t - m2)))^v2 )
     return(pred)
 }
 attr(doubleLog.Klos, 'par')     = c('a1', 'a2', 'b1', 'b2', 'c', 'B1', 'B2',

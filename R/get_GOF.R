@@ -2,9 +2,8 @@
 #'
 #' Goodness-of-fitting (GOF) of fine curve fitting results.
 #'
-#' @param fit Object returned by `curvefits`.
-#' @param fFITs `fFITs` object returned by [curvefit()].
-#'
+#' @inheritParams get_param
+#' 
 #' @return
 #' - `meth`: The name of fine curve fitting method
 #' - `RMSE`: Root Mean Square Error
@@ -22,24 +21,31 @@
 #'
 #' @example inst/examples/ex-get_fitting_param_GOF.R
 #' @export
-get_GOF <- function(fit){
-    map_df(fit, get_GOF.fFITs, .id = "flag") %>% data.table()
+#'
+#' @example inst/examples/ex-get_fitting_param_GOF.R
+#' @export
+get_GOF <- function(x) UseMethod("get_GOF", x)
+
+#' @rdname get_GOF
+#' @export
+get_GOF.list <- function(x){
+    map_df(x, get_GOF.fFITs, .id = "flag") %>% data.table()
 }
 
 #' @rdname get_GOF
 #' @export
-get_GOF.fFITs <- function(fFITs){
-    models = fFITs$model
+get_GOF.fFITs <- function(x){
+    models = x$model
     methods <- names(models)
     nmeth   <- length(methods)
 
-    t     <- fFITs$data$t
-    tout  <- fFITs$tout
+    t     <- x$data$t
+    tout  <- x$tout
     ti    <- intersect(t, tout)
     I_org <- match(ti, t)
     I_sim <- match(ti, tout)
 
-    Y_obs  <- fFITs$data$y[I_org]
+    Y_obs  <- x$data$y[I_org]
     # Y_sim  <- map(x$fFIT, ~last(.$fits))
 
     # The following script assume that tout in every method is equal length.

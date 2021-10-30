@@ -2,17 +2,18 @@
 % Please edit documentation in R/get_GOF.R
 \name{get_GOF}
 \alias{get_GOF}
+\alias{get_GOF.list}
 \alias{get_GOF.fFITs}
 \title{get_GOF}
 \usage{
-get_GOF(fit)
+get_GOF(x)
 
-get_GOF.fFITs(fFITs)
+\method{get_GOF}{list}(x)
+
+\method{get_GOF}{fFITs}(x)
 }
 \arguments{
-\item{fit}{Object returned by \code{curvefits}.}
-
-\item{fFITs}{\code{fFITs} object returned by \code{\link[=curvefit]{curvefit()}}.}
+\item{x}{\code{fFITs} object returned by \code{\link[=curvefit]{curvefit()}}, or list of \code{fFITs} objects}
 }
 \value{
 \itemize{
@@ -29,6 +30,22 @@ get_GOF.fFITs(fFITs)
 Goodness-of-fitting (GOF) of fine curve fitting results.
 }
 \examples{
+library(phenofit)
+# simulate vegetation time-series
+fFUN = doubleLog.Beck
+par  = c( mn  = 0.1, mx  = 0.7, sos = 50, rsp = 0.1, eos = 250, rau = 0.1)
+t    <- seq(1, 365, 8)
+tout <- seq(1, 365, 1)
+y <- fFUN(par, t)
+methods <- c("AG", "Beck", "Elmore", "Gu", "Zhang") # "Klos" too slow
+fFITs <- curvefit(y, t, tout, methods)
+# multiple years
+fits  <- list(`2001` = fFITs, `2002` = fFITs)
+
+l_param   <- get_param(fits)
+d_GOF     <- get_GOF(fits)
+d_fitting <- get_fitting(fits)
+l_pheno   <- get_pheno(fits, "AG", IsPlot=TRUE)
 library(phenofit)
 # simulate vegetation time-series
 fFUN = doubleLog.Beck

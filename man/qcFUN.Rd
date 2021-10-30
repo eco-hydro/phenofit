@@ -4,10 +4,10 @@
 \alias{getBits}
 \alias{qc_summary}
 \alias{qc_StateQA}
-\alias{qc_5l}
 \alias{qc_FparLai}
-\alias{qc_NDVI3g}
+\alias{qc_5l}
 \alias{qc_NDVIv4}
+\alias{qc_NDVI3g}
 \alias{qc_SPOT}
 \title{Initial weights according to qc}
 \usage{
@@ -17,13 +17,13 @@ qc_summary(QA, wmin = 0.2, wmid = 0.5, wmax = 1)
 
 qc_StateQA(QA, wmin = 0.2, wmid = 0.5, wmax = 1)
 
-qc_5l(QA, wmin = 0.2, wmid = 0.5, wmax = 1)
-
 qc_FparLai(QA, FparLai_QC = NULL, wmin = 0.2, wmid = 0.5, wmax = 1)
 
-qc_NDVI3g(QA, wmin = 0.2, wmid = 0.5, wmax = 1)
+qc_5l(QA, wmin = 0.2, wmid = 0.5, wmax = 1)
 
 qc_NDVIv4(QA, wmin = 0.2, wmid = 0.5, wmax = 1)
+
+qc_NDVI3g(QA, wmin = 0.2, wmid = 0.5, wmax = 1)
 
 qc_SPOT(QA, wmin = 0.2, wmid = 0.5, wmax = 1)
 }
@@ -68,6 +68,9 @@ and MOD16A2(ET, ET_QC).
 }
 \details{
 If \code{FparLai_QC} specified, \code{I_margin = SCF_QC >= 2 & SCF_QC <= 3}.
+}
+\note{
+\code{qc_5l} and \code{qc_NDVIv4} only returns \code{weight}, without \code{QC_flag}.
 }
 \examples{
 set.seed(100)

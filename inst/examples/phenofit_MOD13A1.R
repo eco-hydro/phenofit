@@ -22,7 +22,7 @@ wFUN = wTSM
 ## 1. check_input
 # add one year in head and tail
 # dnew     <- add_HeadTail(d, south = south, nptperyear = nptperyear)
-INPUT <- check_input(dnew$t, dnew$y, dnew$w, QC_flag = dnew$QC_flag,
+INPUT <- check_input(dnew$y, dnew$t, dnew$w, QC_flag = dnew$QC_flag,
      nptperyear = nptperyear, south = south,
      maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
 

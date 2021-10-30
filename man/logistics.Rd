@@ -9,7 +9,7 @@
 \alias{doubleLog.Elmore}
 \alias{doubleLog.Gu}
 \alias{doubleLog.Klos}
-\title{Double logistics functions}
+\title{Fine fitting functions}
 \usage{
 Logistic(par, t)
 
@@ -33,8 +33,10 @@ doubleLog.Klos(par, t)
 \item{t}{A \code{Date} or numeric vector}
 }
 \description{
-Define double logistics, piecewise logistics and many other functions to
-curve fit VI time-series
+double logistics, piecewise logistics and many other functions to
+curve fit VI time-series.
+}
+\details{
 \itemize{
 \item \code{Logistic} The traditional simplest logistic function. It can
 be only used in half growing season, i.e. vegetation green-up or senescence
@@ -46,11 +48,43 @@ period.
 \item \code{doubleLog.Elmore} Elmore logistics.
 \item \code{doubleLog.Klos} Klos logistics.
 }
-}
-\details{
+
 All of those function have \code{par} and \code{formula} attributes for the
 convenience for analytical D1 and D2
 }
+\examples{
+library(phenofit)
+# simulate vegetation time-series
+fFUN = doubleLog.Beck
+par  = c( mn  = 0.1, mx  = 0.7, sos = 50, rsp = 0.1, eos = 250, rau = 0.1)
+t    <- seq(1, 365, 8)
+tout <- seq(1, 365, 1)
+y <- fFUN(par, t)
+methods <- c("AG", "Beck", "Elmore", "Gu", "Zhang")
+
+r <- FitDL.AG(y, t, tout)
+plot(t, y)
+lines(tout, r$zs$iter2, col = "red")
+legend('topright', c('Original time-series', 'AG smoothed'), 
+    lty = c(0, 1), pch = c(16, NA), col = c("black", "red"))
+}
 \references{
-Peter M. Atkinson, et al., 2012, RSE, 123:400-417
+\enumerate{
+\item Beck, P.S.A., Atzberger, C., Hogda, K.A., Johansen, B., Skidmore, A.K.,
+2006. Improved monitoring of vegetation dynamics at very high latitudes:
+A new method using MODIS NDVI. Remote Sens. Environ.
+https://doi.org/10.1016/j.rse.2005.10.021.
+\item Elmore, A.J., Guinn, S.M., Minsley, B.J., Richardson, A.D., 2012.
+Landscape controls on the timing of spring, autumn, and growing season
+length in mid-Atlantic forests. Glob. Chang. Biol. 18, 656-674.
+https://doi.org/10.1111/j.1365-2486.2011.02521.x. \cr
+\item Gu, L., Post, W.M., Baldocchi, D.D., Black, TRUE.A., Suyker, A.E., Verma,
+S.B., Vesala, TRUE., Wofsy, S.C., 2009. Characterizing the Seasonal Dynamics
+of Plant Community Photosynthesis Across a Range of Vegetation Types,
+in: Noormets, A. (Ed.), Phenology of Ecosystem Processes: Applications
+in Global Change Research. Springer New York, New York, NY, pp. 35-58.
+https://doi.org/10.1007/978-1-4419-0026-5_2. \cr
+\item Peter M. Atkinson, et al., 2012, RSE, 123:400-417
+\item https://github.com/cran/phenopix/blob/master/R/FitDoubleLogGu.R
+}
 }

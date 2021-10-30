@@ -2,17 +2,23 @@
 % Please edit documentation in R/get_param.R
 \name{get_param}
 \alias{get_param}
+\alias{get_param.list}
 \alias{get_param.fFITs}
 \title{Get parameters from curve fitting result}
 \usage{
-get_param(fits)
+get_param(x)
 
-get_param.fFITs(fFITs)
+\method{get_param}{list}(x)
+
+\method{get_param}{fFITs}(x)
 }
 \arguments{
-\item{fits}{Multiple methods curve fitting results by \code{curvefits} result.}
-
-\item{fFITs}{\code{fFITs} object returned by \code{\link[=curvefit]{curvefit()}}.}
+\item{x}{\code{fFITs} object returned by \code{\link[=curvefit]{curvefit()}}, or list of \code{fFITs} objects}
+}
+\value{
+A list of \code{tibble} with the length being equal to the number of methods.
+Each line of \code{tibble} cotains the corresponding parameters of each growing
+season.
 }
 \description{
 Get parameters from curve fitting result

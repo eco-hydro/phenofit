@@ -57,6 +57,7 @@ doubleLog_Klos <- function(par, t, pred) {
     doubleLogMain(`_phenofit_cdoubleLog_Klos`, par, t, pred)
 }
 
+# REWRITE IN R VERSION, BECAUSE NEED TO IGNORE ADDITIONAL PARAMETERS.
 #' objective function of double logistics
 #' 
 #' @inheritParams f_goal

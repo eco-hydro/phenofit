@@ -2,17 +2,18 @@
 % Please edit documentation in R/get_fitting.R
 \name{get_fitting}
 \alias{get_fitting}
+\alias{get_fitting.list}
 \alias{get_fitting.fFITs}
 \title{getFittings}
 \usage{
-get_fitting(fit)
+get_fitting(x)
 
-get_fitting.fFITs(fFITs)
+\method{get_fitting}{list}(x)
+
+\method{get_fitting}{fFITs}(x)
 }
 \arguments{
-\item{fit}{Object returned by \code{curvefits}.}
-
-\item{fFITs}{\code{fFITs} object returned by \code{\link[=curvefit]{curvefit()}}.}
+\item{x}{\code{fFITs} object returned by \code{\link[=curvefit]{curvefit()}}, or list of \code{fFITs} objects}
 }
 \description{
 Get curve fitting data.frame

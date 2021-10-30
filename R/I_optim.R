@@ -18,8 +18,9 @@ methods <- c(
 #' 'L-BFGS-B', 'nlm', 'nlminb', 'ucminf'`. \cr
 #' For `I_optimx`, other methods are also supported,
 #' e.g. `'spg','Rcgmin','Rvmmin', 'newuoa','bobyqa','nmkb','hjkb'`.
-#' @param use.julia whether use julia nlminb optimization?
-#'
+#' @param use.cpp boolean, whether to use c++ defined fine fitting function? If
+#' `FALSE`, R version will be used.
+#' 
 #' @inherit opt_optim return
 #'
 #' @seealso [stats::optim()], [stats::nlminb()],
@@ -30,10 +31,11 @@ methods <- c(
 #'
 #' @keywords internal
 #' @export
-I_optim <- function(prior, FUN, y, t, method = "BFGS", fn = f_goal, ...,
-    use.julia = FALSE)
-{
+I_optim <- function(prior, FUN, y, t, method = "BFGS", ..., use.cpp = FALSE) {
+
+    fn = ifelse(use.cpp, f_goal2, f_goal)
     pred = y*0
+
     if (is.vector(prior)) prior <- t(prior)
     prior2 <- set_colnames(prior, NULL)
 
@@ -56,21 +58,12 @@ I_optim <- function(prior, FUN, y, t, method = "BFGS", fn = f_goal, ...,
         for (j in 1:nrow(prior)) {
             par0 <- prior2[j, ]
 
-            if (optFUN_name == "opt_nlminb" && use.julia) {
-                FUN_name = attr(FUN, "name")
-                r   <- opt_nlminb_julia(par0, FUN_name, y, t, ...) # w, ylu
-                ans <- c(r$par, value = r$objective,
-                    fevals   = r$evaluations[[1]],
-                    niter    = r$iterations,
-                    convcode = r$convergence)
-            } else {
-                optFUN <- get(optFUN_name, mode = "function")
-                r   <-  optFUN(par0, method = meth,
-                    objective = fn, fun = FUN, y = y, t = t, pred = pred, ...)
-                ans <- c(r$par, value = r$value,
-                    fevals   = r$fevals[[1]], niter  = r$nitns,
-                    convcode = r$convcode)
-            }
+            optFUN <- get(optFUN_name, mode = "function")
+            r   <-  optFUN(par0, method = meth,
+                objective = fn, fun = FUN, y = y, t = t, pred = pred, ...)
+            ans <- c(r$par, value = r$value,
+                fevals   = r$fevals[[1]], niter  = r$nitns,
+                convcode = r$convcode)
             lst[[j]] <- ans
         }
         res[[i]] <- do.call(rbind, lst) # %>% as.data.frame() %>% set_colnames(colnames)
@@ -89,14 +82,15 @@ I_optim <- function(prior, FUN, y, t, method = "BFGS", fn = f_goal, ...,
 #'
 #' @keywords internal
 #' @export
-I_optimx <- function(prior, FUN, y, t, method, verbose = FALSE, ...){
+I_optimx <- function(prior, FUN, y, t, method, verbose = FALSE, ..., use.cpp = FALSE) {
+    fn = ifelse(use.cpp, f_goal2, f_goal)
     pred = y*0
     if (is.vector(prior)) prior <- t(prior)
 
     # add method column
     opt.lst <- map(1:nrow(prior), function(i) {
         optimx(prior[i, ],
-            method = method, fn = f_goal, fun = FUN, y = y, t = t, pred = pred, ...,
+            method = method, fn = fn, fun = FUN, y = y, t = t, pred = pred, ...,
             control = list(maxit = 1000, all.methods = verbose, dowarn = FALSE)
         )
     })

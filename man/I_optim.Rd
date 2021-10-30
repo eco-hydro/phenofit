@@ -5,9 +5,9 @@
 \alias{I_optimx}
 \title{Interface of unified optimization functions.}
 \usage{
-I_optim(prior, FUN, y, t, method = "BFGS", fn = f_goal, ..., use.julia = FALSE)
+I_optim(prior, FUN, y, t, method = "BFGS", ..., use.cpp = FALSE)
 
-I_optimx(prior, FUN, y, t, method, verbose = FALSE, ...)
+I_optimx(prior, FUN, y, t, method, verbose = FALSE, ..., use.cpp = FALSE)
 }
 \arguments{
 \item{prior}{A vector of initial values for the parameters for which optimal
@@ -25,7 +25,8 @@ e.g. \verb{'spg','Rcgmin','Rvmmin', 'newuoa','bobyqa','nmkb','hjkb'}.}
 
 \item{...}{other parameters passed to \code{\link[=I_optim]{I_optim()}} or \code{\link[=I_optimx]{I_optimx()}}.}
 
-\item{use.julia}{whether use julia nlminb optimization?}
+\item{use.cpp}{boolean, whether to use c++ defined fine fitting function? If
+\code{FALSE}, R version will be used.}
 
 \item{verbose}{If \code{TRUE}, all optimization methods in
 \code{\link[optimx:optimx]{optimx::optimx()}} are used, and print optimization information

@@ -2,6 +2,7 @@
 % Please edit documentation in R/curvefit.R
 \name{curvefit}
 \alias{curvefit}
+\alias{curvefit0}
 \title{Fine curve fitting}
 \usage{
 curvefit(
@@ -9,6 +10,17 @@ curvefit(
   t = index(y),
   tout = t,
   methods = c("AG", "Beck", "Elmore", "Gu", "Klos", "Zhang"),
+  w = NULL,
+  ...,
+  use.cpp = TRUE
+)
+
+curvefit0(
+  y,
+  t = index(y),
+  tout = t,
+  methods = c("AG", "Beck", "Elmore", "Gu", "Klos", "Zhang"),
+  w = NULL,
   ...
 )
 }
@@ -49,11 +61,8 @@ tout <- seq(1, 365, 1)
 y <- fFUN(par, t)
 
 methods <- c("AG", "Beck", "Elmore", "Gu", "Zhang") # "Klos" too slow
-fFITs <- curvefit(y, t, tout, methods)
+fFITs <- curvefit(y, t, tout = tout, methods)
 }
 \seealso{
-\code{\link[=fFITs]{fFITs()}},
-\code{\link[=FitDL.AG]{FitDL.AG()}}, \code{\link[=FitDL.Beck]{FitDL.Beck()}},
-\code{\link[=FitDL.Elmore]{FitDL.Elmore()}}, \code{\link[=FitDL.Gu]{FitDL.Gu()}},
-\code{\link[=FitDL.Klos]{FitDL.Klos()}}, \code{\link[=FitDL.Zhang]{FitDL.Zhang()}}
+\code{\link[=fFITs]{fFITs()}}
 }
