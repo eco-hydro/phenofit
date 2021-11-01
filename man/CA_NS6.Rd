@@ -11,7 +11,7 @@ An object of class \code{data.table} (inherits from \code{data.frame}) with 161 
 data('CA_NS6')
 }
 \description{
-Variables in CA-NS6:
+Variables in \code{CA-NS6}:
 \itemize{
 \item \code{site}: site name
 \item \code{y}: EVI

@@ -39,7 +39,7 @@
 
 #' MOD13A1 EVI observations at flux site CA-NS6
 #' 
-#' Variables in CA-NS6:
+#' Variables in `CA-NS6`:
 #' - `site`: site name 
 #' - `y`: EVI
 #' - `date`: date of image
@@ -51,3 +51,18 @@
 #' @usage
 #' data('CA_NS6')
 "CA_NS6"
+
+#' input object with one growing season per year
+#' 
+#' Variables in `input_single`:
+#' - `t`: date of compositing image
+#' - `y`: EVI
+#' - `w`: weights of data point
+#' - `ylu`: lower and upper boundary
+#' - `nptperyear`: points per year
+#' - `south`: boolean, whether in south Hemisphere?
+#' 
+#' @docType data
+#' @usage
+#' data('input_single')
+"input_single"

@@ -66,6 +66,9 @@ season regions:
   Dynamic growing season pattern is the most challenging task, which also means
   that large uncertainty might be exists.
 
+  When using `wHANTS` as the rough fitting function, `r_min` is suggested setting as zero.
+  
+
 - Use only one iteration in fine fitting procedure.
 
 
