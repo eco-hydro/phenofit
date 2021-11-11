@@ -116,6 +116,7 @@ roughFit <- function(INPUT, options = list(),
     ylu0 <- INPUT$ylu
     A0 <- diff(ylu0)
     ylu <- ylu0
+    rFUN = check_function(opt$rFUN)
 
     nups <- default_nups(nptperyear)
     for (iloop in 1:3) {

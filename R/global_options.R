@@ -104,7 +104,7 @@ set_options <- function(...) {
     
     .options$fitting$wFUN %<>% check_function()
     .options$season$wFUN %<>% check_function()
-    .options$season$rFUN %<>% check_function()
+    # .options$season$rFUN %<>% check_function()
     invisible()
 }
 

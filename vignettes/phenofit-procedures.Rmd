@@ -75,7 +75,7 @@ INPUT <- check_input(d$t, d$y, d$w,
 )
 
 brks <- season_mov(INPUT,
-    list(FUN = smooth_wWHIT, wFUN = wFUN,
+    list(FUN = "smooth_wWHIT", wFUN = wFUN,
         maxExtendMonth = 3,
         wmin = wmin, r_min = 0.1
     ))

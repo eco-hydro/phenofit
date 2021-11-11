@@ -47,7 +47,7 @@ INPUT <- check_input(d$t, d$y, d$w,
 
 wFUN <- "wTSM"
 # all year as a whole
-options = list(rFUN = smooth_wWHIT, wFUN = wFUN, lambda = 10)
+options = list(rFUN = "smooth_wWHIT", wFUN = wFUN, lambda = 10)
 brks <- season(INPUT, lambda = 10)
 plot_season(INPUT, brks, d)
 

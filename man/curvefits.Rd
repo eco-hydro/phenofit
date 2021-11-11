@@ -67,7 +67,7 @@ INPUT <- check_input(d$t, d$y, d$w, QC_flag = d$QC_flag,
 wFUN <- "wTSM"
 brks2 <- season_mov(INPUT,
     options = list(
-        rFUN = smooth_wWHIT, wFUN = wFUN,
+        rFUN = "smooth_wWHIT", wFUN = wFUN,
         r_min = 0.05, ypeak_min = 0.05,
         lambda = 10,
         verbose = FALSE

@@ -102,7 +102,7 @@ season_mov <- function(INPUT,
         input <- lapply(INPUT[c("t", "y", "w")], `[`, I) # y, t, w
         input <- c(input, list(ylu = ylu, nptperyear=nptperyear, south=south))
 
-        if (!has_lambda) {
+        if (opt$rFUN == "smooth_wWHIT" && !has_lambda) {
             vc = guess_lambda(input) # IsPlot.vc
             lambda = vc$lambda; vcs[[i]] <- vc
         }
@@ -137,7 +137,8 @@ season_mov <- function(INPUT,
     }
     brks$GOF <- stat_season(INPUT, brks$fit)
 
-    if (!has_lambda && opt$.lambda_vcurve) brks$optim <- vcs
+    if (opt$rFUN == "smooth_wWHIT" && !has_lambda && opt$.lambda_vcurve) 
+        brks$optim <- vcs
     return(brks)
 }
 

@@ -19,8 +19,9 @@
 #'
 #' @param INPUT A list object with the elements of `t`, `y`, `w`,
 #' `Tn` (optional) and `ylu`, returned by [check_input()].
-#' @param rFUN Rough curve fitting function, can be one of [smooth_wSG()],
-#' [smooth_wWHIT()] and [smooth_wHANTS()].
+#' @param rFUN Rough curve fitting function, character, can be one of 
+#' c("smooth_wSG", "smooth_wWHIT", "smooth_wHANTS"), which are corresponding to 
+#' [smooth_wSG()], [smooth_wWHIT()] and [smooth_wHANTS()].
 #' @param wFUN weights updating function, can be one of [wTSM()],
 #' [wChen()], [wBisquare()] and [wSELF()].
 #' @param iters How many times curve fitting is implemented.

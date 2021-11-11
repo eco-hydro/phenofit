@@ -6,7 +6,7 @@ wFUN = wTSM # wBisquare #
 # The `maxExtendMonth` in season_mov and curvefits is different
 # lambda   <- init_lambda(INPUT$y) # lambda for whittaker
 brks2 <- season_mov(INPUT,
-    options = list(rFUN = smooth_wWHIT, wFUN = wFUN)
+    options = list(rFUN = "smooth_wWHIT", wFUN = wFUN)
 )
 param <- list(
     INPUT, brks2,

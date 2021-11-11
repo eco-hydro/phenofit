@@ -135,7 +135,7 @@ lambda <- init_lambda(INPUT$y)
 #                max_MaxPeaksperyear =2.5, max_MinPeaksperyear = 3.5) #, ...
 # get growing season breaks in a 3-year moving window
 brks2 <- season_mov(INPUT, 
-    list(FUN = smooth_wWHIT, wFUN = wFUN, maxExtendMonth = 6, r_min = 0.1))
+    list(rFUN = "smooth_wWHIT", wFUN = wFUN, maxExtendMonth = 6, r_min = 0.1))
 plot_season(INPUT, brks2)
 ```
 

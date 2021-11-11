@@ -45,8 +45,9 @@ roughFit(
 \item{INPUT}{A list object with the elements of \code{t}, \code{y}, \code{w},
 \code{Tn} (optional) and \code{ylu}, returned by \code{\link[=check_input]{check_input()}}.}
 
-\item{rFUN}{Rough curve fitting function, can be one of \code{\link[=smooth_wSG]{smooth_wSG()}},
-\code{\link[=smooth_wWHIT]{smooth_wWHIT()}} and \code{\link[=smooth_wHANTS]{smooth_wHANTS()}}.}
+\item{rFUN}{Rough curve fitting function, character, can be one of
+c("smooth_wSG", "smooth_wWHIT", "smooth_wHANTS"), which are corresponding to
+\code{\link[=smooth_wSG]{smooth_wSG()}}, \code{\link[=smooth_wWHIT]{smooth_wWHIT()}} and \code{\link[=smooth_wHANTS]{smooth_wHANTS()}}.}
 
 \item{wFUN}{weights updating function, can be one of \code{\link[=wTSM]{wTSM()}},
 \code{\link[=wChen]{wChen()}}, \code{\link[=wBisquare]{wBisquare()}} and \code{\link[=wSELF]{wSELF()}}.}
@@ -214,7 +215,7 @@ INPUT <- check_input(d$t, d$y, d$w,
 
 wFUN <- "wTSM"
 # all year as a whole
-options = list(rFUN = smooth_wWHIT, wFUN = wFUN, lambda = 10)
+options = list(rFUN = "smooth_wWHIT", wFUN = wFUN, lambda = 10)
 brks <- season(INPUT, lambda = 10)
 plot_season(INPUT, brks, d)
 
@@ -254,7 +255,7 @@ INPUT <- check_input(d$t, d$y, d$w,
 
 wFUN <- "wTSM"
 # all year as a whole
-options = list(rFUN = smooth_wWHIT, wFUN = wFUN, lambda = 10)
+options = list(rFUN = "smooth_wWHIT", wFUN = wFUN, lambda = 10)
 brks <- season(INPUT, lambda = 10)
 plot_season(INPUT, brks, d)
 

@@ -14,7 +14,7 @@ context("season3y")
 
 param = listk(
     INPUT,
-    options = list(rFUN = smooth_wWHIT, wFUN = wTSM, iters = 3, r_min = 0)
+    options = list(rFUN = "smooth_wWHIT", wFUN = wTSM, iters = 3, r_min = 0)
 )
 
 set_options(verbose_season_mov = FALSE)
@@ -32,11 +32,11 @@ test_that("`season_mov` with smooth_wWHIT", {
 })
 
 test_that("`season_mov` with wHANTS", {
-    param$rFUN <- smooth_wHANTS
+    param$rFUN <- "smooth_wHANTS"
     expect_silent(brks <- do.call(season_mov, param))
 })
 
 test_that("`season_mov` with smooth_wSG", {
-    param$rFUN <- smooth_wSG
+    param$rFUN <- "smooth_wSG"
     expect_silent(brks <- do.call(season_mov, param))
 })
