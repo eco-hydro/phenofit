@@ -156,7 +156,7 @@
     </tr>
     <tr>
       <th>fitMeth</th>
-      <td><p>Curve fitting methods, one of <code><a href='https://rdrr.io/r/base/c.html'>c("doubleLog_Beck", "doubleLog_Elmore", "doubleLog_AG", "doubleLog_Zhang")</a></code></p></td>
+      <td><p>Curve fitting methods, one of <code>c("doubleLog_Beck", "doubleLog_Elmore", "doubleLog_AG", "doubleLog_Zhang")</code></p></td>
     </tr>
     <tr>
       <th>y</th>
@@ -211,39 +211,39 @@ weights of all <code>NA</code> values will be <code>wmin</code>, the others will
     <div class='dont-index'><p><code><a href='https://rdrr.io/r/stats/nlminb.html'>stats::nlminb()</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
-
-<span class='va'>t</span>    <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span><span class='fl'>1.0</span>, <span class='fl'>366</span>, <span class='fl'>8</span><span class='op'>)</span>
-<span class='va'>fun</span>  <span class='op'>=</span> <span class='va'>doubleLog_Beck</span>
-<span class='va'>par</span>  <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0.1</span> , <span class='fl'>0.7</span>, <span class='fl'>50</span>, <span class='fl'>0.1</span>, <span class='fl'>250</span>, <span class='fl'>0.1</span><span class='op'>)</span>
-<span class='va'>par0</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0.05</span>, <span class='fl'>0.6</span> , <span class='fl'>45</span>, <span class='fl'>0.1</span>, <span class='fl'>200</span>, <span class='fl'>0.2</span><span class='op'>)</span>
-
-<span class='va'>ypred</span> <span class='op'>=</span> <span class='va'>t</span><span class='op'>*</span><span class='fl'>0</span>
-<span class='va'>y</span>     <span class='op'>=</span> <span class='fu'>fun</span><span class='op'>(</span><span class='va'>par</span>, <span class='va'>t</span><span class='op'>)</span>
-
-<span class='fu'>julia_init</span><span class='op'>(</span><span class='op'>)</span>
-<span class='va'>r_julia</span>  <span class='op'>&lt;-</span> <span class='fu'>opt_nlminb_julia</span><span class='op'>(</span><span class='va'>par0</span>, <span class='st'>"doubleLog_Beck"</span>, <span class='va'>y</span>, <span class='va'>t</span><span class='op'>)</span>
-<span class='va'>r_R</span> <span class='op'>&lt;-</span> <span class='fu'><a href='opt_FUN.html'>opt_nlminb</a></span><span class='op'>(</span><span class='va'>par0</span>, <span class='va'>f_goal</span>, fun <span class='op'>=</span> <span class='va'>fun</span>, y <span class='op'>=</span> <span class='va'>y</span>, t <span class='op'>=</span> <span class='va'>t</span>, pred <span class='op'>=</span> <span class='va'>ypred</span><span class='op'>)</span>
-
-<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>julia <span class='op'>=</span> <span class='va'>r_julia</span>, R <span class='op'>=</span> <span class='va'>r_R</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-    <span class='fu'><a href='https://purrr.tidyverse.org/reference/map.html'>map</a></span><span class='op'>(</span><span class='op'>~</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>.</span><span class='op'>$</span><span class='va'>par</span>, <span class='va'>.</span><span class='op'>$</span><span class='va'>objective</span>, <span class='va'>.</span><span class='op'>$</span><span class='va'>value</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-    <span class='fu'><a href='https://rdrr.io/r/base/do.call.html'>do.call</a></span><span class='op'>(</span><span class='va'>rbind</span>, <span class='va'>.</span><span class='op'>)</span><span class='co'># %&gt;%</span>
-
-<span class='va'>n</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span><span class='op'>(</span><span class='va'>t</span><span class='op'>)</span>
-<span class='va'>w</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fl'>0.2</span>, <span class='va'>n</span><span class='op'>)</span>
-<span class='co'># julia is 5 times faster</span>
-<span class='op'>{</span>
-    <span class='co'># microbenchmark::microbenchmark : 18.939826 ms in R</span>
-    <span class='va'>info</span> <span class='op'>&lt;-</span> <span class='fu'>rbenchmark</span><span class='fu'>::</span><span class='fu'>benchmark</span><span class='op'>(</span>
-        <span class='va'>r1</span> <span class='op'>&lt;-</span> <span class='fu'>opt_nlminb_julia</span><span class='op'>(</span><span class='va'>par0</span>, <span class='st'>"doubleLog_Beck"</span>, <span class='va'>y</span>, <span class='va'>t</span>, <span class='va'>w</span><span class='op'>)</span>,
-        <span class='va'>r2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='opt_FUN.html'>opt_nlminb</a></span><span class='op'>(</span><span class='va'>par0</span>, <span class='va'>f_goal</span>, fun <span class='op'>=</span> <span class='va'>fun</span>, y <span class='op'>=</span> <span class='va'>y</span>, t <span class='op'>=</span> <span class='va'>t</span>, pred <span class='op'>=</span> <span class='va'>ypred</span><span class='op'>)</span>,
-        replications <span class='op'>=</span> <span class='fl'>500</span>
-    <span class='op'>)</span>
-    <span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span><span class='op'>(</span><span class='va'>info</span><span class='op'>)</span>
-<span class='op'>}</span>
-
-<span class='op'>}</span>
-</div></pre>
+    <pre class="examples"><span class='r-in'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>t</span>    <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span><span class='fl'>1.0</span>, <span class='fl'>366</span>, <span class='fl'>8</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>fun</span>  <span class='op'>=</span> <span class='va'>doubleLog_Beck</span></span>
+<span class='r-in'><span class='va'>par</span>  <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0.1</span> , <span class='fl'>0.7</span>, <span class='fl'>50</span>, <span class='fl'>0.1</span>, <span class='fl'>250</span>, <span class='fl'>0.1</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>par0</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0.05</span>, <span class='fl'>0.6</span> , <span class='fl'>45</span>, <span class='fl'>0.1</span>, <span class='fl'>200</span>, <span class='fl'>0.2</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>ypred</span> <span class='op'>=</span> <span class='va'>t</span><span class='op'>*</span><span class='fl'>0</span></span>
+<span class='r-in'><span class='va'>y</span>     <span class='op'>=</span> <span class='fu'>fun</span><span class='op'>(</span><span class='va'>par</span>, <span class='va'>t</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='fu'>julia_init</span><span class='op'>(</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>r_julia</span>  <span class='op'>&lt;-</span> <span class='fu'>opt_nlminb_julia</span><span class='op'>(</span><span class='va'>par0</span>, <span class='st'>"doubleLog_Beck"</span>, <span class='va'>y</span>, <span class='va'>t</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>r_R</span> <span class='op'>&lt;-</span> <span class='fu'><a href='opt_FUN.html'>opt_nlminb</a></span><span class='op'>(</span><span class='va'>par0</span>, <span class='va'>f_goal</span>, fun <span class='op'>=</span> <span class='va'>fun</span>, y <span class='op'>=</span> <span class='va'>y</span>, t <span class='op'>=</span> <span class='va'>t</span>, pred <span class='op'>=</span> <span class='va'>ypred</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>julia <span class='op'>=</span> <span class='va'>r_julia</span>, R <span class='op'>=</span> <span class='va'>r_R</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span></span>
+<span class='r-in'>    <span class='fu'><a href='https://purrr.tidyverse.org/reference/map.html'>map</a></span><span class='op'>(</span><span class='op'>~</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>.</span><span class='op'>$</span><span class='va'>par</span>, <span class='va'>.</span><span class='op'>$</span><span class='va'>objective</span>, <span class='va'>.</span><span class='op'>$</span><span class='va'>value</span><span class='op'>)</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span></span>
+<span class='r-in'>    <span class='fu'><a href='https://rdrr.io/r/base/do.call.html'>do.call</a></span><span class='op'>(</span><span class='va'>rbind</span>, <span class='va'>.</span><span class='op'>)</span><span class='co'># %&gt;%</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>n</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span><span class='op'>(</span><span class='va'>t</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>w</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fl'>0.2</span>, <span class='va'>n</span><span class='op'>)</span></span>
+<span class='r-in'><span class='co'># julia is 5 times faster</span></span>
+<span class='r-in'><span class='op'>{</span></span>
+<span class='r-in'>    <span class='co'># microbenchmark::microbenchmark : 18.939826 ms in R</span></span>
+<span class='r-in'>    <span class='va'>info</span> <span class='op'>&lt;-</span> <span class='fu'>rbenchmark</span><span class='fu'>::</span><span class='fu'>benchmark</span><span class='op'>(</span></span>
+<span class='r-in'>        <span class='va'>r1</span> <span class='op'>&lt;-</span> <span class='fu'>opt_nlminb_julia</span><span class='op'>(</span><span class='va'>par0</span>, <span class='st'>"doubleLog_Beck"</span>, <span class='va'>y</span>, <span class='va'>t</span>, <span class='va'>w</span><span class='op'>)</span>,</span>
+<span class='r-in'>        <span class='va'>r2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='opt_FUN.html'>opt_nlminb</a></span><span class='op'>(</span><span class='va'>par0</span>, <span class='va'>f_goal</span>, fun <span class='op'>=</span> <span class='va'>fun</span>, y <span class='op'>=</span> <span class='va'>y</span>, t <span class='op'>=</span> <span class='va'>t</span>, pred <span class='op'>=</span> <span class='va'>ypred</span><span class='op'>)</span>,</span>
+<span class='r-in'>        replications <span class='op'>=</span> <span class='fl'>500</span></span>
+<span class='r-in'>    <span class='op'>)</span></span>
+<span class='r-in'>    <span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span><span class='op'>(</span><span class='va'>info</span><span class='op'>)</span></span>
+<span class='r-in'><span class='op'>}</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='op'>}</span></span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

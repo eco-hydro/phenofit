@@ -166,7 +166,7 @@ Asymmetric of Threshold method</li>
 <a href="#note" class="anchor"></a>Note</h1>
 <p>Users can through the following options to improve the performance of phenofit in multiple growing season regions:</p>
 <ul>
-<li><p>Users can decrease those three parameters <code>nextend</code>, <code>minExtendMonth</code> and <code>maxExtendMonth</code> to a relative low value, by setting option <code><a href="reference/set_options.html">set_options(fitting = list(nextend = 1, minExtendMonth = 0, maxExtendMonth = 0.5))</a></code>.</p></li>
+<li><p>Users can decrease those three parameters <code>nextend</code>, <code>minExtendMonth</code> and <code>maxExtendMonth</code> to a relative low value, by setting option <code>set_options(fitting = list(nextend = 1, minExtendMonth = 0, maxExtendMonth = 0.5))</code>.</p></li>
 <li>
 <p>Use <code>wHANTS</code> as the rough fitting function. Due to nature of fourier functions, <code>wHANTS</code> is more stable for multiple growing seasons, but it is less flexible than <code>wWHIT.</code> <code>wHANTS</code> is suitable for regions with the static growing season pattern accoss multiple years, <code>wWHIT</code> is more suitable for regions with the dynamic growing season pattern. Dynamic growing season pattern is the most challenging task, which also means that large uncertainty might be exists.</p>
 <p>When using <code>wHANTS</code> as the rough fitting function, <code>r_min</code> is suggested setting as zero.</p>

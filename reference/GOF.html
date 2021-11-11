@@ -186,14 +186,15 @@ calculate. See details in Zhang et al., (2015).</p></li>
     <p>Zhang Xiaoyang (2015), http://dx.doi.org/10.1016/j.rse.2014.10.012</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='va'>Y_obs</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='fl'>100</span><span class='op'>)</span>
-<span class='va'>Y_sim</span> <span class='op'>=</span> <span class='va'>Y_obs</span> <span class='op'>+</span> <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='fl'>100</span><span class='op'>)</span><span class='op'>/</span><span class='fl'>4</span>
-<span class='fu'>GOF</span><span class='op'>(</span><span class='va'>Y_obs</span>, <span class='va'>Y_sim</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;         RMSE          NSE          MAE           AI         Bias    Bias_perc 
-#&gt; 2.539274e-01 9.410265e-01 2.110004e-01 9.854096e-01 2.871420e-02 4.056297e-01 
-#&gt;        n_sim           R2            R       pvalue 
-#&gt; 1.000000e+02 9.443434e-01 9.717733e-01 2.803541e-63 </div><div class='input'>
-</div></pre>
+    <pre class="examples"><span class='r-in'><span class='va'>Y_obs</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='fl'>100</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>Y_sim</span> <span class='op'>=</span> <span class='va'>Y_obs</span> <span class='op'>+</span> <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='fl'>100</span><span class='op'>)</span><span class='op'>/</span><span class='fl'>4</span></span>
+<span class='r-in'><span class='fu'>GOF</span><span class='op'>(</span><span class='va'>Y_obs</span>, <span class='va'>Y_sim</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>         RMSE          NSE          MAE           AI         Bias    Bias_perc </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 2.539274e-01 9.410265e-01 2.110004e-01 9.854096e-01 2.871420e-02 4.056297e-01 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>        n_sim           R2            R       pvalue </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 1.000000e+02 9.443434e-01 9.717733e-01 2.803541e-63 </span>
+<span class='r-in'></span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

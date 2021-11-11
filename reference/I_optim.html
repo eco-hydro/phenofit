@@ -222,26 +222,26 @@ NULL, or NA value.</p></li>
 <code><a href='https://rdrr.io/pkg/ucminf/man/ucminf.html'>ucminf::ucminf()</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'># simulate vegetation time-series</span>
-<span class='va'>FUN</span>  <span class='op'>=</span> <span class='va'>doubleLog_Beck</span>
-<span class='va'>par</span>  <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span> mn  <span class='op'>=</span> <span class='fl'>0.1</span> , mx  <span class='op'>=</span> <span class='fl'>0.7</span> , sos <span class='op'>=</span> <span class='fl'>50</span> , rsp <span class='op'>=</span> <span class='fl'>0.1</span> , eos <span class='op'>=</span> <span class='fl'>250</span>, rau <span class='op'>=</span> <span class='fl'>0.1</span><span class='op'>)</span>
-<span class='va'>par0</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span> mn  <span class='op'>=</span> <span class='fl'>0.15</span>, mx  <span class='op'>=</span> <span class='fl'>0.65</span>, sos <span class='op'>=</span> <span class='fl'>100</span>, rsp <span class='op'>=</span> <span class='fl'>0.12</span>, eos <span class='op'>=</span> <span class='fl'>200</span>, rau <span class='op'>=</span> <span class='fl'>0.12</span><span class='op'>)</span>
-
-<span class='va'>t</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>365</span>, <span class='fl'>8</span><span class='op'>)</span>
-<span class='va'>y</span> <span class='op'>&lt;-</span> <span class='fu'>FUN</span><span class='op'>(</span><span class='va'>par</span>, <span class='va'>t</span><span class='op'>)</span>
-
-<span class='va'>methods</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"BFGS"</span>, <span class='st'>"ucminf"</span>, <span class='st'>"nlm"</span>, <span class='st'>"nlminb"</span><span class='op'>)</span>
-<span class='va'>opt1</span> <span class='op'>&lt;-</span> <span class='fu'>I_optim</span> <span class='op'>(</span><span class='va'>par0</span>, <span class='va'>FUN</span>, <span class='va'>y</span>, <span class='va'>t</span>, <span class='va'>methods</span><span class='op'>)</span>
-<span class='va'>opt2</span> <span class='op'>&lt;-</span> <span class='fu'>I_optimx</span><span class='op'>(</span><span class='va'>par0</span>, <span class='va'>FUN</span>, <span class='va'>y</span>, <span class='va'>t</span>, <span class='va'>methods</span><span class='op'>)</span>
-
-<span class='co'># \dontrun{</span>
-<span class='co'># microbenchmark::microbenchmark(</span>
-<span class='co'>#     opt1 = I_optim (par0, FUN, y, t, methods),</span>
-<span class='co'>#     opt2 = I_optimx(par0, FUN, y, t, methods),</span>
-<span class='co'>#     times = 2</span>
-<span class='co'># )</span>
-<span class='co'># }</span>
-</div></pre>
+    <pre class="examples"><span class='r-in'><span class='co'># simulate vegetation time-series</span></span>
+<span class='r-in'><span class='va'>FUN</span>  <span class='op'>=</span> <span class='va'>doubleLog_Beck</span></span>
+<span class='r-in'><span class='va'>par</span>  <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span> mn  <span class='op'>=</span> <span class='fl'>0.1</span> , mx  <span class='op'>=</span> <span class='fl'>0.7</span> , sos <span class='op'>=</span> <span class='fl'>50</span> , rsp <span class='op'>=</span> <span class='fl'>0.1</span> , eos <span class='op'>=</span> <span class='fl'>250</span>, rau <span class='op'>=</span> <span class='fl'>0.1</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>par0</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span> mn  <span class='op'>=</span> <span class='fl'>0.15</span>, mx  <span class='op'>=</span> <span class='fl'>0.65</span>, sos <span class='op'>=</span> <span class='fl'>100</span>, rsp <span class='op'>=</span> <span class='fl'>0.12</span>, eos <span class='op'>=</span> <span class='fl'>200</span>, rau <span class='op'>=</span> <span class='fl'>0.12</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>t</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>365</span>, <span class='fl'>8</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>y</span> <span class='op'>&lt;-</span> <span class='fu'>FUN</span><span class='op'>(</span><span class='va'>par</span>, <span class='va'>t</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>methods</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"BFGS"</span>, <span class='st'>"ucminf"</span>, <span class='st'>"nlm"</span>, <span class='st'>"nlminb"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>opt1</span> <span class='op'>&lt;-</span> <span class='fu'>I_optim</span> <span class='op'>(</span><span class='va'>par0</span>, <span class='va'>FUN</span>, <span class='va'>y</span>, <span class='va'>t</span>, <span class='va'>methods</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>opt2</span> <span class='op'>&lt;-</span> <span class='fu'>I_optimx</span><span class='op'>(</span><span class='va'>par0</span>, <span class='va'>FUN</span>, <span class='va'>y</span>, <span class='va'>t</span>, <span class='va'>methods</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># \dontrun{</span></span>
+<span class='r-in'><span class='co'># microbenchmark::microbenchmark(</span></span>
+<span class='r-in'><span class='co'>#     opt1 = I_optim (par0, FUN, y, t, methods),</span></span>
+<span class='r-in'><span class='co'>#     opt2 = I_optimx(par0, FUN, y, t, methods),</span></span>
+<span class='r-in'><span class='co'>#     times = 2</span></span>
+<span class='r-in'><span class='co'># )</span></span>
+<span class='r-in'><span class='co'># }</span></span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

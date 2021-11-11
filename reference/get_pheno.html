@@ -217,23 +217,24 @@ in top title?</p></td>
     <p>Please note that only a single fine curve fitting method allowed here!</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://github.com/eco-hydro/phenofit'>phenofit</a></span><span class='op'>)</span>
-<span class='co'># simulate vegetation time-series</span>
-<span class='va'>fFUN</span> <span class='op'>=</span> <span class='va'>doubleLog.Beck</span>
-<span class='va'>par</span>  <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span> mn  <span class='op'>=</span> <span class='fl'>0.1</span>, mx  <span class='op'>=</span> <span class='fl'>0.7</span>, sos <span class='op'>=</span> <span class='fl'>50</span>, rsp <span class='op'>=</span> <span class='fl'>0.1</span>, eos <span class='op'>=</span> <span class='fl'>250</span>, rau <span class='op'>=</span> <span class='fl'>0.1</span><span class='op'>)</span>
-<span class='va'>t</span>    <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>365</span>, <span class='fl'>8</span><span class='op'>)</span>
-<span class='va'>tout</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>365</span>, <span class='fl'>1</span><span class='op'>)</span>
-<span class='va'>y</span> <span class='op'>&lt;-</span> <span class='fu'>fFUN</span><span class='op'>(</span><span class='va'>par</span>, <span class='va'>t</span><span class='op'>)</span>
-<span class='va'>methods</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"AG"</span>, <span class='st'>"Beck"</span>, <span class='st'>"Elmore"</span>, <span class='st'>"Gu"</span>, <span class='st'>"Zhang"</span><span class='op'>)</span> <span class='co'># "Klos" too slow</span>
-<span class='va'>fFITs</span> <span class='op'>&lt;-</span> <span class='fu'><a href='curvefit.html'>curvefit</a></span><span class='op'>(</span><span class='va'>y</span>, <span class='va'>t</span>, <span class='va'>tout</span>, <span class='va'>methods</span><span class='op'>)</span>
-<span class='co'># multiple years</span>
-<span class='va'>fits</span>  <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>`2001` <span class='op'>=</span> <span class='va'>fFITs</span>, `2002` <span class='op'>=</span> <span class='va'>fFITs</span><span class='op'>)</span>
-
-<span class='va'>l_param</span>   <span class='op'>&lt;-</span> <span class='fu'><a href='get_param.html'>get_param</a></span><span class='op'>(</span><span class='va'>fits</span><span class='op'>)</span>
-<span class='va'>d_GOF</span>     <span class='op'>&lt;-</span> <span class='fu'><a href='get_GOF.html'>get_GOF</a></span><span class='op'>(</span><span class='va'>fits</span><span class='op'>)</span>
-<span class='va'>d_fitting</span> <span class='op'>&lt;-</span> <span class='fu'><a href='get_fitting.html'>get_fitting</a></span><span class='op'>(</span><span class='va'>fits</span><span class='op'>)</span>
-<span class='va'>l_pheno</span>   <span class='op'>&lt;-</span> <span class='fu'>get_pheno</span><span class='op'>(</span><span class='va'>fits</span>, <span class='st'>"AG"</span>, IsPlot<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
-</div><div class='img'><img src='get_pheno-1.png' alt='' width='700' height='433' /></div></pre>
+    <pre class="examples"><span class='r-in'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://github.com/eco-hydro/phenofit'>phenofit</a></span><span class='op'>)</span></span>
+<span class='r-in'><span class='co'># simulate vegetation time-series</span></span>
+<span class='r-in'><span class='va'>fFUN</span> <span class='op'>=</span> <span class='va'>doubleLog.Beck</span></span>
+<span class='r-in'><span class='va'>par</span>  <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span> mn  <span class='op'>=</span> <span class='fl'>0.1</span>, mx  <span class='op'>=</span> <span class='fl'>0.7</span>, sos <span class='op'>=</span> <span class='fl'>50</span>, rsp <span class='op'>=</span> <span class='fl'>0.1</span>, eos <span class='op'>=</span> <span class='fl'>250</span>, rau <span class='op'>=</span> <span class='fl'>0.1</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>t</span>    <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>365</span>, <span class='fl'>8</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>tout</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>365</span>, <span class='fl'>1</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>y</span> <span class='op'>&lt;-</span> <span class='fu'>fFUN</span><span class='op'>(</span><span class='va'>par</span>, <span class='va'>t</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>methods</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"AG"</span>, <span class='st'>"Beck"</span>, <span class='st'>"Elmore"</span>, <span class='st'>"Gu"</span>, <span class='st'>"Zhang"</span><span class='op'>)</span> <span class='co'># "Klos" too slow</span></span>
+<span class='r-in'><span class='va'>fFITs</span> <span class='op'>&lt;-</span> <span class='fu'><a href='curvefit.html'>curvefit</a></span><span class='op'>(</span><span class='va'>y</span>, <span class='va'>t</span>, <span class='va'>tout</span>, <span class='va'>methods</span><span class='op'>)</span></span>
+<span class='r-in'><span class='co'># multiple years</span></span>
+<span class='r-in'><span class='va'>fits</span>  <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>`2001` <span class='op'>=</span> <span class='va'>fFITs</span>, `2002` <span class='op'>=</span> <span class='va'>fFITs</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>l_param</span>   <span class='op'>&lt;-</span> <span class='fu'><a href='get_param.html'>get_param</a></span><span class='op'>(</span><span class='va'>fits</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>d_GOF</span>     <span class='op'>&lt;-</span> <span class='fu'><a href='get_GOF.html'>get_GOF</a></span><span class='op'>(</span><span class='va'>fits</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>d_fitting</span> <span class='op'>&lt;-</span> <span class='fu'><a href='get_fitting.html'>get_fitting</a></span><span class='op'>(</span><span class='va'>fits</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>l_pheno</span>   <span class='op'>&lt;-</span> <span class='fu'>get_pheno</span><span class='op'>(</span><span class='va'>fits</span>, <span class='st'>"AG"</span>, IsPlot<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span></span>
+<span class='r-plt img'><img src='get_pheno-1.png' alt='' width='700' height='433' /></span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
