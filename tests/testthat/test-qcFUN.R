@@ -13,6 +13,7 @@ test_that("qcFUN works", {
 
     r_lai <- qc_FparLai(QA, wmin = 0.2, wmid = 0.5, wmax = 1)
     r_spot <- qc_SPOT(QA, wmin = 0.2, wmid = 0.5, wmax = 1)
+    r_s2   <- qc_sentinel2(QA, wmin = 0.2, wmid = 0.5, wmax = 1)
 
     expect_true(is.list(r1) && is.list(r2))
     expect_equal(names(r_lai), names(r_spot))

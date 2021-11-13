@@ -221,6 +221,48 @@ qc_SPOT <- function (QA, wmin = 0.2, wmid = 0.5, wmax = 1) {
     list(QC_flag = QC_flag, w = w)
 }
 
+#' Initial weights for sentinel2 according to SCL band
+#' 
+#' @param SCL quality control variable for sentinel2
+#' @inheritParams qc_summary
+#' 
+#' @description 
+#' | **SCL Value** | **Description**                       | **Quality** | **weight** |
+#' | ------------- | ------------------------------------- | ----------- | ---------- |
+#' | 1             | Saturated or defective                | Bad         | \eqn{w_{min}}  |
+#' | 2             | Dark Area Pixels                      | Bad         | \eqn{w_{min}}  |
+#' | 3             | Cloud Shadows                         | Bad         | \eqn{w_{min}}  |
+#' | 4             | Vegetation                            | Good        | \eqn{w_{max}}  |
+#' | 5             | Bare Soils                            | Good        | \eqn{w_{max}}  |
+#' | 6             | Water                                 | Good        | \eqn{w_{max}}  |
+#' | 7             | Clouds Low Probability / Unclassified | Good        | \eqn{w_{max}}  |
+#' | 8             | Clouds Medium Probability             | Marginal    | \eqn{w_{mid}}  |
+#' | 9             | Clouds High Probability               | Bad         | \eqn{w_{mid}}  |
+#' | 10            | Cirrus                                | Good        | \eqn{w_{mid}}  |
+#' | 11            | Snow / Ice                            | Bad         | \eqn{w_{mid}}  |
+#' @references 
+#' 
+#' @examples
+#' qc_sentinel2(1:11)
+#' @export
+qc_sentinel2 <- function(SLC, wmin = 0.2, wmid = 0.5, wmax = 1) {
+    QA <- SLC
+    qc_good = c(4, 5, 6, 7, 10)
+    qc_bad = c(1, 2, 3, 9)
+    qc_mid = c(8)
+    w <- rep(wmin, length(QA)) # default weight is zero
+    w[QA %in% qc_good] = wmax
+    w[QA %in% qc_mid]  = wmid
+    w[QA %in% c(qc_bad, 11)] = wmin
+
+    QC_flag = rep("bad", length(QA))
+    QC_flag[QA %in% qc_good] = "good"
+    QC_flag[QA %in% qc_mid]  = "marginal"
+    QC_flag[QA %in% qc_bad]  = "cloud"
+    QC_flag[QA %in% c(11)]   = "snow" # snow is useful for phenology
+
+    listk(QC_flag, w)
+}
 
 # source('R/GPP_Pheno/main_QC.R')
 # 

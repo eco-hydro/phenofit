@@ -1,12 +1,13 @@
+# ' @param IsDiff If want to find extreme values, `IsDiff` should be true; If
+# ' just want to find the continue negative or positive values, just set
+# ' `IsDiff` as false.
+
 #' findpeaks
 #'
 #' Find peaks (maxima) in a time series. This function is modified from
 #' `pracma::findpeaks`.
 #'
 #' @param x Numeric vector.
-#' @param IsDiff If want to find extreme values, `IsDiff` should be true; If
-#' just want to find the continue negative or positive values, just set
-#' `IsDiff` as false.
 #' @param nups minimum number of increasing steps before a peak is reached
 #' @param ndowns minimum number of decreasing steps after the peak
 #' @param zero can be `+`, `-`, or `0`; how to interprete succeeding steps
@@ -30,7 +31,7 @@
 #' @param sortstr Boolean, Should the peaks be returned sorted in decreasing oreder of
 #' their maximum value?
 #' @param IsPlot Boolean.
-#' 
+#'
 #' @examples
 #' x <- seq(0, 1, len = 1024)
 #' pos <- c(0.1, 0.13, 0.15, 0.23, 0.25, 0.40, 0.44, 0.65, 0.76, 0.78, 0.81)
@@ -46,7 +47,7 @@
 #' points(val~pos, x$X, pch=20, col="maroon")
 #'
 #' @export
-findpeaks <- function (x, IsDiff = TRUE, nups = 1, ndowns = nups, zero = "0", peakpat = NULL,
+findpeaks <- function (x, nups = 1, ndowns = nups, zero = "0", peakpat = NULL,
                        minpeakheight = -Inf, minpeakdistance = 1,
                        y_min = 0, y_max = 0,
                        npeaks = 0, sortstr = FALSE, IsPlot = F)
@@ -59,22 +60,27 @@ findpeaks <- function (x, IsDiff = TRUE, nups = 1, ndowns = nups, zero = "0", pe
     if (!zero %in% c("0", "+", "-"))
         stop("Argument 'zero' can only be '0', '+', or '-'.")
 
-    # extend the use of findpeaks:
-    if (IsDiff){
-        xc <- sign(diff(x))
-    }else{
-        xc <- x
-    }
+    # # extend the use of findpeaks:
+    # if (IsDiff) {
+    #     xc <- sign(diff(x))
+    # } else {
+    #     xc <- x
+    # }
+    xc <- sign(diff(x))
     xc <- paste(as.character(sign(xc)), collapse = "")
     xc <- gsub("1", "+", gsub("-1", "-", xc))
     if (zero != "0")      xc      <- gsub("0", zero, xc)
     if (is.null(peakpat)) peakpat <- sprintf("[+]{%d,}[-]{%d,}", nups, ndowns)
 
+    # Fatal bug found at 20211114
+    # Because `diff` operation lead to the length of `x` reduced one
+    # Hence x2 should be `rc + attr(rc, "match.length")`, without `-1`.
     rc <- gregexpr(peakpat, xc)[[1]]
 
     if (rc[1] < 0) return(NULL)
     x1 <- rc
-    x2 <- rc + attr(rc, "match.length") - 1
+    x2 <- rc + attr(rc, "match.length") # - 1
+
     attributes(x1) <- NULL
     attributes(x2) <- NULL
     n <- length(x1)
@@ -107,7 +113,7 @@ findpeaks <- function (x, IsDiff = TRUE, nups = 1, ndowns = nups, zero = "0", pe
 
     X <- X[order(X[, 2]), ,drop = F] # update 20180122; order according to index
     X <- rm_near(X) # sort index is necessary before `rm_near`
-    
+
     if (sortstr) { # || minpeakdistance > 1
         sl <- sort.list(X[, 1], na.last = NA, decreasing = TRUE)
         X <- X[sl, , drop = FALSE]

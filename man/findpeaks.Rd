@@ -6,7 +6,6 @@
 \usage{
 findpeaks(
   x,
-  IsDiff = TRUE,
   nups = 1,
   ndowns = nups,
   zero = "0",
@@ -22,10 +21,6 @@ findpeaks(
 }
 \arguments{
 \item{x}{Numeric vector.}
-
-\item{IsDiff}{If want to find extreme values, \code{IsDiff} should be true; If
-just want to find the continue negative or positive values, just set
-\code{IsDiff} as false.}
 
 \item{nups}{minimum number of increasing steps before a peak is reached}
 

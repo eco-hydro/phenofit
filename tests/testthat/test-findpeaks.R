@@ -17,4 +17,9 @@ test_that("findpeaks works", {
                   info = 'r_min works') # 8 points amplitude > 3
     expect_equal( nrow(findpeaks(pSignal, y_min=4.1, sortstr=TRUE)$X), 3,
                   info = 'r_min works')
+
+    ## add test for Henan multiple growing season
+    ypred = c(0.329, 0.341, 0.356, 0.476, 0.539, 0.569, 0.645, 0.602, 0.515, 0.329, 
+        0.128, 0.596, 0.535, 0.483, 0.355, 0.355, 0.128, 0.148, 0.176, 0.244)
+    expect_equal(nrow(findpeaks(-ypred, y_min = 0.0)$X), 2)
 })

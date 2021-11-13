@@ -118,7 +118,7 @@ find_season.default <- function(
 
     nups <- default_nups(nptperyear)
     info_peak = findpeaks_season(ypred, opt$r_max, opt$r_min,
-        minpeakdistance = opt$minpeakdistance, minpeakheight = opt$ypeak_min, 
+        minpeakdistance = opt$minpeakdistance, minpeakheight = opt$ypeak_min,
         nups = nups, nyear = NULL)
 
     years = NULL
@@ -140,12 +140,17 @@ find_season.default <- function(
 #' @keywords internal
 #' @importFrom utils str
 #' @export
-season_input <- function(INPUT, options = NULL, verbose = FALSE, ...) 
+season_input <- function(INPUT, options = NULL, verbose = FALSE, ...)
 {
     set_options(season = options, ...)
     if (verbose) print(str(.options$season))
 
+    opt = get_options()
+#     browser()
+# assign("opt", opt, envir = globalenv())
+# assign("INPUT", INPUT, envir = globalenv())
     c(d_fit, info_peak) %<-% roughFit(INPUT)
     d_season = find_season.peaks(d_fit, info_peak)
     listk(fit = d_fit, dt = d_season)
 }
+

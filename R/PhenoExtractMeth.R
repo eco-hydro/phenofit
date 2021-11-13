@@ -424,7 +424,9 @@ PhenoKl <- function(fFIT, t = NULL,
         minpeakheight = A*0.025
 
         # first half maximum local values of k'
-        pos <- findpeaks(asc.k, minpeakdistance = 15, npeaks = 2, ndowns = 0, sortstr = TRUE, minpeakheight)$X$pos
+        # minpeakdistance in the unit of day
+        pos <- findpeaks(asc.k, npeaks = 2, ndowns = 0, sortstr = TRUE,
+                         minpeakdistance = 15, minpeakheight = minpeakheight)$X$pos
         pos <- sort(pos)
         pos <- c(rep(NA, 2 - length(pos)), pos) #at least two values
         I_asc <- asc.k.d[pos]
@@ -435,7 +437,8 @@ PhenoKl <- function(fFIT, t = NULL,
         }
 
         # second half minimum local values of k'
-        pos <- findpeaks(-des.k, minpeakdistance = 15, npeaks = 2, sortstr = TRUE, minpeakheight)$X$pos
+        pos <- findpeaks(-des.k, npeaks = 2, sortstr = TRUE, 
+            minpeakdistance = 15, minpeakheight = minpeakheight)$X$pos
         pos <- sort(pos);
         pos <- c(pos, rep(NA, 2 - length(pos)))
         if (all(is.na(pos))) {

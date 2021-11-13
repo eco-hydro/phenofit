@@ -93,15 +93,15 @@
 #' @keywords internal
 #' @export
 roughFit <- function(INPUT, options = list(),
-    frame = floor(INPUT$nptperyear / 5) * 2 + 1, ...) 
+    frame = floor(INPUT$nptperyear / 5) * 2 + 1, ...)
 {
     if (all(is.na(INPUT$y))) return(NULL)
-    
+
     south <- INPUT$south
     t <- INPUT$t
     y <- INPUT$y
     nlen <- length(t)
-    
+
     set_options(season = options)
     .options$season %<>% modifyList(list(frame = frame))
     opt <- .options$season
@@ -145,7 +145,7 @@ roughFit <- function(INPUT, options = list(),
             opt$r_max, opt$r_min,
             minpeakdistance = 0, minpeakheight = opt$ypeak_min,
             nups = nups, nyear = nyear)
-        
+
         if (.options$season$verbose) {
             cat(sprintf(
                 "iloop = %d: lambda = %.1f, ntrough_PerYear = %.2f, npeak_PerYear = %.2f\n",

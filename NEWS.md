@@ -1,3 +1,8 @@
+# phenofit 0.3.4 (2021-11-14)
+
+- Fix the bug of `findpeaks`, which lead to sharp changed growing season failed to detect.
+- Fix the bug of `PhenoKlos` where `minpeakheight` not work in previous version.
+
 # phenofit 0.3.3 (2021-10-26)
 
 - Fix typo error in curvefits' document.
