@@ -39,7 +39,7 @@ Depends:
 Imports: 
     Rcpp,
     purrr,
-    dplyr,
+    dplyr, stringr,
     magrittr,
     lubridate,
     data.table,

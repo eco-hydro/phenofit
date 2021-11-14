@@ -20,11 +20,11 @@
 #' @param minpeakdistance The minimum distance (in indices) peaks have to have
 #' to be counted. If the distance of two maximum extreme value less than
 #' `minpeakdistance`, only the real maximum value will be left.
-#' @param y_min Threshold is defined as the difference of peak value with
-#' trough value. There are two threshold (left and right). The minimum threshold
-#' should be greater than `y_min`.
-#' @param y_max Similar as `y_min`, The maximum threshold should
-#' be greater than `y_max`.
+#' @param h_min `h` is defined as the difference of peak value to the
+#' adjacent left and right trough value (`h_left` and `h_right` respectively).
+#' The real peaks should follow `min(h_left, h_right) >= h_min`.
+#' @param h_max Similar as `h_min`, the real peaks should follow
+#' `max(h_left, h_right) >= h_min`.
 #' @param npeaks  the number of peaks to return. If `sortstr` = true, the
 #' largest npeaks maximum values will be returned; If `sortstr` = false,
 #' just the first npeaks are returned in the order of index.
@@ -32,6 +32,12 @@
 #' their maximum value?
 #' @param IsPlot Boolean.
 #'
+#' @note
+#' In versions before v0.3.4, `findpeaks(c(1, 2, 3, 4, 4, 3, 1))` failed to detect
+#' peaks when a flat pattern exit in the middle.
+#'
+#' From version v0.3.4, the peak pattern was changed from `[+]{%d,}[-]{%d,}` to
+#' `[+]{%d,}[0]{0,}[-]{%d,}`. The latter can escape the flat part successfully.
 #' @examples
 #' x <- seq(0, 1, len = 1024)
 #' pos <- c(0.1, 0.13, 0.15, 0.23, 0.25, 0.40, 0.44, 0.65, 0.76, 0.78, 0.81)
@@ -43,14 +49,16 @@
 #' }
 #'
 #' plot(pSignal, type="l", col="navy"); grid()
-#' x <- findpeaks(pSignal, npeaks=3, y_min=4, sortstr=TRUE)
+#' x <- findpeaks(pSignal, npeaks=3, h_min=4, sortstr=TRUE)
 #' points(val~pos, x$X, pch=20, col="maroon")
 #'
 #' @export
 findpeaks <- function (x, nups = 1, ndowns = nups, zero = "0", peakpat = NULL,
-                       minpeakheight = -Inf, minpeakdistance = 1,
-                       y_min = 0, y_max = 0,
-                       npeaks = 0, sortstr = FALSE, IsPlot = F)
+    minpeakheight = -Inf, minpeakdistance = 1,
+    h_min = 0, h_max = 0,
+    npeaks = 0, sortstr = FALSE,
+    include_gregexpr = FALSE,
+    IsPlot = F)
 {
     stopifnot(is.vector(x, mode = "numeric") ||
                   is.vector(x, mode = "logical") || length(is.na(x)) == 0)
@@ -67,10 +75,13 @@ findpeaks <- function (x, nups = 1, ndowns = nups, zero = "0", peakpat = NULL,
     #     xc <- x
     # }
     xc <- sign(diff(x))
-    xc <- paste(as.character(sign(xc)), collapse = "")
-    xc <- gsub("1", "+", gsub("-1", "-", xc))
-    if (zero != "0")      xc      <- gsub("0", zero, xc)
-    if (is.null(peakpat)) peakpat <- sprintf("[+]{%d,}[-]{%d,}", nups, ndowns)
+    xc <- paste(as.character(sign(xc)), collapse = "") %>%
+        {gsub("1", "+", gsub("-1", "-", .))}
+    xc %<>% str_replace_midzero() # in v0.3.4
+
+    if (zero != "0") xc <- gsub("0", zero, xc)
+    # if (is.null(peakpat)) peakpat <- sprintf("[+]{%d,}[-]{%d,}", nups, ndowns)
+    if (is.null(peakpat)) peakpat <- sprintf("[+]{%d,}[0]{0,}[-]{%d,}", nups, ndowns)
 
     # Fatal bug found at 20211114
     # Because `diff` operation lead to the length of `x` reduced one
@@ -93,8 +104,8 @@ findpeaks <- function (x, nups = 1, ndowns = nups, zero = "0", peakpat = NULL,
         xv[i] <- x[xp[i]]
     }
     inds <- which(xv >= minpeakheight &
-                      xv - pmin(x[x1], x[x2]) >= y_max &
-                      xv - pmax(x[x1], x[x2]) >= y_min)
+                      xv - pmin(x[x1], x[x2]) >= h_max &
+                      xv - pmax(x[x1], x[x2]) >= h_min)
     X <- cbind(xv[inds], xp[inds], x1[inds], x2[inds])
 
     if (length(X) == 0) return(NULL)
@@ -128,8 +139,18 @@ findpeaks <- function (x, nups = 1, ndowns = nups, zero = "0", peakpat = NULL,
         plot(x, type = "b"); grid()
         points(val~pos, X, col = "blue")
     }
-    return(list(gregexpr = rc, X = X))
+    if (include_gregexpr) listk(X, gregexpr = rc) else listk(X)
 }
+
+#' @importFrom stringr str_replace_all
+str_replace_midzero <- function(x) {
+    replace = function(x, replacement = "+") {
+        paste(rep(replacement, nchar(x)), collapse = "")
+    }
+    str_replace_all(x, "\\++0\\++", . %>% replace("+")) %>%
+        str_replace_all("-+0-+", . %>% replace("-"))
+}
+
 
 findpeaks_season <- function(
     ypred, r_max = 0, r_min = 0,
@@ -139,13 +160,13 @@ findpeaks_season <- function(
     nyear = 1)
 {
     A = max(ypred) - min(ypred)
-    y_max = r_max * A
-    y_min = r_min * A
+    h_max = r_max * A
+    h_min = r_min * A
     # local minimum values
     # peak values is small for minimum values, so can't use r_min here
     peaks <- findpeaks(-ypred,
-        zero = "-",
-        y_max = y_max, y_min = y_min * 0,
+        zero = "+",
+        h_max = h_max, h_min = h_min * 0,
         minpeakdistance = minpeakdistance,
         nups = 0
     )
@@ -161,7 +182,7 @@ findpeaks_season <- function(
     # local maximum values,
     peaks <- findpeaks(ypred,
         zero = "+",
-        y_max = y_max, y_min = y_min,
+        h_max = h_max, h_min = h_min,
         minpeakdistance = minpeakdistance,
         minpeakheight = minpeakheight,
         nups = nups, ndowns = ndowns
@@ -184,9 +205,9 @@ findpeaks_season_jl <- function(
     A = max(ypred) - min(ypred)
     ans = JuliaCall::julia_call("phenofit.findpeaks_season", ypred,
         r_max = r_max, r_min = r_min,
-        # r_max = y_max/A, r_min = y_min/A,
+        # r_max = h_max/A, r_min = h_min/A,
         minpeakdistance = as.integer(minpeakdistance), minpeakheight = minpeakheight,
         nups = nups, ndowns = ndowns)
-    ans$threshold <- data.table(y_max = r_max*A, y_min = r_min*A, r_max, r_min)
+    ans$threshold <- data.table(h_max = r_max * A, h_min = r_min * A, r_max, r_min)
     ans
 }

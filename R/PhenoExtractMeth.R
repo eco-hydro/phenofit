@@ -221,7 +221,7 @@ PhenoDeriv <- function(fFIT, t = NULL,
     }
     if (is_empty(eos)) {
         I_eos <- findpeaks(-der1[(half.season+5):length(der1)],
-                           nups=nmin, ndowns=0, npeaks=1, sortstr=TRUE)$X$pos + half.season + 4
+            nups=nmin, ndowns=0, npeaks=1, sortstr=TRUE)$X$pos + half.season + 4
         eos <- t[I_eos]
         if (is_empty(eos)) eos <- round((t[n] + pos)/2)
     }

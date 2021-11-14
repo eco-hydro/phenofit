@@ -3,14 +3,14 @@
 \name{rcpp_season_filter}
 \alias{rcpp_season_filter}
 \alias{check_season_dt}
-\alias{cheak_season_list}
+\alias{check_season_list}
 \title{season_filter}
 \usage{
 rcpp_season_filter(d, rm_closed = TRUE, rtrough_max = 0.7, r_min = 0.02)
 
 check_season_dt(dt)
 
-cheak_season_list(lst_dt)
+check_season_list(lst_dt)
 }
 \arguments{
 \item{d}{Data.frame of growing season dividing info}

@@ -62,7 +62,7 @@ find_season.peaks <- function(
                     (c(FALSE, diff(val) < 0) & c(FALSE, diff(type) == 2)))
             pos <- pos[I, ]
 
-            pos   <- removeClosedExtreme(pos, ypred, A, y_min = r_min*A, minpeakdistance)
+            pos   <- removeClosedExtreme(pos, ypred, A, y_min = r_min*A)
             pos$t <- t[pos$pos]
             if (nrow(pos) < 2){ # at least two points, begin and end
                 warning("Can't find a complete growing season before!"); return(NULL)
@@ -146,11 +146,9 @@ season_input <- function(INPUT, options = NULL, verbose = FALSE, ...)
     if (verbose) print(str(.options$season))
 
     opt = get_options()
-#     browser()
-# assign("opt", opt, envir = globalenv())
-# assign("INPUT", INPUT, envir = globalenv())
-    c(d_fit, info_peak) %<-% roughFit(INPUT)
-    d_season = find_season.peaks(d_fit, info_peak)
-    listk(fit = d_fit, dt = d_season)
+    # export2glob(opt, INPUT)
+    c(rfit, info_peak) %<-% roughFit(INPUT)
+    d_season = find_season.peaks(rfit, info_peak)
+    listk(fit = rfit, dt = d_season)
 }
 

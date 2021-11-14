@@ -85,13 +85,12 @@ season_mov <- function(INPUT,
 
     brks  <- list()
     vcs   <- vector("list", length(years.run)) %>% set_names(years.run)
-
     for (year_i in years.run) {
-        i = which(year_i == years)
+        i = which(year_i == years.run)
         if (.options$season$verbose) fprintf("  [season_mov] running %d ... \n", i)
-        
+
         # I <- which(date_year %in% years[(i-ny_extend):(i+ny_extend)]) # 3y index
-        I   <- which(date_year %in% years[i])
+        I   <- which(date_year %in% years.run[i])
         ylu <- get_ylu(INPUT$y, date_year, INPUT$w, width = width_ylu, I, Imedian = TRUE,
             opt$wmin)
         ylu %<>% merge_ylu(INPUT$ylu, .) # curvefits.R
@@ -118,7 +117,15 @@ season_mov <- function(INPUT,
         if (!is_empty(brk$dt))
             brk$dt %<>% subset(year == year_i) %>% mutate(lambda = lambda)
 
-        ans = list(fit = brk$fit[date_year[I] == year_i, ], dt = brk$dt)
+        # improve for head and tail, v0.3.4
+        if (i == 1) {
+            rfit = brk$fit[date_year[I] <= year_i, ]
+        } else if (i == length(years.run)) {
+            rfit = brk$fit[date_year[I] >= year_i, ]
+        } else {
+            rfit = brk$fit[date_year[I] == year_i, ]
+        }
+        ans = list(fit = rfit, dt = brk$dt)
         if (.options$debug) ans %<>% c(list(fit.raw = brk$fit), .)
         brks[[i]] <- ans
     }
@@ -133,11 +140,12 @@ season_mov <- function(INPUT,
         if (is_empty(dt)) {
             warning( 'No growing season found!'); return(NULL)
         }
-        if (opt$.check_season) brks$dt %<>% cheak_season_list()
+        if (opt$.check_season) brks$dt %<>% check_season_list()
     }
     brks$GOF <- stat_season(INPUT, brks$fit)
-
-    if (opt$rFUN == "smooth_wWHIT" && !has_lambda && opt$.lambda_vcurve) 
+    # compatible for previous versions
+    if (is.character(opt$rFUN) && opt$rFUN == "smooth_wWHIT" &&
+        !has_lambda && opt$.lambda_vcurve)
         brks$optim <- vcs
     return(brks)
 }
@@ -174,7 +182,8 @@ check_season_dt <- function(dt) {
     rcpp_season_filter(dt, .options$season$rm.closed,
         rtrough_max = .options$season$rtrough_max,
         r_min = .options$season$r_min)
-    dt[y_peak >= .options$season$ypeak_min & (len > len_min & len < len_max), ]
+    dt[y_peak >= .options$season$ypeak_min & (len > len_min & len < len_max), ] %>%
+        .[peak <= end & beg < end] # a temporary resolution
 }
 
 #' @param dt data.table of growing season dividing info
@@ -183,7 +192,7 @@ check_season_dt <- function(dt) {
 #' @inheritParams season_mov
 #' @rdname rcpp_season_filter
 #' @export
-cheak_season_list <- function(lst_dt) {
+check_season_list <- function(lst_dt) {
     if (is.data.frame(lst_dt)) lst_dt = list(lst_dt)
     lst_dt %<>% rm_empty()
     dt2 = map(lst_dt, ~ check_season_dt(.x)) %>%

@@ -62,48 +62,49 @@ rename_season <- function(d) {
 #' @param pos data.table with the columns of `"val", "pos", "left", "right", "type"`.
 #'
 #' @examples
-#' #removeClosedExtreme(pos, ypred, A, y_min, minpeakdistance)
+#' #removeClosedExtreme(pos, ypred, A, y_min)
 #'
 #' @keywords internal
 #' @return A data.table with the columns of:
 #' `"val", "pos", "left", "right", "type"`
 #' @export
-removeClosedExtreme <- function(pos, ypred, A = NULL, y_min, minpeakdistance)
+removeClosedExtreme <- function(pos, ypred, A = NULL, y_min)
 {
-    # 1.2 remove both points (date or value of min and max too close)
+    # 1. remove both points (date or value of min and max too close)
     # I_del <- union(I_date, I_date+1)
     # I_del <- union(I_date + 1, I_val + 1)
     if (is.null(A)) A = max(ypred) - min(ypred)
 
-    # if (rm.closed) {
-    for (i in 1:2) {
-        if (i == 1) {
-            # remove dates too close first, then rm continue max or min value
-            I_del  <- which(diff(pos$pos) < minpeakdistance/3) + 1
-        } else if(i == 2) {
-            # remove values too close second, then rm continue max or min value again.
-            # I_del = NULL
-            I_del  <- which(abs(diff(pos$val)) < 0.05 * A) + 1
-        }
-        if (length(I_del) > 0) pos <- pos[-I_del, ]
+    I_del <- which(abs(diff(pos$val)) < 0.05 * A) + 1
+    if (length(I_del) > 0) pos <- pos[-I_del, ]
 
-        # 1.3 remove duplicated peaks or troughs
-        pos$flag <- cumsum(c(1, diff(pos$type) != 0))
-        has_duplicated <- duplicated(pos$flag) %>% any()
-        if (has_duplicated) {
-            pos %<>% group_by(flag) %>%
-                group_modify(~merge_duplicate(.x, y = ypred, threshold = y_min)) %>%
-                ungroup() %>%
-                select(-flag)
-        }
-        pos
+    # 2. remove duplicated peaks or troughs
+    pos$flag <- cumsum(c(1, diff(pos$type) != 0))
+    has_duplicated <- duplicated(pos$flag) %>% any()
+    if (has_duplicated) {
+        pos %<>% group_by(flag) %>%
+            group_modify(~ merge_duplicate(.x, y = ypred, threshold = y_min)) %>%
+            ungroup() %>%
+            select(-flag)
     }
-    # } else {
-    #     # 对于CRO, GRA, 变化比较剧烈，相邻极值，不进行调整和融合
-    #     pos[type == 1, ]
-    # }
     pos
 }
+
+# if (rm.closed) {
+# for (i in 1:2) {
+# if (i == 1) {
+# remove dates too close first, then rm continue max or min value
+# This step not works for sharply change. Removed in v0.3.4
+# I_del  <- which(diff(pos$pos) < minpeakdistance/3) + 1
+# } else if(i == 2) {
+# remove values too close second, then rm continue max or min value again.
+# I_del = NULL
+# }
+# } else {
+#     # 对于CRO, GRA, 变化比较剧烈，相邻极值，不进行调整和融合
+#     pos[type == 1, ]
+# }
+# pos
 
 # 如果在指定阈值之内，则进行合并；
 # 否则，仅保留最大的极值

@@ -4,7 +4,7 @@
 \alias{removeClosedExtreme}
 \title{rm too closed peaks or troughs}
 \usage{
-removeClosedExtreme(pos, ypred, A = NULL, y_min, minpeakdistance)
+removeClosedExtreme(pos, ypred, A = NULL, y_min)
 }
 \arguments{
 \item{pos}{data.table with the columns of \verb{"val", "pos", "left", "right", "type"}.}
@@ -17,7 +17,7 @@ A data.table with the columns of:
 rm too closed peaks or troughs
 }
 \examples{
-#removeClosedExtreme(pos, ypred, A, y_min, minpeakdistance)
+#removeClosedExtreme(pos, ypred, A, y_min)
 
 }
 \keyword{internal}

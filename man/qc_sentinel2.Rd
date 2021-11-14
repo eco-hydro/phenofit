@@ -4,16 +4,16 @@
 \alias{qc_sentinel2}
 \title{Initial weights for sentinel2 according to SCL band}
 \usage{
-qc_sentinel2(SLC, wmin = 0.2, wmid = 0.5, wmax = 1)
+qc_sentinel2(SCL, wmin = 0.2, wmid = 0.5, wmax = 1)
 }
 \arguments{
+\item{SCL}{quality control variable for sentinel2}
+
 \item{wmin}{Double, minimum weigth (i.e. weight of snow, ice and cloud).}
 
 \item{wmid}{Dougle, middle weight, i.e. marginal}
 
 \item{wmax}{Double, maximum weight, i.e. good}
-
-\item{SCL}{quality control variable for sentinel2}
 }
 \description{
 \tabular{llll}{

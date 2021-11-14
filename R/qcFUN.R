@@ -245,8 +245,8 @@ qc_SPOT <- function (QA, wmin = 0.2, wmid = 0.5, wmax = 1) {
 #' @examples
 #' qc_sentinel2(1:11)
 #' @export
-qc_sentinel2 <- function(SLC, wmin = 0.2, wmid = 0.5, wmax = 1) {
-    QA <- SLC
+qc_sentinel2 <- function(SCL, wmin = 0.2, wmid = 0.5, wmax = 1) {
+    QA <- SCL
     qc_good = c(4, 5, 6, 7, 10)
     qc_bad = c(1, 2, 3, 9)
     qc_mid = c(8)

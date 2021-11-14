@@ -5,7 +5,7 @@
 \alias{get_options}
 \title{set and get phenofit option}
 \usage{
-set_options(...)
+set_options(..., options = NULL)
 
 get_options(names = NULL)
 }
@@ -13,6 +13,8 @@ get_options(names = NULL)
 \item{...}{list of phenofit options
 FUN_season: character, \code{season_mov} or \code{season}
 rFUN: character, rough fitting function. \code{smooth_wWHIT}, \code{smooth_wSG} or \code{smooth_wHANTs}.}
+
+\item{options}{If not NULL, \code{options} will be used and \code{...} will be ignored.}
 
 \item{names}{vector of character, names of options}
 }

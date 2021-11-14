@@ -11,15 +11,21 @@ test_that("findpeaks works", {
         pSignal <- pSignal + hgt[i]/(1 + abs((x - pos[i])/wdt[i]))^4
     }
 
-    expect_equal( nrow(findpeaks(pSignal, y_max=4, sortstr=TRUE)$X), 5,
+    expect_equal( nrow(findpeaks(pSignal, h_max=4, sortstr=TRUE)$X), 5,
                   info = 'r_min works') # 5 points amplitude > 4
-    expect_equal( nrow(findpeaks(pSignal, y_max=3, sortstr=TRUE)$X), 8,
+    expect_equal( nrow(findpeaks(pSignal, h_max=3, sortstr=TRUE)$X), 8,
                   info = 'r_min works') # 8 points amplitude > 3
-    expect_equal( nrow(findpeaks(pSignal, y_min=4.1, sortstr=TRUE)$X), 3,
+    expect_equal( nrow(findpeaks(pSignal, h_min=4.1, sortstr=TRUE)$X), 3,
                   info = 'r_min works')
 
     ## add test for Henan multiple growing season
     ypred = c(0.329, 0.341, 0.356, 0.476, 0.539, 0.569, 0.645, 0.602, 0.515, 0.329, 
         0.128, 0.596, 0.535, 0.483, 0.355, 0.355, 0.128, 0.148, 0.176, 0.244)
-    expect_equal(nrow(findpeaks(-ypred, y_min = 0.0)$X), 2)
+    expect_equal(nrow(findpeaks(-ypred, h_min = 0.0)$X), 2)
+
+    ## test for flat pattern
+    x = c(4, 1, 2, 3, 4, 4, 3, 1, 3, 4)
+    expect_equal(nrow(findpeaks(x)$X), 1)
+    expect_equal(nrow(findpeaks(x, ndowns = 0)$X), 2)
+    expect_equal(nrow(findpeaks(x, nups = 0)$X), 3) # this because ndowns = nups in default
 })

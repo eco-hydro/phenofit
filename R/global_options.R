@@ -82,19 +82,19 @@ options_fitting <- list(
 #' @param ... list of phenofit options
 #' FUN_season: character, `season_mov` or `season`
 #' rFUN: character, rough fitting function. `smooth_wWHIT`, `smooth_wSG` or `smooth_wHANTs`.
-#'
+#' @param options If not NULL, `options` will be used and `...` will be ignored.
 #' @examples
 #' set_options(verbose = FALSE)
 #' get_options("season") %>% str()
 #' @export
-set_options <- function(...) {
-    opts = list(...)
+set_options <- function(..., options = NULL) {
+    if (is.null(options)) options = list(...)
     # rm unrelated parameters
-    ind = match(names(opts), names(.options)) %>% which.notna()
+    ind = match(names(options), names(.options)) %>% which.notna()
     # This step might lead to error, but will improve performance
     if (.options$initialized && length(ind) == 0) return()
-
-    .options %<>% modifyList(opts[ind])
+    
+    .options %<>% modifyList(options[ind])
     # `season` and `fitting` share the same parameter
     pars_comm = c("wFUN", "wmin", "verbose") 
     for (par in pars_comm) {

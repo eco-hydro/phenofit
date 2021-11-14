@@ -12,10 +12,11 @@ findpeaks(
   peakpat = NULL,
   minpeakheight = -Inf,
   minpeakdistance = 1,
-  y_min = 0,
-  y_max = 0,
+  h_min = 0,
+  h_max = 0,
   npeaks = 0,
   sortstr = FALSE,
+  include_gregexpr = FALSE,
   IsPlot = F
 )
 }
@@ -40,12 +41,12 @@ to be recognized as such}
 to be counted. If the distance of two maximum extreme value less than
 \code{minpeakdistance}, only the real maximum value will be left.}
 
-\item{y_min}{Threshold is defined as the difference of peak value with
-trough value. There are two threshold (left and right). The minimum threshold
-should be greater than \code{y_min}.}
+\item{h_min}{\code{h} is defined as the difference of peak value to the
+adjacent left and right trough value (\code{h_left} and \code{h_right} respectively).
+The real peaks should follow \code{min(h_left, h_right) >= h_min}.}
 
-\item{y_max}{Similar as \code{y_min}, The maximum threshold should
-be greater than \code{y_max}.}
+\item{h_max}{Similar as \code{h_min}, the real peaks should follow
+\code{max(h_left, h_right) >= h_min}.}
 
 \item{npeaks}{the number of peaks to return. If \code{sortstr} = true, the
 largest npeaks maximum values will be returned; If \code{sortstr} = false,
@@ -60,6 +61,13 @@ their maximum value?}
 Find peaks (maxima) in a time series. This function is modified from
 \code{pracma::findpeaks}.
 }
+\note{
+In versions before v0.3.4, \code{findpeaks(c(1, 2, 3, 4, 4, 3, 1))} failed to detect
+peaks when a flat pattern exit in the middle.
+
+From version v0.3.4, the peak pattern was changed from \verb{[+]\{\%d,\}[-]\{\%d,\}} to
+\verb{[+]\{\%d,\}[0]\{0,\}[-]\{\%d,\}}. The latter can escape the flat part successfully.
+}
 \examples{
 x <- seq(0, 1, len = 1024)
 pos <- c(0.1, 0.13, 0.15, 0.23, 0.25, 0.40, 0.44, 0.65, 0.76, 0.78, 0.81)
@@ -71,7 +79,7 @@ for (i in seq(along=pos)) {
 }
 
 plot(pSignal, type="l", col="navy"); grid()
-x <- findpeaks(pSignal, npeaks=3, y_min=4, sortstr=TRUE)
+x <- findpeaks(pSignal, npeaks=3, h_min=4, sortstr=TRUE)
 points(val~pos, x$X, pch=20, col="maroon")
 
 }

@@ -212,7 +212,7 @@ season <- function(
                     (c(FALSE, diff(val) < 0) & c(FALSE, diff(type) == 2)))
             pos <- pos[I, ]
 
-            pos   <- removeClosedExtreme(pos, ypred, A, y_min = r_min*A, minpeakdistance)
+            pos   <- removeClosedExtreme(pos, ypred, A, y_min = r_min*A)
             pos$t <- t[pos$pos]
             if (nrow(pos) < 2){ # at least two points, begin and end
                 warning("Can't find a complete growing season before!"); return(res)
