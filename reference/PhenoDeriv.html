@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Growing season division (unstable version) — season_input • phenofit</title>
+<title>Phenology extraction in Derivative method (DER) — PhenoDeriv • phenofit</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Growing season division (unstable version) — season_input" />
-<meta property="og:description" content="Growing season division (unstable version)" />
+<meta property="og:title" content="Phenology extraction in Derivative method (DER) — PhenoDeriv" />
+<meta property="og:description" content="Phenology extraction in Derivative method (DER)" />
 
 
 
@@ -126,35 +126,74 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Growing season division (unstable version)</h1>
-    <small class="dont-index">Source: <a href='https://github.com/eco-hydro/phenofit/blob/master/R/season_input.R'><code>R/season_input.R</code></a></small>
-    <div class="hidden name"><code>season_input.Rd</code></div>
+    <h1>Phenology extraction in Derivative method (DER)</h1>
+    <small class="dont-index">Source: <a href='https://github.com/eco-hydro/phenofit/blob/master/R/PhenoDeriv.R'><code>R/PhenoDeriv.R</code></a></small>
+    <div class="hidden name"><code>PhenoDeriv.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Growing season division (unstable version)</p>
+    <p>Phenology extraction in Derivative method (DER)</p>
     </div>
 
-    <pre class="usage"><span class='fu'>season_input</span><span class='op'>(</span><span class='va'>INPUT</span>, options <span class='op'>=</span> <span class='cn'>NULL</span>, verbose <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='va'>...</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>PhenoDeriv</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>t</span>, <span class='va'>...</span><span class='op'>)</span>
+
+<span class='co'># S3 method for fFIT</span>
+<span class='fu'>PhenoDeriv</span><span class='op'>(</span><span class='va'>x</span>, t <span class='op'>=</span> <span class='cn'>NULL</span>, analytical <span class='op'>=</span> <span class='cn'>TRUE</span>, smoothed.spline <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='va'>...</span><span class='op'>)</span>
+
+<span class='co'># S3 method for default</span>
+<span class='fu'>PhenoDeriv</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>t</span>, <span class='va'>der1</span>, IsPlot <span class='op'>=</span> <span class='cn'>TRUE</span>, show.legend <span class='op'>=</span> <span class='cn'>TRUE</span>, <span class='va'>...</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>INPUT</th>
-      <td><p>A list object with the elements of <code>t</code>, <code>y</code>, <code>w</code>,
-<code>Tn</code> (optional) and <code>ylu</code>, returned by <code><a href='check_input.html'>check_input()</a></code>.</p></td>
+      <th>x</th>
+      <td><p>numeric vector, or <code>fFIT</code> object returned by <code><a href='curvefit.html'>curvefit()</a></code>.</p></td>
     </tr>
     <tr>
-      <th>options</th>
-      <td><p>see details</p></td>
+      <th>t</th>
+      <td><p><code>doy</code> vector, corresponding doy of vegetation index.</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>others parameter to <code><a href='set_options.html'>set_options()</a></code></p></td>
+      <td><p>Other parameters will be ignored.</p></td>
+    </tr>
+    <tr>
+      <th>analytical</th>
+      <td><p>If true, <code>numDeriv</code> package <code>grad</code> and <code>hess</code>
+will be used; if false, <code>D1</code> and <code>D2</code> will be used.</p></td>
+    </tr>
+    <tr>
+      <th>smoothed.spline</th>
+      <td><p>Whether apply <code>smooth.spline</code> first?</p></td>
+    </tr>
+    <tr>
+      <th>der1</th>
+      <td><p>the first order difference</p></td>
+    </tr>
+    <tr>
+      <th>IsPlot</th>
+      <td><p>whether to plot?</p></td>
+    </tr>
+    <tr>
+      <th>show.legend</th>
+      <td><p>whether show figure lelend?</p></td>
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
+
+    
+<ol>
+<li><p>Filippa, G., Cremonese, E., Migliavacca, M., Galvagno, M., Forkel, M.,
+Wingate, L., … Richardson, A. D. (2016). Phenopix: A R package for
+image-based vegetation phenology. Agricultural and Forest Meteorology,
+220, 141–150. doi: <a href='https://doi.org/10.1016/j.agrformet.2016.01.006'>10.1016/j.agrformet.2016.01.006</a></p></li>
+</ol>
+
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p><code><a href='PhenoTrs.html'>PhenoTrs()</a></code>, <code><a href='PhenoGu.html'>PhenoGu()</a></code>, <code><a href='PhenoKl.html'>PhenoKl()</a></code></p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

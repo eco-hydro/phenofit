@@ -129,9 +129,9 @@
       <small>Source: <a href='https://github.com/eco-hydro/phenofit/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
-    <div id="phenofit-033-2021-10-26" class="section level1">
+    <div id="phenofit-033-2021-11-14" class="section level1">
 <h1 class="page-header" data-toc-text="0.3.3">
-<a href="#phenofit-033-2021-10-26" class="anchor"></a>phenofit 0.3.3 (2021-10-26)<small> Unreleased </small>
+<a href="#phenofit-033-2021-11-14" class="anchor"></a>phenofit 0.3.3 (2021-11-14)<small> Unreleased </small>
 </h1>
 <ul>
 <li><p>Fix typo error in curvefits’ document.</p></li>
@@ -140,6 +140,14 @@
 <li><p>In the case of none growing season division information, <code>find_season.peaks</code> will be error. Fixed now.</p></li>
 <li><p>Fix the bug of <code>init_param</code> in the approximately monotonous time-sereis (e.g. fast harvest leads to a very short senescence period, and hence approximately monotonic in the whole growing season). In previous version, the parameter boundary of <code>sos</code> might exceed that of <code>eos</code>.</p></li>
 <li><p>Improved the phenology extraction method <code>PhenoTrs</code>, <code>PhenoDeriv</code> and <code>PhenoGu</code> in the approximately monotonous time-sereis. In the previous version <code>NA</code> value will be return. In the current version, if the time series is monotonously increasing, EOS will be the mean value of <code>t[n]</code> and peak date of season (<code>POP</code>). But <code>PhenoKlos</code> has no method to avoid <code>NA</code> values, because it used the strict mathematical solution to find the extreme values in the curve of curvature’s change rate.</p></li>
+</ul>
+<p>** MAJOR updates to improve multi-GS phenology extraction **</p>
+<ul>
+<li><p>Fix the bug of <code>findpeaks</code>, which lead to sharp changed growing season failed to detect.</p></li>
+<li><p>Fix the bug of <code>PhenoKlos</code>, where <code>minpeakheight</code> not work in previous version.</p></li>
+<li><p>Fix the bug of <code>check_season_dt</code>, where <code>peak</code> might be able to greater than <code>end</code>.</p></li>
+<li><p>Remove the parameter <code>check_season_dt</code> in <code>removeClosedExtreme</code>, which might eliminate good extreme values.</p></li>
+<li><p>add <code>get_pheno.rfit</code> to extract vegetation phenology from rough fitting directly.</p></li>
 </ul>
 </div>
     <div id="phenofit-032-2021-10-15" class="section level1">

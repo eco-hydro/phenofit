@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>get_pheno — get_pheno • phenofit</title>
+<title>Phenology extraction in inflexion method (Zhang) — PhenoKl • phenofit</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="get_pheno — get_pheno" />
-<meta property="og:description" content="Get yearly vegetation phenological metrics of a curve fitting method" />
+<meta property="og:title" content="Phenology extraction in inflexion method (Zhang) — PhenoKl" />
+<meta property="og:description" content="Phenology extraction in inflexion method (Zhang)" />
 
 
 
@@ -126,42 +126,22 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>get_pheno</h1>
-    <small class="dont-index">Source: <a href='https://github.com/eco-hydro/phenofit/blob/master/R/get_pheno.R'><code>R/get_pheno.R</code></a></small>
-    <div class="hidden name"><code>get_pheno.Rd</code></div>
+    <h1>Phenology extraction in inflexion method (Zhang)</h1>
+    <small class="dont-index">Source: <a href='https://github.com/eco-hydro/phenofit/blob/master/R/PhenoKl.R'><code>R/PhenoKl.R</code></a></small>
+    <div class="hidden name"><code>PhenoKl.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Get yearly vegetation phenological metrics of a curve fitting method</p>
+    <p>Phenology extraction in inflexion method (Zhang)</p>
     </div>
 
-    <pre class="usage"><span class='fu'>get_pheno</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
-
-<span class='co'># S3 method for rfit</span>
-<span class='fu'>get_pheno</span><span class='op'>(</span><span class='va'>x</span>, TRS <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0.2</span>, <span class='fl'>0.5</span><span class='op'>)</span>, asymmetric <span class='op'>=</span> <span class='cn'>TRUE</span>, <span class='va'>...</span><span class='op'>)</span>
-
-<span class='co'># S3 method for list</span>
-<span class='fu'>get_pheno</span><span class='op'>(</span>
-  <span class='va'>x</span>,
-  <span class='va'>method</span>,
-  TRS <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0.2</span>, <span class='fl'>0.5</span>, <span class='fl'>0.6</span><span class='op'>)</span>,
+    <pre class="usage"><span class='fu'>PhenoKl</span><span class='op'>(</span>
+  <span class='va'>fFIT</span>,
+  t <span class='op'>=</span> <span class='cn'>NULL</span>,
   analytical <span class='op'>=</span> <span class='cn'>TRUE</span>,
   smoothed.spline <span class='op'>=</span> <span class='cn'>FALSE</span>,
-  IsPlot <span class='op'>=</span> <span class='cn'>FALSE</span>,
-  show.title <span class='op'>=</span> <span class='cn'>TRUE</span>,
-  <span class='va'>...</span>
-<span class='op'>)</span>
-
-<span class='co'># S3 method for fFITs</span>
-<span class='fu'>get_pheno</span><span class='op'>(</span>
-  <span class='va'>x</span>,
-  <span class='va'>method</span>,
-  TRS <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0.2</span>, <span class='fl'>0.5</span><span class='op'>)</span>,
-  analytical <span class='op'>=</span> <span class='cn'>TRUE</span>,
-  smoothed.spline <span class='op'>=</span> <span class='cn'>FALSE</span>,
-  IsPlot <span class='op'>=</span> <span class='cn'>FALSE</span>,
-  title.left <span class='op'>=</span> <span class='st'>""</span>,
-  show.PhenoName <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  IsPlot <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  show.legend <span class='op'>=</span> <span class='cn'>TRUE</span>,
   <span class='va'>...</span>
 <span class='op'>)</span></pre>
 
@@ -169,30 +149,12 @@
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>x</th>
-      <td><p>One of:</p><ul>
-<li><p><code>rfit</code> (rought fitting object), returned by <code><a href='brks2rfit.html'>brks2rfit()</a></code>.</p></li>
-<li><p><code>fFITs</code> (fine fitting object), return by multiple curve fitting methods by <code><a href='curvefit.html'>curvefit()</a></code> for
-a growing season.</p></li>
-<li><p>list of <code><a href='fFITs.html'>fFITs()</a></code> object, for multiple growing seasons.</p></li>
-</ul></td>
+      <th>fFIT</th>
+      <td><p>object return by <code><a href='curvefit.html'>curvefit()</a></code></p></td>
     </tr>
     <tr>
-      <th>...</th>
-      <td><p>ignored.</p></td>
-    </tr>
-    <tr>
-      <th>TRS</th>
-      <td><p>Threshold for <code>PhenoTrs</code>.</p></td>
-    </tr>
-    <tr>
-      <th>asymmetric</th>
-      <td><p>If true, background value in spring season and autumn season
-is regarded as different.</p></td>
-    </tr>
-    <tr>
-      <th>method</th>
-      <td><p>Which fine curve fitting method to be extracted?</p></td>
+      <th>t</th>
+      <td><p><code>doy</code> vector, corresponding doy of vegetation index.</p></td>
     </tr>
     <tr>
       <th>analytical</th>
@@ -205,49 +167,60 @@ will be used; if false, <code>D1</code> and <code>D2</code> will be used.</p></t
     </tr>
     <tr>
       <th>IsPlot</th>
-      <td><p>Boolean. Whether to plot figure?</p></td>
+      <td><p>whether to plot?</p></td>
     </tr>
     <tr>
-      <th>show.title</th>
-      <td><p>Whether to show the name of fine curve fitting method
-in top title?</p></td>
+      <th>show.legend</th>
+      <td><p>whether show figure lelend?</p></td>
     </tr>
     <tr>
-      <th>title.left</th>
-      <td><p>String of growing season flag.</p></td>
-    </tr>
-    <tr>
-      <th>show.PhenoName</th>
-      <td><p>Whether to show phenological methods names in the top panel?</p></td>
-    </tr>
-    <tr>
-      <th>fFITs</th>
-      <td><p><code>fFITs</code> object returned by <code><a href='curvefits.html'>curvefits()</a></code></p></td>
+      <th>...</th>
+      <td><p>Other parameters will be ignored.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>List of every year phenology metrics</p>
+    <p>A numeric vector, with the elements of:
+<code>Greenup</code>, <code>Maturity</code>, <code>Senescence</code>, <code>Dormancy</code>.</p>
+    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
+
+    
+<ol>
+<li><p>Zhang, X., Friedl, M. A., Schaaf, C. B., Strahler, A. H., Hodges, J. C. F.
+F., Gao, F., … Huete, A. (2003). Monitoring vegetation phenology using
+MODIS. Remote Sensing of Environment, 84(3), 471–475.
+doi: <a href='https://doi.org/10.1016/S0034-4257(02)00135-9'>10.1016/S0034-4257(02)00135-9</a></p></li>
+</ol>
+
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><span class='r-in'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://github.com/eco-hydro/phenofit'>phenofit</a></span><span class='op'>)</span></span>
-<span class='r-in'><span class='co'># simulate vegetation time-series</span></span>
+    <pre class="examples"><span class='r-in'><span class='co'># simulate vegetation time-series</span></span>
 <span class='r-in'><span class='va'>fFUN</span> <span class='op'>=</span> <span class='va'>doubleLog.Beck</span></span>
-<span class='r-in'><span class='va'>par</span>  <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span> mn  <span class='op'>=</span> <span class='fl'>0.1</span>, mx  <span class='op'>=</span> <span class='fl'>0.7</span>, sos <span class='op'>=</span> <span class='fl'>50</span>, rsp <span class='op'>=</span> <span class='fl'>0.1</span>, eos <span class='op'>=</span> <span class='fl'>250</span>, rau <span class='op'>=</span> <span class='fl'>0.1</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>par</span>  <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span> mn  <span class='op'>=</span> <span class='fl'>0.1</span> , mx  <span class='op'>=</span> <span class='fl'>0.7</span> , sos <span class='op'>=</span> <span class='fl'>50</span> , rsp <span class='op'>=</span> <span class='fl'>0.1</span> , eos <span class='op'>=</span> <span class='fl'>250</span>, rau <span class='op'>=</span> <span class='fl'>0.1</span><span class='op'>)</span></span>
+<span class='r-in'></span>
 <span class='r-in'><span class='va'>t</span>    <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>365</span>, <span class='fl'>8</span><span class='op'>)</span></span>
 <span class='r-in'><span class='va'>tout</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>365</span>, <span class='fl'>1</span><span class='op'>)</span></span>
 <span class='r-in'><span class='va'>y</span> <span class='op'>&lt;-</span> <span class='fu'>fFUN</span><span class='op'>(</span><span class='va'>par</span>, <span class='va'>t</span><span class='op'>)</span></span>
+<span class='r-in'></span>
 <span class='r-in'><span class='va'>methods</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"AG"</span>, <span class='st'>"Beck"</span>, <span class='st'>"Elmore"</span>, <span class='st'>"Gu"</span>, <span class='st'>"Zhang"</span><span class='op'>)</span> <span class='co'># "Klos" too slow</span></span>
 <span class='r-in'><span class='va'>fFITs</span> <span class='op'>&lt;-</span> <span class='fu'><a href='curvefit.html'>curvefit</a></span><span class='op'>(</span><span class='va'>y</span>, <span class='va'>t</span>, <span class='va'>tout</span>, <span class='va'>methods</span><span class='op'>)</span></span>
-<span class='r-in'><span class='co'># multiple years</span></span>
-<span class='r-in'><span class='va'>fits</span>  <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>`2001` <span class='op'>=</span> <span class='va'>fFITs</span>, `2002` <span class='op'>=</span> <span class='va'>fFITs</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>fFIT</span>  <span class='op'>&lt;-</span> <span class='va'>fFITs</span><span class='op'>$</span><span class='va'>model</span><span class='op'>$</span><span class='va'>AG</span></span>
 <span class='r-in'></span>
-<span class='r-in'><span class='va'>l_param</span>   <span class='op'>&lt;-</span> <span class='fu'><a href='get_param.html'>get_param</a></span><span class='op'>(</span><span class='va'>fits</span><span class='op'>)</span></span>
-<span class='r-in'><span class='va'>d_GOF</span>     <span class='op'>&lt;-</span> <span class='fu'><a href='get_GOF.html'>get_GOF</a></span><span class='op'>(</span><span class='va'>fits</span><span class='op'>)</span></span>
-<span class='r-in'><span class='va'>d_fitting</span> <span class='op'>&lt;-</span> <span class='fu'><a href='get_fitting.html'>get_fitting</a></span><span class='op'>(</span><span class='va'>fits</span><span class='op'>)</span></span>
-<span class='r-in'><span class='va'>l_pheno</span>   <span class='op'>&lt;-</span> <span class='fu'>get_pheno</span><span class='op'>(</span><span class='va'>fits</span>, <span class='st'>"AG"</span>, IsPlot<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span></span>
-<span class='r-plt img'><img src='get_pheno-1.png' alt='' width='700' height='433' /></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span><span class='op'>(</span>mfrow <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>2</span>, <span class='fl'>2</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'><a href='PhenoTrs.html'>PhenoTrs</a></span><span class='op'>(</span><span class='va'>fFIT</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> sos eos </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  50 250 </span>
+<span class='r-in'><span class='fu'><a href='PhenoDeriv.html'>PhenoDeriv</a></span><span class='op'>(</span><span class='va'>fFIT</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> sos pos eos </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  47 150 253 </span>
+<span class='r-in'><span class='fu'><a href='PhenoGu.html'>PhenoGu</a></span><span class='op'>(</span><span class='va'>fFIT</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  UD  SD  DD  RD </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  26  73 227 275 </span>
+<span class='r-in'><span class='fu'>PhenoKl</span><span class='op'>(</span><span class='va'>fFIT</span><span class='op'>)</span></span>
+<span class='r-plt img'><img src='PhenoKl-1.png' alt='' width='700' height='433' /></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    Greenup   Maturity Senescence   Dormancy </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>         16         82        218        284 </span>
 </pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

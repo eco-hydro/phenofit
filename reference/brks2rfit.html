@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Growing season division (unstable version) — season_input • phenofit</title>
+<title>get rough fitting — brks2rfit • phenofit</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Growing season division (unstable version) — season_input" />
-<meta property="og:description" content="Growing season division (unstable version)" />
+<meta property="og:title" content="get rough fitting — brks2rfit" />
+<meta property="og:description" content="get rough fitting" />
 
 
 
@@ -126,34 +126,39 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Growing season division (unstable version)</h1>
-    <small class="dont-index">Source: <a href='https://github.com/eco-hydro/phenofit/blob/master/R/season_input.R'><code>R/season_input.R</code></a></small>
-    <div class="hidden name"><code>season_input.Rd</code></div>
+    <h1>get rough fitting</h1>
+    <small class="dont-index">Source: <a href='https://github.com/eco-hydro/phenofit/blob/master/R/roughFit.R'><code>R/roughFit.R</code></a></small>
+    <div class="hidden name"><code>brks2rfit.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Growing season division (unstable version)</p>
+    <p>get rough fitting</p>
     </div>
 
-    <pre class="usage"><span class='fu'>season_input</span><span class='op'>(</span><span class='va'>INPUT</span>, options <span class='op'>=</span> <span class='cn'>NULL</span>, verbose <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='va'>...</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>brks2rfit</span><span class='op'>(</span><span class='va'>brks</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>INPUT</th>
-      <td><p>A list object with the elements of <code>t</code>, <code>y</code>, <code>w</code>,
-<code>Tn</code> (optional) and <code>ylu</code>, returned by <code><a href='check_input.html'>check_input()</a></code>.</p></td>
-    </tr>
-    <tr>
-      <th>options</th>
-      <td><p>see details</p></td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td><p>others parameter to <code><a href='set_options.html'>set_options()</a></code></p></td>
+      <th>brks</th>
+      <td><p>returned by function <code><a href='season_mov.html'>season_mov()</a></code></p></td>
     </tr>
     </table>
+
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    
+<ul>
+<li><p><code>data</code>:</p><ul>
+<li><p>t</p></li>
+<li><p>y</p></li>
+<li><p>QC_flag</p></li>
+</ul></li>
+<li><p><code>tout</code>:</p></li>
+<li><p><code>zs</code>: list of iter1, ..., itern</p></li>
+<li><p><code>ws</code>: list of iter1, ..., itern</p></li>
+</ul>
 
 
   </div>

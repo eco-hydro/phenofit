@@ -211,15 +211,14 @@ treated as ungrowing season).</p></li>
 <span class='r-in'><span class='va'>wFUN</span> <span class='op'>&lt;-</span> <span class='st'>"wTSM"</span></span>
 <span class='r-in'><span class='va'>brks2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='season_mov.html'>season_mov</a></span><span class='op'>(</span><span class='va'>INPUT</span>,</span>
 <span class='r-in'>    options <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span></span>
-<span class='r-in'>        rFUN <span class='op'>=</span> <span class='va'>smooth_wWHIT</span>, wFUN <span class='op'>=</span> <span class='va'>wFUN</span>,</span>
+<span class='r-in'>        rFUN <span class='op'>=</span> <span class='st'>"smooth_wWHIT"</span>, wFUN <span class='op'>=</span> <span class='va'>wFUN</span>,</span>
 <span class='r-in'>        r_min <span class='op'>=</span> <span class='fl'>0.05</span>, ypeak_min <span class='op'>=</span> <span class='fl'>0.05</span>,</span>
 <span class='r-in'>        lambda <span class='op'>=</span> <span class='fl'>10</span>,</span>
 <span class='r-in'>        verbose <span class='op'>=</span> <span class='cn'>FALSE</span></span>
 <span class='r-in'>    <span class='op'>)</span><span class='op'>)</span></span>
-<span class='r-err co'><span class='r-pr'>#&gt;</span> <span class='error'>Error in opt$rFUN == "smooth_wWHIT":</span> comparison (1) is possible only for atomic and list types</span>
 <span class='r-in'><span class='co'># plot_season(INPUT, brks2, d)</span></span>
 <span class='r-in'><span class='co'># Fine fitting</span></span>
-<span class='r-in'><span class='va'>fit</span> <span class='op'>&lt;-</span> <span class='fu'>curvefits</span><span class='op'>(</span></span>
+<span class='r-in'><span class='va'>fFITs</span> <span class='op'>&lt;-</span> <span class='fu'>curvefits</span><span class='op'>(</span></span>
 <span class='r-in'>    <span class='va'>INPUT</span>, <span class='va'>brks2</span>,</span>
 <span class='r-in'>    options <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span></span>
 <span class='r-in'>        methods <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"AG"</span>, <span class='st'>"Beck"</span>, <span class='st'>"Elmore"</span>, <span class='st'>"Zhang"</span><span class='op'>)</span>, <span class='co'>#,"klos", "Gu"</span></span>
@@ -227,21 +226,15 @@ treated as ungrowing season).</p></li>
 <span class='r-in'>        nextend <span class='op'>=</span> <span class='fl'>2</span>, maxExtendMonth <span class='op'>=</span> <span class='fl'>2</span>, minExtendMonth <span class='op'>=</span> <span class='fl'>1</span>, minPercValid <span class='op'>=</span> <span class='fl'>0.2</span></span>
 <span class='r-in'>    <span class='op'>)</span></span>
 <span class='r-in'><span class='op'>)</span></span>
-<span class='r-err co'><span class='r-pr'>#&gt;</span> <span class='error'>Error in match(brks$fit$t, t):</span> object 'brks2' not found</span>
 <span class='r-in'></span>
-<span class='r-in'><span class='va'>r_param</span> <span class='op'>=</span> <span class='fu'><a href='get_param.html'>get_param</a></span><span class='op'>(</span><span class='va'>fit</span><span class='op'>)</span></span>
-<span class='r-err co'><span class='r-pr'>#&gt;</span> <span class='error'>Error in get_param(fit):</span> object 'fit' not found</span>
-<span class='r-in'><span class='va'>r_pheno</span> <span class='op'>=</span> <span class='fu'><a href='get_pheno.html'>get_pheno</a></span><span class='op'>(</span><span class='va'>fit</span><span class='op'>)</span></span>
-<span class='r-err co'><span class='r-pr'>#&gt;</span> <span class='error'>Error in get_pheno(fit):</span> object 'fit' not found</span>
-<span class='r-in'><span class='va'>r_gof</span> <span class='op'>=</span> <span class='fu'><a href='get_GOF.html'>get_GOF</a></span><span class='op'>(</span><span class='va'>fit</span><span class='op'>)</span></span>
-<span class='r-err co'><span class='r-pr'>#&gt;</span> <span class='error'>Error in get_GOF(fit):</span> object 'fit' not found</span>
-<span class='r-in'><span class='va'>d_fit</span> <span class='op'>=</span> <span class='fu'><a href='get_fitting.html'>get_fitting</a></span><span class='op'>(</span><span class='va'>fit</span><span class='op'>)</span></span>
-<span class='r-err co'><span class='r-pr'>#&gt;</span> <span class='error'>Error in get_fitting(fit):</span> object 'fit' not found</span>
+<span class='r-in'><span class='va'>r_param</span> <span class='op'>=</span> <span class='fu'><a href='get_param.html'>get_param</a></span><span class='op'>(</span><span class='va'>fFITs</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>r_pheno</span> <span class='op'>=</span> <span class='fu'><a href='get_pheno.html'>get_pheno</a></span><span class='op'>(</span><span class='va'>fFITs</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>r_gof</span> <span class='op'>=</span> <span class='fu'><a href='get_GOF.html'>get_GOF</a></span><span class='op'>(</span><span class='va'>fFITs</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>d_fit</span> <span class='op'>=</span> <span class='fu'><a href='get_fitting.html'>get_fitting</a></span><span class='op'>(</span><span class='va'>fFITs</span><span class='op'>)</span></span>
 <span class='r-in'></span>
 <span class='r-in'><span class='va'>g</span> <span class='op'>&lt;-</span> <span class='fu'><a href='plot_curvefits.html'>plot_curvefits</a></span><span class='op'>(</span><span class='va'>d_fit</span>, <span class='va'>brks2</span><span class='op'>)</span></span>
-<span class='r-err co'><span class='r-pr'>#&gt;</span> <span class='error'>Error in unique(.):</span> object 'd_fit' not found</span>
 <span class='r-in'><span class='fu'>grid</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/r/grid/grid.newpage.html'>grid.newpage</a></span><span class='op'>(</span><span class='op'>)</span>; <span class='fu'>grid</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/r/grid/grid.draw.html'>grid.draw</a></span><span class='op'>(</span><span class='va'>g</span><span class='op'>)</span></span>
-<span class='r-err co'><span class='r-pr'>#&gt;</span> <span class='error'>Error in grid::grid.draw(g):</span> object 'g' not found</span>
+<span class='r-plt img'><img src='curvefits-1.png' alt='' width='700' height='433' /></span>
 </pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

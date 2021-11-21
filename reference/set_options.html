@@ -135,7 +135,7 @@
     <p>set and get phenofit option</p>
     </div>
 
-    <pre class="usage"><span class='fu'>set_options</span><span class='op'>(</span><span class='va'>...</span><span class='op'>)</span>
+    <pre class="usage"><span class='fu'>set_options</span><span class='op'>(</span><span class='va'>...</span>, options <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span>
 
 <span class='fu'>get_options</span><span class='op'>(</span>names <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
 
@@ -147,6 +147,10 @@
       <td><p>list of phenofit options
 FUN_season: character, <code>season_mov</code> or <code>season</code>
 rFUN: character, rough fitting function. <code>smooth_wWHIT</code>, <code>smooth_wSG</code> or <code>smooth_wHANTs</code>.</p></td>
+    </tr>
+    <tr>
+      <th>options</th>
+      <td><p>If not NULL, <code>options</code> will be used and <code>...</code> patched.</p></td>
     </tr>
     <tr>
       <th>names</th>

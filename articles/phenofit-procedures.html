@@ -184,35 +184,35 @@
 <span class="co">#&gt; # A tibble: 7 × 7</span>
 <span class="co">#&gt;   flag      mn    mx   sos    rsp   eos    rau</span>
 <span class="co">#&gt;   &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;</span>
-<span class="co">#&gt; 1 2010_1 0.190 0.538 3808. 0.0827 3894. 0.0424</span>
+<span class="co">#&gt; 1 2010_1 0.191 0.538 3808. 0.0826 3894. 0.0432</span>
 <span class="co">#&gt; 2 2011_1 0.194 0.477 4180. 0.113  4274. 0.113 </span>
 <span class="co">#&gt; 3 2012_1 0.189 0.514 4542. 0.196  4643. 0.0864</span>
 <span class="co">#&gt; 4 2013_1 0.190 0.493 4903. 0.190  5011. 0.0672</span>
 <span class="co">#&gt; 5 2014_1 0.198 0.494 5276. 0.122  5375. 0.289 </span>
 <span class="co">#&gt; 6 2015_1 0.212 0.493 5639. 0.142  5726. 0.169 </span>
-<span class="co">#&gt; 7 2016_1 0.198 0.501 6002. 0.186  6095. 0.0729</span>
+<span class="co">#&gt; 7 2016_1 0.198 0.501 6002. 0.186  6095. 0.0731</span>
 
 <span class="va">dfit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_fitting.html">get_fitting</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">dfit</span><span class="op">)</span>
 <span class="co">#&gt;        flag          t      y QC_flag   meth    ziter1    ziter2</span>
-<span class="co">#&gt;   1: 2010_1 2010-01-25 0.1196    snow     AG 0.1887106 0.1900416</span>
-<span class="co">#&gt;   2: 2010_1 2010-01-25 0.1196    snow  Zhang 0.1879665 0.1893982</span>
-<span class="co">#&gt;   3: 2010_1 2010-01-25 0.1196    snow   Beck 0.1887318 0.1902582</span>
-<span class="co">#&gt;   4: 2010_1 2010-01-25 0.1196    snow Elmore 0.1880555 0.1902376</span>
-<span class="co">#&gt;   5: 2010_1 2010-01-25 0.1196    snow     Gu 0.1876624 0.1880027</span>
+<span class="co">#&gt;   1: 2010_1 2010-01-25 0.1196    snow     AG 0.1888598 0.1903677</span>
+<span class="co">#&gt;   2: 2010_1 2010-01-25 0.1196    snow  Zhang 0.1881071 0.1897593</span>
+<span class="co">#&gt;   3: 2010_1 2010-01-25 0.1196    snow   Beck 0.1888971 0.1906256</span>
+<span class="co">#&gt;   4: 2010_1 2010-01-25 0.1196    snow Elmore 0.1881961 0.1906009</span>
+<span class="co">#&gt;   5: 2010_1 2010-01-25 0.1196    snow     Gu 0.1877055 0.1882123</span>
 <span class="co">#&gt;  ---                                                            </span>
-<span class="co">#&gt; 766: 2016_1 2016-12-12 0.1372    snow     AG 0.1932683 0.1962146</span>
-<span class="co">#&gt; 767: 2016_1 2016-12-12 0.1372    snow  Zhang 0.1938416 0.1979743</span>
-<span class="co">#&gt; 768: 2016_1 2016-12-12 0.1372    snow   Beck 0.1939461 0.1983255</span>
-<span class="co">#&gt; 769: 2016_1 2016-12-12 0.1372    snow Elmore 0.1940137 0.1983899</span>
-<span class="co">#&gt; 770: 2016_1 2016-12-12 0.1372    snow     Gu 0.1872110 0.1872110</span>
+<span class="co">#&gt; 761: 2016_1 2016-12-12 0.1372    snow     AG 0.1933491 0.1963926</span>
+<span class="co">#&gt; 762: 2016_1 2016-12-12 0.1372    snow  Zhang 0.1939335 0.1981793</span>
+<span class="co">#&gt; 763: 2016_1 2016-12-12 0.1372    snow   Beck 0.1940403 0.1985395</span>
+<span class="co">#&gt; 764: 2016_1 2016-12-12 0.1372    snow Elmore 0.1941100 0.1986073</span>
+<span class="co">#&gt; 765: 2016_1 2016-12-12 0.1372    snow     Gu 0.1872110 0.1872110</span>
 
 <span class="co">## 2.5 Extract phenology</span>
 <span class="va">TRS</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.2</span>, <span class="fl">0.5</span><span class="op">)</span>
 <span class="va">l_pheno</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_pheno.html">get_pheno</a></span><span class="op">(</span><span class="va">fit</span>, TRS <span class="op">=</span> <span class="va">TRS</span>, IsPlot <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="co"># %&gt;% map(~melt_list(., "meth"))</span>
 <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">l_pheno</span><span class="op">$</span><span class="va">doy</span><span class="op">$</span><span class="va">Beck</span><span class="op">)</span>
 <span class="co">#&gt;      flag     origin TRS1.sos TRS1.eos TRS2.sos TRS2.eos TRS5.sos TRS5.eos</span>
-<span class="co">#&gt; 1: 2010_1 2010-01-01      126      302      137      280      154      250</span>
+<span class="co">#&gt; 1: 2010_1 2010-01-01      126      300      137      280      154      248</span>
 <span class="co">#&gt; 2: 2011_1 2011-01-01      143      278      151      270      163      257</span>
 <span class="co">#&gt; 3: 2012_1 2012-01-01      148      288      153      277      160      261</span>
 <span class="co">#&gt; 4: 2013_1 2013-01-01      142      298      147      284      154      262</span>
@@ -220,13 +220,13 @@
 <span class="co">#&gt; 6: 2015_1 2015-01-01      144      262      150      256      161      248</span>
 <span class="co">#&gt; 7: 2016_1 2016-01-01      147      285      151      272      159      253</span>
 <span class="co">#&gt;    DER.sos DER.pos DER.eos  UD  SD  DD  RD Greenup Maturity Senescence Dormancy</span>
-<span class="co">#&gt; 1:     155     191     243 132 175 211 290     128      184        214      296</span>
+<span class="co">#&gt; 1:     155     192     242 132 175 211 289     128      184        295       NA</span>
 <span class="co">#&gt; 2:     163     210     257 146 181 240 277     142      185        236      279</span>
 <span class="co">#&gt; 3:     160     194     261 150 170 239 284     145      175        233      288</span>
-<span class="co">#&gt; 4:     155     187     263 144 165 236 293     139      170        228      297</span>
+<span class="co">#&gt; 4:     155     187     263 144 165 236 293     139      170         NA       NA</span>
 <span class="co">#&gt; 5:     163     230     262 146 179 253 273     142      183        250      274</span>
-<span class="co">#&gt; 6:     161     207     248 147 175 235 261     143      179        231      264</span>
-<span class="co">#&gt; 7:     159     189     252 148 170 228 281     144      175        221      284</span>
+<span class="co">#&gt; 6:     161     207     248 147 175 235 261     142      179        231      264</span>
+<span class="co">#&gt; 7:     159     189     252 148 170 228 280     144      175         NA       NA</span>
 
 <span class="va">pheno</span> <span class="op">&lt;-</span> <span class="va">l_pheno</span><span class="op">$</span><span class="va">doy</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="../reference/melt_list.html">melt_list</a></span><span class="op">(</span><span class="st">"meth"</span><span class="op">)</span></code></pre></div>
 </div>
@@ -250,7 +250,7 @@
 
 <span class="co"># extract phenology metrics, only the first 3 year showed at here</span>
 <span class="co"># write_fig({</span>
-<span class="va">l_pheno</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_pheno.html">get_pheno</a></span><span class="op">(</span><span class="va">fit</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">7</span><span class="op">]</span>, method <span class="op">=</span> <span class="st">"AG"</span>, TRS <span class="op">=</span> <span class="va">TRS</span>, IsPlot <span class="op">=</span> <span class="cn">TRUE</span>, show_title <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
+<span class="va">l_pheno</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_pheno.html">get_pheno</a></span><span class="op">(</span><span class="va">fit</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">7</span><span class="op">]</span>, method <span class="op">=</span> <span class="st">"AG"</span>, TRS <span class="op">=</span> <span class="va">TRS</span>, IsPlot <span class="op">=</span> <span class="cn">TRUE</span>, show.title <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
 <p><img src="phenofit-procedures_files/figure-html/unnamed-chunk-7-3.png" width="672"></p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># }, "Figure6_phenology_metrics.pdf", 8, 6, show = TRUE)</span></code></pre></div>

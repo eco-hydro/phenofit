@@ -139,17 +139,17 @@ pracma::findpeaks." />
 
     <pre class="usage"><span class='fu'>findpeaks</span><span class='op'>(</span>
   <span class='va'>x</span>,
-  IsDiff <span class='op'>=</span> <span class='cn'>TRUE</span>,
   nups <span class='op'>=</span> <span class='fl'>1</span>,
   ndowns <span class='op'>=</span> <span class='va'>nups</span>,
   zero <span class='op'>=</span> <span class='st'>"0"</span>,
   peakpat <span class='op'>=</span> <span class='cn'>NULL</span>,
   minpeakheight <span class='op'>=</span> <span class='op'>-</span><span class='cn'>Inf</span>,
   minpeakdistance <span class='op'>=</span> <span class='fl'>1</span>,
-  y_min <span class='op'>=</span> <span class='fl'>0</span>,
-  y_max <span class='op'>=</span> <span class='fl'>0</span>,
+  h_min <span class='op'>=</span> <span class='fl'>0</span>,
+  h_max <span class='op'>=</span> <span class='fl'>0</span>,
   npeaks <span class='op'>=</span> <span class='fl'>0</span>,
   sortstr <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  include_gregexpr <span class='op'>=</span> <span class='cn'>FALSE</span>,
   IsPlot <span class='op'>=</span> <span class='cn'>F</span>
 <span class='op'>)</span></pre>
 
@@ -159,12 +159,6 @@ pracma::findpeaks." />
     <tr>
       <th>x</th>
       <td><p>Numeric vector.</p></td>
-    </tr>
-    <tr>
-      <th>IsDiff</th>
-      <td><p>If want to find extreme values, <code>IsDiff</code> should be true; If
-just want to find the continue negative or positive values, just set
-<code>IsDiff</code> as false.</p></td>
     </tr>
     <tr>
       <th>nups</th>
@@ -197,15 +191,15 @@ to be counted. If the distance of two maximum extreme value less than
 <code>minpeakdistance</code>, only the real maximum value will be left.</p></td>
     </tr>
     <tr>
-      <th>y_min</th>
-      <td><p>Threshold is defined as the difference of peak value with
-trough value. There are two threshold (left and right). The minimum threshold
-should be greater than <code>y_min</code>.</p></td>
+      <th>h_min</th>
+      <td><p><code>h</code> is defined as the difference of peak value to the
+adjacent left and right trough value (<code>h_left</code> and <code>h_right</code> respectively).
+The real peaks should follow <code>min(h_left, h_right) &gt;= h_min</code>.</p></td>
     </tr>
     <tr>
-      <th>y_max</th>
-      <td><p>Similar as <code>y_min</code>, The maximum threshold should
-be greater than <code>y_max</code>.</p></td>
+      <th>h_max</th>
+      <td><p>Similar as <code>h_min</code>, the real peaks should follow
+<code>max(h_left, h_right) &gt;= h_min</code>.</p></td>
     </tr>
     <tr>
       <th>npeaks</th>
@@ -219,11 +213,22 @@ just the first npeaks are returned in the order of index.</p></td>
 their maximum value?</p></td>
     </tr>
     <tr>
+      <th>include_gregexpr</th>
+      <td><p>Boolean (default <code>FALSE</code>), whether to include the
+matched <code>gregexpr</code>?</p></td>
+    </tr>
+    <tr>
       <th>IsPlot</th>
-      <td><p>Boolean.</p></td>
+      <td><p>Boolean, whether to plot?</p></td>
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
+
+    <p>In versions before v0.3.4, <code>findpeaks(c(1, 2, 3, 4, 4, 3, 1))</code> failed to detect
+peaks when a flat pattern exit in the middle.</p>
+<p>From version v0.3.4, the peak pattern was changed from <code>[+]{%d,}[-]{%d,}</code> to
+<code>[+]{%d,}[0]{0,}[-]{%d,}</code>. The latter can escape the flat part successfully.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><span class='r-in'><span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span><span class='fl'>0</span>, <span class='fl'>1</span>, len <span class='op'>=</span> <span class='fl'>1024</span><span class='op'>)</span></span>
@@ -236,7 +241,7 @@ their maximum value?</p></td>
 <span class='r-in'><span class='op'>}</span></span>
 <span class='r-in'></span>
 <span class='r-in'><span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>pSignal</span>, type<span class='op'>=</span><span class='st'>"l"</span>, col<span class='op'>=</span><span class='st'>"navy"</span><span class='op'>)</span>; <span class='fu'><a href='https://rdrr.io/r/graphics/grid.html'>grid</a></span><span class='op'>(</span><span class='op'>)</span></span>
-<span class='r-in'><span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'>findpeaks</span><span class='op'>(</span><span class='va'>pSignal</span>, npeaks<span class='op'>=</span><span class='fl'>3</span>, y_min<span class='op'>=</span><span class='fl'>4</span>, sortstr<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'>findpeaks</span><span class='op'>(</span><span class='va'>pSignal</span>, npeaks<span class='op'>=</span><span class='fl'>3</span>, h_min<span class='op'>=</span><span class='fl'>4</span>, sortstr<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span></span>
 <span class='r-in'><span class='fu'><a href='https://rdrr.io/r/graphics/points.html'>points</a></span><span class='op'>(</span><span class='va'>val</span><span class='op'>~</span><span class='va'>pos</span>, <span class='va'>x</span><span class='op'>$</span><span class='va'>X</span>, pch<span class='op'>=</span><span class='fl'>20</span>, col<span class='op'>=</span><span class='st'>"maroon"</span><span class='op'>)</span></span>
 <span class='r-plt img'><img src='findpeaks-1.png' alt='' width='700' height='433' /></span>
 <span class='r-in'></span>
