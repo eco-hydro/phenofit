@@ -18,7 +18,7 @@ brks2 <- season_mov(INPUT,
     ))
 # plot_season(INPUT, brks2, d)
 # Fine fitting
-fit <- curvefits(
+fFITs <- curvefits(
     INPUT, brks2,
     options = list(
         methods = c("AG", "Beck", "Elmore", "Zhang"), #,"klos", "Gu"
@@ -27,10 +27,10 @@ fit <- curvefits(
     )
 )
 
-r_param = get_param(fit)
-r_pheno = get_pheno(fit)
-r_gof = get_GOF(fit)
-d_fit = get_fitting(fit)
+r_param = get_param(fFITs)
+r_pheno = get_pheno(fFITs)
+r_gof = get_GOF(fFITs)
+d_fit = get_fitting(fFITs)
 
 g <- plot_curvefits(d_fit, brks2)
 grid::grid.newpage(); grid::grid.draw(g)

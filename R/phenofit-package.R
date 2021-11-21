@@ -47,7 +47,7 @@ NULL
               "val", "type", "flag", "peak", # season, 
               "i", "qc", "y", "sitename",  # phenofit_TS.avhrr
               season_input, 
-              "years", "nyear", "d_fit", "info_peak"
+              "years", "nyear", "d_fit", "rfit", "info_peak"
             )
         )
     }

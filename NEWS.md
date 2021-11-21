@@ -1,12 +1,4 @@
-# phenofit 0.3.4 (2021-11-14)
-
-- Fix the bug of `findpeaks`, which lead to sharp changed growing season failed to detect.
-- Fix the bug of `PhenoKlos`, where `minpeakheight` not work in previous version.
-- Fix the bug of `check_season_dt`, where `peak` might be able to greater than `end`.
-- Remove the parameter `check_season_dt` in `removeClosedExtreme`, which might eliminate
-  good extreme values.
-  
-# phenofit 0.3.3 (2021-10-26)
+# phenofit 0.3.3 (2021-11-14)
 
 - Fix typo error in curvefits' document.
 
@@ -29,6 +21,19 @@
   But `PhenoKlos` has no method to avoid `NA` values, because it
   used the strict mathematical solution to find the extreme values in the curve
   of curvature's change rate.
+
+** MAJOR updates to improve multi-GS phenology extraction **
+
+- Fix the bug of `findpeaks`, which lead to sharp changed growing season failed to detect.
+
+- Fix the bug of `PhenoKlos`, where `minpeakheight` not work in previous version.
+
+- Fix the bug of `check_season_dt`, where `peak` might be able to greater than `end`.
+
+- Remove the parameter `check_season_dt` in `removeClosedExtreme`, which might eliminate
+  good extreme values.
+  
+- add `get_pheno.rfit` to extract vegetation phenology from rough fitting directly.
 
 # phenofit 0.3.2 (2021-10-15)
 

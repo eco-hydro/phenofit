@@ -190,3 +190,32 @@ adjustRoughParam <- function(lambda, nf, frame,
     }
     listk(lambda, nf, frame, status = status)
 }
+
+#' get rough fitting
+#'
+#' @param brks returned by function [season_mov()]
+#'
+#' @keywords internal
+#' @return
+#' - `data`:
+#'     + t
+#'     + y
+#'     + QC_flag
+#' - `tout`:
+#' - `zs`: list of iter1, ..., itern
+#' - `ws`: list of iter1, ..., itern
+#' @export
+brks2rfit <- function(brks) {
+    dt = brks$dt
+    fit = brks$fit
+    data = fit[, .(t, y)]
+
+    # doys = difftime(data$t, data$t[1])
+    t = data$t #%>% as.integer()
+    tout = seq(data$t[1], last(data$t), by = "day") #%>% as.integer()
+    zs = ldply(fit %>% select(starts_with("ziter")),
+        ~approx2(t, .x, tout, na.rm = FALSE)$y)
+    structure(listk(data, dt, tout, zs), class = "rfit")
+}
+
+approx2 <- function(...) suppressWarnings(approx(...))

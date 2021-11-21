@@ -30,8 +30,10 @@
 #' just the first npeaks are returned in the order of index.
 #' @param sortstr Boolean, Should the peaks be returned sorted in decreasing oreder of
 #' their maximum value?
-#' @param IsPlot Boolean.
-#'
+#' @param include_gregexpr Boolean (default `FALSE`), whether to include the 
+#' matched `gregexpr`?
+#' @param IsPlot Boolean, whether to plot?
+#' 
 #' @note
 #' In versions before v0.3.4, `findpeaks(c(1, 2, 3, 4, 4, 3, 1))` failed to detect
 #' peaks when a flat pattern exit in the middle.

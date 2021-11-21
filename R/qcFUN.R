@@ -241,6 +241,7 @@ qc_SPOT <- function (QA, wmin = 0.2, wmid = 0.5, wmax = 1) {
 #' | 10            | Cirrus                                | Good        | \eqn{w_{mid}}  |
 #' | 11            | Snow / Ice                            | Bad         | \eqn{w_{mid}}  |
 #' @references 
+#' https://developers.google.com/earth-engine/datasets/catalog/COPERNICUS_S2_SR
 #' 
 #' @examples
 #' qc_sentinel2(1:11)

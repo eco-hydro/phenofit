@@ -151,4 +151,3 @@ season_input <- function(INPUT, options = NULL, verbose = FALSE, ...)
     d_season = find_season.peaks(rfit, info_peak)
     listk(fit = rfit, dt = d_season)
 }
-

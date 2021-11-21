@@ -19,7 +19,6 @@ phenonames <- c('TRS2.SOS', 'TRS2.EOS', 'TRS5.SOS', 'TRS5.EOS', 'TRS6.SOS', 'TRS
 #' @note 'Klos' have too many parameters. It will be slow and not stable.
 #'
 #' @return fFITs S3 object, see [fFITs()] for details.
-#' 
 #' @seealso [fFITs()]
 #' 
 #' @examples
@@ -66,6 +65,7 @@ curvefit <- function(y, t = index(y), tout = t,
     structure(list(data = data.table(y, t), tout = tout, model = fFITs), class = 'fFITs')
 }
 
+finefit <- curvefit
 
 #' @rdname curvefit
 #' @export

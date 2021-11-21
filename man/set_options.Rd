@@ -14,7 +14,7 @@ get_options(names = NULL)
 FUN_season: character, \code{season_mov} or \code{season}
 rFUN: character, rough fitting function. \code{smooth_wWHIT}, \code{smooth_wSG} or \code{smooth_wHANTs}.}
 
-\item{options}{If not NULL, \code{options} will be used and \code{...} will be ignored.}
+\item{options}{If not NULL, \code{options} will be used and \code{...} patched.}
 
 \item{names}{vector of character, names of options}
 }

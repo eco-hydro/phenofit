@@ -55,7 +55,10 @@ just the first npeaks are returned in the order of index.}
 \item{sortstr}{Boolean, Should the peaks be returned sorted in decreasing oreder of
 their maximum value?}
 
-\item{IsPlot}{Boolean.}
+\item{include_gregexpr}{Boolean (default \code{FALSE}), whether to include the
+matched \code{gregexpr}?}
+
+\item{IsPlot}{Boolean, whether to plot?}
 }
 \description{
 Find peaks (maxima) in a time series. This function is modified from

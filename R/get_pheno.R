@@ -18,54 +18,79 @@ PhenoPlot <- function(t, y, main = "", ...){
 #'
 #' @inheritParams get_GOF
 #' @inheritParams D
-#' @param fits A list of [fFITs()] object, for a single curve fitting
-#' method.
+#' @param x One of:
+#' - `rfit` (rought fitting object), returned by [brks2rfit()].
+#' - `fFITs` (fine fitting object), return by multiple curve fitting methods by [curvefit()] for 
+#'    a growing season.
+#' - list of [fFITs()] object, for multiple growing seasons.
 #' @param method Which fine curve fitting method to be extracted?
 #' @param TRS Threshold for `PhenoTrs`.
 #' @param IsPlot Boolean. Whether to plot figure?
-#' @param show_title Whether to show the name of fine curve fitting method
+#' @param show.title Whether to show the name of fine curve fitting method
 #' in top title?
 #' @param ... ignored.
-#'
-#' @note
-#' Please note that only a single fine curve fitting method allowed here!
 #'
 #' @return List of every year phenology metrics
 #'
 #' @example inst/examples/ex-get_fitting_param_GOF.R
 #' @export
-get_pheno <- function(fits, method,
+get_pheno <- function(x, ...) UseMethod("get_pheno", x)
+
+#' @inheritParams PhenoTrs
+#' @rdname get_pheno
+#' @export
+get_pheno.rfit <- function(x, TRS = c(0.2, 0.5), asymmetric = TRUE, ...) {
+    dt = x$dt
+    tout = x$tout
+    doys = as.numeric(difftime(tout, date.origin, units = "day"))
+    TRS %<>% set_names(., paste0("TRS", .*10))
+    pheno = dt %>% group_by(flag) %>% group_map(function(d, .y) {
+        ind = which(tout >= d$beg & tout <= d$end)
+        t = doys[ind]
+        values = last(x$zs)[ind]
+        der1 = diff(values) %>% c(NA, .)
+
+        p_TRS = map(TRS, ~ PhenoTrs.default(values, t, trs = ., IsPlot = FALSE, asymmetric = asymmetric))
+        p_DER = PhenoDeriv.default(values, t, der1, IsPlot = FALSE)
+        p_GU  = PhenoGu.default(values, t, der1, IsPlot = FALSE)
+        c(p_TRS, list(DER = p_DER, p_GU)) %>% unlist()
+    }) %>% set_names(dt$flag)
+    tidy_pheno(pheno)
+}
+
+#' @rdname get_pheno
+#' @export
+get_pheno.list <- function(x, method,
     TRS = c(0.2, 0.5, 0.6),
     analytical = TRUE, smoothed.spline = FALSE,
-    IsPlot = FALSE, show_title = TRUE, ...)
+    IsPlot = FALSE, show.title = TRUE, ...)
 {
-    if (!is.list(fits)) stop("Unsupported input type!")
-    if (class(fits) == 'fFITs')  fits <- list(fits)
+    if (!is.list(x)) stop("Unsupported input type!")
+    if (class(x) == 'fFITs')  x <- list(x)
 
-    names   <- names(fits) # methods
-    methods <- if (missing(method)) names(fits[[1]]$model) else method
+    names   <- names(x) # methods
+    methods <- if (missing(method)) names(x[[1]]$model) else method
 
     # pheno_list
     res <- lapply(set_names(seq_along(methods), methods), function(k){
         method <- methods[k]
         if (IsPlot){
-            op <- par(mfrow = c(length(fits), 5),
+            op <- par(mfrow = c(length(x), 5),
                 mgp = c(3, 0.6, 0), mar = rep(0, 4), yaxt = "n", xaxt = "n")
             if (isTRUE(all.equal(par("oma"), c(0, 0, 0, 0)))) {
                 margin_l = 5.5
-                oma <- if (show_title) c(1, margin_l, 4, 1) else c(1, margin_l, 2, 1)
+                oma <- if (show.title) c(1, margin_l, 4, 1) else c(1, margin_l, 2, 1)
                 par(oma = oma)
             }
         }
 
-        # fFITs
         pheno_list <- lapply(seq_along(names) %>% set_names(names), function(i){
-            fFITs <- fits[[i]]
+            fFITs <- x[[i]]
             .params = listk(
-                fFITs, method, TRS,
+                x = fFITs, method, TRS,
                 analytical, smoothed.spline, IsPlot,
-                showName_pheno = ifelse(i == 1, TRUE, FALSE),
-                title_left = names[i]
+                show.PhenoName = ifelse(i == 1, TRUE, FALSE),
+                title.left = names[i]
             )
             do.call(get_pheno.fFITs, .params)
         })
@@ -73,7 +98,7 @@ get_pheno <- function(fits, method,
         if (IsPlot){
             par(new = TRUE, mfrow = c(1, 1), oma = rep(0, 4), mar = rep(0, 4))
             plot(0, axes = F, type = "n", xaxt = "n", yaxt = "n") #
-            if (show_title) {
+            if (show.title) {
                 text(1, 1, method, font = 2, cex = 1.3)
             }
         }
@@ -82,19 +107,19 @@ get_pheno <- function(fits, method,
     lapply(res, tidy_pheno) %>% purrr::transpose()
 }
 
-#' @param fFITs `fFITs` object returned by [curvefit()]
-#' @param title_left String of growing season flag.
-#' @param showName_pheno Whether to show phenological methods names in the top panel?
+#' @param fFITs `fFITs` object returned by [curvefits()]
+#' @param title.left String of growing season flag.
+#' @param show.PhenoName Whether to show phenological methods names in the top panel?
 #'
 #' @rdname get_pheno
 #' @export
-get_pheno.fFITs <- function(fFITs, method,
+get_pheno.fFITs <- function(x, method,
     TRS = c(0.2, 0.5),
     analytical = TRUE, smoothed.spline = FALSE,
     IsPlot = FALSE,
-    title_left = "", showName_pheno = TRUE)
+    title.left = "", show.PhenoName = TRUE, ...)
 {
-    meths <- names(fFITs$model)
+    meths <- names(x$model)
     if (missing(method)) {
         method <- meths[1]
         warning(sprintf("method is missing and set to %s!", method))
@@ -103,7 +128,7 @@ get_pheno.fFITs <- function(fFITs, method,
         warning(sprintf("%s not in methods and set to %s!", method, meths[1]))
         method <- meths[1]
     }
-    model <- fFITs$model[[method]]
+    model <- x$model[[method]]
 
     # get_pheno methods
     methods  <- c(paste0("TRS", TRS*10),"DER","GU", "ZHANG")
@@ -112,10 +137,10 @@ get_pheno.fFITs <- function(fFITs, method,
     ypred  <- last2(model$zs)
     all_na <- all(is.na(ypred))
 
-    show.lgd = FALSE
+    show.legend = FALSE
     if (IsPlot && !all_na){
-        ti <- fFITs$data$t
-        yi <- fFITs$data$y # may have NA values.
+        ti <- x$data$t
+        yi <- x$data$y # may have NA values.
         # constrain plot ylims
         ylim0    <- c( pmin(min(yi, na.rm = TRUE), min(ypred)),
                        pmax(max(yi, na.rm = TRUE), max(ypred)))
@@ -123,10 +148,10 @@ get_pheno.fFITs <- function(fFITs, method,
         ylim     <- ylim0 + c(-1, 0.2) * 0.05 *A
         ylim_trs <- (ylim - ylim0) / A # TRS:0-1
 
-        PhenoPlot(fFITs$tout, ypred, ylim = ylim, yaxt = "s")
+        PhenoPlot(x$tout, ypred, ylim = ylim, yaxt = "s")
         lines(ti, yi, lwd = 1, col = "grey60")
 
-        QC_flag <- fFITs$data$QC_flag
+        QC_flag <- x$data$QC_flag
         # Different quality points with different color and shape.
         if (is.null(QC_flag)){
             points(ti, yi)
@@ -141,11 +166,11 @@ get_pheno.fFITs <- function(fFITs, method,
         }
 
         # show legend in first subplot
-        if (showName_pheno){
-            show.lgd <- TRUE
+        if (show.PhenoName){
+            show.legend <- TRUE
             legend('topright', c('y', "f(t)"), lty = c(1, 1), pch =c(1, NA), bty='n')
         }
-        stat <- get_GOF.fFITs(fFITs)
+        stat <- get_GOF.fFITs(x)
         stat <- subset(stat, meth == method) %>% select(-meth) %>% unlist() %>% round(3)
 
         exprs = list(
@@ -155,37 +180,36 @@ get_pheno.fFITs <- function(fFITs, method,
         )
 
         legend('topleft', do.call(expression, exprs), adj = c(0.2, 0.2), bty='n', text.col = "red")
-        # mtext(title_left, side = 2, line = 0.2)
-        mtext(title_left, side = 2, line = 1.8)
+        # mtext(title.left, side = 2, line = 0.2)
+        mtext(title.left, side = 2, line = 1.8)
     }
-    if (showName_pheno && IsPlot) mtext("Fine fitting", line = 0.2)
+    if (show.PhenoName && IsPlot) mtext("Fine fitting", line = 0.2)
 
     p_TRS <- lapply(TRS, function(trs) {
-        PhenoTrs(model, t = fFITs$tout, approach = "White", trs = trs, IsPlot = FALSE)
+        PhenoTrs(model, t = x$tout, approach = "White", trs = trs, IsPlot = FALSE)
     })
 
     if (IsPlot && !all_na) {
         p_TRS_last <- PhenoTrs(model, approach="White", trs=TRS_last, IsPlot = IsPlot, ylim = ylim)
-        if (showName_pheno) mtext(sprintf('TRS%d', TRS_last*10))
+        if (show.PhenoName) mtext(sprintf('TRS%d', TRS_last*10))
     }
 
-    param_common  <- list(model, t = fFITs$tout,
+    param_common  <- list(model, t = x$tout,
         analytical = analytical, smoothed.spline = smoothed.spline,
         IsPlot, ylim = ylim)
-    param_common2 <- c(param_common, list(show.lgd = show.lgd))
+    param_common2 <- c(param_common, list(show.legend = show.legend))
 
     der <- do.call(PhenoDeriv, param_common2)
-    if (showName_pheno && IsPlot) mtext("DER", line = 0.2)
+    if (show.PhenoName && IsPlot) mtext("DER", line = 0.2)
 
     zhang <- do.call(PhenoKl, param_common2)
-    if (showName_pheno && IsPlot) mtext("Inflexion ", line = 0.2)
+    if (show.PhenoName && IsPlot) mtext("Inflexion ", line = 0.2)
 
     gu <- do.call(PhenoGu, param_common)[1:4]
-    if (showName_pheno && IsPlot) mtext("Gu", line = 0.2)
+    if (show.PhenoName && IsPlot) mtext("Gu", line = 0.2)
 
     c(p_TRS, list(der, gu, zhang)) %>% set_names(methods)
 }
-
 
 #' tidy_pheno
 #'
@@ -213,17 +237,6 @@ get_pheno.fFITs <- function(fFITs, method,
 #' @export
 tidy_pheno <- function(pheno) {
     doy2date <- function(datenum) as.Date(unlist(datenum), origin = date.origin)
-    # phenonames <- c('TRS2.sos', 'TRS2.eos', 'TRS5.sos', 'TRS5.eos', 'TRS6.sos', 'TRS6.eos',
-    #                 'DER.sos', 'DER.pop', 'DER.eos',
-    #                 'GU.UD', 'GU.SD', 'GU.DD', 'GU.RD',
-    #                 'ZHANG.Greenup', 'ZHANG.Maturity', 'ZHANG.Senescence', 'ZHANG.Dormancy')
-
-    # fix the error of \code{pheno} without name
-    # names <- names(pheno)
-    # if (is.null(names)){
-    #     years <- seq(year(origin), by = 1, length.out = length(pheno))
-    #     names(pheno) <- years
-    # }
     names <- unlist(pheno[[1]]) %>% names()
 
     p_date <- map_df(pheno, function(x) {
@@ -242,6 +255,16 @@ tidy_pheno <- function(pheno) {
     list(doy = p_doy[, ..vars], date = p_date[, ..vars])
 }
 
+# phenonames <- c('TRS2.sos', 'TRS2.eos', 'TRS5.sos', 'TRS5.eos', 'TRS6.sos', 'TRS6.eos',
+#                 'DER.sos', 'DER.pop', 'DER.eos',
+#                 'GU.UD', 'GU.SD', 'GU.DD', 'GU.RD',
+#                 'ZHANG.Greenup', 'ZHANG.Maturity', 'ZHANG.Senescence', 'ZHANG.Dormancy')
+# fix the error of \code{pheno} without name
+# names <- names(pheno)
+# if (is.null(names)){
+#     years <- seq(year(origin), by = 1, length.out = length(pheno))
+#     names(pheno) <- years
+# }
 date2doy <- function(p_date){
     p_date %>% mutate(across(3:ncol(.), ~ as.numeric(.x - origin + 1)))
 }

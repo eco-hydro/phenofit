@@ -35,5 +35,5 @@ qc_sentinel2(SCL, wmin = 0.2, wmid = 0.5, wmax = 1)
 qc_sentinel2(1:11)
 }
 \references{
-
+https://developers.google.com/earth-engine/datasets/catalog/COPERNICUS_S2_SR
 }

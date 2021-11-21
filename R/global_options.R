@@ -61,8 +61,8 @@ options_fitting <- list(
     south              = FALSE,
     ymin               = 0.1,
     wFUN               = "wTSM",
-    wmin               = 0.1, 
-    
+    wmin               = 0.1,
+
     ws                 = c(0.2, 0.5, 0.8), # initial weights
 
     # methods
@@ -73,7 +73,7 @@ options_fitting <- list(
     debug              = FALSE,
     # parameters
     season             = options_season,
-    fitting            = options_fitting, 
+    fitting            = options_fitting,
     initialized        = FALSE
 ))
 
@@ -82,26 +82,29 @@ options_fitting <- list(
 #' @param ... list of phenofit options
 #' FUN_season: character, `season_mov` or `season`
 #' rFUN: character, rough fitting function. `smooth_wWHIT`, `smooth_wSG` or `smooth_wHANTs`.
-#' @param options If not NULL, `options` will be used and `...` will be ignored.
+#' @param options If not NULL, `options` will be used and `...` patched.
 #' @examples
 #' set_options(verbose = FALSE)
 #' get_options("season") %>% str()
 #' @export
 set_options <- function(..., options = NULL) {
-    if (is.null(options)) options = list(...)
-    # rm unrelated parameters
+    if (is.null(options)) {
+        options = list(...)
+    } else {
+        options %<>% modifyList(list(...))
+    }
+    # find valid options, and rm unrelated parameters
     ind = match(names(options), names(.options)) %>% which.notna()
-    # This step might lead to error, but will improve performance
     if (.options$initialized && length(ind) == 0) return()
-    
+
     .options %<>% modifyList(options[ind])
     # `season` and `fitting` share the same parameter
-    pars_comm = c("wFUN", "wmin", "verbose") 
+    pars_comm = c("wFUN", "wmin", "verbose")
     for (par in pars_comm) {
         if (is.null(.options$fitting[[par]])) .options$fitting[[par]] <- .options[[par]]
         if (is.null(.options$season[[par]])) .options$season[[par]] <- .options[[par]]
     }
-    
+
     .options$fitting$wFUN %<>% check_function()
     .options$season$wFUN %<>% check_function()
     # .options$season$rFUN %<>% check_function()
