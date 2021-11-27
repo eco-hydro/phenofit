@@ -2,9 +2,15 @@
 % Please edit documentation in R/get_pheno.R
 \name{tidy_pheno}
 \alias{tidy_pheno}
+\alias{date2doy}
+\alias{doy2date}
 \title{tidy_pheno}
 \usage{
 tidy_pheno(pheno)
+
+date2doy(p_date)
+
+doy2date(p_doy)
 }
 \arguments{
 \item{pheno}{Phenology metrics extracted from \code{get_pheno}}

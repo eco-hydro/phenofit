@@ -242,6 +242,9 @@ brks_mov <- season_mov(INPUT,
     )
 )
 plot_season(INPUT, brks_mov)
+
+rfit <- brks2rfit(brks_mov)
+r <- get_pheno(rfit)
 data("CA_NS6")
 d <- CA_NS6
 
@@ -282,6 +285,9 @@ brks_mov <- season_mov(INPUT,
     )
 )
 plot_season(INPUT, brks_mov)
+
+rfit <- brks2rfit(brks_mov)
+r <- get_pheno(rfit)
 }
 \seealso{
 \code{\link[=findpeaks]{findpeaks()}}.

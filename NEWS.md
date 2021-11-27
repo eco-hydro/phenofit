@@ -22,7 +22,7 @@
   used the strict mathematical solution to find the extreme values in the curve
   of curvature's change rate.
 
-** MAJOR updates to improve multi-GS phenology extraction **
+**MAJOR updates to improve multi-GS phenology extraction**
 
 - Fix the bug of `findpeaks`, which lead to sharp changed growing season failed to detect.
 

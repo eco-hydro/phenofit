@@ -38,3 +38,6 @@ brks_mov <- season_mov(INPUT,
     )
 )
 plot_season(INPUT, brks_mov)
+
+rfit <- brks2rfit(brks_mov)
+r <- get_pheno(rfit)

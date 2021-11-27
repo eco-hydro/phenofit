@@ -265,6 +265,15 @@ tidy_pheno <- function(pheno) {
 #     years <- seq(year(origin), by = 1, length.out = length(pheno))
 #     names(pheno) <- years
 # }
+
+#' @rdname tidy_pheno
+#' @export
 date2doy <- function(p_date){
     p_date %>% mutate(across(3:ncol(.), ~ as.numeric(.x - origin + 1)))
+}
+
+#' @rdname tidy_pheno
+#' @export
+doy2date <- function(p_doy){
+    p_doy %>% mutate(across(3:ncol(.), ~ (origin + .x - 1)))
 }
