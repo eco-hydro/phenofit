@@ -19,6 +19,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -31,18 +33,12 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenofit</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.3</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-<li>
-  <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
@@ -67,7 +63,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/eco-hydro/phenofit/">
+  <a href="https://github.com/eco-hydro/phenofit/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -88,24 +84,24 @@
       <h1 data-toc-skip>Extract vegetation phenology from MOD13A1 EVI</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/eco-hydro/phenofit/blob/master/vignettes/phenofit_CA-NS6.Rmd"><code>vignettes/phenofit_CA-NS6.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/eco-hydro/phenofit/blob/HEAD/vignettes/phenofit_CA-NS6.Rmd" class="external-link"><code>vignettes/phenofit_CA-NS6.Rmd</code></a></small>
       <div class="hidden name"><code>phenofit_CA-NS6.Rmd</code></div>
 
     </div>
 
     
     
-<div id="example" class="section level1">
-<h1 class="hasAnchor">
-<a href="#example" class="anchor"></a>Example</h1>
+<div class="section level1">
+<h1 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
+</h1>
 <p>Here, we illustrate how to use <code>phenofit</code> to extract vegetation phenology from MOD13A1 in the sampled points. Regional analysis also can be conducted in the similar way.</p>
 <!-- ## 1.1 Download MOD13A1 data
 Upload point shapefile into GEE, clip MOD13A1 and download vegetation index
 data. [Here](https://code.earthengine.google.com/ee3ec39cf3061374dab435c358d008a3) is the corresponding GEE script. 
  -->
-<div id="initial-weights-for-input-data" class="section level2">
-<h2 class="hasAnchor">
-<a href="#initial-weights-for-input-data" class="anchor"></a>1.1 Initial weights for input data</h2>
+<div class="section level2">
+<h2 id="initial-weights-for-input-data">1.1 Initial weights for input data<a class="anchor" aria-label="anchor" href="#initial-weights-for-input-data"></a>
+</h2>
 <p>Load packages.</p>
 <p>Set global parameters for <code>phenofit</code></p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
@@ -155,35 +151,35 @@ data. [Here](https://code.earthengine.google.com/ee3ec39cf3061374dab435c358d008a
 </tbody>
 </table>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="st">'MOD13A1'</span><span class="op">)</span>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">'MOD13A1'</span><span class="op">)</span>
 <span class="va">df</span> <span class="op">&lt;-</span> <span class="va">MOD13A1</span><span class="op">$</span><span class="va">dt</span> 
 <span class="va">st</span> <span class="op">&lt;-</span> <span class="va">MOD13A1</span><span class="op">$</span><span class="va">st</span>
 
-<span class="va">df</span><span class="op">[</span>, <span class="fu">`:=`</span><span class="op">(</span>date <span class="op">=</span> <span class="fu">ymd</span><span class="op">(</span><span class="va">date</span><span class="op">)</span>, year <span class="op">=</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/IDateTime.html">year</a></span><span class="op">(</span><span class="va">date</span><span class="op">)</span>, doy <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html">as.integer</a></span><span class="op">(</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/IDateTime.html">yday</a></span><span class="op">(</span><span class="va">date</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">]</span>
-<span class="va">df</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">DayOfYear</span><span class="op">)</span>, <span class="va">DayOfYear</span> <span class="op">:=</span> <span class="va">doy</span><span class="op">]</span> <span class="co"># If DayOfYear is missing</span>
+<span class="va">df</span><span class="op">[</span>, <span class="fu">`:=`</span><span class="op">(</span>date <span class="op">=</span> <span class="fu">ymd</span><span class="op">(</span><span class="va">date</span><span class="op">)</span>, year <span class="op">=</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/IDateTime.html" class="external-link">year</a></span><span class="op">(</span><span class="va">date</span><span class="op">)</span>, doy <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/IDateTime.html" class="external-link">yday</a></span><span class="op">(</span><span class="va">date</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">]</span>
+<span class="va">df</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">DayOfYear</span><span class="op">)</span>, <span class="va">DayOfYear</span> <span class="op">:=</span> <span class="va">doy</span><span class="op">]</span> <span class="co"># If DayOfYear is missing</span>
     
 <span class="co"># In case of last scene of a year, doy of last scene could in the next year</span>
-<span class="va">df</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">DayOfYear</span> <span class="op">-</span> <span class="va">doy</span><span class="op">)</span> <span class="op">&gt;=</span> <span class="fl">300</span>, <span class="va">t</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html">as.Date</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span><span class="op">(</span><span class="st">"%d-%03d"</span>, <span class="va">year</span><span class="op">+</span><span class="fl">1</span>, <span class="va">DayOfYear</span><span class="op">)</span>, <span class="st">"%Y-%j"</span><span class="op">)</span><span class="op">]</span> <span class="co"># last scene</span>
-<span class="va">df</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">DayOfYear</span> <span class="op">-</span> <span class="va">doy</span><span class="op">)</span> <span class="op">&lt;</span>  <span class="fl">300</span>, <span class="va">t</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html">as.Date</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span><span class="op">(</span><span class="st">"%d-%03d"</span>, <span class="va">year</span>  , <span class="va">DayOfYear</span><span class="op">)</span>, <span class="st">"%Y-%j"</span><span class="op">)</span><span class="op">]</span>
+<span class="va">df</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">DayOfYear</span> <span class="op">-</span> <span class="va">doy</span><span class="op">)</span> <span class="op">&gt;=</span> <span class="fl">300</span>, <span class="va">t</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"%d-%03d"</span>, <span class="va">year</span><span class="op">+</span><span class="fl">1</span>, <span class="va">DayOfYear</span><span class="op">)</span>, <span class="st">"%Y-%j"</span><span class="op">)</span><span class="op">]</span> <span class="co"># last scene</span>
+<span class="va">df</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">DayOfYear</span> <span class="op">-</span> <span class="va">doy</span><span class="op">)</span> <span class="op">&lt;</span>  <span class="fl">300</span>, <span class="va">t</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"%d-%03d"</span>, <span class="va">year</span>  , <span class="va">DayOfYear</span><span class="op">)</span>, <span class="st">"%Y-%j"</span><span class="op">)</span><span class="op">]</span>
 
-<span class="va">df</span> <span class="op">&lt;-</span> <span class="va">df</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html">duplicated</a></span><span class="op">(</span><span class="va">df</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">site</span>, <span class="va">t</span><span class="op">)</span><span class="op">]</span><span class="op">)</span>, <span class="op">]</span>
+<span class="va">df</span> <span class="op">&lt;-</span> <span class="va">df</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">duplicated</a></span><span class="op">(</span><span class="va">df</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">site</span>, <span class="va">t</span><span class="op">)</span><span class="op">]</span><span class="op">)</span>, <span class="op">]</span>
 <span class="co"># # MCD12Q1.006 land cover 1-17, IGBP scheme</span>
 <span class="co"># IGBPnames_006 &lt;- c("ENF", "EBF", "DNF", "DBF", "MF" , "CSH", </span>
 <span class="co">#               "OSH", "WSA", "SAV", "GRA", "WET", "CRO", </span>
 <span class="co">#               "URB", "CNV", "SNOW", "BSV", "water", "UNC")</span>
 <span class="co"># Initial weights</span>
-<span class="va">df</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"QC_flag"</span>, <span class="st">"w"</span><span class="op">)</span> <span class="op">:=</span> <span class="fu"><a href="../reference/getBits.html">qc_summary</a></span><span class="op">(</span><span class="va">SummaryQA</span><span class="op">)</span><span class="op">]</span>
+<span class="va">df</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"QC_flag"</span>, <span class="st">"w"</span><span class="op">)</span> <span class="op">:=</span> <span class="fu"><a href="../reference/qcFUN.html">qc_summary</a></span><span class="op">(</span><span class="va">SummaryQA</span><span class="op">)</span><span class="op">]</span>
 <span class="va">df</span> <span class="op">&lt;-</span> <span class="va">df</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">site</span>, y <span class="op">=</span> <span class="va">EVI</span><span class="op">/</span><span class="fl">1e4</span>, <span class="va">t</span>, <span class="va">date</span>, <span class="va">w</span>, <span class="va">QC_flag</span><span class="op">)</span><span class="op">]</span></code></pre></div>
 <ul>
 <li>
 <code>add_HeadTail</code> is used to deal with such situation, e.g. MOD13A2 begins from 2000-02-08. We need to construct a series with complete year, which begins from 01-01 for NH, and 07-01 for SH. For example, the input data period is 20000218 ~ 20171219. After adding one year in head and tail, it becomes 19990101 ~ 20181219.</li>
 </ul>
 </div>
-<div id="load-site-data" class="section level2">
-<h2 class="hasAnchor">
-<a href="#load-site-data" class="anchor"></a>2.1 load site data</h2>
+<div class="section level2">
+<h2 id="load-site-data">2.1 load site data<a class="anchor" aria-label="anchor" href="#load-site-data"></a>
+</h2>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">sites</span>        <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html">unique</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">site</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">sites</span>        <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">site</span><span class="op">)</span>
 <span class="va">sitename</span>     <span class="op">&lt;-</span> <span class="va">sites</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span>
 <span class="va">d</span>            <span class="op">&lt;-</span> <span class="va">df</span><span class="op">[</span><span class="va">site</span> <span class="op">==</span> <span class="va">sitename</span><span class="op">]</span> <span class="co"># get the first site data</span>
 <span class="va">sp</span>           <span class="op">&lt;-</span> <span class="va">st</span><span class="op">[</span><span class="va">site</span> <span class="op">==</span> <span class="va">sitename</span><span class="op">]</span>
@@ -193,31 +189,31 @@ data. [Here](https://code.earthengine.google.com/ee3ec39cf3061374dab435c358d008a
 <span class="va">IsPlot</span>     <span class="op">&lt;-</span> <span class="cn">TRUE</span>  <span class="co"># for brks</span>
 
 <span class="va">prefix_fig</span> <span class="op">&lt;-</span> <span class="st">"phenofit"</span>
-<span class="va">titlestr</span>   <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/with.html">with</a></span><span class="op">(</span><span class="va">sp</span>, <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span><span class="op">(</span><span class="st">'[%03d,%s] %s, lat = %5.2f, lon = %6.2f'</span>,
+<span class="va">titlestr</span>   <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="va">sp</span>, <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">'[%03d,%s] %s, lat = %5.2f, lon = %6.2f'</span>,
                                      <span class="va">ID</span>, <span class="va">site</span>, <span class="va">IGBPname</span>, <span class="va">lat</span>, <span class="va">lon</span><span class="op">)</span><span class="op">)</span>
-<span class="va">file_pdf</span>   <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span><span class="op">(</span><span class="st">'Figure/%s_[%03d]_%s.pdf'</span>, <span class="va">prefix_fig</span>, <span class="va">sp</span><span class="op">$</span><span class="va">ID</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, <span class="va">sp</span><span class="op">$</span><span class="va">site</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span></code></pre></div>
+<span class="va">file_pdf</span>   <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">'Figure/%s_[%03d]_%s.pdf'</span>, <span class="va">prefix_fig</span>, <span class="va">sp</span><span class="op">$</span><span class="va">ID</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, <span class="va">sp</span><span class="op">$</span><span class="va">site</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span></code></pre></div>
 <p>If need night temperature (Tn) to constrain ungrowing season backgroud value, NA values in Tn should be filled.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">d</span><span class="op">$</span><span class="va">Tn</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/compound.html">%&lt;&gt;%</a></span> <span class="fu">zoo</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/zoo/man/na.approx.html">na.approx</a></span><span class="op">(</span>maxgap <span class="op">=</span> <span class="fl">4</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">d</span><span class="op">$</span><span class="va">Tn</span>, type <span class="op">=</span> <span class="st">"l"</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/abline.html">abline</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fl">5</span>, b <span class="op">=</span> <span class="fl">0</span>, col <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="va">d</span><span class="op">$</span><span class="va">Tn</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/compound.html" class="external-link">%&lt;&gt;%</a></span> <span class="fu">zoo</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/zoo/man/na.approx.html" class="external-link">na.approx</a></span><span class="op">(</span>maxgap <span class="op">=</span> <span class="fl">4</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">d</span><span class="op">$</span><span class="va">Tn</span>, type <span class="op">=</span> <span class="st">"l"</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fl">5</span>, b <span class="op">=</span> <span class="fl">0</span>, col <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="check-input-data" class="section level2">
-<h2 class="hasAnchor">
-<a href="#check-input-data" class="anchor"></a>2.2 Check input data</h2>
+<div class="section level2">
+<h2 id="check-input-data">2.2 Check input data<a class="anchor" aria-label="anchor" href="#check-input-data"></a>
+</h2>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">dnew</span>  <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_HeadTail.html">add_HeadTail</a></span><span class="op">(</span><span class="va">d</span>, <span class="va">south</span>, nptperyear <span class="op">=</span> <span class="fl">23</span><span class="op">)</span> <span class="co"># add additional one year in head and tail</span>
 <span class="va">INPUT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/check_input.html">check_input</a></span><span class="op">(</span><span class="va">dnew</span><span class="op">$</span><span class="va">t</span>, <span class="va">dnew</span><span class="op">$</span><span class="va">y</span>, <span class="va">dnew</span><span class="op">$</span><span class="va">w</span>, <span class="va">dnew</span><span class="op">$</span><span class="va">QC_flag</span>,
                      <span class="va">nptperyear</span>, <span class="va">south</span>, 
                      maxgap <span class="op">=</span> <span class="va">nptperyear</span><span class="op">/</span><span class="fl">4</span>, alpha <span class="op">=</span> <span class="fl">0.02</span>, wmin <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="divide-growing-seasons" class="section level2">
-<h2 class="hasAnchor">
-<a href="#divide-growing-seasons" class="anchor"></a>2.3 Divide growing seasons</h2>
+<div class="section level2">
+<h2 id="divide-growing-seasons">2.3 Divide growing seasons<a class="anchor" aria-label="anchor" href="#divide-growing-seasons"></a>
+</h2>
 <p>Simply treating calendar year as a complete growing season will induce a considerable error for phenology extraction. A simple growing season dividing method was proposed in <code>phenofit</code>.</p>
 <p>The growing season dividing method rely on heavily in Whittaker smoother.</p>
 <p>Procedures of initial weight, growing season dividing, curve fitting, and phenology extraction are conducted separately.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span><span class="op">(</span>mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">2</span>, <span class="fl">2</span>, <span class="fl">1</span><span class="op">)</span>, mgp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">0.6</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">2</span>, <span class="fl">2</span>, <span class="fl">1</span><span class="op">)</span>, mgp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">0.6</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span>
 <span class="va">lambda</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/init_lambda.html">init_lambda</a></span><span class="op">(</span><span class="va">INPUT</span><span class="op">$</span><span class="va">y</span><span class="op">)</span>
 <span class="co"># The detailed information of those parameters can be seen in `season`.</span>
 <span class="co"># brks   &lt;- season(INPUT, nptperyear,</span>
@@ -229,86 +225,86 @@ data. [Here](https://code.earthengine.google.com/ee3ec39cf3061374dab435c358d008a
 <span class="co">#                max_MaxPeaksperyear =2.5, max_MinPeaksperyear = 3.5) #, ...</span>
 <span class="co"># get growing season breaks in a 3-year moving window</span>
 <span class="va">brks2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/season_mov.html">season_mov</a></span><span class="op">(</span><span class="va">INPUT</span>, 
-    <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>rFUN <span class="op">=</span> <span class="st">"smooth_wWHIT"</span>, wFUN <span class="op">=</span> <span class="va">wFUN</span>, maxExtendMonth <span class="op">=</span> <span class="fl">6</span>, r_min <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span><span class="op">)</span>
+    <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>rFUN <span class="op">=</span> <span class="st">"smooth_wWHIT"</span>, wFUN <span class="op">=</span> <span class="va">wFUN</span>, maxExtendMonth <span class="op">=</span> <span class="fl">6</span>, r_min <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span><span class="op">)</span>
 <span class="fu"><a href="../reference/plot_season.html">plot_season</a></span><span class="op">(</span><span class="va">INPUT</span>, <span class="va">brks2</span><span class="op">)</span></code></pre></div>
 <p><img src="phenofit_CA-NS6_files/figure-html/divide%20growing%20season-1.png" width="700"></p>
 </div>
-<div id="curve-fitting" class="section level2">
-<h2 class="hasAnchor">
-<a href="#curve-fitting" class="anchor"></a>2.4 Curve fitting</h2>
+<div class="section level2">
+<h2 id="curve-fitting">2.4 Curve fitting<a class="anchor" aria-label="anchor" href="#curve-fitting"></a>
+</h2>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">fit</span>  <span class="op">&lt;-</span> <span class="fu"><a href="../reference/curvefits.html">curvefits</a></span><span class="op">(</span><span class="va">INPUT</span>, <span class="va">brks2</span>,
-    options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>
-        methods <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"AG"</span>, <span class="st">"Zhang"</span>, <span class="st">"Beck"</span>, <span class="st">"Elmore"</span><span class="op">)</span>, <span class="co">#,"klos",, 'Gu'</span>
+    options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>
+        methods <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AG"</span>, <span class="st">"Zhang"</span>, <span class="st">"Beck"</span>, <span class="st">"Elmore"</span><span class="op">)</span>, <span class="co">#,"klos",, 'Gu'</span>
         wFUN <span class="op">=</span> <span class="va">wFUN</span>,
         nextend <span class="op">=</span> <span class="fl">2</span>, maxExtendMonth <span class="op">=</span> <span class="fl">3</span>, minExtendMonth <span class="op">=</span> <span class="fl">1</span>, minPercValid <span class="op">=</span> <span class="fl">0.2</span>
     <span class="op">)</span><span class="op">)</span>
 
 <span class="co">## check the curve fitting parameters</span>
 <span class="va">l_param</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_param.html">get_param</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">l_param</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<pre><code>## List of 4
-##  $ AG    : tibble [20 × 8] (S3: tbl_df/tbl/data.frame)
-##  $ Zhang : tibble [20 × 8] (S3: tbl_df/tbl/data.frame)
-##  $ Beck  : tibble [20 × 7] (S3: tbl_df/tbl/data.frame)
-##  $ Elmore: tibble [20 × 8] (S3: tbl_df/tbl/data.frame)
-## NULL</code></pre>
+<span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">l_param</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<pre><code><span class="co">## List of 4</span>
+<span class="co">##  $ AG    : tibble [20 × 8] (S3: tbl_df/tbl/data.frame)</span>
+<span class="co">##  $ Zhang : tibble [20 × 8] (S3: tbl_df/tbl/data.frame)</span>
+<span class="co">##  $ Beck  : tibble [20 × 7] (S3: tbl_df/tbl/data.frame)</span>
+<span class="co">##  $ Elmore: tibble [20 × 8] (S3: tbl_df/tbl/data.frame)</span>
+<span class="co">## NULL</span></code></pre>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">l_param</span><span class="op">$</span><span class="va">AG</span><span class="op">)</span></code></pre></div>
-<pre><code>## # A tibble: 20 × 8
-##    flag      t0    mn    mx    rsp    a3     rau    a5
-##    &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;
-##  1 1999_1 -166. 0.169 0.398 0.0193  4.43 0.0177   6   
-##  2 2000_1  209. 0.167 0.407 0.0255  4.36 0.0171   4.84
-##  3 2001_1  567. 0.169 0.398 0.0193  4.43 0.0177   6   
-##  4 2002_1  934. 0.168 0.528 0.0329  2    0.0161   2   
-##  5 2003_1 1275. 0.167 0.432 0.0268  2    0.0123   3.73
-##  6 2004_1 1689. 0.168 0.446 0.0167  5.04 0.0369   2   
-##  7 2005_1 2025. 0.172 0.449 0.0224  6    0.0161   3.62
-##  8 2006_1 2370. 0.166 0.420 0.0280  2.02 0.0112   3.12
-##  9 2007_1 2752. 0.166 0.483 0.0210  2    0.0150   2.90
-## 10 2008_1 3123. 0.170 0.481 0.0215  2.74 0.0165   6   
-## 11 2009_1 3522. 0.168 0.479 0.0142  6    0.0277   2   
-## 12 2010_1 3840. 0.167 0.489 0.0228  2    0.0131   2   
-## 13 2011_1 4207. 0.175 0.467 0.0290  2    0.0133   5.04
-## 14 2012_1 4558. 0.166 0.507 0.0478  2    0.0109   4.11
-## 15 2013_1 4965. 0.166 0.483 0.0144  6    0.0190   2.47
-## 16 2014_1 5306. 0.169 0.507 0.0281  2    0.0127   2.70
-## 17 2015_1 5701. 0.184 0.486 0.0145  5.62 0.0280   2   
-## 18 2016_1 6024. 0.176 0.484 0.0370  2    0.0126   5.14
-## 19 2017_1 6381. 0.168 0.441 0.0403  2.95 0.00979  5.98
-## 20 2018_1 6774. 0.165 0.451 0.0155  3.22 0.0164   3.07</code></pre>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">l_param</span><span class="op">$</span><span class="va">AG</span><span class="op">)</span></code></pre></div>
+<pre><code><span class="co">## <span style="color: #949494;"># A tibble: 20 × 8</span></span>
+<span class="co">##    flag      t0    mn    mx    rsp    a3     rau    a5</span>
+<span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="co">## <span style="color: #BCBCBC;"> 1</span> 1999_1 -<span style="color: #BB0000;">166.</span> 0.169 0.398 0.019<span style="text-decoration: underline;">3</span>  4.43 0.017<span style="text-decoration: underline;">7</span>   6   </span>
+<span class="co">## <span style="color: #BCBCBC;"> 2</span> 2000_1  209. 0.167 0.407 0.025<span style="text-decoration: underline;">5</span>  4.36 0.017<span style="text-decoration: underline;">1</span>   4.84</span>
+<span class="co">## <span style="color: #BCBCBC;"> 3</span> 2001_1  567. 0.169 0.398 0.019<span style="text-decoration: underline;">3</span>  4.43 0.017<span style="text-decoration: underline;">7</span>   6   </span>
+<span class="co">## <span style="color: #BCBCBC;"> 4</span> 2002_1  934. 0.168 0.528 0.032<span style="text-decoration: underline;">9</span>  2    0.016<span style="text-decoration: underline;">1</span>   2   </span>
+<span class="co">## <span style="color: #BCBCBC;"> 5</span> 2003_1 <span style="text-decoration: underline;">1</span>275. 0.167 0.432 0.026<span style="text-decoration: underline;">8</span>  2    0.012<span style="text-decoration: underline;">3</span>   3.73</span>
+<span class="co">## <span style="color: #BCBCBC;"> 6</span> 2004_1 <span style="text-decoration: underline;">1</span>689. 0.168 0.446 0.016<span style="text-decoration: underline;">7</span>  5.04 0.036<span style="text-decoration: underline;">9</span>   2   </span>
+<span class="co">## <span style="color: #BCBCBC;"> 7</span> 2005_1 <span style="text-decoration: underline;">2</span>025. 0.172 0.449 0.022<span style="text-decoration: underline;">4</span>  6    0.016<span style="text-decoration: underline;">1</span>   3.62</span>
+<span class="co">## <span style="color: #BCBCBC;"> 8</span> 2006_1 <span style="text-decoration: underline;">2</span>370. 0.166 0.420 0.028<span style="text-decoration: underline;">0</span>  2.02 0.011<span style="text-decoration: underline;">2</span>   3.12</span>
+<span class="co">## <span style="color: #BCBCBC;"> 9</span> 2007_1 <span style="text-decoration: underline;">2</span>752. 0.166 0.483 0.021<span style="text-decoration: underline;">0</span>  2    0.015<span style="text-decoration: underline;">0</span>   2.90</span>
+<span class="co">## <span style="color: #BCBCBC;">10</span> 2008_1 <span style="text-decoration: underline;">3</span>123. 0.170 0.481 0.021<span style="text-decoration: underline;">5</span>  2.74 0.016<span style="text-decoration: underline;">5</span>   6   </span>
+<span class="co">## <span style="color: #BCBCBC;">11</span> 2009_1 <span style="text-decoration: underline;">3</span>522. 0.168 0.479 0.014<span style="text-decoration: underline;">2</span>  6    0.027<span style="text-decoration: underline;">7</span>   2   </span>
+<span class="co">## <span style="color: #BCBCBC;">12</span> 2010_1 <span style="text-decoration: underline;">3</span>840. 0.167 0.489 0.022<span style="text-decoration: underline;">8</span>  2    0.013<span style="text-decoration: underline;">1</span>   2   </span>
+<span class="co">## <span style="color: #BCBCBC;">13</span> 2011_1 <span style="text-decoration: underline;">4</span>207. 0.175 0.467 0.029<span style="text-decoration: underline;">0</span>  2    0.013<span style="text-decoration: underline;">3</span>   5.04</span>
+<span class="co">## <span style="color: #BCBCBC;">14</span> 2012_1 <span style="text-decoration: underline;">4</span>558. 0.166 0.507 0.047<span style="text-decoration: underline;">8</span>  2    0.010<span style="text-decoration: underline;">9</span>   4.11</span>
+<span class="co">## <span style="color: #BCBCBC;">15</span> 2013_1 <span style="text-decoration: underline;">4</span>965. 0.166 0.483 0.014<span style="text-decoration: underline;">4</span>  6    0.019<span style="text-decoration: underline;">0</span>   2.47</span>
+<span class="co">## <span style="color: #BCBCBC;">16</span> 2014_1 <span style="text-decoration: underline;">5</span>306. 0.169 0.507 0.028<span style="text-decoration: underline;">1</span>  2    0.012<span style="text-decoration: underline;">7</span>   2.70</span>
+<span class="co">## <span style="color: #BCBCBC;">17</span> 2015_1 <span style="text-decoration: underline;">5</span>701. 0.184 0.486 0.014<span style="text-decoration: underline;">5</span>  5.62 0.028<span style="text-decoration: underline;">0</span>   2   </span>
+<span class="co">## <span style="color: #BCBCBC;">18</span> 2016_1 <span style="text-decoration: underline;">6</span>024. 0.176 0.484 0.037<span style="text-decoration: underline;">0</span>  2    0.012<span style="text-decoration: underline;">6</span>   5.14</span>
+<span class="co">## <span style="color: #BCBCBC;">19</span> 2017_1 <span style="text-decoration: underline;">6</span>381. 0.168 0.441 0.040<span style="text-decoration: underline;">3</span>  2.95 0.009<span style="text-decoration: underline;">79</span>  5.98</span>
+<span class="co">## <span style="color: #BCBCBC;">20</span> 2018_1 <span style="text-decoration: underline;">6</span>774. 0.165 0.451 0.015<span style="text-decoration: underline;">5</span>  3.22 0.016<span style="text-decoration: underline;">4</span>   3.07</span></code></pre>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">d_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_fitting.html">get_fitting</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span>
 <span class="co">## Get GOF information</span>
 <span class="va">d_gof</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_GOF.html">get_GOF</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span>
 <span class="co"># fit$stat &lt;- stat</span>
-<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">d_gof</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<pre><code>##      flag   meth        R2       NSE         R       RMSE       pvalue n_sim
-## 1: 1999_1     AG 0.8235796 0.6150465 0.9075129 0.08514232 2.304668e-09    23
-## 2: 1999_1  Zhang 0.8285788 0.6189771 0.9102630 0.08470653 1.699586e-09    23
-## 3: 1999_1   Beck 0.8289473 0.6192976 0.9104654 0.08467090 1.661281e-09    23
-## 4: 1999_1 Elmore 0.8334679 0.6054137 0.9129446 0.08620101 1.250962e-09    23
-## 5: 2000_1     AG 0.8252408 0.5496414 0.9084277 0.09660186 2.084845e-09    23
-## 6: 2000_1  Zhang 0.8271460 0.5499378 0.9094757 0.09657007 1.856258e-09    23</code></pre>
+<span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">d_gof</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<pre><code><span class="co">##      flag   meth        R2       NSE         R       RMSE       pvalue n_sim</span>
+<span class="co">## 1: 1999_1     AG 0.8235796 0.6150465 0.9075129 0.08514232 2.304668e-09    23</span>
+<span class="co">## 2: 1999_1  Zhang 0.8285788 0.6189771 0.9102630 0.08470653 1.699586e-09    23</span>
+<span class="co">## 3: 1999_1   Beck 0.8289473 0.6192976 0.9104654 0.08467090 1.661281e-09    23</span>
+<span class="co">## 4: 1999_1 Elmore 0.8334679 0.6054137 0.9129446 0.08620101 1.250962e-09    23</span>
+<span class="co">## 5: 2000_1     AG 0.8252408 0.5496414 0.9084277 0.09660186 2.084845e-09    23</span>
+<span class="co">## 6: 2000_1  Zhang 0.8271460 0.5499378 0.9094757 0.09657007 1.856258e-09    23</span></code></pre>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># print(fit$fits$AG$`2002_1`$ws)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">fit</span><span class="op">$</span><span class="va">`2002_1`</span><span class="op">$</span><span class="va">fFIT</span><span class="op">$</span><span class="va">AG</span><span class="op">$</span><span class="va">ws</span><span class="op">)</span></code></pre></div>
-<pre><code>## NULL</code></pre>
+<span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">fit</span><span class="op">$</span><span class="va">`2002_1`</span><span class="op">$</span><span class="va">fFIT</span><span class="op">$</span><span class="va">AG</span><span class="op">$</span><span class="va">ws</span><span class="op">)</span></code></pre></div>
+<pre><code><span class="co">## NULL</span></code></pre>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">## visualization</span>
 <span class="va">g</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/plot_curvefits.html">plot_curvefits</a></span><span class="op">(</span><span class="va">d_fit</span>, <span class="va">brks2</span>, <span class="cn">NULL</span>, ylab <span class="op">=</span> <span class="st">"NDVI"</span>, <span class="st">"Time"</span>,
-                   theme <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_cartesian.html">coord_cartesian</a></span><span class="op">(</span>xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fu">ymd</span><span class="op">(</span><span class="st">"2000-04-01"</span><span class="op">)</span>, <span class="fu">ymd</span><span class="op">(</span><span class="st">"2017-07-31"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<pre><code>## Warning: Removed 4 rows containing missing values (geom_point).</code></pre>
+                   theme <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_cartesian.html" class="external-link">coord_cartesian</a></span><span class="op">(</span>xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu">ymd</span><span class="op">(</span><span class="st">"2000-04-01"</span><span class="op">)</span>, <span class="fu">ymd</span><span class="op">(</span><span class="st">"2017-07-31"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<pre><code><span class="co">## Warning: Removed 4 rows containing missing values (geom_point).</span></code></pre>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">grid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grid/grid.newpage.html">grid.newpage</a></span><span class="op">(</span><span class="op">)</span>; <span class="fu">grid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grid/grid.draw.html">grid.draw</a></span><span class="op">(</span><span class="va">g</span><span class="op">)</span><span class="co"># plot to check the curve fitting</span></code></pre></div>
+<code class="sourceCode R"><span class="fu">grid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grid/grid.newpage.html" class="external-link">grid.newpage</a></span><span class="op">(</span><span class="op">)</span>; <span class="fu">grid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grid/grid.draw.html" class="external-link">grid.draw</a></span><span class="op">(</span><span class="va">g</span><span class="op">)</span><span class="co"># plot to check the curve fitting</span></code></pre></div>
 <p><img src="phenofit_CA-NS6_files/figure-html/curve%20fitting-1.png" width="700" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># write_fig(g, "Figure1_phenofit_curve_fitting.pdf", 10, 6)</span></code></pre></div>
 </div>
-<div id="extract-phenology" class="section level2">
-<h2 class="hasAnchor">
-<a href="#extract-phenology" class="anchor"></a>2.5 Extract phenology</h2>
+<div class="section level2">
+<h2 id="extract-phenology">2.5 Extract phenology<a class="anchor" aria-label="anchor" href="#extract-phenology"></a>
+</h2>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># pheno: list(p_date, p_doy)</span>
 <span class="va">l_pheno</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_pheno.html">get_pheno</a></span><span class="op">(</span><span class="va">fit</span>, IsPlot <span class="op">=</span> <span class="cn">F</span><span class="op">)</span> <span class="co">#%&gt;% map(~melt_list(., "meth"))</span>
@@ -325,21 +321,21 @@ data. [Here](https://code.earthengine.google.com/ee3ec39cf3061374dab435c358d008a
 <p><img src="phenofit_CA-NS6_files/figure-html/Extract%20phenology-1.png" width="768" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># print(str(pheno, 1))</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">l_pheno</span><span class="op">$</span><span class="va">doy</span><span class="op">$</span><span class="va">AG</span><span class="op">)</span></code></pre></div>
-<pre><code>##      flag     origin TRS2.sos TRS2.eos TRS5.sos TRS5.eos TRS6.sos TRS6.eos
-## 1: 1999_1 1999-01-01      142      261      152      253      155      250
-## 2: 2000_1 2000-01-01      166      275      174      264      177      261
-## 3: 2001_1 2001-01-01      143      263      154      255      157      252
-## 4: 2002_1 2002-01-01      164      284      178      256      182      248
-## 5: 2003_1 2003-01-01      132      273      149      253      153      247
-## 6: 2004_1 2004-01-01      162      264      173      252      176      248
-##    DER.sos DER.pos DER.eos  UD  SD  DD  RD Greenup Maturity Senescence Dormancy
-## 1:     151     200     254 136 167 240 267     129      175        235      272
-## 2:     173     210     266 162 186 248 281     156      192        241      288
-## 3:     153     202     256 138 169 242 269     131      177        237      274
-## 4:     182     204     248 161 196 222 292     153      204         NA       NA
-## 5:     153     180     254 127 170 228 282     118      180        197      294
-## 6:     172     228     248 157 189 235 268     150      196        274       NA</code></pre>
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">l_pheno</span><span class="op">$</span><span class="va">doy</span><span class="op">$</span><span class="va">AG</span><span class="op">)</span></code></pre></div>
+<pre><code><span class="co">##      flag     origin TRS2.sos TRS2.eos TRS5.sos TRS5.eos TRS6.sos TRS6.eos</span>
+<span class="co">## 1: 1999_1 1999-01-01      142      261      152      253      155      250</span>
+<span class="co">## 2: 2000_1 2000-01-01      166      275      174      264      177      261</span>
+<span class="co">## 3: 2001_1 2001-01-01      143      263      154      255      157      252</span>
+<span class="co">## 4: 2002_1 2002-01-01      164      284      178      256      182      248</span>
+<span class="co">## 5: 2003_1 2003-01-01      132      273      149      253      153      247</span>
+<span class="co">## 6: 2004_1 2004-01-01      162      264      173      252      176      248</span>
+<span class="co">##    DER.sos DER.pos DER.eos  UD  SD  DD  RD Greenup Maturity Senescence Dormancy</span>
+<span class="co">## 1:     151     200     254 136 167 240 267     129      175        235      272</span>
+<span class="co">## 2:     173     210     266 162 186 248 281     156      192        241      288</span>
+<span class="co">## 3:     153     202     256 138 169 242 269     131      177        237      274</span>
+<span class="co">## 4:     182     204     248 161 196 222 292     153      204         NA       NA</span>
+<span class="co">## 5:     153     180     254 127 170 228 282     118      180        197      294</span>
+<span class="co">## 6:     172     228     248 157 189 235 268     150      196        274       NA</span></code></pre>
 </div>
 </div>
   </div>
@@ -355,11 +351,13 @@ data. [Here](https://code.earthengine.google.com/ee3ec39cf3061374dab435c358d008a
 
 
       <footer><div class="copyright">
-  <p>Developed by Dongdong Kong, Mingzhong Xiao, Yongqiang Zhang, Xihui Gu, Jianjian Cui.</p>
+  <p></p>
+<p>Developed by Dongdong Kong, Mingzhong Xiao, Yongqiang Zhang, Xihui Gu, Jianjian Cui.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
 </div>
 
       </footer>
@@ -367,6 +365,8 @@ data. [Here](https://code.earthengine.google.com/ee3ec39cf3061374dab435c358d008a
 
   
 
+
+  
 
   </body>
 </html>

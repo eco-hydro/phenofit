@@ -19,6 +19,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -31,18 +33,12 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenofit</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.3</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-<li>
-  <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
@@ -67,7 +63,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/eco-hydro/phenofit/">
+  <a href="https://github.com/eco-hydro/phenofit/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -88,35 +84,35 @@
       <h1 data-toc-skip>Detailed procedures of phenofit</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/eco-hydro/phenofit/blob/master/vignettes/phenofit-procedures.Rmd"><code>vignettes/phenofit-procedures.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/eco-hydro/phenofit/blob/HEAD/vignettes/phenofit-procedures.Rmd" class="external-link"><code>vignettes/phenofit-procedures.Rmd</code></a></small>
       <div class="hidden name"><code>phenofit-procedures.Rmd</code></div>
 
     </div>
 
     
     
-<div id="example" class="section level1">
-<h1 class="hasAnchor">
-<a href="#example" class="anchor"></a>Example</h1>
-<div id="load-packages" class="section level2">
-<h2 class="hasAnchor">
-<a href="#load-packages" class="anchor"></a>Load packages</h2>
+<div class="section level1">
+<h1 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
+</h1>
+<div class="section level2">
+<h2 id="load-packages">Load packages<a class="anchor" aria-label="anchor" href="#load-packages"></a>
+</h2>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/eco-hydro/phenofit">phenofit</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://r-datatable.com">data.table</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/eco-hydro/phenofit" class="external-link">phenofit</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-datatable.com" class="external-link">data.table</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></code></pre></div>
 </div>
-<div id="load-data" class="section level2">
-<h2 class="hasAnchor">
-<a href="#load-data" class="anchor"></a>Load data</h2>
+<div class="section level2">
+<h2 id="load-data">Load data<a class="anchor" aria-label="anchor" href="#load-data"></a>
+</h2>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">d</span> <span class="op">=</span> <span class="va">MOD13A1</span><span class="op">$</span><span class="va">dt</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/subset.data.table.html">subset</a></span><span class="op">(</span><span class="va">site</span> <span class="op">==</span> <span class="st">"CA-NS6"</span> <span class="op">&amp;</span> <span class="va">date</span> <span class="op">&gt;=</span> <span class="st">"2010-01-01"</span> <span class="op">&amp;</span> <span class="va">date</span> <span class="op">&lt;=</span> <span class="st">"2016-12-31"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+<code class="sourceCode R"><span class="va">d</span> <span class="op">=</span> <span class="va">MOD13A1</span><span class="op">$</span><span class="va">dt</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/subset.data.table.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">site</span> <span class="op">==</span> <span class="st">"CA-NS6"</span> <span class="op">&amp;</span> <span class="va">date</span> <span class="op">&gt;=</span> <span class="st">"2010-01-01"</span> <span class="op">&amp;</span> <span class="va">date</span> <span class="op">&lt;=</span> <span class="st">"2016-12-31"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
     <span class="va">.</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">date</span>, y <span class="op">=</span> <span class="va">EVI</span><span class="op">/</span><span class="fl">1e4</span>, <span class="va">DayOfYear</span>, QC <span class="op">=</span> <span class="va">SummaryQA</span><span class="op">)</span><span class="op">]</span>
-<span class="va">d</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/compound.html">%&lt;&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>t <span class="op">=</span> <span class="fu"><a href="../reference/getRealDate.html">getRealDate</a></span><span class="op">(</span><span class="va">date</span>, <span class="va">DayOfYear</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
-    <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span><span class="op">(</span><span class="va">d</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">as.list</a></span><span class="op">(</span><span class="fu"><a href="../reference/getBits.html">qc_summary</a></span><span class="op">(</span><span class="va">QC</span>, wmin <span class="op">=</span> <span class="fl">0.2</span>, wmid <span class="op">=</span> <span class="fl">0.5</span>, wmax <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span><span class="op">)</span><span class="op">]</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+<span class="va">d</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/compound.html" class="external-link">%&lt;&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>t <span class="op">=</span> <span class="fu"><a href="../reference/getRealDate.html">getRealDate</a></span><span class="op">(</span><span class="va">date</span>, <span class="va">DayOfYear</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+    <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">d</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">as.list</a></span><span class="op">(</span><span class="fu"><a href="../reference/qcFUN.html">qc_summary</a></span><span class="op">(</span><span class="va">QC</span>, wmin <span class="op">=</span> <span class="fl">0.2</span>, wmid <span class="op">=</span> <span class="fl">0.5</span>, wmax <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span><span class="op">)</span><span class="op">]</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
     <span class="va">.</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">date</span>, <span class="va">t</span>, <span class="va">y</span>, <span class="va">QC_flag</span>, <span class="va">w</span><span class="op">)</span><span class="op">]</span>
-<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">d</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">d</span><span class="op">)</span>
 <span class="co">#&gt;            date          t      y QC_flag   w</span>
 <span class="co">#&gt;   1: 2010-01-01 2010-01-08 0.1531    snow 0.2</span>
 <span class="co">#&gt;   2: 2010-01-17 2010-01-25 0.1196    snow 0.2</span>
@@ -132,9 +128,9 @@
 <p><code>date</code>: image date <code>t</code> : composite date</p>
 <p><code>QC_flag</code> and <code>date</code> are optional.</p>
 </div>
-<div id="phenofit-parameters" class="section level2">
-<h2 class="hasAnchor">
-<a href="#phenofit-parameters" class="anchor"></a>phenofit parameters</h2>
+<div class="section level2">
+<h2 id="phenofit-parameters">phenofit parameters<a class="anchor" aria-label="anchor" href="#phenofit-parameters"></a>
+</h2>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">lambda</span>         <span class="op">&lt;-</span> <span class="fl">8</span>
 <span class="va">nptperyear</span>     <span class="op">&lt;-</span> <span class="fl">23</span>
@@ -143,11 +139,11 @@
 <span class="va">minPercValid</span>   <span class="op">&lt;-</span> <span class="fl">0</span>
 <span class="va">wFUN</span>           <span class="op">&lt;-</span> <span class="va">wTSM</span> <span class="co"># wBisquare</span>
 <span class="va">wmin</span>           <span class="op">&lt;-</span> <span class="fl">0.2</span>
-<span class="va">methods_fine</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"AG"</span>, <span class="st">"Zhang"</span>, <span class="st">"Beck"</span>, <span class="st">"Elmore"</span>, <span class="st">"Gu"</span><span class="op">)</span></code></pre></div>
+<span class="va">methods_fine</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AG"</span>, <span class="st">"Zhang"</span>, <span class="st">"Beck"</span>, <span class="st">"Elmore"</span>, <span class="st">"Gu"</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="growing-season-division-and-fine-curve-fitting" class="section level2">
-<h2 class="hasAnchor">
-<a href="#growing-season-division-and-fine-curve-fitting" class="anchor"></a>growing season division and fine-curve fitting</h2>
+<div class="section level2">
+<h2 id="growing-season-division-and-fine-curve-fitting">growing season division and fine-curve fitting<a class="anchor" aria-label="anchor" href="#growing-season-division-and-fine-curve-fitting"></a>
+</h2>
 <p>Simply treating calendar year as a complete growing season will induce a considerable error for phenology extraction. A simple growing season dividing method was proposed in <code>phenofit</code>.</p>
 <p>The growing season dividing method rely on heavily in Whittaker smoother.</p>
 <p>Procedures of initial weight, growing season dividing, curve fitting, and phenology extraction are conducted separately.</p>
@@ -159,7 +155,7 @@
 <span class="op">)</span>
 
 <span class="va">brks</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/season_mov.html">season_mov</a></span><span class="op">(</span><span class="va">INPUT</span>,
-    <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>FUN <span class="op">=</span> <span class="st">"smooth_wWHIT"</span>, wFUN <span class="op">=</span> <span class="va">wFUN</span>,
+    <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>FUN <span class="op">=</span> <span class="st">"smooth_wWHIT"</span>, wFUN <span class="op">=</span> <span class="va">wFUN</span>,
         maxExtendMonth <span class="op">=</span> <span class="fl">3</span>,
         wmin <span class="op">=</span> <span class="va">wmin</span>, r_min <span class="op">=</span> <span class="fl">0.1</span>
     <span class="op">)</span><span class="op">)</span>
@@ -167,7 +163,7 @@
 
 <span class="co">## 2.4 Curve fitting</span>
 <span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/curvefits.html">curvefits</a></span><span class="op">(</span><span class="va">INPUT</span>, <span class="va">brks</span>,
-    <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>
+    <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>
         methods <span class="op">=</span> <span class="va">methods_fine</span>, <span class="co"># ,"klos",, 'Gu'</span>
         wFUN <span class="op">=</span> <span class="va">wFUN</span>,
         iters <span class="op">=</span> <span class="fl">2</span>,
@@ -180,20 +176,20 @@
 
 <span class="co">## check the curve fitting parameters</span>
 <span class="va">l_param</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_param.html">get_param</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">l_param</span><span class="op">$</span><span class="va">Beck</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 7 × 7</span>
+<span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">l_param</span><span class="op">$</span><span class="va">Beck</span><span class="op">)</span>
+<span class="co">#&gt; <span style="color: #949494;"># A tibble: 7 × 7</span></span>
 <span class="co">#&gt;   flag      mn    mx   sos    rsp   eos    rau</span>
-<span class="co">#&gt;   &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;</span>
-<span class="co">#&gt; 1 2010_1 0.191 0.538 3808. 0.0826 3894. 0.0432</span>
-<span class="co">#&gt; 2 2011_1 0.194 0.477 4180. 0.113  4274. 0.113 </span>
-<span class="co">#&gt; 3 2012_1 0.189 0.514 4542. 0.196  4643. 0.0864</span>
-<span class="co">#&gt; 4 2013_1 0.190 0.493 4903. 0.190  5011. 0.0672</span>
-<span class="co">#&gt; 5 2014_1 0.198 0.494 5276. 0.122  5375. 0.289 </span>
-<span class="co">#&gt; 6 2015_1 0.212 0.493 5639. 0.142  5726. 0.169 </span>
-<span class="co">#&gt; 7 2016_1 0.198 0.501 6002. 0.186  6095. 0.0731</span>
+<span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">1</span> 2010_1 0.191 0.538 <span style="text-decoration: underline;">3</span>808. 0.082<span style="text-decoration: underline;">6</span> <span style="text-decoration: underline;">3</span>894. 0.043<span style="text-decoration: underline;">2</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">2</span> 2011_1 0.194 0.477 <span style="text-decoration: underline;">4</span>180. 0.113  <span style="text-decoration: underline;">4</span>274. 0.113 </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">3</span> 2012_1 0.189 0.514 <span style="text-decoration: underline;">4</span>542. 0.196  <span style="text-decoration: underline;">4</span>643. 0.086<span style="text-decoration: underline;">4</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">4</span> 2013_1 0.190 0.493 <span style="text-decoration: underline;">4</span>903. 0.190  <span style="text-decoration: underline;">5</span>011. 0.067<span style="text-decoration: underline;">2</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">5</span> 2014_1 0.198 0.494 <span style="text-decoration: underline;">5</span>276. 0.122  <span style="text-decoration: underline;">5</span>375. 0.289 </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">6</span> 2015_1 0.212 0.493 <span style="text-decoration: underline;">5</span>639. 0.142  <span style="text-decoration: underline;">5</span>726. 0.169 </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">7</span> 2016_1 0.198 0.501 <span style="text-decoration: underline;">6</span>002. 0.186  <span style="text-decoration: underline;">6</span>095. 0.073<span style="text-decoration: underline;">1</span></span>
 
 <span class="va">dfit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_fitting.html">get_fitting</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">dfit</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">dfit</span><span class="op">)</span>
 <span class="co">#&gt;        flag          t      y QC_flag   meth    ziter1    ziter2</span>
 <span class="co">#&gt;   1: 2010_1 2010-01-25 0.1196    snow     AG 0.1888598 0.1903677</span>
 <span class="co">#&gt;   2: 2010_1 2010-01-25 0.1196    snow  Zhang 0.1881071 0.1897593</span>
@@ -208,9 +204,9 @@
 <span class="co">#&gt; 765: 2016_1 2016-12-12 0.1372    snow     Gu 0.1872110 0.1872110</span>
 
 <span class="co">## 2.5 Extract phenology</span>
-<span class="va">TRS</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.2</span>, <span class="fl">0.5</span><span class="op">)</span>
+<span class="va">TRS</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.2</span>, <span class="fl">0.5</span><span class="op">)</span>
 <span class="va">l_pheno</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_pheno.html">get_pheno</a></span><span class="op">(</span><span class="va">fit</span>, TRS <span class="op">=</span> <span class="va">TRS</span>, IsPlot <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="co"># %&gt;% map(~melt_list(., "meth"))</span>
-<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">l_pheno</span><span class="op">$</span><span class="va">doy</span><span class="op">$</span><span class="va">Beck</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">l_pheno</span><span class="op">$</span><span class="va">doy</span><span class="op">$</span><span class="va">Beck</span><span class="op">)</span>
 <span class="co">#&gt;      flag     origin TRS1.sos TRS1.eos TRS2.sos TRS2.eos TRS5.sos TRS5.eos</span>
 <span class="co">#&gt; 1: 2010_1 2010-01-01      126      300      137      280      154      248</span>
 <span class="co">#&gt; 2: 2011_1 2011-01-01      143      278      151      270      163      257</span>
@@ -228,11 +224,11 @@
 <span class="co">#&gt; 6:     161     207     248 147 175 235 261     142      179        231      264</span>
 <span class="co">#&gt; 7:     159     189     252 148 170 228 280     144      175         NA       NA</span>
 
-<span class="va">pheno</span> <span class="op">&lt;-</span> <span class="va">l_pheno</span><span class="op">$</span><span class="va">doy</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="../reference/melt_list.html">melt_list</a></span><span class="op">(</span><span class="st">"meth"</span><span class="op">)</span></code></pre></div>
+<span class="va">pheno</span> <span class="op">&lt;-</span> <span class="va">l_pheno</span><span class="op">$</span><span class="va">doy</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/melt_list.html">melt_list</a></span><span class="op">(</span><span class="st">"meth"</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="visualization" class="section level2">
-<h2 class="hasAnchor">
-<a href="#visualization" class="anchor"></a>Visualization</h2>
+<div class="section level2">
+<h2 id="visualization">Visualization<a class="anchor" aria-label="anchor" href="#visualization"></a>
+</h2>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># growing season dividing</span>
 <span class="fu"><a href="../reference/plot_season.html">plot_season</a></span><span class="op">(</span><span class="va">INPUT</span>, <span class="va">brks</span>, ylab <span class="op">=</span> <span class="st">"EVI"</span><span class="op">)</span></code></pre></div>
@@ -242,8 +238,8 @@
 
 <span class="co"># fine curvefitting</span>
 <span class="va">g</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/plot_curvefits.html">plot_curvefits</a></span><span class="op">(</span><span class="va">dfit</span>, <span class="va">brks</span>, title <span class="op">=</span> <span class="cn">NULL</span>, cex <span class="op">=</span> <span class="fl">1.5</span>, ylab <span class="op">=</span> <span class="st">"EVI"</span>, angle <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>
-<span class="fu">grid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grid/grid.newpage.html">grid.newpage</a></span><span class="op">(</span><span class="op">)</span>
-<span class="fu">grid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grid/grid.draw.html">grid.draw</a></span><span class="op">(</span><span class="va">g</span><span class="op">)</span></code></pre></div>
+<span class="fu">grid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grid/grid.newpage.html" class="external-link">grid.newpage</a></span><span class="op">(</span><span class="op">)</span>
+<span class="fu">grid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grid/grid.draw.html" class="external-link">grid.draw</a></span><span class="op">(</span><span class="va">g</span><span class="op">)</span></code></pre></div>
 <p><img src="phenofit-procedures_files/figure-html/unnamed-chunk-7-2.png" width="672"></p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Ipaper::write_fig(g, "Figure5_curvefitting.pdf", 8, 6, show = TRUE)</span>
@@ -256,9 +252,8 @@
 <code class="sourceCode R"><span class="co"># }, "Figure6_phenology_metrics.pdf", 8, 6, show = TRUE)</span></code></pre></div>
 </div>
 </div>
-<div id="comparison-with-timesat-and-phenopix" class="section level1">
-<h1 class="hasAnchor">
-<a href="#comparison-with-timesat-and-phenopix" class="anchor"></a>Comparison with <code>TIMESAT</code> and <code>phenopix</code>
+<div class="section level1">
+<h1 id="comparison-with-timesat-and-phenopix">Comparison with <code>TIMESAT</code> and <code>phenopix</code><a class="anchor" aria-label="anchor" href="#comparison-with-timesat-and-phenopix"></a>
 </h1>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># library(ggplot2)</span>
@@ -307,11 +302,13 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by Dongdong Kong, Mingzhong Xiao, Yongqiang Zhang, Xihui Gu, Jianjian Cui.</p>
+  <p></p>
+<p>Developed by Dongdong Kong, Mingzhong Xiao, Yongqiang Zhang, Xihui Gu, Jianjian Cui.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
 </div>
 
       </footer>
@@ -319,6 +316,8 @@
 
   
 
+
+  
 
   </body>
 </html>
