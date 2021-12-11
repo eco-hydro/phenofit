@@ -68,7 +68,7 @@
 <li><p>In the case of none growing season division information, <code>find_season.peaks</code> will be error. Fixed now.</p></li>
 <li><p>Fix the bug of <code>init_param</code> in the approximately monotonous time-sereis (e.g. fast harvest leads to a very short senescence period, and hence approximately monotonic in the whole growing season). In previous version, the parameter boundary of <code>sos</code> might exceed that of <code>eos</code>.</p></li>
 <li><p>Improved the phenology extraction method <code>PhenoTrs</code>, <code>PhenoDeriv</code> and <code>PhenoGu</code> in the approximately monotonous time-sereis. In the previous version <code>NA</code> value will be return. In the current version, if the time series is monotonously increasing, EOS will be the mean value of <code>t[n]</code> and peak date of season (<code>POP</code>). But <code>PhenoKlos</code> has no method to avoid <code>NA</code> values, because it used the strict mathematical solution to find the extreme values in the curve of curvature’s change rate.</p></li>
-</ul><p>** MAJOR updates to improve multi-GS phenology extraction **</p>
+</ul><p><strong>MAJOR updates to improve multi-GS phenology extraction</strong></p>
 <ul><li><p>Fix the bug of <code>findpeaks</code>, which lead to sharp changed growing season failed to detect.</p></li>
 <li><p>Fix the bug of <code>PhenoKlos</code>, where <code>minpeakheight</code> not work in previous version.</p></li>
 <li><p>Fix the bug of <code>check_season_dt</code>, where <code>peak</code> might be able to greater than <code>end</code>.</p></li>
