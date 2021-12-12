@@ -1,9 +1,9 @@
 #' Phenology extraction in GU method (GU)
 #'
-#' @inheritParams PhenoDeriv 
+#' @inheritParams PhenoDeriv
 #' @inherit PhenoTrs examples
 #' @param ... other parameters to [PhenoGu.default()] or [PhenoGu.fFIT()]
-#' 
+#'
 #' @references
 #' 1. Gu, L., Post, W. M., Baldocchi, D. D., Black, T. A., Suyker, A. E., Verma,
 #'    S. B., … Wofsy, S. C. (2009). Characterizing the Seasonal Dynamics of
@@ -15,19 +15,19 @@
 #'    Wingate, L., … Richardson, A. D. (2016). Phenopix: A R package for
 #'    image-based vegetation phenology. Agricultural and Forest Meteorology,
 #'    220, 141–150. \doi{10.1016/j.agrformet.2016.01.006}
-#' 
+#'
 #' @return A numeric vector, with the elements of:
 #' - `UD`: upturn date
 #' - `SD`: stabilisation date
 #' - `DD`: downturn date
-#' - `RD`: recession date 
+#' - `RD`: recession date
 #' @export
 PhenoGu <- function(x, t, ...) UseMethod("PhenoGu", x)
 
 #' @rdname PhenoGu
 #' @export
 PhenoGu.fFIT <- function(x, t = NULL,
-    analytical = TRUE, smoothed.spline = FALSE, ...) 
+    analytical = TRUE, smoothed.spline = FALSE, ...)
 {
     if (!is.null(x$tout)) t <- x$tout
     values <- last2(x$zs)
@@ -82,16 +82,16 @@ PhenoGu.default <- function(x, t, der1,
     sub.gcc  <- x[t >= SD & t <= DD]
 
     ## compute a linear fit
-    if (length(sub.time) > 3) {
+    if (length(sub.time) > 3 && !all(is.na(sub.gcc))) {
         X <- cbind(1, sub.time)
-        plateau.lm        <- .lm.fit(X, sub.gcc)
-        plateau.slope     <- plateau.lm$coefficients[2]
-        plateau.intercept <- plateau.lm$coefficients[1]
         # y1 = rau*t + sl.b
         # y2 = k2t + b2
         # so, t = (sl.b - b2)/(k2 -rau)
+        plateau.lm        <- .lm.fit(X, sub.gcc)
+        plateau.slope     <- plateau.lm$coefficients[2]
+        plateau.intercept <- plateau.lm$coefficients[1]
         DD <- (sl.b - plateau.intercept) / (plateau.slope - rau)
-    }else{
+    } else {
         plateau.slope     <- NA
         plateau.intercept <- NA
     }

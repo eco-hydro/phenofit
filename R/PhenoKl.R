@@ -4,20 +4,19 @@
 #' @inheritParams PhenoDeriv
 #' @param fFIT object return by [curvefit()]
 #'
-#' @inherit PhenoTrs examples 
+#' @inherit PhenoTrs examples
 #' @references
 #' 1. Zhang, X., Friedl, M. A., Schaaf, C. B., Strahler, A. H., Hodges, J. C. F.
 #'    F., Gao, F., … Huete, A. (2003). Monitoring vegetation phenology using
 #'    MODIS. Remote Sensing of Environment, 84(3), 471–475.
 #'    \doi{10.1016/S0034-4257(02)00135-9}
-#' @return A numeric vector, with the elements of: 
+#' @return A numeric vector, with the elements of:
 #' `Greenup`, `Maturity`, `Senescence`, `Dormancy`.
-#' 
+#'
 #' @export
 PhenoKl <- function(fFIT, t = NULL,
                     analytical = TRUE, smoothed.spline = FALSE,
                     IsPlot = TRUE, show.legend = TRUE, ...) {
-    
     PhenoNames <- c("Greenup", "Maturity", "Senescence", "Dormancy")
     metrics <- setNames(rep(NA, 4), PhenoNames)
 
@@ -61,16 +60,16 @@ PhenoKl <- function(fFIT, t = NULL,
         des.k.d <- try(t[(half.season + dist_fromPeak):length(k)])
 
         A <- range(der.k, na.rm = TRUE) %>% diff()
-        minpeakheight <- A * 0.025
-
         # first half maximum local x of k'
         # minpeakdistance in the unit of day
         pos <- findpeaks(asc.k,
             npeaks = 2, ndowns = 0, sortstr = TRUE,
-            minpeakdistance = 15, minpeakheight = minpeakheight
+            minpeakdistance = 15, minpeakheight = A * 0.025 + min(asc.k)
         )$X$pos
         pos <- sort(pos)
-        pos <- c(rep(NA, 2 - length(pos)), pos) # at least two x
+        # pos <- c(rep(NA, 2 - length(pos)), pos) # at least two x
+        pos <- fill_NA_kl(pos, length(asc.k))
+
         I_asc <- asc.k.d[pos]
         if (all(is.na(pos))) {
             I_asc <- pos
@@ -81,10 +80,12 @@ PhenoKl <- function(fFIT, t = NULL,
         # second half minimum local x of k'
         pos <- findpeaks(-des.k,
             npeaks = 2, sortstr = TRUE,
-            minpeakdistance = 15, minpeakheight = minpeakheight
+            minpeakdistance = 15, minpeakheight = A * 0.025 + min(-des.k)
         )$X$pos
         pos <- sort(pos)
-        pos <- c(pos, rep(NA, 2 - length(pos)))
+        # pos <- c(pos, rep(NA, 2 - length(pos)))
+        pos <- fill_NA_kl(pos, length(des.k))
+        
         if (all(is.na(pos))) {
             I_dec <- pos
         } else {
@@ -135,4 +136,24 @@ PhenoKl <- function(fFIT, t = NULL,
         ) # cex = 1, pch = 20,
     }
     return(setNames(metrics, PhenoNames))
+}
+
+
+# not sure in the current result
+fill_NA_kl <- function(pos, half.season) {
+    # guess the position of NA value
+    if (length(pos) == 1) {
+        fill_right = pos < (half.season - pos)
+
+        if (fill_right) {
+            # if pos near the pos
+            pos = c(pos, rep(NA, 2 - length(pos)))
+        } else {
+            # if pos near the end
+            pos = c(rep(NA, 2 - length(pos)), pos)
+        }
+    } else {
+        pos <- c(pos, rep(NA, 2 - length(pos)))
+    }
+    pos
 }

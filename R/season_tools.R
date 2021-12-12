@@ -42,9 +42,11 @@ guess_nyear <- function(INPUT) {
 
 # ' @param di with the columns of `beg`, `peak` and `end`
 di2dt <- function(di, t, ypred){
-    dt = di %>% mutate(across(.fns = ~ ypred[.x], .names = "y_{.col}")) %>%
-        mutate(across(beg:end, .fns = ~ t[.x]))
-
+    dt = cbind(
+        di[, map(.SD, ~t[.x])],
+        di[, map(.SD, ~ypred[.x])] %>% set_names(paste0("y_", names(di))))
+    # dt = di %>% mutate(across(.fns = ~ ypred[.x], .names = "y_{.col}")) %>%
+    #     mutate(across(beg:end, .fns = ~ t[.x]))
     if (is.Date(t)) {
         dt %>% mutate(len = as.integer(difftime(end, beg, units = "days") + 1), year = year(peak))
     } else {

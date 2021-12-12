@@ -1,3 +1,8 @@
+# phenofit 0.3.4 (2021-12-12)
+
+- fix `minpeakheight` error in `PhenoKl`, which leads to `PhenoKl` failed unexpectedly.
+- plateau line fitting in `PhenoGu`
+
 # phenofit 0.3.3 (2021-11-14)
 
 - Fix typo error in curvefits' document.
