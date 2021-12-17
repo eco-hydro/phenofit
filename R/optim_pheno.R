@@ -72,7 +72,8 @@ optim_pheno <- function(
 
     # check input parameters
     if (missing(w))          w   <- rep(1, length(y))
-    if (missing(nptperyear)) nptperyear <- ceiling(365/mean(as.numeric(diff(t))))
+    # v20211219: make sure `nptperyear` >= 10
+    if (missing(nptperyear)) nptperyear <- pmax(ceiling(365/mean(as.numeric(diff(t)))), 10)
     if (missing(ylu))        ylu <- range(y, na.rm = TRUE)
     A <- diff(ylu) # y amplitude
 
@@ -83,8 +84,8 @@ optim_pheno <- function(
     ypred <- rep(NA_real_, length(tout))
     pred  <- rep(NA_real_, length(t))
 
-    if (verbose){
-        boundary <- list(...)[c('lower', 'upper')] %>% do.call(rbind, .) %>%
+    if (verbose && (length(lower) != 1)){
+        boundary <- rbind(lower, upper) %>%
             set_colnames(parnames) %>% as_tibble()
         print(boundary)
     }
@@ -116,7 +117,6 @@ optim_pheno <- function(
             } else { #if (opt.df$convcode[best] == 0)
                 opt <- opt.df[best, , drop = FALSE]
             }
-
             RMSE = sqrt(opt[1, J_VALUE])/ntime # SSE returned
             # check whether convergence, only 1 row now
             if (opt[1, J_CONVCODE] != 0 & RMSE > 0.1*A) {
@@ -135,7 +135,11 @@ optim_pheno <- function(
                 # to adapt wTS, set iter = i-1; #20180910
                 # nptperyear, wfact = 0.5)
                 w <- tryCatch({
-                    if (use.cpp) FUN(par, t, pred) else pred = FUN(par, t)
+                    if (use.cpp) {
+                        FUN(par, t, pred)
+                    } else {
+                        pred = FUN(par, t)
+                    }
                     wFUN(y, pred, w, i, nptperyear, ...)
                 }, error = function(e) {
                     message(sprintf('[%s]: %s', sFUN, e$message))

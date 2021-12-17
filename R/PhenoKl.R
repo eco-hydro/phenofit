@@ -1,5 +1,5 @@
 
-#' Phenology extraction in inflexion method (Zhang)
+#' Phenology extraction in Inflection method (Zhang)
 #'
 #' @inheritParams PhenoDeriv
 #' @param fFIT object return by [curvefit()]

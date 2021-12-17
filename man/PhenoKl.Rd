@@ -2,7 +2,7 @@
 % Please edit documentation in R/PhenoKl.R
 \name{PhenoKl}
 \alias{PhenoKl}
-\title{Phenology extraction in inflexion method (Zhang)}
+\title{Phenology extraction in Inflection method (Zhang)}
 \usage{
 PhenoKl(
   fFIT,
@@ -35,7 +35,7 @@ A numeric vector, with the elements of:
 \code{Greenup}, \code{Maturity}, \code{Senescence}, \code{Dormancy}.
 }
 \description{
-Phenology extraction in inflexion method (Zhang)
+Phenology extraction in Inflection method (Zhang)
 }
 \examples{
 # simulate vegetation time-series

@@ -203,7 +203,7 @@ get_pheno.fFITs <- function(x, method,
     if (show.PhenoName && IsPlot) mtext("DER", line = 0.2)
 
     zhang <- do.call(PhenoKl, param_common2)
-    if (show.PhenoName && IsPlot) mtext("Inflexion ", line = 0.2)
+    if (show.PhenoName && IsPlot) mtext("Inflection", line = 0.2)
 
     gu <- do.call(PhenoGu, param_common)[1:4]
     if (show.PhenoName && IsPlot) mtext("Gu", line = 0.2)

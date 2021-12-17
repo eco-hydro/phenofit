@@ -105,10 +105,7 @@ opt_ucminf <- function(par0, objective, ...){
 opt_nlm <- function(par0, objective, ...){
     npar <- length(par0)
 
-    # ans <- try(nlm(start = par0, resfn =objective, ..., iterlim=1000, print.level=0), silent=TRUE)
     ans <- try(nlm(f=objective, p=par0, ..., iterlim=1000, print.level=0), silent=TRUE)
-      # , silent=TRUE)
-    # ans <- nlm(f_goal, par0, y = y, t = t, fun = doubleLog.Gu)
     if (class(ans)[1] != "try-error") {
         ans$convcode <- ans$code
         if (ans$convcode == 1 || ans$convcode == 2 || ans$convcode == 3)
