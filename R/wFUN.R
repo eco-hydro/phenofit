@@ -17,9 +17,9 @@
 #' 'Adaptation strength' in TIMESAT.
 #' @param ... other parameters are ignored.
 #' @param .toUpper Boolean. Whether to approach the upper envelope?
-#' 
+#'
 #' @inheritParams check_input
-#' 
+#'
 #' @return wnew Numeric Vector, adjusted weights.
 #'
 #' @references
@@ -47,7 +47,7 @@ wSELF <- function(y, yfit, w, ...){w}
 #' @author
 #' wTSM is implemented by Per J\"onsson, Malm\"o University, Sweden
 #' \email{per.jonsson@ts.mah.se} and Lars Eklundh, Lund University, Sweden
-#' \email{lars.eklundh@nateko.lu.se}. 
+#' \email{lars.eklundh@nateko.lu.se}.
 #' And Translated into Rcpp by Dongdong Kong, 01 May 2018.
 #'
 #' @rdname wFUN
@@ -59,13 +59,23 @@ wTSM <- function(y, yfit, w, iter = 2, nptperyear, wfact = 0.5, ...){
 #' @rdname wFUN
 #' @export
 wBisquare0 <- function(y, yfit, w, ..., wmin = 0.2) {
-    wBisquare(y, yfit, w, ..., wmin = 0.2, .toUpper = FALSE)    
+    # re < 0, good
+    # re > 0, bad
+    re <- yfit - y
+    re_abs <- re
+
+    sc <- 6 * median(re, na.rm = TRUE)
+    w = rep(0, length(y))
+
+    ind = which(re < sc) # 
+    w[ind] = ( 1 - ( re[ind] / sc )^2 )^2
+    w
+    # wBisquare(y, yfit, w, ..., wmin = 0.2, .toUpper = FALSE)
 }
 
 #' @rdname wFUN
 #' @export
 wBisquare <- function(y, yfit, w, ..., wmin = 0.2, .toUpper = TRUE){
-    
     if (missing(w)) w  <- rep(1, length(y))
     wnew <- w
 
@@ -80,16 +90,16 @@ wBisquare <- function(y, yfit, w, ..., wmin = 0.2, .toUpper = TRUE){
 
     if (.toUpper) {
         # only decrease the weights of growing season `& yfit > 1/3*A`.
-        # have a problem, in this way, original weights will be ignored.     
+        # have a problem, in this way, original weights will be ignored.
         I_pos <- which(re > 0 & re < sc & (yfit > 0.3*A + ylu[1]) )
     } else {
         I_pos <- which(re < sc & (yfit > 0.3*A + ylu[1]))
     }
     wnew[I_pos]  <- (1 - (re_abs[I_pos]/sc)^2)^2 * w[I_pos]
-   
+
     # I_zero       <- which(re >= sc) # update 20180723
     I_zero       <- which(abs(re) >= sc) # update 20180924, positive bias outlier
-    
+
     wnew[I_zero] <- wmin
     wnew[wnew < wmin] <- wmin
 

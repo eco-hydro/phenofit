@@ -29,11 +29,18 @@ sgolayS <- function(frame, d){
 #' @export
 smooth_wSG <- function(y, w, nptperyear, ylu, wFUN = wTSM, iters = 2,
                    frame = floor(nptperyear/7)*2 + 1, d=2, ...){
-    if (all(is.na(y))) return(y)
+    if (all(is.na(y)) || sum(y, na.rm = TRUE) == 0) {
+        return(list(zs = list(ziter1 = y * NA), ws = list(witer1 = y*NA)))
+    }
     if (missing(w)) w <- rep(1, length(y))
+    if (missing(ylu)) {
+        alpha = 0.01
+        ylu = quantile(y, c(alpha / 2, 1 - alpha), na.rm = TRUE)
+    }
+    w[is.na(y)] = 0
+    w[y < ylu[1] | y > ylu[2]] = 0
 
-    halfwin <- floor((frame-1)/2)
-
+    halfwin <- floor((frame - 1) / 2)
     yiter <- y
     fits  <- list()
     ws    <- list()
@@ -42,17 +49,12 @@ smooth_wSG <- function(y, w, nptperyear, ylu, wFUN = wTSM, iters = 2,
         ws[[i]] <- w
         z <- rcpp_wSG(yiter, halfwin, d, w)
 
-        if (is.null(wFUN)){
-            wnew <- w
-        } else {
-            wnew <- wFUN(y, z, w, i, nptperyear, ...)
-        }
-
-        if (!missing(ylu)) {
-            z <- check_ylu(z, ylu)
-        }
+        if (!is.null(wFUN)) w <- wFUN(y, z, w, i, nptperyear, ...)
+        if (!missing(ylu)) z %<>% checkfit(ylu)
+        # z <- check_ylu(z, ylu)
         I = which(yiter < z)
         if (length(I) > 0 ) yiter[I] <- z[I] # upper envelope
+        
         fits[[i]] <- z
     }
 
@@ -60,4 +62,12 @@ smooth_wSG <- function(y, w, nptperyear, ylu, wFUN = wTSM, iters = 2,
     ws   %<>% set_names(paste0('witer', 1:iters))
 
     list(zs = fits, ws = ws)
+}
+
+checkfit <- function(y, ylu) {
+    I_na = y < ylu[1] | y > ylu[2]
+    if (sum(I_na) > 0) {
+        y[I_na] = approx(which(!I_na), y[!I_na], which(I_na), "constant", rule = 2)$y
+    }
+    y
 }
