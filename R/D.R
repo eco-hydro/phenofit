@@ -78,16 +78,16 @@ NULL
 
 #' @rdname D
 #' @export
-D1 <- function(fit, t = NULL, analytical = TRUE, smoothed.spline = FALSE, ...) UseMethod('D1', fit)
+D1 <- function(fit, t = NULL, analytical = FALSE, smoothed.spline = FALSE, ...) UseMethod('D1', fit)
 
 #' @rdname D
 #' @export
-D2 <- function(fit, t = NULL, analytical = TRUE, smoothed.spline = FALSE, ...) UseMethod('D2', fit)
+D2 <- function(fit, t = NULL, analytical = FALSE, smoothed.spline = FALSE, ...) UseMethod("D2", fit)
 
 #' @keywords internal
 #' @rdname D
 #' @export
-D1.fFIT <- function(fit, t = NULL, analytical = TRUE, smoothed.spline = FALSE, ...){
+D1.fFIT <- function(fit, t = NULL, analytical = FALSE, smoothed.spline = FALSE, ...){
     pred <- last2(fit$zs)
     # t    <- fit$tout
     par  <- fit$par
@@ -121,7 +121,7 @@ D1.fFIT <- function(fit, t = NULL, analytical = TRUE, smoothed.spline = FALSE, .
 #' @keywords internal
 #' @rdname D
 #' @export
-D2.fFIT <- function(fit, t = NULL, analytical = TRUE, smoothed.spline = FALSE, ...){
+D2.fFIT <- function(fit, t = NULL, analytical = FALSE, smoothed.spline = FALSE, ...){
     pred <- last2(fit$zs)
     # t    <- fit$tout
     par  <- fit$par
@@ -157,12 +157,12 @@ D2.fFIT <- function(fit, t = NULL, analytical = TRUE, smoothed.spline = FALSE, .
 
 #' @rdname D
 #' @export
-curvature <- function(fit, t = NULL, analytical = TRUE, smoothed.spline = FALSE, ...) UseMethod('curvature', fit)
+curvature <- function(fit, t = NULL, analytical = FALSE, smoothed.spline = FALSE, ...) UseMethod('curvature', fit)
 
 #' @keywords internal
 #' @rdname D
 #' @export
-curvature.fFIT <- function(fit, t = NULL, analytical = TRUE, smoothed.spline = FALSE, ...){
+curvature.fFIT <- function(fit, t = NULL, analytical = FALSE, smoothed.spline = FALSE, ...){
     derivs <- D2.fFIT(fit, t, analytical, smoothed.spline)
     k      <- derivs$der2 / (1 + derivs$der1 ^ 2) ^ (3 / 2)
     c(derivs, list(k = k))

@@ -49,9 +49,13 @@
 #' specified, `alpha_high=alpha`.
 #' @param date_start,date_end starting and ending date of the original vegetation
 #' time-sereis (before `add_HeadTail`)
-#' @param ... Others will be ignored.
+#' 
 #' @param mask_spike Boolean. Whether to remove spike values?
-#'
+#' @param na.rm Boolean. If `TRUE`, NA and spike values will be removed; 
+#' otherwise, NA and spike values will be interpolated by valid neighbours.
+#' 
+#' @param ... Others will be ignored.
+#' 
 #' @return A list object returned:
 #' * `t` : Numeric vector
 #' * `y0`: Numeric vector, original vegetation time-series.
@@ -79,7 +83,8 @@ check_input <- function(t, y, w, QC_flag,
     ymin, missval,
     maxgap, alpha = 0.02, alpha_high = NULL,
     date_start = NULL, date_end = NULL,
-    mask_spike = TRUE,
+    mask_spike = TRUE, 
+    na.rm = FALSE,
     ...)
 {
     if (missing(QC_flag)) QC_flag <- NULL
@@ -163,11 +168,20 @@ check_input <- function(t, y, w, QC_flag,
     ## 3. gap-fill NA values
     w[is.na(w) | is.na(y)] <- wmin
     w[w <= wmin] <- wmin
-    # left missing values were interpolated by `na.approx`
-    y <- na.approx(y, maxgap = maxgap, na.rm = FALSE)
-    # If still have na values after na.approx, just replace it with `missval`.
-    y[is.na(y)] <- missval
-
+    if (isTRUE(na.rm)) {
+        ind = which.notna(y)
+        y  = y[ind]
+        y0 = y0[ind]
+        t  = t[ind]
+        w  = w[ind]
+        QC_flag = QC_flag[ind]
+    } else {
+        # left missing values were interpolated by `na.approx`
+        y <- na.approx(y, maxgap = maxgap, na.rm = FALSE)
+        # If still have na values after na.approx, just replace it with `missval`.
+        y[is.na(y)] <- missval
+    }
+    
     # if (!is_empty(Tn)) Tn <- na.approx(Tn, maxgap = maxgap, na.rm = FALSE)
     list(t = t, y0 = y0, y = y, w = w, QC_flag = QC_flag, ylu = ylu,
         nptperyear = nptperyear, south = south,

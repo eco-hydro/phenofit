@@ -3,6 +3,10 @@
 #' Initialize parameters of double logistic function
 #'
 #' @inheritParams check_input
+#' @param e The object returned by [init_param()]
+#' @param type integer, `1` or `-1`
+#' -  `1`: trough-to-trough curve fitting
+#' - `-1`: peak-to-peak curve fitting
 #' 
 #' @keywords internal
 #' @examples
@@ -22,7 +26,7 @@
 #' 
 #' l_param <- init_param(y, t)
 #' @export
-init_param <- function(y, t, w){
+init_param <- function(y, t, w, type = 1L){
     if (any(is.na(y)))
         stop("NA in the time series are not allowed: fill them with e.g. na.approx()")
     if (missing(w)) w <- rep(1, length(y))
@@ -62,13 +66,12 @@ init_param <- function(y, t, w){
         t0  = c(doy.mx - deltaT, doy.mx + deltaT),
         mn  = c(mn - deltaY    , mn + deltaY),
         mx  = c(mx - deltaY*2  , mx + deltaY*2),
-        r   = c(k/1.2, k*5),
+        r   = c(k/1.2, k*5) * type,                                             # >= v0.3.5
         sos = c(min(t)         , pmin(doy.mx + deltaT), tmax),
         eos = c(doy.mx - deltaT, tmax)
     )
     # plot(t, y, main = "init_param")
     # print(str(lims))
-    
     res <- listk( mx, mn, ampl, doy, doy.mx,
         deltaT, deltaY, half, t1, t2,
         k, lims)
@@ -77,10 +80,9 @@ init_param <- function(y, t, w){
 
 #' @rdname init_param
 #' @export
-init_Zhang <- function(y, t = index(y), w) {
-    if (missing(w)) w <- rep(1, length(y))
-    e <- init_param(y, t, w)
-
+init_Zhang <- function(e, type = 1L, ...) {
+    # if (missing(w)) w <- rep(1, length(y))
+    # e <- init_param(y, t, w, type = type)
     prior <- with(e, rbind(
         c(doy.mx, mn, mx, doy[1], k, doy[2], k),
         c(doy.mx, mn, mx, doy[1] + t1, k * 2, doy[2] - t1, k * 2),
@@ -97,9 +99,9 @@ init_Zhang <- function(y, t = index(y), w) {
 
 #' @rdname init_param
 #' @export
-init_AG <- function(y, t = index(y), w) {
-    if (missing(w)) w <- rep(1, length(y))
-    e <- init_param(y, t, w)
+init_AG <- function(e, type = 1L, ...) {
+    # if (missing(w)) w <- rep(1, length(y))
+    # e <- init_param(y, t, w, type = type)
     prior <- with(e, rbind(
         c(doy.mx, mn, mx, 1 / half, 2, 1 / half, 2),
         # c(doy.mx, mn, mx, 0.2*half, 1  , 0.2*half, 1),
@@ -114,9 +116,9 @@ init_AG <- function(y, t = index(y), w) {
 
 #' @rdname init_param
 #' @export
-init_AG2 <- function(y, t = index(y), w) {
-    if (missing(w)) w <- rep(1, length(y))
-    e <- init_param(y, t, w)
+init_AG2 <- function(e, type = 1L, ...) {
+    # if (missing(w)) w <- rep(1, length(y))
+    # e <- init_param(y, t, w, type = type)
     prior <- with(e, rbind(
         c(doy.mx, mn, mn, mx, 1 / half, 2, 1 / half, 2),
         # c(doy.mx, mn, mx, 0.2*half, 1  , 0.2*half, 1),
@@ -131,10 +133,9 @@ init_AG2 <- function(y, t = index(y), w) {
 
 #' @rdname init_param
 #' @export
-init_Beck <- function(y, t = index(y), w) {
-    if (missing(w)) w <- rep(1, length(y))
-    e <- init_param(y, t, w)
-
+init_Beck <- function(e, type = 1L, ...) {
+    # if (missing(w)) w <- rep(1, length(y))
+    # e <- init_param(y, t, w, type = type)
     prior <- with(e, rbind(
         c(mn, mx, doy[1], k, doy[2], k),
         c(mn, mx, doy[1] + t1, k * 2, doy[2] - t2, k * 2)
@@ -147,9 +148,9 @@ init_Beck <- function(y, t = index(y), w) {
 
 #' @rdname init_param
 #' @export
-init_Elmore <- function(y, t = index(y), w) {
-    if (missing(w)) w <- rep(1, length(y))
-    e <- init_param(y, t, w)
+init_Elmore <- function(e, type = 1L, ...) {
+    # if (missing(w)) w <- rep(1, length(y))
+    # e <- init_param(y, t, w, type = type)
     # doy_q  <- quantile(t, c(0.1, 0.25, 0.5, 0.75, 0.9), na.rm = TRUE)
     # TODO: remove bad one
     # generally m7 < 0.001
@@ -159,6 +160,7 @@ init_Elmore <- function(y, t = index(y), w) {
         # c(mn, mx - mn, doy[1]   , k*1    , doy[2]   , k      , 0.001),
         c(mn, mx - mn, doy[1] - t1, k * 0.25, doy[2] + t2, k * 0.25, 0.001)
     ))
+    # c("mn", "mx", "sos", "rsp", "eos", "rau", "m7")
     param_lims <- e$lims[c("mn", "mx", "sos", "r", "eos", "r")]
     lower <- c(sapply(param_lims, `[`, 1), 0)
     upper <- c(sapply(param_lims, `[`, 2), 1)
@@ -167,10 +169,9 @@ init_Elmore <- function(y, t = index(y), w) {
 
 #' @rdname init_param
 #' @export
-init_Gu <- function(y, t = index(y), w) {
-    if (missing(w)) w <- rep(1, length(y))
-    e <- init_param(y, t, w)
-
+init_Gu <- function(e, type = 1L, ...) {
+    # if (missing(w)) w <- rep(1, length(y))
+    # e <- init_param(y, t, w, type = type)
     a <- e$ampl
     b1 <- 0.1
     b2 <- 0.1
@@ -185,6 +186,7 @@ init_Gu <- function(y, t = index(y), w) {
     ))
     # y0 + (a1/(1 + exp(-(t - t1)/b1))^c1) - (a2/(1 + exp(-(t - t2)/b2))^c2)
 
+    # c('y0', 'a1', 'a2', 'sos', 'rsp', 'eos', 'rau', 'c1', 'c2')
     param_lims <- e$lims[c("mn", "mx", "mx", "sos", "r", "eos", "r")]
     lower <- c(sapply(param_lims, `[`, 1), 0, 0)
     upper <- c(sapply(param_lims, `[`, 2), Inf, Inf)
@@ -193,15 +195,14 @@ init_Gu <- function(y, t = index(y), w) {
 
 #' @rdname init_param
 #' @export
-init_Klos <- function(y, t = index(y), w) {
-    if (missing(w)) w <- rep(1, length(y))
-    e <- init_param(y, t, w)
-
+init_Klos <- function(e, type = 1L, ...) {
+    # if (missing(w)) w <- rep(1, length(y))
+    # e <- init_param(y, t, w, type = type)
     a1 <- 0
-    a2 <- 0 # ok
+    a2 <- 0    # ok
     b1 <- e$mn # ok
-    b2 <- 0 # ok
-    c <- 0.2 * max(y) # ok
+    b2 <- 0    # ok
+    c <- 0.2 * e$mx # ok
     ## very slightly smoothed spline to get reliable maximum
     # tmp <- smooth.spline(y, df = 0.5 * length(y))#, find error: 20161104, fix tomorrow
 

@@ -15,7 +15,7 @@
 #'
 #' @export
 PhenoKl <- function(fFIT, t = NULL,
-                    analytical = TRUE, smoothed.spline = FALSE,
+                    analytical = FALSE, smoothed.spline = FALSE,
                     IsPlot = TRUE, show.legend = TRUE, ...) {
     PhenoNames <- c("Greenup", "Maturity", "Senescence", "Dormancy")
     metrics <- setNames(rep(NA, 4), PhenoNames)

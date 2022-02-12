@@ -11,19 +11,19 @@
 \alias{FitDL.Klos}
 \title{Fine fitting}
 \usage{
-FitDL.Zhang(y, t = index(y), tout = t, method = "nlm", w, ...)
+FitDL.Zhang(y, t = index(y), tout = t, method = "nlm", w, type = 1L, ...)
 
-FitDL.AG(y, t = index(y), tout = t, method = "nlminb", w, ...)
+FitDL.AG(y, t = index(y), tout = t, method = "nlminb", w, type = 1L, ...)
 
-FitDL.AG2(y, t = index(y), tout = t, method = "nlminb", w, ...)
+FitDL.AG2(y, t = index(y), tout = t, method = "nlminb", w, type = 1L, ...)
 
-FitDL.Beck(y, t = index(y), tout = t, method = "nlminb", w, ...)
+FitDL.Beck(y, t = index(y), tout = t, method = "nlminb", w, type = 1L, ...)
 
-FitDL.Elmore(y, t = index(y), tout = t, method = "nlminb", w, ...)
+FitDL.Elmore(y, t = index(y), tout = t, method = "nlminb", w, type = 1L, ...)
 
-FitDL.Gu(y, t = index(y), tout = t, method = "nlminb", w, ...)
+FitDL.Gu(y, t = index(y), tout = t, method = "nlminb", w, type = 1L, ...)
 
-FitDL.Klos(y, t = index(y), tout = t, method = "BFGS", w, ...)
+FitDL.Klos(y, t = index(y), tout = t, method = "BFGS", w, type = 1L, ...)
 }
 \arguments{
 \item{y}{input vegetation index time-series.}
@@ -35,6 +35,12 @@ FitDL.Klos(y, t = index(y), tout = t, method = "BFGS", w, ...)
 \item{method}{method passed to \code{optimx} or \code{optim} function.}
 
 \item{w}{weights}
+
+\item{type}{integer, \code{1} or \code{-1}
+\itemize{
+\item \code{1}: trough-to-trough curve fitting
+\item \code{-1}: peak-to-peak curve fitting
+}}
 
 \item{...}{other paraters passed to \code{\link[=optim_pheno]{optim_pheno()}}.}
 }

@@ -21,6 +21,7 @@ check_input(
   date_start = NULL,
   date_end = NULL,
   mask_spike = TRUE,
+  na.rm = FALSE,
   ...
 )
 }
@@ -75,6 +76,9 @@ specified, \code{alpha_high=alpha}.}
 time-sereis (before \code{add_HeadTail})}
 
 \item{mask_spike}{Boolean. Whether to remove spike values?}
+
+\item{na.rm}{Boolean. If \code{TRUE}, NA and spike values will be removed;
+otherwise, NA and spike values will be interpolated by valid neighbours.}
 
 \item{...}{Others will be ignored.}
 }

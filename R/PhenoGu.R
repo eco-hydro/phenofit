@@ -27,7 +27,7 @@ PhenoGu <- function(x, t, ...) UseMethod("PhenoGu", x)
 #' @rdname PhenoGu
 #' @export
 PhenoGu.fFIT <- function(x, t = NULL,
-    analytical = TRUE, smoothed.spline = FALSE, ...)
+    analytical = FALSE, smoothed.spline = FALSE, ...)
 {
     if (!is.null(x$tout)) t <- x$tout
     values <- last2(x$zs)

@@ -11,21 +11,21 @@
 \alias{init_Klos}
 \title{init_param}
 \usage{
-init_param(y, t, w)
+init_param(y, t, w, type = 1L)
 
-init_Zhang(y, t = index(y), w)
+init_Zhang(e, type = 1L, ...)
 
-init_AG(y, t = index(y), w)
+init_AG(e, type = 1L, ...)
 
-init_AG2(y, t = index(y), w)
+init_AG2(e, type = 1L, ...)
 
-init_Beck(y, t = index(y), w)
+init_Beck(e, type = 1L, ...)
 
-init_Elmore(y, t = index(y), w)
+init_Elmore(e, type = 1L, ...)
 
-init_Gu(y, t = index(y), w)
+init_Gu(e, type = 1L, ...)
 
-init_Klos(y, t = index(y), w)
+init_Klos(e, type = 1L, ...)
 }
 \arguments{
 \item{y}{Numeric vector, vegetation index time-series}
@@ -34,6 +34,16 @@ init_Klos(y, t = index(y), w)
 
 \item{w}{(optional) Numeric vector, weights of \code{y}. If not specified,
 weights of all \code{NA} values will be \code{wmin}, the others will be 1.0.}
+
+\item{type}{integer, \code{1} or \code{-1}
+\itemize{
+\item \code{1}: trough-to-trough curve fitting
+\item \code{-1}: peak-to-peak curve fitting
+}}
+
+\item{e}{The object returned by \code{\link[=init_param]{init_param()}}}
+
+\item{...}{Others will be ignored.}
 }
 \description{
 Initialize parameters of double logistic function

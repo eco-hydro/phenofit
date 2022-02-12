@@ -10,17 +10,17 @@
 \alias{curvature.fFIT}
 \title{D}
 \usage{
-D1(fit, t = NULL, analytical = TRUE, smoothed.spline = FALSE, ...)
+D1(fit, t = NULL, analytical = FALSE, smoothed.spline = FALSE, ...)
 
-D2(fit, t = NULL, analytical = TRUE, smoothed.spline = FALSE, ...)
+D2(fit, t = NULL, analytical = FALSE, smoothed.spline = FALSE, ...)
 
-\method{D1}{fFIT}(fit, t = NULL, analytical = TRUE, smoothed.spline = FALSE, ...)
+\method{D1}{fFIT}(fit, t = NULL, analytical = FALSE, smoothed.spline = FALSE, ...)
 
-\method{D2}{fFIT}(fit, t = NULL, analytical = TRUE, smoothed.spline = FALSE, ...)
+\method{D2}{fFIT}(fit, t = NULL, analytical = FALSE, smoothed.spline = FALSE, ...)
 
-curvature(fit, t = NULL, analytical = TRUE, smoothed.spline = FALSE, ...)
+curvature(fit, t = NULL, analytical = FALSE, smoothed.spline = FALSE, ...)
 
-\method{curvature}{fFIT}(fit, t = NULL, analytical = TRUE, smoothed.spline = FALSE, ...)
+\method{curvature}{fFIT}(fit, t = NULL, analytical = FALSE, smoothed.spline = FALSE, ...)
 }
 \arguments{
 \item{fit}{A curve fitting object returned by \code{curvefit}, with the object of:

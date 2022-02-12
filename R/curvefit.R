@@ -15,7 +15,8 @@ phenonames <- c('TRS2.SOS', 'TRS2.EOS', 'TRS5.SOS', 'TRS5.EOS', 'TRS6.SOS', 'TRS
 #' 'Beck', 'Elmore', 'Gu', 'Klos', 'Zhang')`.
 #' @param ... other parameters passed to curve fitting function.
 #' @inheritParams optim_pheno
-#' 
+#' @inheritParams init_param
+#'
 #' @note 'Klos' have too many parameters. It will be slow and not stable.
 #'
 #' @return fFITs S3 object, see [fFITs()] for details.
@@ -41,7 +42,7 @@ phenonames <- c('TRS2.SOS', 'TRS2.EOS', 'TRS5.SOS', 'TRS5.EOS', 'TRS6.SOS', 'TRS
 #' @export
 curvefit <- function(y, t = index(y), tout = t,
     methods = c('AG', 'Beck', 'Elmore', 'Gu', 'Klos', 'Zhang'), 
-    w = NULL, ..., use.cpp = FALSE)
+    w = NULL, ..., type = 1L, use.cpp = FALSE)
 {
     if (all(is.na(y))) return(NULL)
     if (is.null(w)) w = rep(1, length(y))
@@ -57,7 +58,9 @@ curvefit <- function(y, t = index(y), tout = t,
         # expr = sprintf('do.call(FitDL.%s, c(params, method = "%s"))', meth, meth_optim)
         fun_init = get(sprintf("init_%s", meth), mode = "function")
         fun_name = paste0(str_DL, meth)
-        lims <- fun_init(y, t, w)
+
+        e <- init_param(y, t, w, type = type)
+        lims <- fun_init(e, type = type)
         optim_pheno(lims$prior, fun_name, y, t, tout, meth_optim, w, 
             lower = lims$lower, upper = lims$upper, ..., use.cpp = use.cpp)
         # eval(parse(text = expr))
@@ -67,6 +70,7 @@ curvefit <- function(y, t = index(y), tout = t,
 
 finefit <- curvefit
 
+## !DEPRECATED
 #' @rdname curvefit
 #' @export
 curvefit0 <- function(y, t = index(y), tout = t,
@@ -94,7 +98,14 @@ curvefit0 <- function(y, t = index(y), tout = t,
         class = "fFITs")
 }
 
+cutoff <- function(n1, n2) {
+    ndiff = n2 - n1;
+    nmid  = (n1 + n2) / 2;
+    k = n1:n2;
 
+    (atan(10 * (k - nmid) / ndiff) - atan(10 * (n1 - nmid) / ndiff)) / 
+        (atan(10 * (n2 - nmid) / ndiff) - atan(10 * (n1 - nmid) / ndiff))
+}
 
 # if ('spline' %in% methods) fit.spline <- splinefit(y, t, tout)
 # if ('AG'     %in% methods) fit.AG     <- do.call(FitDL.AG,    c(params, method = "nlminb"))  #nlm
@@ -107,7 +118,3 @@ curvefit0 <- function(y, t = index(y), tout = t,
 # if ('Gu'     %in% methods) fit.Gu     <- do.call(FitDL.Gu,    c(params, method = "nlminb"))  #nlm, ucminf
 # if ('Klos'   %in% methods) fit.Klos   <- do.call(FitDL.Klos,  c(params, method = "BFGS"))    #BFGS, Nelder-Mead, L-BFGS-B
 # if ('Zhang'  %in% methods) fit.Zhang  <- do.call(FitDL.Zhang, c(params, method = "nlminb"))  #nlm
-
-# # names <- ls(pattern = "fit\\.") %>% set_names(., .)
-# fFITs <- lapply(names, get, envir = environment()) %>%
-#     set_names(gsub("fit\\.", "", names)) #remove `fit.` and update names

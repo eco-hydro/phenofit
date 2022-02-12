@@ -8,7 +8,7 @@
 \usage{
 PhenoDeriv(x, t, ...)
 
-\method{PhenoDeriv}{fFIT}(x, t = NULL, analytical = TRUE, smoothed.spline = FALSE, ...)
+\method{PhenoDeriv}{fFIT}(x, t = NULL, analytical = FALSE, smoothed.spline = FALSE, ...)
 
 \method{PhenoDeriv}{default}(x, t, der1, IsPlot = TRUE, show.legend = TRUE, ...)
 }

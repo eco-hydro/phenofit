@@ -62,7 +62,7 @@ get_pheno.rfit <- function(x, TRS = c(0.2, 0.5), asymmetric = TRUE, ...) {
 #' @export
 get_pheno.list <- function(x, method,
     TRS = c(0.2, 0.5, 0.6),
-    analytical = TRUE, smoothed.spline = FALSE,
+    analytical = FALSE, smoothed.spline = FALSE,
     IsPlot = FALSE, show.title = TRUE, ...)
 {
     if (!is.list(x)) stop("Unsupported input type!")
@@ -115,7 +115,7 @@ get_pheno.list <- function(x, method,
 #' @export
 get_pheno.fFITs <- function(x, method,
     TRS = c(0.2, 0.5),
-    analytical = TRUE, smoothed.spline = FALSE,
+    analytical = FALSE, smoothed.spline = FALSE,
     IsPlot = FALSE,
     title.left = "", show.PhenoName = TRUE, ...)
 {

@@ -17,7 +17,7 @@ PhenoDeriv <- function(x, t, ...) UseMethod("PhenoDeriv", x)
 #' @rdname PhenoDeriv
 #' @export
 PhenoDeriv.fFIT <- function(x, t = NULL,
-    analytical = TRUE, smoothed.spline = FALSE, ...) {
+    analytical = FALSE, smoothed.spline = FALSE, ...) {
     if (!is.null(x$tout)) t <- x$tout
     values <- last2(x$zs)
     der1 <- D1.fFIT(x, t, analytical, smoothed.spline)

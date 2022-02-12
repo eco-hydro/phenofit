@@ -8,7 +8,7 @@
 \usage{
 PhenoGu(x, t, ...)
 
-\method{PhenoGu}{fFIT}(x, t = NULL, analytical = TRUE, smoothed.spline = FALSE, ...)
+\method{PhenoGu}{fFIT}(x, t = NULL, analytical = FALSE, smoothed.spline = FALSE, ...)
 
 \method{PhenoGu}{default}(x, t, der1, IsPlot = TRUE, ...)
 }

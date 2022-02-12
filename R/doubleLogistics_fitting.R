@@ -30,7 +30,8 @@
 #' @param method method passed to `optimx` or `optim` function.
 #' @param w weights
 #' @param ... other paraters passed to [optim_pheno()].
-#'
+#' @inheritParams init_param
+#' 
 #' @return
 #' - `tout`: The time of output curve fitting time-series.
 #' - `zs`  : Smoothed vegetation time-series of every iteration.
@@ -62,10 +63,10 @@ NULL
 #' @rdname FitDL
 #' @export
 FitDL.Zhang <- function(y, t = index(y), tout = t, 
-    method = 'nlm', w, ...)
+    method = 'nlm', w, type = 1L, ...)
 {
     if (missing(w)) w <- rep(1, length(y))
-    e <- init_param(y, t, w)
+    e <- init_param(y, t, w, type = type)
 
     sFUN    <- "doubleLog.Zhang"
     
@@ -87,10 +88,10 @@ FitDL.Zhang <- function(y, t = index(y), tout = t,
 #' @rdname FitDL
 #' @export
 FitDL.AG <- function(y, t = index(y), tout = t, 
-    method = 'nlminb', w, ...)
+    method = 'nlminb', w, type = 1L, ...)
 {
     if (missing(w)) w <- rep(1, length(y))
-    e <- init_param(y, t, w)
+    e <- init_param(y, t, w, type = type)
     # print(ls.str(envir = e))
 
     sFUN <- "doubleLog.AG"
@@ -111,10 +112,10 @@ FitDL.AG <- function(y, t = index(y), tout = t,
 #' @rdname FitDL
 #' @export
 FitDL.AG2 <- function(y, t = index(y), tout = t, 
-    method = 'nlminb', w, ...)
+    method = 'nlminb', w, type = 1L, ...)
 {
     if (missing(w)) w <- rep(1, length(y))
-    e <- init_param(y, t, w)
+    e <- init_param(y, t, w, type = type)
     # print(ls.str(envir = e))
 
     sFUN <- "doubleLog.AG2"
@@ -132,10 +133,10 @@ FitDL.AG2 <- function(y, t = index(y), tout = t,
 #' @rdname FitDL
 #' @export
 FitDL.Beck <- function(y, t = index(y), tout = t, 
-    method = 'nlminb', w, ...)
+    method = 'nlminb', w, type = 1L, ...)
 {
     if (missing(w)) w <- rep(1, length(y))
-    e <- init_param(y, t, w)
+    e <- init_param(y, t, w, type = type)
 
     sFUN   <- "doubleLog.Beck"
     prior <- with(e, rbind(
@@ -152,9 +153,9 @@ FitDL.Beck <- function(y, t = index(y), tout = t,
 #' @rdname FitDL
 #' @export
 FitDL.Elmore <- function(y, t = index(y), tout = t, 
-    method = 'nlminb', w, ...) 
+    method = 'nlminb', w, type = 1L, ...) 
 {
-    e <- init_param(y, t, w)
+    e <- init_param(y, t, w, type = type)
 
     # doy_q  <- quantile(t, c(0.1, 0.25, 0.5, 0.75, 0.9), na.rm = TRUE)
     sFUN   <- "doubleLog.Elmore"
@@ -182,10 +183,10 @@ FitDL.Elmore <- function(y, t = index(y), tout = t,
 #' @rdname FitDL
 #' @export
 FitDL.Gu <- function(y, t = index(y), tout = t, 
-    method = "nlminb", w, ...)
+    method = "nlminb", w, type = 1L, ...)
 {
     if (missing(w)) w <- rep(1, length(y))
-    e <- init_param(y, t, w)
+    e <- init_param(y, t, w, type = type)
 
     a  <- e$ampl
     b1 <- 0.1
@@ -212,10 +213,10 @@ FitDL.Gu <- function(y, t = index(y), tout = t,
 #' @rdname FitDL
 #' @export
 FitDL.Klos <- function(y, t = index(y), tout = t, 
-    method = 'BFGS', w, ...)
+    method = 'BFGS', w, type = 1L, ...)
 {
     if (missing(w)) w <- rep(1, length(y))
-    e <- init_param(y, t, w)
+    e <- init_param(y, t, w, type = type)
 
     a1 <- 0
     a2 <- 0  #ok
@@ -235,8 +236,8 @@ FitDL.Klos <- function(y, t = index(y), tout = t,
         q1 <- 0.5  # ok
         q2 <- 0.5  # ok
         v1 <- 2    # ok
-        v2 <- 2    # ok    
-
+        v2 <- 2    # ok
+        
         rbind(
         c(a1, a2, b1, b2, c, B1, B2, m1, m2, q1, q2, v1, v2),
         c(a1, a2, b1, 0.01, 0, B1, B2, m1, m2.bis, q1, 1, v1, 4),

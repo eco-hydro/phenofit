@@ -12,6 +12,7 @@ curvefit(
   methods = c("AG", "Beck", "Elmore", "Gu", "Klos", "Zhang"),
   w = NULL,
   ...,
+  type = 1L,
   use.cpp = FALSE
 )
 
@@ -37,6 +38,12 @@ curvefit0(
 weights of all \code{NA} values will be \code{wmin}, the others will be 1.0.}
 
 \item{...}{other parameters passed to curve fitting function.}
+
+\item{type}{integer, \code{1} or \code{-1}
+\itemize{
+\item \code{1}: trough-to-trough curve fitting
+\item \code{-1}: peak-to-peak curve fitting
+}}
 
 \item{use.cpp}{(unstable, not used) boolean, whether to use c++ defined fine
 fitting function? If \code{FALSE}, R version will be used.}

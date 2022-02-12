@@ -7,7 +7,7 @@
 PhenoKl(
   fFIT,
   t = NULL,
-  analytical = TRUE,
+  analytical = FALSE,
   smoothed.spline = FALSE,
   IsPlot = TRUE,
   show.legend = TRUE,

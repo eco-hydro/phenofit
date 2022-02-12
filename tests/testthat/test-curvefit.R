@@ -15,8 +15,8 @@ y <- fFUN(par, t)
 
 methods <- c("AG", "Beck", "Elmore", "Gu", "Zhang", "Klos")[1:5]
 
-system.time(suppressWarnings(fit     <- curvefit0(y, t, tout = tout, methods)))
 # weird: cpp is much slower
+system.time(suppressWarnings(fit <- curvefit(y, t, tout = tout, methods, use.cpp = FALSE)))
 system.time(suppressWarnings(fit_cpp <- curvefit(y, t, tout = tout, methods, use.cpp = TRUE)))
 
 
