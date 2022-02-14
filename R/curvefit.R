@@ -38,7 +38,7 @@ phenonames <- c('TRS2.SOS', 'TRS2.EOS', 'TRS5.SOS', 'TRS5.EOS', 'TRS6.SOS', 'TRS
 #' y <- fFUN(par, t)
 #' 
 #' methods <- c("AG", "Beck", "Elmore", "Gu", "Zhang") # "Klos" too slow
-#' fFITs <- curvefit(y, t, tout = tout, methods)
+#' fit <- curvefit(y, t, tout = tout, methods)
 #' @export
 curvefit <- function(y, t = index(y), tout = t,
     methods = c('AG', 'Beck', 'Elmore', 'Gu', 'Klos', 'Zhang'), 

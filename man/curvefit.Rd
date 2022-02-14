@@ -74,7 +74,7 @@ tout <- seq(1, 365, 1)
 y <- fFUN(par, t)
 
 methods <- c("AG", "Beck", "Elmore", "Gu", "Zhang") # "Klos" too slow
-fFITs <- curvefit(y, t, tout = tout, methods)
+fit <- curvefit(y, t, tout = tout, methods)
 }
 \seealso{
 \code{\link[=fFITs]{fFITs()}}

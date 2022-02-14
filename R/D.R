@@ -1,6 +1,6 @@
 # ' @rdname derivative
 # ' @export
-hess.fFIT <- function(fit, tout){
+hess.fFIT <- function(fit, tout = NULL){
     FUN <- get(fit$fun, mode = 'function')
     grad(function(t) grad(FUN, t, par= fit$par), tout)
 }
@@ -16,11 +16,11 @@ hess.fFIT <- function(fit, tout){
 # '
 # ' @rdname derivative
 # ' @export
-grad.fFIT <- function(fit, tout){
+grad.fFIT <- function(fit, tout = NULL){
     FUN <- get(fit$fun, mode = 'function')
     grad(FUN, tout, par = fit$par)
-}
 
+}
 
 #' @title D
 #' @name D
@@ -38,7 +38,7 @@ grad.fFIT <- function(fit, tout){
 #' - `par`: parameters of curve fitting function
 #' - `fun`: curve fitting function name, e.g., "doubleLog_AG"
 #' - `zs`: predicted values, vector or data.frame
-#' 
+#'
 #' @param analytical If true, `numDeriv` package `grad` and `hess`
 #' will be used; if false, `D1` and `D2` will be used.
 #' @param smoothed.spline Whether apply `smooth.spline` first?
@@ -52,27 +52,7 @@ grad.fFIT <- function(fit, tout){
 #' \item k    Curvature
 #' }
 #'
-#' @examples
-#' library(phenofit)
-#' # simulate vegetation time-series
-#' fFUN = doubleLog.Beck
-#' par  = c(
-#'     mn  = 0.1,
-#'     mx  = 0.7,
-#'     sos = 50,
-#'     rsp = 0.1,
-#'     eos = 250,
-#'     rau = 0.1)
-#' t    <- seq(1, 365, 8)
-#' tout <- seq(1, 365, 1)
-#' y <- fFUN(par, t)
-#'
-#' methods <- c("AG", "Beck", "Elmore", "Gu", "Zhang") # "Klos" too slow
-#' fFITs <- curvefit(y, t, tout, methods)
-#' fFIT  <- fFITs$model$AG
-#' d1 <- D1(fFIT)
-#' d2 <- D2(fFIT)
-#' d_k <- curvature(fFIT)
+#' @example R/examples/ex-D1.R
 #' @rdname D
 NULL
 
@@ -88,6 +68,7 @@ D2 <- function(fit, t = NULL, analytical = FALSE, smoothed.spline = FALSE, ...) 
 #' @rdname D
 #' @export
 D1.fFIT <- function(fit, t = NULL, analytical = FALSE, smoothed.spline = FALSE, ...){
+    if (is.null(t)) t = fit$tout
     pred <- last2(fit$zs)
     # t    <- fit$tout
     par  <- fit$par
@@ -108,8 +89,8 @@ D1.fFIT <- function(fit, t = NULL, analytical = FALSE, smoothed.spline = FALSE, 
         # real analytical
         der1 <- D1(par, t)[, 1] # the default option
     } else {
-        # numerical approximation
-        der1 <- grad.fFIT(fit, t)
+        # numerical approximation by package `numDeriv`
+        der1 <- grad.fFIT(fit, t) 
     }
 
     der1[is.infinite(der1)] <- NA
@@ -122,6 +103,7 @@ D1.fFIT <- function(fit, t = NULL, analytical = FALSE, smoothed.spline = FALSE, 
 #' @rdname D
 #' @export
 D2.fFIT <- function(fit, t = NULL, analytical = FALSE, smoothed.spline = FALSE, ...){
+    if (is.null(t)) t = fit$tout
     pred <- last2(fit$zs)
     # t    <- fit$tout
     par  <- fit$par

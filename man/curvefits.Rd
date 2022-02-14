@@ -4,7 +4,7 @@
 \alias{curvefits}
 \title{Fine Curve fitting}
 \usage{
-curvefits(INPUT, brks, options = list(), ...)
+curvefits(INPUT, brks, options = list(), globalModel = FALSE, ...)
 }
 \arguments{
 \item{INPUT}{A list object with the elements of 't', 'y', 'w', 'Tn' (optional)
@@ -74,7 +74,7 @@ brks2 <- season_mov(INPUT,
     ))
 # plot_season(INPUT, brks2, d)
 # Fine fitting
-fFITs <- curvefits(
+fits <- curvefits(
     INPUT, brks2,
     options = list(
         methods = c("AG", "Beck", "Elmore", "Zhang"), #,"klos", "Gu"
@@ -83,10 +83,10 @@ fFITs <- curvefits(
     )
 )
 
-r_param = get_param(fFITs)
-r_pheno = get_pheno(fFITs)
-r_gof = get_GOF(fFITs)
-d_fit = get_fitting(fFITs)
+r_param = get_param(fits)
+r_pheno = get_pheno(fits)
+r_gof = get_GOF(fits)
+d_fit = get_fitting(fits)
 
 g <- plot_curvefits(d_fit, brks2)
 grid::grid.newpage(); grid::grid.draw(g)

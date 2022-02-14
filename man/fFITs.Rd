@@ -30,9 +30,9 @@ tout <- seq(1, 365, 1)
 y <- fFUN(par, t)
 
 methods <- c("AG", "Beck", "Elmore", "Gu", "Zhang") # "Klos" too slow
-fFITs <- curvefit(y, t, tout, methods)
+fit <- curvefit(y, t, tout, methods)
 
 # plot
-plot(fFITs)
+plot(fit)
 }
 \keyword{internal}

@@ -21,9 +21,6 @@
 #'
 #' @example inst/examples/ex-get_fitting_param_GOF.R
 #' @export
-#'
-#' @example inst/examples/ex-get_fitting_param_GOF.R
-#' @export
 get_GOF <- function(x) UseMethod("get_GOF", x)
 
 #' @rdname get_GOF

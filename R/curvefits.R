@@ -62,6 +62,7 @@ curvefits <- function(
     INPUT, brks,
     # methods, wFUN,
     options = list(),
+    globalModel = FALSE,
     #   iters = 2, wmin = 0.1,
     #   nextend = 2, maxExtendMonth = 2, minExtendMonth = 1,
     #   minT = 0,

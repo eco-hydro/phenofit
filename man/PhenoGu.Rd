@@ -41,23 +41,21 @@ A numeric vector, with the elements of:
 Phenology extraction in GU method (GU)
 }
 \examples{
-# simulate vegetation time-series
-fFUN = doubleLog.Beck
-par  = c( mn  = 0.1 , mx  = 0.7 , sos = 50 , rsp = 0.1 , eos = 250, rau = 0.1)
-
+# `doubleLog.Beck` simulate vegetation time-series
 t    <- seq(1, 365, 8)
 tout <- seq(1, 365, 1)
-y <- fFUN(par, t)
+par  = c( mn  = 0.1 , mx  = 0.7 , sos = 50 , rsp = 0.1 , eos = 250, rau = 0.1)
+y <- doubleLog.Beck(par, t)
 
 methods <- c("AG", "Beck", "Elmore", "Gu", "Zhang") # "Klos" too slow
-fFITs <- curvefit(y, t, tout, methods)
-fFIT  <- fFITs$model$AG
+fit <- curvefit(y, t, tout, methods)
+x <- fit$model$AG # one model
 
 par(mfrow = c(2, 2))
-PhenoTrs(fFIT)
-PhenoDeriv(fFIT)
-PhenoGu(fFIT)
-PhenoKl(fFIT)
+PhenoTrs(x)
+PhenoDeriv(x)
+PhenoGu(x)
+PhenoKl(x)
 }
 \references{
 \enumerate{
