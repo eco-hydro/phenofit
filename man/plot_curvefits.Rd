@@ -25,7 +25,7 @@ plot_curvefits(
 \arguments{
 \item{d_fit}{data.frame of curve fittings returned by \code{\link[=get_fitting]{get_fitting()}}.}
 
-\item{seasons}{Growing season dividing object returned by \code{\link[=season]{season()}}
+\item{seasons}{growing season division object returned by \code{\link[=season]{season()}}
 and \code{\link[=season_mov]{season_mov()}}.}
 
 \item{d_obs}{data.frame of original vegetation time series, with the columns

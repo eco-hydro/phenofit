@@ -114,7 +114,7 @@ is for fluxsite site-year data.}
 \itemize{
 \item \code{fit}: A data.table of Rough fitting result, with the columns of
 (\code{t}, \code{y}, \code{witer1}, ..., \code{witerN}, \code{ziter1}, ..., \code{ziterN}).
-\item \code{dt}: A data.table of Growing season dividing information, with the columns
+\item \code{dt}: A data.table of growing season division information, with the columns
 of (\code{beg}, \code{peak}, \code{end}, \code{y_beg}, \code{y_peak}, \code{y_end}, \code{len}, \code{year},
 \code{season}, \code{flag}).
 }
@@ -122,7 +122,7 @@ of (\code{beg}, \code{peak}, \code{end}, \code{y_beg}, \code{y_peak}, \code{y_en
 \itemize{
 \item \code{fit}: A data.table of Rough fitting result, with the columns of
 (\code{t}, \code{y}, \code{witer1}, ..., \code{witerN}, \code{ziter1}, ..., \code{ziterN}).
-\item \code{dt}: A data.table of Growing season dividing information, with the columns
+\item \code{dt}: A data.table of growing season division information, with the columns
 of (\code{beg}, \code{peak}, \code{end}, \code{y_beg}, \code{y_peak}, \code{y_end}, \code{len}, \code{year},
 \code{season}, \code{flag}).
 }
@@ -141,7 +141,7 @@ For \code{season_mov} rough fitting is applied in every year, during which
 \code{maxExtendMonth} is extended.
 }
 \details{
-Before dividing growing season, \code{INPUT} should be added a year in head
+Before growing season division, \code{INPUT} should be added a year in head
 and tail first by \code{add_HeadTail}.
 
 Finally, use \code{\link[=findpeaks]{findpeaks()}} to get local maximum and local minimum values.
@@ -149,7 +149,7 @@ Two local minimum define a growing season.
 If two local minimum(maximum) are too closed, then only the smaller(biger)
 is left.
 
-Before dividing growing season, \code{INPUT} should be added a year in head
+Before division growing season, \code{INPUT} should be added a year in head
 and tail first by \code{add_HeadTail}.
 
 Finally, use \code{\link[=findpeaks]{findpeaks()}} to get local maximum and local minimum values.

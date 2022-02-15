@@ -1,7 +1,7 @@
 #' init_param
-#'
+#' 
 #' Initialize parameters of double logistic function
-#'
+#' 
 #' @inheritParams check_input
 #' @param e The object returned by [init_param()]
 #' @param type integer, `1` or `-1`
@@ -40,7 +40,7 @@ init_param <- function(y, t, w, type = 1L){
     mn     <- min(y[w >= w_min], na.rm = TRUE)
     avg    <- mean(y, na.rm = TRUE)
 
-    doy.mx <- t[which.max(y)]
+    doy.mx = if (type == 1L) t[which.max(y)] else t[which.min(y)]
     # fixed 06 March, 2018; Avoid doy.mx not in the range of doy
     # doy    <- quantile(t, c(0.25, 0.75), na.rm = TRUE),
     doy  <- c((doy.mx + first(t))/2, (last(t) + doy.mx) /2)
@@ -66,12 +66,22 @@ init_param <- function(y, t, w, type = 1L){
         t0  = c(doy.mx - deltaT, doy.mx + deltaT),
         mn  = c(mn - deltaY    , mn + deltaY),
         mx  = c(mx - deltaY*2  , mx + deltaY*2),
-        r   = c(k/1.2, k*5) * type,                                             # >= v0.3.5
+        r   = c(k/1.2, k*5),
+        # r   = sort(c(k/1.2, k*5) * type),                                     # >= v0.3.5
         sos = c(min(t)         , pmin(doy.mx + deltaT), tmax),
         eos = c(doy.mx - deltaT, tmax)
     )
     # plot(t, y, main = "init_param")
-    # print(str(lims))
+    if (type == -1) {
+        # swap value mx and mn, this is suit for AG and Zhang
+        tmp = mx
+        mx  = mn
+        mn  = tmp
+
+        tmp     = lims$mx
+        lims$mx = lims$mn
+        lims$mn = tmp
+    }
     res <- listk( mx, mn, ampl, doy, doy.mx,
         deltaT, deltaY, half, t1, t2,
         k, lims)
@@ -89,7 +99,6 @@ init_Zhang <- function(e, type = 1L, ...) {
         c(doy.mx, mn, mx, doy[1] - t1, k, doy[2] + t2, k)
     ))
     param_lims <- e$lims[c("t0", "mn", "mx", "sos", "r", "eos", "r")]
-    # param_lims$r[2] %<>% multiply_by(2)
     lower <- sapply(param_lims, `[`, 1)
     upper <- sapply(param_lims, `[`, 2)
     # lower[["r"]] %>% multiply_by(1/3)
@@ -108,6 +117,7 @@ init_AG <- function(e, type = 1L, ...) {
         # c(doy.mx, mn, mx, 0.5*half, 1.5, 0.5*half, 1.5),
         c(doy.mx, mn, mx, 1 / (0.8 * half), 3, 1 / (0.8 * half), 3)
     ))
+    # c("t0", "mn", "mx", "rsp", "a3", "rau", "a5")
     # referenced by TIMESAT
     lower <- with(e$lims, c(t0[1], mn[1], mx[1], 1 / (1.4 * e$half), 2, 1 / (1.4 * e$half), 2))
     upper <- with(e$lims, c(t0[2], mn[2], mx[2], 1 / (0.1 * e$half), 6, 1 / (0.1 * e$half), 6))
@@ -161,6 +171,7 @@ init_Elmore <- function(e, type = 1L, ...) {
         c(mn, mx - mn, doy[1] - t1, k * 0.25, doy[2] + t2, k * 0.25, 0.001)
     ))
     # c("mn", "mx", "sos", "rsp", "eos", "rau", "m7")
+    # TODO: m7 might need to be adjust
     param_lims <- e$lims[c("mn", "mx", "sos", "r", "eos", "r")]
     lower <- c(sapply(param_lims, `[`, 1), 0)
     upper <- c(sapply(param_lims, `[`, 2), 1)
@@ -172,7 +183,7 @@ init_Elmore <- function(e, type = 1L, ...) {
 init_Gu <- function(e, type = 1L, ...) {
     # if (missing(w)) w <- rep(1, length(y))
     # e <- init_param(y, t, w, type = type)
-    a <- e$ampl
+    a <- e$ampl * type
     b1 <- 0.1
     b2 <- 0.1
     c1 <- 1
@@ -184,10 +195,19 @@ init_Gu <- function(e, type = 1L, ...) {
         c(mn, a, a, doy[1] + t1, k * 2, doy[2] - t2, k * 2, 0.5, 0.5),
         c(mn, a, a, doy[1] + t1, k * 3, doy[2] - t2, k * 3, 5, 5)
     ))
-    # y0 + (a1/(1 + exp(-(t - t1)/b1))^c1) - (a2/(1 + exp(-(t - t2)/b2))^c2)
 
+    # y0 + (a1/(1 + exp(-(t - t1)/b1))^c1) - (a2/(1 + exp(-(t - t2)/b2))^c2)
     # c('y0', 'a1', 'a2', 'sos', 'rsp', 'eos', 'rau', 'c1', 'c2')
-    param_lims <- e$lims[c("mn", "mx", "mx", "sos", "r", "eos", "r")]
+    if (type == 1L) {
+        param_lims <- e$lims[c("mn", "mx", "mx", "sos", "r", "eos", "r")]
+    } else if (type == -1L) {
+        param_lims <- e$lims[c("mn", "mn", "mn", "sos", "r", "eos", "r")]
+        # mn and mx had been wrapped
+        A_lims = rev(-param_lims[["mn"]])
+        param_lims[[2]] = A_lims # a1
+        param_lims[[3]] = A_lims # a2
+    }
+    
     lower <- c(sapply(param_lims, `[`, 1), 0, 0)
     upper <- c(sapply(param_lims, `[`, 2), Inf, Inf)
     listk(prior, lower, upper)

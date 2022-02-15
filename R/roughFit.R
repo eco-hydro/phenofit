@@ -9,7 +9,7 @@
 #' `maxExtendMonth` is extended.
 #'
 #' @details
-#' Before dividing growing season, `INPUT` should be added a year in head
+#' Before division growing season, `INPUT` should be added a year in head
 #' and tail first by `add_HeadTail`.
 #'
 #' Finally, use [findpeaks()] to get local maximum and local minimum values.
@@ -83,7 +83,7 @@
 #' - `fit`: A data.table of Rough fitting result, with the columns of
 #' (`t`, `y`, `witer1`, ..., `witerN`, `ziter1`, ..., `ziterN`).
 #'
-#' - `dt`: A data.table of Growing season dividing information, with the columns
+#' - `dt`: A data.table of growing season division information, with the columns
 #' of (`beg`, `peak`, `end`, `y_beg`, `y_peak`, `y_end`, `len`, `year`,
 #' `season`, `flag`).
 #'

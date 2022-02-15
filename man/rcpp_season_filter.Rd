@@ -21,7 +21,7 @@ check_season_list(lst_dt)
 trough value. There are two threshold (left and right). The minimum threshold
 should be greater than r_min.}
 
-\item{dt}{data.table of growing season dividing info}
+\item{dt}{data.table of growing season division info}
 
 \item{lst_dt}{list of \code{dt}. Every year is corresponding to a \code{dt}.}
 }

@@ -4,6 +4,7 @@
 \alias{get_param}
 \alias{get_param.list}
 \alias{get_param.fFITs}
+\alias{get_param.fFIT}
 \title{Get parameters from curve fitting result}
 \usage{
 get_param(x)
@@ -11,6 +12,8 @@ get_param(x)
 \method{get_param}{list}(x)
 
 \method{get_param}{fFITs}(x)
+
+\method{get_param}{fFIT}(x)
 }
 \arguments{
 \item{x}{\code{fFITs} object returned by \code{\link[=curvefit]{curvefit()}}, or list of \code{fFITs} objects}

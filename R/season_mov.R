@@ -186,7 +186,7 @@ check_season_dt <- function(dt) {
         .[peak <= end & beg < end] # a temporary resolution
 }
 
-#' @param dt data.table of growing season dividing info
+#' @param dt data.table of growing season division info
 #' @param lst_dt list of `dt`. Every year is corresponding to a `dt`.
 #'
 #' @inheritParams season_mov

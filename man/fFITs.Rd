@@ -3,17 +3,23 @@
 \name{fFITs}
 \alias{fFITs}
 \alias{plot.fFITs}
+\alias{plot.fFIT}
 \title{S3 class of multiple fine curve fittings object.}
 \usage{
-\method{plot}{fFITs}(x, method, ...)
+\method{plot}{fFITs}(x, method, show.pheno = TRUE, ...)
+
+\method{plot}{fFIT}(x, data, ...)
 }
 \arguments{
-\item{x}{Fine curve fitting object \code{\link[=fFITs]{fFITs()}} returned by
-\code{\link[=curvefit]{curvefit()}}.}
+\item{x}{Fine curve fitting object \code{\link[=fFITs]{fFITs()}} returned by \code{\link[=curvefit]{curvefit()}}.}
 
 \item{method}{Which fine curve fitting method to be extracted?}
 
-\item{...}{ignored.}
+\item{show.pheno}{whether to plot phenological metrics.}
+
+\item{...}{other parameters to \code{\link[=curvature]{curvature()}}.}
+
+\item{data}{A data.frame with the columns of \code{c('t', 'y')}}
 }
 \description{
 plot curve fitting VI, gradient (first order difference D1), hessian (D2),
@@ -34,5 +40,8 @@ fit <- curvefit(y, t, tout, methods)
 
 # plot
 plot(fit)
+}
+\seealso{
+\code{\link[=curvature]{curvature()}}
 }
 \keyword{internal}

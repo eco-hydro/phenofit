@@ -21,7 +21,23 @@ last2 <- function(x) {
     if (is.list(x)) last(x) else x
 }
 
+guess_names <- function(x) {
+    if (is.null(names(x))) names(x) = seq_along(x)
+    x
+}
+
 which.notna <- function(x) which(!is.na(x))
+
+match2 <- function (x, y) {
+    if (is.null(x) || is.null(y)) return(NULL)
+
+    I <- match(x, y)
+    I_x <- which.notna(I)
+    I_y <- I[I_x]
+    d <- data.table(x = x[I_x], y = y[I_y], I_x, I_y, grp = cumsum(c(TRUE, 
+        diff(I_y) != 1)))
+    d
+}
 
 contain <- function(d, pattern = "NDVI|EVI") {
     names(d) %>% .[grep(pattern, .)]

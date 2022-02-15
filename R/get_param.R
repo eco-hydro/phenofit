@@ -24,3 +24,9 @@ get_param.list <- function(x) {
 get_param.fFITs <- function(x){
     map(x$model, ~.x[["par"]] %>% as_tibble())
 }
+
+#' @rdname get_param
+#' @export
+get_param.fFIT <- function(x) {
+    x[["par"]] %>% as_tibble()
+}

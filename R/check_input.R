@@ -119,8 +119,7 @@ check_input <- function(t, y, w, QC_flag,
         ylu[1] <- pmax(ylu[1], ymin)
     }
     A = diff(ylu)
-    # When check_ylu, ylu_max is not used. ylu_max is only used for dividing
-    # growing seasons.
+    # When check_ylu, ylu_max is not used. ylu_max is only used for growing seasons division.
 
     # adjust weights according to ylu
     # if (trim){

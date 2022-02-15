@@ -3,7 +3,7 @@
 #' plot_curvefits
 #'
 #' @param d_fit data.frame of curve fittings returned by [get_fitting()].
-#' @param seasons Growing season dividing object returned by [season()]
+#' @param seasons growing season division object returned by [season()]
 #' and [season_mov()].
 #' @param d_obs data.frame of original vegetation time series, with the columns
 #' of `t`, `y` and `QC_flag`. If not specified, it will be determined from `d_fit`.

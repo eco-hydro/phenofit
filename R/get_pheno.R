@@ -20,7 +20,7 @@ PhenoPlot <- function(t, y, main = "", ...){
 #' @inheritParams D
 #' @param x One of:
 #' - `rfit` (rought fitting object), returned by [brks2rfit()].
-#' - `fFITs` (fine fitting object), return by multiple curve fitting methods by [curvefit()] for 
+#' - `fFITs` (fine fitting object), return by multiple curve fitting methods by [curvefit()] for
 #'    a growing season.
 #' - list of [fFITs()] object, for multiple growing seasons.
 #' @param method Which fine curve fitting method to be extracted?
@@ -236,6 +236,8 @@ get_pheno.fFITs <- function(x, method,
 #' pheno <- get_pheno(fits, "AG", IsPlot = FALSE)
 #' @export
 tidy_pheno <- function(pheno) {
+    if (is_empty(pheno)) return(NULL)
+
     doy2date <- function(datenum) as.Date(unlist(datenum), origin = date.origin)
     names <- unlist(pheno[[1]]) %>% names()
 

@@ -1,24 +1,16 @@
 # context("test-curvefit")
 
 # simulate vegetation time-series
-fFUN = doubleLog.Beck
-par  = c(
-    mn  = 0.1,
-    mx  = 0.7,
-    sos = 50,
-    rsp = 0.1,
-    eos = 250,
-    rau = 0.1)
-t    <- seq(1, 365, 8)
+t <- seq(1, 365, 8)
+par <- c(mn = 0.1, mx = 0.7, sos = 50, rsp = 0.1, eos = 250, rau = 0.1)
+y <- doubleLog.Beck(par, t)
 tout <- seq(1, 365, 1)
-y <- fFUN(par, t)
 
 methods <- c("AG", "Beck", "Elmore", "Gu", "Zhang", "Klos")[1:5]
 
 # weird: cpp is much slower
 system.time(suppressWarnings(fit <- curvefit(y, t, tout = tout, methods, use.cpp = FALSE)))
 system.time(suppressWarnings(fit_cpp <- curvefit(y, t, tout = tout, methods, use.cpp = TRUE)))
-
 
 test_that("curvefit works", {
     p1 = get_param(fit_cpp)[1:5]
@@ -41,8 +33,6 @@ test_that("get_GOF works", {
     expect_silent({info <- get_GOF.fFITs(fit)})
     print(info)
 })
-
-
 
 # rbenchmark::benchmark(
 #     fit1 <- curvefit(y, t, tout, methods[1:5]),

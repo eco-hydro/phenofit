@@ -4,16 +4,23 @@
 \alias{get_GOF}
 \alias{get_GOF.list}
 \alias{get_GOF.fFITs}
+\alias{get_GOF.fFIT}
 \title{get_GOF}
 \usage{
-get_GOF(x)
+get_GOF(x, ...)
 
-\method{get_GOF}{list}(x)
+\method{get_GOF}{list}(x, ...)
 
-\method{get_GOF}{fFITs}(x)
+\method{get_GOF}{fFITs}(x, ...)
+
+\method{get_GOF}{fFIT}(x, data, ...)
 }
 \arguments{
 \item{x}{\code{fFITs} object returned by \code{\link[=curvefit]{curvefit()}}, or list of \code{fFITs} objects}
+
+\item{...}{ignored.}
+
+\item{data}{A data.frame with the columns of \code{c('t', 'y')}}
 }
 \value{
 \itemize{

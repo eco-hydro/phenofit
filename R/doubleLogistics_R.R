@@ -38,7 +38,7 @@
 #' 4. Peter M. Atkinson, et al., 2012, RSE, 123:400-417
 #'
 #' 5. https://github.com/cran/phenopix/blob/master/R/FitDoubleLogGu.R
-#' @example inst/examples/ex-FitDL.R
+#' @example R/examples/ex-FitDL.R
 #' @rdname logistics
 #' @export
 Logistic = function(par, t){
@@ -79,8 +79,8 @@ doubleLog.Zhang = function(par, t){
     return(pred)
 }
 attr(doubleLog.Zhang, 'par')     = c("t0", "mn", "mx", "sos", "rsp", "eos", "rau")
-attr(doubleLog.Zhang, 'formula') = expression( (mx - mn)/(1 + exp(-rsp*(t - sos))),
-                                                (mx - mn)/(1 + exp( rau*(t - eos))) )
+attr(doubleLog.Zhang, 'formula') = expression( mn + (mx - mn)/(1 + exp(-rsp*(t - sos))),
+                                               mn + (mx - mn)/(1 + exp( rau*(t - eos))) )
 
 #' @rdname logistics
 #' @export

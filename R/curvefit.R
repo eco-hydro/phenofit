@@ -21,7 +21,7 @@ phenonames <- c('TRS2.SOS', 'TRS2.EOS', 'TRS5.SOS', 'TRS5.EOS', 'TRS6.SOS', 'TRS
 #'
 #' @return fFITs S3 object, see [fFITs()] for details.
 #' @seealso [fFITs()]
-#' 
+#'
 #' @examples
 #' library(phenofit)
 #' # simulate vegetation time-series
@@ -36,12 +36,12 @@ phenonames <- c('TRS2.SOS', 'TRS2.EOS', 'TRS5.SOS', 'TRS5.EOS', 'TRS6.SOS', 'TRS
 #' t    <- seq(1, 365, 8)
 #' tout <- seq(1, 365, 1)
 #' y <- fFUN(par, t)
-#' 
+#'
 #' methods <- c("AG", "Beck", "Elmore", "Gu", "Zhang") # "Klos" too slow
 #' fit <- curvefit(y, t, tout = tout, methods)
 #' @export
 curvefit <- function(y, t = index(y), tout = t,
-    methods = c('AG', 'Beck', 'Elmore', 'Gu', 'Klos', 'Zhang'), 
+    methods = c('AG', 'Beck', 'Elmore', 'Gu', 'Klos', 'Zhang'),
     w = NULL, ..., type = 1L, use.cpp = FALSE)
 {
     if (all(is.na(y))) return(NULL)
@@ -52,6 +52,7 @@ curvefit <- function(y, t = index(y), tout = t,
     params <- list(y, t, tout, optimFUN = I_optim, ...)
 
     str_DL <- ifelse(use.cpp, "cdoubleLog_", "doubleLog.")
+
     fFITs = lapply(methods %>% set_names(., .), function(meth){
         meth_optim = ifelse(meth == "Klos", "BFGS", "nlminb")
 
@@ -61,7 +62,8 @@ curvefit <- function(y, t = index(y), tout = t,
 
         e <- init_param(y, t, w, type = type)
         lims <- fun_init(e, type = type)
-        optim_pheno(lims$prior, fun_name, y, t, tout, meth_optim, w, 
+
+        optim_pheno(lims$prior, fun_name, y, t, tout, meth_optim, w,
             lower = lims$lower, upper = lims$upper, ..., use.cpp = use.cpp)
         # eval(parse(text = expr))
     })
@@ -74,14 +76,14 @@ finefit <- curvefit
 #' @rdname curvefit
 #' @export
 curvefit0 <- function(y, t = index(y), tout = t,
-    methods = c("AG", "Beck", "Elmore", "Gu", "Klos", "Zhang"), 
+    methods = c("AG", "Beck", "Elmore", "Gu", "Klos", "Zhang"),
     w = NULL, ...) {
-    
+
     if (all(is.na(y))) return(NULL)
     if (is.null(w)) w <- rep(1, length(y))
-    if (length(methods) == 1 && methods == "all") 
+    if (length(methods) == 1 && methods == "all")
         methods <- c("AG", "Beck", "Elmore", "Gu", "Klos", "Zhang")
-    
+
     params <- list(y, t, tout, optimFUN = I_optim, ...)
 
     fFITs <- lapply(methods %>% set_names(., .), function(meth) {
@@ -96,15 +98,6 @@ curvefit0 <- function(y, t = index(y), tout = t,
     })
     structure(list(data = data.table(y, t), tout = tout, model = fFITs),
         class = "fFITs")
-}
-
-cutoff <- function(n1, n2) {
-    ndiff = n2 - n1;
-    nmid  = (n1 + n2) / 2;
-    k = n1:n2;
-
-    (atan(10 * (k - nmid) / ndiff) - atan(10 * (n1 - nmid) / ndiff)) / 
-        (atan(10 * (n2 - nmid) / ndiff) - atan(10 * (n1 - nmid) / ndiff))
 }
 
 # if ('spline' %in% methods) fit.spline <- splinefit(y, t, tout)

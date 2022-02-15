@@ -5,8 +5,7 @@
 #' @param INPUT A list object with the elements of 't', 'y', 'w', 'Tn' (optional)
 #' and 'ylu', returned by `check_input`.
 #' @param brks A list object with the elements of 'fit' and 'dt', returned by
-#' `season` or `season_mov`, which contains the growing season
-#' dividing information.
+#' `season` or `season_mov`, which contains the growing season division information.
 #'
 #' @param options
 #' - `methods` (default `c('AG', 'Beck', 'Elmore', 'Zhang')``):
@@ -62,7 +61,6 @@ curvefits <- function(
     INPUT, brks,
     # methods, wFUN,
     options = list(),
-    globalModel = FALSE,
     #   iters = 2, wmin = 0.1,
     #   nextend = 2, maxExtendMonth = 2, minExtendMonth = 1,
     #   minT = 0,
@@ -105,7 +103,7 @@ curvefits <- function(
     # w[I_all] <- brks$fit %>% {.[, contain(., "witer"), with = F]} %>% last()
     # w[I_fix] <- wmin + 0.1 # exert the function of whitaker smoother
 
-    # growing season dividing
+    # growing season division
     di <- data.table( beg  = getDateId_before(brks$dt$beg, t),
                       peak = getDateId_before(brks$dt$peak, t),
                       end  = getDateId_after(brks$dt$end, t)) #%>% na.omit()

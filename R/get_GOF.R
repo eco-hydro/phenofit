@@ -3,6 +3,7 @@
 #' Goodness-of-fitting (GOF) of fine curve fitting results.
 #'
 #' @inheritParams get_param
+#' @param ... ignored.
 #' 
 #' @return
 #' - `meth`: The name of fine curve fitting method
@@ -21,17 +22,17 @@
 #'
 #' @example inst/examples/ex-get_fitting_param_GOF.R
 #' @export
-get_GOF <- function(x) UseMethod("get_GOF", x)
+get_GOF <- function(x, ...) UseMethod("get_GOF", x)
 
 #' @rdname get_GOF
 #' @export
-get_GOF.list <- function(x){
+get_GOF.list <- function(x, ...){
     map_df(x, get_GOF.fFITs, .id = "flag") %>% data.table()
 }
 
 #' @rdname get_GOF
 #' @export
-get_GOF.fFITs <- function(x){
+get_GOF.fFITs <- function(x, ...){
     models = x$model
     methods <- names(models)
     nmeth   <- length(methods)
@@ -49,13 +50,38 @@ get_GOF.fFITs <- function(x){
     # calculate statistic for every meth
     info <- map_df(models, function(fFIT){
         Y_sim <- last(fFIT$zs)[I_sim]
-        I <- which(!(is.na(Y_obs) | is.na(Y_sim)))
-
-        Y_sim2 <- Y_sim[I]
-        Y_obs2 <- Y_obs[I]
-
+        
         indexes = c("R2", "NSE", "R", "RMSE", "pvalue", "n_sim")
-        GOF(Y_obs2, Y_sim2)[indexes] %>% as.list() %>% as.data.table()
+        GOF(Y_obs, Y_sim)[indexes] %>% as.list() %>% as.data.table()
     }, .id = "meth")
     info
+}
+
+#' @param data A data.frame with the columns of `c('t', 'y')`
+#' 
+#' @rdname get_GOF
+#' @export
+get_GOF.fFIT <- function(x, data, ...) {
+    models <- x$model
+
+    t <- data$t
+    tout <- x$tout
+    ti <- intersect(t, tout)
+    I_org <- match(ti, t)
+    I_sim <- match(ti, tout)
+
+    Y_obs <- data$y[I_org]
+    # Y_sim  <- map(x$fFIT, ~last(.$fits))
+
+    # The following script assume that tout in every method is equal length.
+    # calculate statistic for every meth
+    Y_sim <- last(x$zs)[I_sim]
+    # I <- which(!(is.na(Y_obs) | is.na(Y_sim)))
+    # Y_sim2 <- Y_sim[I]
+    # Y_obs2 <- Y_obs[I]
+
+    indexes <- c("R2", "NSE", "R", "RMSE", "pvalue", "n_sim")
+    GOF(Y_obs, Y_sim)[indexes] %>%
+        as.list() %>%
+        as.data.table()
 }

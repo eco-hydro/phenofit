@@ -28,8 +28,7 @@ process_phenofit(
 following year 31 June; In north hemisphere, growing year is 1 Jan to 31 Dec.}
 
 \item{brks}{A list object with the elements of 'fit' and 'dt', returned by
-\code{season} or \code{season_mov}, which contains the growing season
-dividing information.}
+\code{season} or \code{season_mov}, which contains the growing season division information.}
 
 \item{...}{other parameters to \code{\link[=curvefits]{curvefits()}}}
 }
