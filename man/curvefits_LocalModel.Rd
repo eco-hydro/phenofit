@@ -3,14 +3,11 @@
 \name{curvefits_LocalModel}
 \alias{curvefits_LocalModel}
 \alias{merge_LocalModels}
-\alias{merge_LocalModel}
 \title{curvefits by local model functions of TIMESAT}
 \usage{
 curvefits_LocalModel(INPUT, brks, options = list(), ...)
 
 merge_LocalModels(fits)
-
-merge_LocalModel(fit_c, fit_l = NULL, fit_r = NULL)
 }
 \arguments{
 \item{INPUT}{A list object with the elements of 't', 'y', 'w', 'Tn' (optional)
@@ -72,7 +69,6 @@ F(t)= \begin{cases}
 }
 \examples{
 library(phenofit)
-library(Ipaper)
 
 data("CA_NS6")
 d = CA_NS6

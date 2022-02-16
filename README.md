@@ -45,8 +45,8 @@ package: `phenofit`
 You can install phenofit from github with:
 
 ``` r
-# install.packages("devtools")
-devtools::install_github("eco-hydro/phenofit")
+# install.packages("remotes")
+remotes::install_github("eco-hydro/phenofit")
 ```
 
 # Note

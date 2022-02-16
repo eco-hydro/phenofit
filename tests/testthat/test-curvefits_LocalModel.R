@@ -35,7 +35,7 @@ test_that("curvefits_LocalModel works", {
                 constrain = TRUE
             )
             # merge local model function into global model function
-            fits_merged = merge_GlobalModels(fits)
+            fits_merged = merge_LocalModels(fits)
         })
     })
 })

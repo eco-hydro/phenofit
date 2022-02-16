@@ -52,8 +52,8 @@ A state-of-the-art **remote sensing vegetation phenology** extraction package: `
 You can install phenofit from github with:
 
 ```{r gh-installation, eval = FALSE}
-# install.packages("devtools")
-devtools::install_github("eco-hydro/phenofit")
+# install.packages("remotes")
+remotes::install_github("eco-hydro/phenofit")
 ```
 
 # Note

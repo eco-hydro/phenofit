@@ -180,20 +180,19 @@ merge_LocalModels <- function(fits) {
 
         fit_l = if(k <= 1)    NULL else fits[[k-1]]
         fit_r = if(k >= N_gs) NULL else fits[[k+1]]
-        fit = applyCutoff_GlobalModel(fit_c, fit_l, fit_r)
+        fit = .merge_LocalModel(fit_c, fit_l, fit_r)
         fits2[[i]] <- fit
     }
     names(fits2) = names(fits)[seq(1, nlocal, 2)]
     fits2
 }
 
-# note that time scale is different
-# ' Global Model Function
+# ' Merge Local Model Functions
 # ' @references
 # ' TIMESAT Mannual v3.3 (2018), Eq. 10
-#' @rdname curvefits_LocalModel
-#' @export 
-merge_LocalModel <- function(fit_c, fit_l = NULL, fit_r = NULL) {
+# ' @rdname curvefits_LocalModel
+# ' @export 
+.merge_LocalModel <- function(fit_c, fit_l = NULL, fit_r = NULL) {
     if (is.null(fit_l) && is.null(fit_r)) return(fit_c)
 
     t_c = fit_c$tout

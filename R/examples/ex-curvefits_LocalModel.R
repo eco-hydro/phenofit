@@ -1,5 +1,4 @@
 library(phenofit)
-library(Ipaper)
 
 data("CA_NS6")
 d = CA_NS6
