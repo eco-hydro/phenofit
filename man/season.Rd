@@ -45,16 +45,15 @@ stat_season(INPUT, d_fit)
 \item{INPUT}{A list object with the elements of \code{t}, \code{y}, \code{w},
 \code{Tn} (optional) and \code{ylu}, returned by \code{\link[=check_input]{check_input()}}.}
 
-\item{rFUN}{Rough curve fitting function, character, can be one of
+\item{rFUN}{character, the name of rough curve fitting function, can be one of
 c("smooth_wSG", "smooth_wWHIT", "smooth_wHANTS"), which are corresponding to
 \code{\link[=smooth_wSG]{smooth_wSG()}}, \code{\link[=smooth_wWHIT]{smooth_wWHIT()}} and \code{\link[=smooth_wHANTS]{smooth_wHANTS()}}.}
 
-\item{wFUN}{weights updating function, can be one of \code{\link[=wTSM]{wTSM()}},
-\code{\link[=wChen]{wChen()}}, \code{\link[=wBisquare]{wBisquare()}} and \code{\link[=wSELF]{wSELF()}}.}
+\item{wFUN}{weights updating function, can be one of .}
 
-\item{iters}{How many times curve fitting is implemented.}
+\item{iters}{integer, the number of rough fitting iterations}
 
-\item{wmin}{Double, minimum weigth (i.e. weight of snow, ice and cloud).}
+\item{wmin}{double, minimum weigth (i.e. weight of snow, ice and cloud).}
 
 \item{lambda}{The smoothing parameter of \code{\link[=smooth_wWHIT]{smooth_wWHIT()}}. For
 \code{\link[=season_mov]{season_mov()}}, if lambda is \code{NULL}, \code{\link[=init_lambda]{init_lambda()}}
@@ -67,8 +66,8 @@ considered above the zero frequency.}
 \item{frame}{The parameter of \code{\link[=smooth_wSG]{smooth_wSG()}}, moving window size. Suggested by
 TIMESAT, default \code{frame = floor(nptperyear/7)*2 + 1}.}
 
-\item{minpeakdistance}{Numberic, in the unit of points (default as
-\code{nptperyear/12}). The minimum distance of two peaks. If the distance of two
+\item{minpeakdistance}{double, in points (default as
+\code{nptperyear/6}). The minimum distance of two peaks. If the distance of two
 maximum extreme value less than \code{minpeakdistance}, only the real maximum
 value will be left.}
 
@@ -92,8 +91,8 @@ If TroughsPerYear > MaxTroughsPerYear, then lambda = lambda*2.}
 \item{calendarYear}{If true, only one static calendar growing season will be
 returned.}
 
-\item{adj.param}{Adjust rough curve fitting function parameters automatically,
-if too many or to less peak and trough values.}
+\item{adj.param}{,
+.}
 
 \item{rm.closed}{boolean. Whether check the two closest peaks (or troughs).}
 

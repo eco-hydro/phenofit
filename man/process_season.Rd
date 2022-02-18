@@ -10,7 +10,6 @@ process_season(
     MaxTroughsPerYear = 4),
   nptperyear = 36,
   south = FALSE,
-  .v_curve = FALSE,
   ...
 )
 }
@@ -19,9 +18,6 @@ process_season(
 
 \item{south}{Boolean. In south hemisphere, growing year is 1 July to the
 following year 31 June; In north hemisphere, growing year is 1 Jan to 31 Dec.}
-
-\item{.v_curve}{If true, it will use V-curve theory to optimize Whittaker
-parameter, lambda.}
 
 \item{...}{Others will be ignored.}
 

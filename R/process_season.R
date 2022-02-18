@@ -1,10 +1,11 @@
+# ' @param .v_curve If true, it will use V-curve theory to optimize Whittaker
+# ' parameter, lambda.
+
 #' divide_seasons
 #'
 #' @inheritParams check_input
 #' @param d data.frame, with the columns of `t`, `y` and `w`.
 #' @param options_season options of [season_mov()]
-#' @param .v_curve If true, it will use V-curve theory to optimize Whittaker
-#' parameter, lambda.
 #'
 #' @note site-year may be not continuous.
 #' 
@@ -17,15 +18,17 @@ process_season <- function(
         wFUN = "wTSM",
         # wmin = 0.1,
         # iters = 2,
-        # .lambda_vcurve = TRUE, lambda = NULL,
+        # lambda = NULL,
         maxExtendMonth = 12, # maxExtendMonth,
         MaxPeaksPerYear = 3,
         MaxTroughsPerYear = 4
     ),
     nptperyear = 36, south = FALSE,
-    .v_curve = FALSE,
     ...)
 {
+    set_options(season = options, ...)
+    opt = .options$season
+    
     if (!("QC_flag" %in% colnames(d_obs))) {
         d_obs %<>% mutate(QC_flag = ifelse(w >= 0.5, "good", "cloud"))
     }
@@ -38,13 +41,12 @@ process_season <- function(
         date_end = last(d_obs$t)
     )
     # frame = floor(nptperyear/8) * 2 + 1 # wSG
-    if (.v_curve) {
-        lg_lambdas <- seq(3.3, 5, 0.1) # 2000-
-        r <- v_curve(INPUT, lg_lambdas, d = 2, IsPlot = FALSE)
+    if (is.null(lambda)) {
+        lg_lambdas <- seq(1, 5, 0.1) # 2000-
+        r <- v_curve(INPUT, lg_lambdas, plot = FALSE)
         # lambda <- r$lambda
         options %<>% modifyList(r["lambda"])
     }
-    # print(lambda)
     # wFUN <- "wBisquare", "wTSM", threshold_max = 0.1, IGBP = CSH
     brks2 <- season_mov(INPUT, options, ...)
     # if (!is.null(brks)) brks2$dt <- brks$dt

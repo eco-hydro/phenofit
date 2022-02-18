@@ -7,54 +7,52 @@
 #' @param brks A list object with the elements of 'fit' and 'dt', returned by
 #' `season` or `season_mov`, which contains the growing season division information.
 #'
-#' @param options
-#' - `methods` (default `c('AG', 'Beck', 'Elmore', 'Zhang')``):
-#' Fine curve fitting methods, can be one or more of
-#' `c('AG', 'Beck', 'Elmore', 'Zhang', 'Gu', 'Klos')`. Note that 'Gu' and 'Klos'
-#' are very slow.
-#'
-#' - `wFUN` (default `wTSM`): Character or function, weights updating function
-#' of fine fitting function.
-#'
-#' - `iters` (default 2): max iterations of fine fitting.
-#'
-#' - `wmin` (default 0.1): min weights in the weights updating procedure.
-#'
-#' - `use.rough` (default FALSE): Whether to use rough fitting smoothed time-series as input?
-#' If `false`, smoothed VI by rough fitting will be used for Phenological metrics
-#' extraction; If `true`, original input `y` will be used (rough fitting is used
-#' to divide growing seasons and update weights.
-#'
-#' - `use.y0` (default TRUE): boolean. whether to use original `y0` as the input of `plot_input`,
-#' note that not for curve fitting. `y0` is the original value before the process
-#' of `check_input`.
-#'
-#' - `nextend` (default 2): Extend curve fitting window, until `nextend` good or
-#' marginal element are found in previous and subsequent growing season.
-#'
-#' - `maxExtendMonth` (default 1): Search good or marginal good values in previous and
-#' subsequent `maxExtendMonth` period.
-#'
-#' - `minExtendMonth` (default 0.5): Extending perid defined by `nextend` and `maxExtendMonth`,
-#' should be no shorter than `minExtendMonth`.
-#' When all points of the input time-series are good value, then the extending
-#' period will be too short. In that situation, we can't make sure the connection
-#' between different growing seasons is smoothing.
-#'
-#' - `minPercValid`: (default 0, not use). If the percentage of good
-#' and marginal quality points is less than `minPercValid`, curve fiting result
-#' is set to `NA`.
-#'
-#' - `minT`: (not used currently). If `Tn` not provided in `INPUT`, `minT` will not be used.
-#' `minT` use night temperature Tn to define backgroud value (days with `Tn < minT`
-#' treated as ungrowing season).
-#'
-#' @param ...  other parameters to [curvefit()]
-#'
+#' @param options see section: options for fitting for details.
 #' @return List of phenofit fitting object.
 #' @seealso [FitDL()]
-#'
 #' @example inst/examples/ex-curvefits.R
+
+#' @section options for fitting:
+#' - `methods` (default `c('AG', 'Beck', 'Elmore', 'Zhang')``): Fine curve
+#'   fitting methods, can be one or more of `c('AG', 'Beck', 'Elmore', 'Zhang',
+#'   'Gu', 'Klos')`. Note that 'Gu' and 'Klos' are very slow.
+#' - `iters` (default 2): max iterations of fine fitting.
+#' 
+#' - `wFUN` (default `wTSM`): Character or function, weights updating function
+#'  of fine fitting function.
+#' 
+#' - `wmin` (default 0.1): min weights in the weights updating procedure.
+#'
+#' - `use.rough` (default FALSE): Whether to use rough fitting smoothed
+#'   time-series as input? If `false`, smoothed VI by rough fitting will be used
+#'   for Phenological metrics extraction; If `true`, original input `y` will be
+#'   used (rough fitting is used to divide growing seasons and update weights.
+#'
+#' - `use.y0` (default TRUE): boolean. whether to use original `y0` as the input
+#'   of `plot_input`, note that not for curve fitting. `y0` is the original
+#'   value before the process of `check_input`.
+#'
+#' - `nextend` (default 2): Extend curve fitting window, until `nextend` good or
+#'   marginal element are found in previous and subsequent growing season.
+#'
+#' - `maxExtendMonth` (default 1): Search good or marginal good values in
+#'   previous and subsequent `maxExtendMonth` period.
+#'
+#' - `minExtendMonth` (default 0.5): Extending perid defined by `nextend` and
+#'   `maxExtendMonth`, should be no shorter than `minExtendMonth`. When all
+#'   points of the input time-series are good value, then the extending period
+#'   will be too short. In that situation, we can't make sure the connection
+#'   between different growing seasons is smoothing.
+#'
+#' - `minPercValid`: (default 0, not use). If the percentage of good and
+#'   marginal quality points is less than `minPercValid`, curve fiting result is
+#'   set to `NA`.
+#'
+#' - `minT`: (not use). If `Tn` not provided in `INPUT`, `minT` will
+#'   not be used. `minT` use night temperature Tn to define backgroud value
+#'   (days with `Tn < minT` treated as ungrowing season).
+#'
+#' @param ...  other parameters to [curvefit()]
 #'
 #' @export
 curvefits <- function(

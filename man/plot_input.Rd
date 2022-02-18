@@ -10,7 +10,7 @@ plot_input(INPUT, wmin = 0.2, show.y0 = TRUE, ylab = "VI", ...)
 \item{INPUT}{A list object with the elements of \code{t}, \code{y}, \code{w},
 \code{Tn} (optional) and \code{ylu}, returned by \code{\link[=check_input]{check_input()}}.}
 
-\item{wmin}{Double, minimum weigth (i.e. weight of snow, ice and cloud).}
+\item{wmin}{double, minimum weigth (i.e. weight of snow, ice and cloud).}
 
 \item{show.y0}{boolean. Whether to show original time-series \code{y0} or processed time-series \code{y} by
 \code{\link[=check_input]{check_input()}}?}

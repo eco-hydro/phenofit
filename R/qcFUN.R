@@ -1,4 +1,5 @@
 #' Initial weights according to qc
+#' @name qcFUN
 #' 
 #' @description
 #' * `getBits`: Extract bitcoded QA information from bin value
@@ -40,6 +41,7 @@
 #' r_5l <- qc_5l(QA, wmin = 0.2, wmid = 0.5, wmax = 1)
 #' r_NDVI3g <- qc_NDVI3g(QA, wmin = 0.2, wmid = 0.5, wmax = 1)
 #' r_NDVIv4 <- qc_NDVIv4(QA, wmin = 0.2, wmid = 0.5, wmax = 1)
+
 #' @rdname qcFUN
 #' @export
 getBits <- function(x, start, end = start){

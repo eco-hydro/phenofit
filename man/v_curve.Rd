@@ -2,41 +2,36 @@
 % Please edit documentation in R/smooth_wWHIT_lambda.R
 \name{v_curve}
 \alias{v_curve}
-\title{v_curve}
+\title{V-curve theory to optimize Whittaker parameter \code{lambda}.}
 \usage{
-v_curve(INPUT, lg_lambdas, d = 2, IsPlot = FALSE, wFUN = wTSM, iters = 2)
+v_curve(INPUT, lg_lambdas = seq(0, 5, by = 0.005), plot = FALSE, ...)
 }
 \arguments{
 \item{INPUT}{A list object with the elements of \code{t}, \code{y}, \code{w},
 \code{Tn} (optional) and \code{ylu}, returned by \code{\link[=check_input]{check_input()}}.}
 
-\item{lg_lambdas}{\code{lg} lambda vectors of Whittaker parameter.}
+\item{lg_lambdas}{numeric vector, log10(lambda) candidates. The optimal \code{lambda}
+will be optimized from \code{lg_lambda}.}
 
-\item{d}{Difference order.}
+\item{plot}{logical. If \code{TRUE}, the optimized \code{lambda} will be printed on the
+console.}
 
-\item{IsPlot}{Boolean. Whether to plot figure?}
-
-\item{wFUN}{weights updating function, can be one of \code{\link[=wTSM]{wTSM()}},
-\code{\link[=wChen]{wChen()}}, \code{\link[=wBisquare]{wBisquare()}} and \code{\link[=wSELF]{wSELF()}}.}
-
-\item{iters}{How many times curve fitting is implemented.}
+\item{...}{ignored.}
 }
 \description{
-V-curve is used to optimize Whittaker parameter lambda.
+V-curve is used to optimize Whittaker parameter \code{lambda}.
+This function is not for users!!!
+
 Update 20180605 add weights updating to whittaker lambda selecting
 }
 \examples{
 data("CA_NS6"); d = CA_NS6
+INPUT <- check_input(d$t, d$y, d$w, nptperyear = 23,
+    maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
 
-# global parameter
-IsPlot = TRUE
-nptperyear = 23
-
-INPUT    <- check_input(d$t, d$y, d$w, nptperyear,
-                        maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
-# INPUT$y0 <- d$y   # raw time-series, for visualization
-
-lg_lambdas <- seq(0, 3, 0.1)
-r <- v_curve(INPUT, lg_lambdas, d = 2, IsPlot = TRUE)
+r <- v_curve(INPUT, lg_lambdas = seq(0, 3, 0.1), plot = TRUE)
+}
+\seealso{
+lambda_vcurve
 }
 \keyword{internal}

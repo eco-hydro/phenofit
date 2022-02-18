@@ -20,6 +20,6 @@ INPUT    <- check_input(dnew$t, dnew$y, dnew$w, nptperyear,
 test_that("v_curve works", {
     expect_silent({
         lg_lambdas <- seq(0, 3, 0.1)
-        r <- v_curve(INPUT, lg_lambdas, d = 2, IsPlot = TRUE)
+        r <- v_curve(INPUT, lg_lambdas, plot = TRUE)
     })
 })

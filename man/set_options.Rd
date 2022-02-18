@@ -10,18 +10,172 @@ set_options(..., options = NULL)
 get_options(names = NULL)
 }
 \arguments{
-\item{...}{list of phenofit options
-FUN_season: character, \code{season_mov} or \code{season}
-rFUN: character, rough fitting function. \code{smooth_wWHIT}, \code{smooth_wSG} or \code{smooth_wHANTs}.}
+\item{...}{list of phenofit options FUN_season: character, \code{season_mov} or
+\code{season} rFUN: character, rough fitting function. \code{smooth_wWHIT},
+\code{smooth_wSG} or \code{smooth_wHANTs}.}
 
-\item{options}{If not NULL, \code{options} will be used and \code{...} patched.}
+\item{options}{If not NULL, \code{options} will overwrite the default parameters
+(\code{get_options()}).
+\itemize{
+\item \code{qcFUN}      : function to process qc flag, see \code{\link[=qcFUN]{qcFUN()}} for details.
+\item \code{nptperyear} : Integer, number of images per year.
+\item \code{wFUN}       : character (default \code{wTSM}), the name of weights updating
+functions, can be one of c("wTSM", "wChen", "wBisquare", "wSELF"). See
+\code{\link[=wTSM]{wTSM()}}, \code{\link[=wChen]{wChen()}}, \code{\link[=wBisquare]{wBisquare()}} and \code{\link[=wSELF]{wSELF()}} for details.
+\itemize{
+\item If \code{options$season$wFUN} or \code{options$season$wFUN} is \code{NULL}, the
+\code{options$wFUN} will overwrite it.
+}
+\item \code{wmin}       : double, the minimum weigth of bads points (i.e. snow, ice
+and cloud).
+\itemize{
+\item If \code{options$season$wmin} or \code{options$season$wmin} is \code{NULL}, the
+\code{options$wmin} will overwrite it.
+}
+\item \code{season}     : See the following part: options for season for details.
+\item \code{fitting}    : See the following part: options for season for details.
+}}
 
 \item{names}{vector of character, names of options}
 }
 \description{
 set and get phenofit option
 }
+\section{options for season}{
+
+\subsection{(a) Parameters for rough fitting}{
+\itemize{
+\item \code{rFUN}              : character (default \code{smooth_wWHIT}), the name of rough
+curve fitting function, can be one of \code{c("smooth_wSG", "smooth_wWHIT", "smooth_wHANTS")}, which are corresponding to \code{\link[=smooth_wSG]{smooth_wSG()}},
+\code{\link[=smooth_wWHIT]{smooth_wWHIT()}} and \code{\link[=smooth_wHANTS]{smooth_wHANTS()}}.
+\item \code{wFUN}              : character (default \code{wTSM}), the name of weights
+updating functions, can be one of c("wTSM", "wChen", "wBisquare",
+"wSELF"). See \code{\link[=wTSM]{wTSM()}}, \code{\link[=wChen]{wChen()}}, \code{\link[=wBisquare]{wBisquare()}} and \code{\link[=wSELF]{wSELF()}} for
+details.
+\item \code{iters}             : integer (default 2), the number of rough fitting
+iterations.
+\item \code{wmin}              : double, the minimum weigth of bads points (i.e. snow,
+ice and cloud).
+\item \code{verbose}           : logical (default \code{FALSE}). If \code{TRUE},
+\code{options$season} will be printed on the console.
+\item \code{lambda}            : double (default NULL), the smoothing parameter of
+\code{\link[=smooth_wWHIT]{smooth_wWHIT()}}.
+\itemize{
+\item If \code{lambda = NULL}, V-curve theory will be employed to find the
+optimal \code{lambda}. See \code{\link[=lambda_vcurve]{lambda_vcurve()}} for details.
+}
+\item \code{frame}             : integer (default NULL), the parameter of
+\code{\link[=smooth_wSG]{smooth_wSG()}}, moving window size.
+\itemize{
+\item If \code{frame = NULL}, \code{frame} will be reset as \code{floor(nptperyear/7)*2 +    1} (refered by TIMESAT).
+}
+\item \code{nf}                : integer (default 4), the number of frequencies in
+\code{\link[=smooth_wHANTS]{smooth_wHANTS()}}.
+\item \code{maxExtendMonth}: integer (default 12), previous and subsequent
+\code{maxExtendMonth} (in month) data were added to the current year for rough
+fitting.
+\item \code{nextend}           : integer (default NULL), same as \code{maxExtendMonth}, but
+in points.
+\itemize{
+\item If \code{nextend} provided, \code{maxExtendMonth} will be ignored.
+\item If \code{nextend = NULL}, \code{nextend} will be reset as
+\code{ceiling(maxExtendMonth/12*nptperyear)}
+}
+}
+}
+
+\subsection{(b) Parameters for growing season division}{
+\itemize{
+\item \code{minpeakdistance}   : double (default NULL), the minimum distance of two
+peaks (in points). If the distance of two maximum extreme value less than
+\code{minpeakdistance}, only the maximum one will be kept.
+\itemize{
+\item If \code{minpeakdistance = NULL}, it will be reset as \code{nptperyear/6}.
+}
+\item \code{r_max}             : double (default 0.2; in (0, 1)). \code{r_max} and \code{r_min}
+are used to eliminate fake peaks and troughs.
+\itemize{
+\item The real peaks should satisfy:
+\enumerate{
+\item \eqn{max(h_{peak, L}, h_{peak, R}) > r_{max} A}
+\item \eqn{min(h_{peak, L}, h_{peak, R}) > r_{min} A,} where \eqn{h_{peak,
+     L}, h_{peak, R}} are height difference from the peak to the left- and
+right-hand troughs.
+}
+\item The troughs should satisfy:
+\enumerate{
+\item \eqn{max(h_{trough, L}, h_{trough, R}) > r_{max} A,} where
+\eqn{h_{trough, L}, h_{trough, R}} are height difference from the trough
+to the left- and right-hand peaks.
+}
+}
+\item \code{r_min}             : double (default 0.05; in (0, 1)), see above \code{r_max}
+for details. \code{r_min} < \code{r_max}.
+\item \code{rtrough_max}       : double (default 0.6, in (0, 1)), \eqn{y_{peak} <=
+  rtrough_max * A + ylu[1]}.
+\item \code{ypeak_min}         : double 0.1 (in VI unit), \eqn{y_{peak} >= ypeak_min}.
+\item \code{.check_season}     : logical (default \code{TRUE}). check the growing season
+length according to \code{len_min} and \code{len_max}. If \code{FALSE}, \code{len_min} and
+\code{len_max} will lose their effect.
+\item \code{len_min}           : integer (default 45), the minimum length (in days) of
+growing season
+\item \code{len_max}           : integer (default 650), the minimum length (in days)
+of growing season
+\item \code{adj.param}         : logical. If \code{TRUE} (default), if there are too many
+or too less peaks and troughs, \code{phenofit} will automatically adjust rough
+curve fitting function parameters. See \code{MaxPeaksPerYear} and
+\code{MaxTroughsPerYear} for details.
+\item \code{MaxPeaksPerYear} (optional)   : integer (default 2), the max number of
+peaks per year. If \code{PeaksPerYear} > \code{MaxPeaksPerYear}, then \code{lambda = lambda*2}.
+\item \code{MaxTroughsPerYear} (optional) : integer (default 3), the max number of
+troughs per year. If \code{TroughsPerYear} > \code{MaxTroughsPerYear}, then \code{lambda = lambda*2}.
+\item \code{calendarYear}      : logical (default \code{FALSE}). If \code{TRUE}, the start and
+end of a calender year will be regarded as growing season division (North
+Hemisphere is from 01 Jan to 31 Dec; South Hemisphere is from 01 Jul to 30
+Jun).
+\item \code{rm.closed}         : logical (default \code{TRUE}). If \code{TRUE}, closed peaks (or troughs)
+will be further tidied. Only the maximum
+\item \code{is.continuous} (not used): logical (default \code{TRUE}). This parameter is for
+\code{fluxnet2015} fluxsite data, where the input might be not continuous.
+}
+}
+}
+
+\section{options for fitting}{
+
+\itemize{
+\item \code{methods} (default \verb{c('AG', 'Beck', 'Elmore', 'Zhang')``): Fine curve fitting methods, can be one or more of }c('AG', 'Beck', 'Elmore', 'Zhang',
+'Gu', 'Klos')`. Note that 'Gu' and 'Klos' are very slow.
+\item \code{iters} (default 2): max iterations of fine fitting.
+\item \code{wFUN} (default \code{wTSM}): Character or function, weights updating function
+of fine fitting function.
+\item \code{wmin} (default 0.1): min weights in the weights updating procedure.
+\item \code{use.rough} (default FALSE): Whether to use rough fitting smoothed
+time-series as input? If \code{false}, smoothed VI by rough fitting will be used
+for Phenological metrics extraction; If \code{true}, original input \code{y} will be
+used (rough fitting is used to divide growing seasons and update weights.
+\item \code{use.y0} (default TRUE): boolean. whether to use original \code{y0} as the input
+of \code{plot_input}, note that not for curve fitting. \code{y0} is the original
+value before the process of \code{check_input}.
+\item \code{nextend} (default 2): Extend curve fitting window, until \code{nextend} good or
+marginal element are found in previous and subsequent growing season.
+\item \code{maxExtendMonth} (default 1): Search good or marginal good values in
+previous and subsequent \code{maxExtendMonth} period.
+\item \code{minExtendMonth} (default 0.5): Extending perid defined by \code{nextend} and
+\code{maxExtendMonth}, should be no shorter than \code{minExtendMonth}. When all
+points of the input time-series are good value, then the extending period
+will be too short. In that situation, we can't make sure the connection
+between different growing seasons is smoothing.
+\item \code{minPercValid}: (default 0, not use). If the percentage of good and
+marginal quality points is less than \code{minPercValid}, curve fiting result is
+set to \code{NA}.
+\item \code{minT}: (not use). If \code{Tn} not provided in \code{INPUT}, \code{minT} will
+not be used. \code{minT} use night temperature Tn to define backgroud value
+(days with \code{Tn < minT} treated as ungrowing season).
+}
+}
+
 \examples{
-set_options(verbose = FALSE)
+set_options(verbose = FALSE) 
 get_options("season") \%>\% str()
 }

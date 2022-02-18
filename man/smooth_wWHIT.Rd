@@ -32,8 +32,12 @@ in the range of \code{ylu}.}
 
 \item{iters}{How many times curve fitting is implemented.}
 
-\item{lambda}{whittaker parameter (2-15 is suitable for 16-day VI). Multiple
-lambda values also are accept, then a list object return.}
+\item{lambda}{scaler or numeric vector, whittaker parameter.
+\itemize{
+\item If \code{lambda = NULL}, \code{V-curve} theory will be applied to retrieve the optimal \code{lambda}.
+\item If multiple \code{lambda} provided (numeric vector), a list of the smoothing results
+with the same length of \code{lambda} will be returned.
+}}
 
 \item{second}{If true, in every iteration, Whittaker will be implemented
 twice to make sure curve fitting is smooth. If curve has been smoothed
@@ -52,19 +56,31 @@ smoothing is unnecessary.}
 \description{
 Weigthed Whittaker Smoother
 }
+\note{
+Whittaker smoother of the second order difference is used!
+}
 \examples{
-library(phenofit)
 data("MOD13A1")
 dt <- tidy_MOD13(MOD13A1$dt)
 d <- dt[site == "AT-Neu", ]
 
 l <- check_input(d$t, d$y, d$w, nptperyear=23)
 r_wWHIT <- smooth_wWHIT(l$y, l$w, l$ylu, nptperyear = 23, iters = 2)
+
+## Optimize `lambda` by V-curve theory
+# (a) optimize manually
+lambda_vcurve(l$y, l$w, plot = TRUE) 
+
+# (b) optimize automatically by setting `lambda = NULL` in smooth_wWHIT
+r_wWHIT2 <- smooth_wWHIT(l$y, l$w, l$ylu, nptperyear = 23, iters = 2, lambda = NULL) # 
 }
 \references{
 \enumerate{
-\item Eilers, P.H.C., 2003. A perfect smoother. Anal. Chem. https://doi.org/10.1021/ac034173t \cr
+\item Eilers, P.H.C., 2003. A perfect smoother. Anal. Chem. \doi{10.1021/ac034173t}
 \item Frasso, G., Eilers, P.H.C., 2015. L- and V-curves for optimal smoothing. Stat.
-Modelling 15, 91-111. https://doi.org/10.1177/1471082X14549288
+Modelling 15, 91-111. \doi{10.1177/1471082X14549288}.
 }
+}
+\seealso{
+\code{\link[=lambda_vcurve]{lambda_vcurve()}}
 }

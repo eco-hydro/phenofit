@@ -8,7 +8,6 @@ process_phenofit(
   d_obs,
   nptperyear = 36,
   south = FALSE,
-  .v_curve = FALSE,
   options_season = list(wFUN = "wTSM", maxExtendMonth = 12, MaxPeaksPerYear = 3,
     MaxTroughsPerYear = 4),
   options_fitting = list(methods = c("AG", "Zhang", "Beck", "Elmore", "Gu"), wFUN =

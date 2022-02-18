@@ -13,11 +13,11 @@
 #' - `R2`  : determined coefficient
 #' - `pvalue`: pvalue of `R`
 #' - `n`   : The number of observations
-#'
+#' 
 #' @references
 #' 1. https://en.wikipedia.org/wiki/Nash-Sutcliffe_model_efficiency_coefficient \cr
 #' 2. https://en.wikipedia.org/wiki/Pearson_correlation_coefficient
-#'
+#' 
 #' @seealso [curvefit()]
 #'
 #' @example inst/examples/ex-get_fitting_param_GOF.R

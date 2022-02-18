@@ -9,15 +9,29 @@
 lambda_vcurve(
   y,
   w,
-  d = 2,
-  lg_lambda_min = 0.1,
-  lg_lambda_max = 5,
-  IsPlot = FALSE
+  lg_lambdas = seq(0.1, 5, 0.1),
+  plot = FALSE,
+  verbose = FALSE,
+  ...
 )
 
 lambda_vcurve_jl(y, w, lg_lambda_min = 0.1, lg_lambda_max = 3)
 
 lambda_cv_jl(y, w, d = 2, lg_lambda_min = 0.1, lg_lambda_max = 3)
+}
+\arguments{
+\item{y}{Numeric vector, vegetation index time-series}
+
+\item{w}{(optional) Numeric vector, weights of \code{y}. If not specified,
+weights of all \code{NA} values will be \code{wmin}, the others will be 1.0.}
+
+\item{lg_lambdas}{numeric vector, log10(lambda) candidates. The optimal \code{lambda}
+will be optimized from \code{lg_lambda}.}
+
+\item{plot}{logical. If \code{TRUE}, the optimized \code{lambda} will be printed on the
+console.}
+
+\item{...}{ignored.}
 }
 \description{
 lambda_vcurve

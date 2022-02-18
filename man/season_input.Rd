@@ -10,7 +10,7 @@ season_input(INPUT, options = NULL, verbose = FALSE, ...)
 \item{INPUT}{A list object with the elements of \code{t}, \code{y}, \code{w},
 \code{Tn} (optional) and \code{ylu}, returned by \code{\link[=check_input]{check_input()}}.}
 
-\item{options}{see details}
+\item{options}{see the following section \verb{options for season} for details.}
 
 \item{...}{others parameter to \code{\link[=set_options]{set_options()}}}
 }

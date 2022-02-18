@@ -45,35 +45,51 @@ whit2 <- function(y, lambda, w = rep(1, ny))
 }
 
 #' Weigthed Whittaker Smoother
-#'
+#' 
 #' @inheritParams smooth_wHANTS
-#' @param lambda whittaker parameter (2-15 is suitable for 16-day VI). Multiple
-#' lambda values also are accept, then a list object return.
+#' 
+#' @param lambda scaler or numeric vector, whittaker parameter.
+#' - If `lambda = NULL`, `V-curve` theory will be applied to retrieve the optimal `lambda`.
+#' - If multiple `lambda` provided (numeric vector), a list of the smoothing results 
+#' with the same length of `lambda` will be returned.
+#' 
 #' @param second If true, in every iteration, Whittaker will be implemented
 #' twice to make sure curve fitting is smooth. If curve has been smoothed
 #' enough, it will not care about the second smooth. If no, the second one is
 #' just prepared for this situation. If lambda value has been optimized, second
 #' smoothing is unnecessary.
-#'
+#' 
 #' @inherit smooth_wHANTS return
 #' 
 #' @references
-#' 1. Eilers, P.H.C., 2003. A perfect smoother. Anal. Chem. https://doi.org/10.1021/ac034173t \cr
+#' 1. Eilers, P.H.C., 2003. A perfect smoother. Anal. Chem. \doi{10.1021/ac034173t}
 #' 2. Frasso, G., Eilers, P.H.C., 2015. L- and V-curves for optimal smoothing. Stat.
-#'      Modelling 15, 91-111. https://doi.org/10.1177/1471082X14549288
+#'      Modelling 15, 91-111. \doi{10.1177/1471082X14549288}.
+#' 
+#' @note Whittaker smoother of the second order difference is used!
+#' @seealso [lambda_vcurve()]
 #' 
 #' @examples
-#' library(phenofit)
 #' data("MOD13A1")
 #' dt <- tidy_MOD13(MOD13A1$dt)
 #' d <- dt[site == "AT-Neu", ]
 #' 
 #' l <- check_input(d$t, d$y, d$w, nptperyear=23)
 #' r_wWHIT <- smooth_wWHIT(l$y, l$w, l$ylu, nptperyear = 23, iters = 2)
+#' 
+#' ## Optimize `lambda` by V-curve theory
+#' # (a) optimize manually
+#' lambda_vcurve(l$y, l$w, plot = TRUE) 
+#' 
+#' # (b) optimize automatically by setting `lambda = NULL` in smooth_wWHIT
+#' r_wWHIT2 <- smooth_wWHIT(l$y, l$w, l$ylu, nptperyear = 23, iters = 2, lambda = NULL) # 
 #' @export
 smooth_wWHIT <- function(y, w, ylu, nptperyear, wFUN = wTSM, iters=1, lambda=15,
     second = FALSE, ...) #, df = NULL
 {
+    if (is.null(lambda)) {
+        lambda = lambda_vcurve(y, w, lg_lambdas = seq(0.1, 5, 0.1))$lambda
+    }
     trs <- 0.5
     if (all(is.na(y))) return(y)
     n <- sum(w)

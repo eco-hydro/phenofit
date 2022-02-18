@@ -12,13 +12,12 @@ process_phenofit <- function(
     d_obs,
     nptperyear = 36,
     south = FALSE,
-    .v_curve = FALSE,
     options_season = list(
         # rFUN = "smooth_wWHIT",
         wFUN = "wTSM",
         # wmin = 0.1,
         # iters = 2,
-        # .lambda_vcurve = TRUE, lambda = NULL,
+        # lambda = NULL,
         maxExtendMonth = 12, # maxExtendMonth,
         MaxPeaksPerYear = 3,
         MaxTroughsPerYear = 4
@@ -45,6 +44,9 @@ process_phenofit <- function(
     options_season %<>% modifyList(list(...))
     options_fitting %<>% modifyList(list(...))
 
+    set_options(season = options_season, fitting = options_fitting, ...)
+    opt = .options$season
+
     ## 2.1 load site data
     # d_obs <- listk(t, y, w, QC_flag) %>% as.data.table()
     if (!("QC_flag" %in% colnames(d_obs))) {
@@ -59,9 +61,9 @@ process_phenofit <- function(
         date_end = last(d_obs$t)
     )
     # frame = floor(nptperyear/8) * 2 + 1 # wSG
-    if (.v_curve) {
-        lg_lambdas <- seq(3.3, 5, 0.1) # 2000-
-        r <- v_curve(INPUT, lg_lambdas, d = 2, IsPlot = FALSE)
+    if (is.null(opt$lambda)) {
+        lg_lambdas <- seq(1, 5, 0.1) # 2000-
+        r <- v_curve(INPUT, lg_lambdas, plot = FALSE)
         lambda <- r$lambda
     }
     # wFUN <- "wBisquare", "wTSM", threshold_max = 0.1, IGBP = CSH

@@ -10,7 +10,7 @@ season_mov(INPUT, options = list(), ..., years.run = NULL)
 \item{INPUT}{A list object with the elements of \code{t}, \code{y}, \code{w},
 \code{Tn} (optional) and \code{ylu}, returned by \code{\link[=check_input]{check_input()}}.}
 
-\item{options}{see details}
+\item{options}{see the following section \verb{options for season} for details.}
 
 \item{...}{others parameter to \code{\link[=set_options]{set_options()}}}
 
@@ -20,16 +20,103 @@ all years.}
 \description{
 Moving growing season division
 }
-\section{options}{
+\section{options for season}{
 
+\subsection{(a) Parameters for rough fitting}{
 \itemize{
-\item \code{len_min}, \code{len_max}: minimum and maximum length (in the unit of days)
+\item \code{rFUN}              : character (default \code{smooth_wWHIT}), the name of rough
+curve fitting function, can be one of \code{c("smooth_wSG", "smooth_wWHIT", "smooth_wHANTS")}, which are corresponding to \code{\link[=smooth_wSG]{smooth_wSG()}},
+\code{\link[=smooth_wWHIT]{smooth_wWHIT()}} and \code{\link[=smooth_wHANTS]{smooth_wHANTS()}}.
+\item \code{wFUN}              : character (default \code{wTSM}), the name of weights
+updating functions, can be one of c("wTSM", "wChen", "wBisquare",
+"wSELF"). See \code{\link[=wTSM]{wTSM()}}, \code{\link[=wChen]{wChen()}}, \code{\link[=wBisquare]{wBisquare()}} and \code{\link[=wSELF]{wSELF()}} for
+details.
+\item \code{iters}             : integer (default 2), the number of rough fitting
+iterations.
+\item \code{wmin}              : double, the minimum weigth of bads points (i.e. snow,
+ice and cloud).
+\item \code{verbose}           : logical (default \code{FALSE}). If \code{TRUE},
+\code{options$season} will be printed on the console.
+\item \code{lambda}            : double (default NULL), the smoothing parameter of
+\code{\link[=smooth_wWHIT]{smooth_wWHIT()}}.
+\itemize{
+\item If \code{lambda = NULL}, V-curve theory will be employed to find the
+optimal \code{lambda}. See \code{\link[=lambda_vcurve]{lambda_vcurve()}} for details.
+}
+\item \code{frame}             : integer (default NULL), the parameter of
+\code{\link[=smooth_wSG]{smooth_wSG()}}, moving window size.
+\itemize{
+\item If \code{frame = NULL}, \code{frame} will be reset as \code{floor(nptperyear/7)*2 +    1} (refered by TIMESAT).
+}
+\item \code{nf}                : integer (default 4), the number of frequencies in
+\code{\link[=smooth_wHANTS]{smooth_wHANTS()}}.
+\item \code{maxExtendMonth}: integer (default 12), previous and subsequent
+\code{maxExtendMonth} (in month) data were added to the current year for rough
+fitting.
+\item \code{nextend}           : integer (default NULL), same as \code{maxExtendMonth}, but
+in points.
+\itemize{
+\item If \code{nextend} provided, \code{maxExtendMonth} will be ignored.
+\item If \code{nextend = NULL}, \code{nextend} will be reset as
+\code{ceiling(maxExtendMonth/12*nptperyear)}
+}
+}
+}
+
+\subsection{(b) Parameters for growing season division}{
+\itemize{
+\item \code{minpeakdistance}   : double (default NULL), the minimum distance of two
+peaks (in points). If the distance of two maximum extreme value less than
+\code{minpeakdistance}, only the maximum one will be kept.
+\itemize{
+\item If \code{minpeakdistance = NULL}, it will be reset as \code{nptperyear/6}.
+}
+\item \code{r_max}             : double (default 0.2; in (0, 1)). \code{r_max} and \code{r_min}
+are used to eliminate fake peaks and troughs.
+\itemize{
+\item The real peaks should satisfy:
+\enumerate{
+\item \eqn{max(h_{peak, L}, h_{peak, R}) > r_{max} A}
+\item \eqn{min(h_{peak, L}, h_{peak, R}) > r_{min} A,} where \eqn{h_{peak,
+     L}, h_{peak, R}} are height difference from the peak to the left- and
+right-hand troughs.
+}
+\item The troughs should satisfy:
+\enumerate{
+\item \eqn{max(h_{trough, L}, h_{trough, R}) > r_{max} A,} where
+\eqn{h_{trough, L}, h_{trough, R}} are height difference from the trough
+to the left- and right-hand peaks.
+}
+}
+\item \code{r_min}             : double (default 0.05; in (0, 1)), see above \code{r_max}
+for details. \code{r_min} < \code{r_max}.
+\item \code{rtrough_max}       : double (default 0.6, in (0, 1)), \eqn{y_{peak} <=
+  rtrough_max * A + ylu[1]}.
+\item \code{ypeak_min}         : double 0.1 (in VI unit), \eqn{y_{peak} >= ypeak_min}.
+\item \code{.check_season}     : logical (default \code{TRUE}). check the growing season
+length according to \code{len_min} and \code{len_max}. If \code{FALSE}, \code{len_min} and
+\code{len_max} will lose their effect.
+\item \code{len_min}           : integer (default 45), the minimum length (in days) of
+growing season
+\item \code{len_max}           : integer (default 650), the minimum length (in days)
 of growing season
-\item \code{.lambda_vcurve}: Boolean. If the Whittaker's parameter lambda not provided,
-whether to optimize lambda by V-curve theory? This parameter only works when
-\code{lambda} not provided.
-\item \code{maxExtendMonth}: Previous and subsequent \code{maxExtendMonth} data were added
-for every year curve fitting.
+\item \code{adj.param}         : logical. If \code{TRUE} (default), if there are too many
+or too less peaks and troughs, \code{phenofit} will automatically adjust rough
+curve fitting function parameters. See \code{MaxPeaksPerYear} and
+\code{MaxTroughsPerYear} for details.
+\item \code{MaxPeaksPerYear} (optional)   : integer (default 2), the max number of
+peaks per year. If \code{PeaksPerYear} > \code{MaxPeaksPerYear}, then \code{lambda = lambda*2}.
+\item \code{MaxTroughsPerYear} (optional) : integer (default 3), the max number of
+troughs per year. If \code{TroughsPerYear} > \code{MaxTroughsPerYear}, then \code{lambda = lambda*2}.
+\item \code{calendarYear}      : logical (default \code{FALSE}). If \code{TRUE}, the start and
+end of a calender year will be regarded as growing season division (North
+Hemisphere is from 01 Jan to 31 Dec; South Hemisphere is from 01 Jul to 30
+Jun).
+\item \code{rm.closed}         : logical (default \code{TRUE}). If \code{TRUE}, closed peaks (or troughs)
+will be further tidied. Only the maximum
+\item \code{is.continuous} (not used): logical (default \code{TRUE}). This parameter is for
+\code{fluxnet2015} fluxsite data, where the input might be not continuous.
+}
 }
 }
 
@@ -43,31 +130,11 @@ INPUT <- check_input(d$t, d$y, d$w,
     nptperyear = nptperyear, south = FALSE,
     maxgap = nptperyear / 4, alpha = 0.02, wmin = 0.2
 )
-# plot_input(INPUT)
-
-wFUN <- "wTSM"
-# all year as a whole
-options = list(rFUN = "smooth_wWHIT", wFUN = wFUN, lambda = 10)
-brks <- season(INPUT, lambda = 10)
-plot_season(INPUT, brks, d)
-
-brks2 = season_input(INPUT, options)
-all.equal(brks2, brks)
-
-c(d_fit, info_peak) \%<-\% roughFit(INPUT)
-d_season = find_season.peaks(d_fit, info_peak)
-
-c(t, ypred) \%<-\% d_fit[, .(t, ziter2)]
-d_season = find_season.default(ypred, t)
-all.equal(brks$dt, d_season)
-
-# opt <- .options$season
-# brks$fit - d_fit # function passed test
 
 # curve fitting by year
 brks_mov <- season_mov(INPUT,
     options = list(
-        rFUN = "smooth_wWHIT", wFUN = wFUN,
+        rFUN = "smooth_wWHIT", wFUN = "wTSM",
         lambda = 10,
         r_min = 0.05, ypeak_min = 0.05,
         verbose = TRUE
@@ -76,6 +143,7 @@ brks_mov <- season_mov(INPUT,
 plot_season(INPUT, brks_mov)
 
 rfit <- brks2rfit(brks_mov)
+# Phenological Metrics from rough fitting
 r <- get_pheno(rfit)
 }
 \references{
@@ -89,4 +157,7 @@ https://doi.org/10.1029/2020JG005636
 reconstructing global MODIS EVI time series on the Google Earth Engine.
 ISPRS Journal of Photogrammetry and Remote Sensing, 155, 13-24.
 }
+}
+\seealso{
+\code{\link[=season]{season()}}
 }

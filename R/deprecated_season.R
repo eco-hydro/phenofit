@@ -16,16 +16,15 @@
 #' Two local minimum define a growing season.
 #' If two local minimum(maximum) are too closed, then only the smaller(biger)
 #' is left.
-#'
+#' 
 #' @param INPUT A list object with the elements of `t`, `y`, `w`,
 #' `Tn` (optional) and `ylu`, returned by [check_input()].
-#' @param rFUN Rough curve fitting function, character, can be one of 
+#' @param rFUN character, the name of rough curve fitting function, can be one of
 #' c("smooth_wSG", "smooth_wWHIT", "smooth_wHANTS"), which are corresponding to 
 #' [smooth_wSG()], [smooth_wWHIT()] and [smooth_wHANTS()].
-#' @param wFUN weights updating function, can be one of [wTSM()],
-#' [wChen()], [wBisquare()] and [wSELF()].
-#' @param iters How many times curve fitting is implemented.
-#' @param wmin Double, minimum weigth (i.e. weight of snow, ice and cloud).
+#' @param wFUN weights updating function, can be one of .
+#' @param iters integer, the number of rough fitting iterations
+#' @param wmin double, minimum weigth (i.e. weight of snow, ice and cloud).
 #' @param lambda The smoothing parameter of [smooth_wWHIT()]. For
 #' [season_mov()], if lambda is `NULL`, [init_lambda()]
 #' will be used. Generally, it was set as 10000, 15, and 5 for daily, 8-day
@@ -34,8 +33,8 @@
 #' considered above the zero frequency.
 #' @param frame The parameter of [smooth_wSG()], moving window size. Suggested by
 #' TIMESAT, default `frame = floor(nptperyear/7)*2 + 1`.
-#' @param minpeakdistance Numberic, in the unit of points (default as
-#' `nptperyear/12`). The minimum distance of two peaks. If the distance of two
+#' @param minpeakdistance double, in points (default as
+#' `nptperyear/6`). The minimum distance of two peaks. If the distance of two
 #' maximum extreme value less than `minpeakdistance`, only the real maximum
 #' value will be left.
 #' @param ypeak_min `y_peak >= ypeak_min`
@@ -51,8 +50,8 @@
 #' If TroughsPerYear > MaxTroughsPerYear, then lambda = lambda*2.
 #' @param calendarYear If true, only one static calendar growing season will be
 #' returned.
-#' @param adj.param Adjust rough curve fitting function parameters automatically,
-#' if too many or to less peak and trough values.
+#' @param adj.param ,
+#' .
 #' @param rm.closed boolean. Whether check the two closest peaks (or troughs).
 #' @param is.continuous boolean. Whether the input is continuous? This parameter
 #' is for fluxsite site-year data.

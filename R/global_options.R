@@ -7,7 +7,7 @@ options_season <- list(
     verbose           = NULL,
 
     lambda            = NULL,  # only used when rFUN = `smooth_wWHIT`
-    .lambda_vcurve    = TRUE, # if lambda not provided, will be optimized by v-curve theory
+    # .lambda_vcurve    = TRUE, # if lambda not provided, will be optimized by v-curve theory
     frame             = 11, # only used when rFUN = `smooth_wSG`
     nf                = 4,  # only used when rFUN = `smooth_wHANTs`
 
@@ -78,14 +78,34 @@ options_fitting <- list(
 ))
 
 #' set and get phenofit option
+#' 
+#' @inheritSection season_mov options for season
+#' @inheritSection curvefits options for fitting
 #'
-#' @param ... list of phenofit options
-#' FUN_season: character, `season_mov` or `season`
-#' rFUN: character, rough fitting function. `smooth_wWHIT`, `smooth_wSG` or `smooth_wHANTs`.
-#' @param options If not NULL, `options` will be used and `...` patched.
-#' @examples
-#' set_options(verbose = FALSE)
+#' @param ... list of phenofit options FUN_season: character, `season_mov` or
+#' `season` rFUN: character, rough fitting function. `smooth_wWHIT`,
+#' `smooth_wSG` or `smooth_wHANTs`. 
+#' @examples 
+#' set_options(verbose = FALSE) 
 #' get_options("season") %>% str()
+
+#' @param options If not NULL, `options` will overwrite the default parameters
+#' (`get_options()`).
+#' - `qcFUN`      : function to process qc flag, see [qcFUN()] for details.
+#' - `nptperyear` : Integer, number of images per year.
+#' - `wFUN`       : character (default `wTSM`), the name of weights updating
+#'      functions, can be one of c("wTSM", "wChen", "wBisquare", "wSELF"). See
+#'      [wTSM()], [wChen()], [wBisquare()] and [wSELF()] for details. 
+#'      + If `options$season$wFUN` or `options$season$wFUN` is `NULL`, the
+#'      `options$wFUN` will overwrite it.
+#' - `wmin`       : double, the minimum weigth of bads points (i.e. snow, ice
+#'   and cloud).
+#'      + If `options$season$wmin` or `options$season$wmin` is `NULL`, the
+#'      `options$wmin` will overwrite it.
+#' 
+#' - `season`     : See the following part: options for season for details.
+#' - `fitting`    : See the following part: options for season for details.
+#' 
 #' @export
 set_options <- function(..., options = NULL) {
     if (is.null(options)) {

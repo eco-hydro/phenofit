@@ -1,13 +1,26 @@
+# ' @param d integer, the order of difference of Whittaker smoother.
+
 # Functions for working with the V-curve
 #' lambda_vcurve
 #'
+#' @inheritParams check_input
+#' @param lg_lambdas numeric vector, log10(lambda) candidates. The optimal `lambda`
+#' will be optimized from `lg_lambda`.
+#' @param plot logical. If `TRUE`, V-curve will be plotted.
+#' @param plot logical. If `TRUE`, the optimized `lambda` will be printed on the 
+#' console.
+#' 
+#' @param ... ignored.
+#' 
 #' @keywords internal
 #' @export
-lambda_vcurve <- function(y, w, d = 2, lg_lambda_min = 0.1, lg_lambda_max = 5,
-    IsPlot = FALSE)
+lambda_vcurve <- function(y, w,
+    # d = 2,
+    lg_lambdas = seq(0.1, 5, 0.1),
+    plot = FALSE, 
+    verbose = FALSE, ...)
 {
-    lg_lambdas <- seq(lg_lambda_min, lg_lambda_max, 0.1)
-
+    d = 2
     fits = pens = NULL
     for (lla in lg_lambdas) {
         # param$lambda <- 10^lla
@@ -30,7 +43,7 @@ lambda_vcurve <- function(y, w, d = 2, lg_lambda_min = 0.1, lg_lambda_max = 5,
     k       = which.min(v)
     opt_lambda  = 10 ^ lamids[k]
 
-    if (IsPlot) {
+    if (plot) {
         par(mfrow = c(2, 1), mar = c(2.5, 2.5, 1, 0.2),
             mgp = c(1.3, 0.6, 0), oma = c(0, 0, 0.5, 0))
 
@@ -49,6 +62,9 @@ lambda_vcurve <- function(y, w, d = 2, lg_lambda_min = 0.1, lg_lambda_max = 5,
         # colors <- c("blue", "red")
         # lines(vc$fit$t, last(vc$fit), col = "blue", lwd = 1.2)
         # lines(vc$fit$t, vc$fit$ziter2, col = "red" , lwd = 1.2)
+    }
+    if (verbosee) {
+        fprintf("The optimized `lambda` by V-curve theory is %.2f", opt_lambda)
     }
     list(lambda = opt_lambda, vcurve = data.table(lg_lambda = lamids, v = v))
     # opt_lambda
@@ -70,35 +86,44 @@ lambda_cv_jl <- function(y, w, d = 2, lg_lambda_min = 0.1, lg_lambda_max = 3) {
         lg_lambda_max = lg_lambda_max)
 }
 
-#' v_curve
+#' V-curve theory to optimize Whittaker parameter `lambda`.
 #'
-#' V-curve is used to optimize Whittaker parameter lambda.
+#' @description
+#' V-curve is used to optimize Whittaker parameter `lambda`.
+#' This function is not for users!!!
+#'
 #' Update 20180605 add weights updating to whittaker lambda selecting
 #'
 #' @inheritParams season
 #' @inheritParams smooth_wWHIT
-#' @param lg_lambdas `lg` lambda vectors of Whittaker parameter.
-#' @param d Difference order.
-#' @param IsPlot Boolean. Whether to plot figure?
-#'
+#' @inheritParams lambda_vcurve
+#' @param ... ignored.
+#' 
 #' @keywords internal
+#' @seealso lambda_vcurve
 #' @examples
 #' data("CA_NS6"); d = CA_NS6
-#' 
-#' # global parameter
-#' IsPlot = TRUE
-#' nptperyear = 23
-#' 
-#' INPUT    <- check_input(d$t, d$y, d$w, nptperyear,
-#'                         maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
-#' # INPUT$y0 <- d$y   # raw time-series, for visualization
-#' 
-#' lg_lambdas <- seq(0, 3, 0.1)
-#' r <- v_curve(INPUT, lg_lambdas, d = 2, IsPlot = TRUE)
+#' INPUT <- check_input(d$t, d$y, d$w, nptperyear = 23,
+#'     maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
+#'
+#' r <- v_curve(INPUT, lg_lambdas = seq(0, 3, 0.1), plot = TRUE)
 #' @export
-v_curve = function(INPUT, lg_lambdas, d = 2, IsPlot = FALSE,
-    wFUN = wTSM, iters=2)
+v_curve = function(
+    INPUT,
+    lg_lambdas = seq(0, 5, by = 0.005),
+    # d = 2,
+    # wFUN = wTSM, iters=2,
+    plot = FALSE,
+    ...)
 {
+    cal_coef <- function(y){
+        y <- y[!is.na(y)]
+        list(mean = mean(y),
+            sd = sd(y),
+            kurtosis = kurtosis(y, type = 2),
+            skewness = skewness(y, type = 2))
+    }
+
     # Compute the V-cure
     y <- INPUT$y
     w <- INPUT$w
@@ -106,31 +131,25 @@ v_curve = function(INPUT, lg_lambdas, d = 2, IsPlot = FALSE,
     nptperyear <- INPUT$nptperyear
     if (length(unique(y)) == 0) return(NULL)
 
-    param <- c(INPUT, nptperyear = nptperyear, wFUN = wFUN, iters=iters,
+    # , wFUN = wFUN, iters=iters
+    param <- c(INPUT, nptperyear = nptperyear,
         second = FALSE, lambda=NA)
 
     # param$lambdas <- lambda
     # fit <- do.call(smooth_wWHIT, param)
     # d_sm <- fit %$% c(ws, zs) %>% as.data.table() %>% cbind(t = INPUT$t, .)
-    l_opt = lambda_vcurve(y, w, d = d, 
-        lg_lambda_min = min(lg_lambdas), lg_lambda_max = max(lg_lambdas),
-        IsPlot = IsPlot) # optimal lambda
+    l_opt = lambda_vcurve(y, w, 
+        # d = d,
+        lg_lambdas = lg_lambdas, plot = plot) # optimal lambda
+
     z <- whit2(y, l_opt$lambda, w)
     d_sm <- data.table(t = INPUT$t, z) # smoothed
-    # browser()
     # result of v_curve
     vc <- list(lambda = l_opt$lambda,
                vmin = l_opt$vcurve$v %>% min(),
         fit = d_sm, optim = l_opt$vcurve)
 
-    cal_COEF <- function(y){
-        y <- y[!is.na(y)]
-        list(mean = mean(y),
-            sd = sd(y),
-            kurtosis = kurtosis(y, type = 2),
-            skewness = skewness(y, type = 2))
-    }
-    vc$coef_all <- cal_COEF(INPUT$y)  #%>% as.list()
+    vc$coef_all <- cal_coef(INPUT$y) # %>% as.list()
     vc
 }
 
