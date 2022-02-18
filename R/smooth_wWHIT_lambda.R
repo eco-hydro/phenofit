@@ -63,7 +63,7 @@ lambda_vcurve <- function(y, w,
         # lines(vc$fit$t, last(vc$fit), col = "blue", lwd = 1.2)
         # lines(vc$fit$t, vc$fit$ziter2, col = "red" , lwd = 1.2)
     }
-    if (verbosee) {
+    if (verbose) {
         fprintf("The optimized `lambda` by V-curve theory is %.2f", opt_lambda)
     }
     list(lambda = opt_lambda, vcurve = data.table(lg_lambda = lamids, v = v))
@@ -103,9 +103,10 @@ lambda_cv_jl <- function(y, w, d = 2, lg_lambda_min = 0.1, lg_lambda_max = 3) {
 #' @seealso lambda_vcurve
 #' @examples
 #' data("CA_NS6"); d = CA_NS6
-#' INPUT <- check_input(d$t, d$y, d$w, nptperyear = 23,
+#' nptperyear = 23
+#' INPUT <- check_input(d$t, d$y, d$w, nptperyear = nptperyear,
 #'     maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
-#'
+#' 
 #' r <- v_curve(INPUT, lg_lambdas = seq(0, 3, 0.1), plot = TRUE)
 #' @export
 v_curve = function(

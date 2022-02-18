@@ -26,7 +26,8 @@ Update 20180605 add weights updating to whittaker lambda selecting
 }
 \examples{
 data("CA_NS6"); d = CA_NS6
-INPUT <- check_input(d$t, d$y, d$w, nptperyear = 23,
+nptperyear = 23
+INPUT <- check_input(d$t, d$y, d$w, nptperyear = nptperyear,
     maxgap = nptperyear/4, alpha = 0.02, wmin = 0.2)
 
 r <- v_curve(INPUT, lg_lambdas = seq(0, 3, 0.1), plot = TRUE)
