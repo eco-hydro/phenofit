@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenofit</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.5</span>
       </span>
     </div>
 
@@ -91,17 +91,17 @@
 
     
     
-<div class="section level1">
-<h1 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
-</h1>
+<div class="section level2">
+<h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
+</h2>
 <p>Here, we illustrate how to use <code>phenofit</code> to extract vegetation phenology from MOD13A1 in the sampled points. Regional analysis also can be conducted in the similar way.</p>
 <!-- ## 1.1 Download MOD13A1 data
 Upload point shapefile into GEE, clip MOD13A1 and download vegetation index
 data. [Here](https://code.earthengine.google.com/ee3ec39cf3061374dab435c358d008a3) is the corresponding GEE script. 
  -->
-<div class="section level2">
-<h2 id="initial-weights-for-input-data">1.1 Initial weights for input data<a class="anchor" aria-label="anchor" href="#initial-weights-for-input-data"></a>
-</h2>
+<div class="section level3">
+<h3 id="initial-weights-for-input-data">1.1 Initial weights for input data<a class="anchor" aria-label="anchor" href="#initial-weights-for-input-data"></a>
+</h3>
 <p>Load packages.</p>
 <p>Set global parameters for <code>phenofit</code></p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
@@ -175,9 +175,9 @@ data. [Here](https://code.earthengine.google.com/ee3ec39cf3061374dab435c358d008a
 <code>add_HeadTail</code> is used to deal with such situation, e.g. MOD13A2 begins from 2000-02-08. We need to construct a series with complete year, which begins from 01-01 for NH, and 07-01 for SH. For example, the input data period is 20000218 ~ 20171219. After adding one year in head and tail, it becomes 19990101 ~ 20181219.</li>
 </ul>
 </div>
-<div class="section level2">
-<h2 id="load-site-data">2.1 load site data<a class="anchor" aria-label="anchor" href="#load-site-data"></a>
-</h2>
+<div class="section level3">
+<h3 id="load-site-data">2.1 load site data<a class="anchor" aria-label="anchor" href="#load-site-data"></a>
+</h3>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">sites</span>        <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">site</span><span class="op">)</span>
 <span class="va">sitename</span>     <span class="op">&lt;-</span> <span class="va">sites</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span>
@@ -197,18 +197,18 @@ data. [Here](https://code.earthengine.google.com/ee3ec39cf3061374dab435c358d008a
 <code class="sourceCode R"><span class="va">d</span><span class="op">$</span><span class="va">Tn</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/compound.html" class="external-link">%&lt;&gt;%</a></span> <span class="fu">zoo</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/zoo/man/na.approx.html" class="external-link">na.approx</a></span><span class="op">(</span>maxgap <span class="op">=</span> <span class="fl">4</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">d</span><span class="op">$</span><span class="va">Tn</span>, type <span class="op">=</span> <span class="st">"l"</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fl">5</span>, b <span class="op">=</span> <span class="fl">0</span>, col <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span></code></pre></div>
 </div>
-<div class="section level2">
-<h2 id="check-input-data">2.2 Check input data<a class="anchor" aria-label="anchor" href="#check-input-data"></a>
-</h2>
+<div class="section level3">
+<h3 id="check-input-data">2.2 Check input data<a class="anchor" aria-label="anchor" href="#check-input-data"></a>
+</h3>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">dnew</span>  <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_HeadTail.html">add_HeadTail</a></span><span class="op">(</span><span class="va">d</span>, <span class="va">south</span>, nptperyear <span class="op">=</span> <span class="fl">23</span><span class="op">)</span> <span class="co"># add additional one year in head and tail</span>
 <span class="va">INPUT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/check_input.html">check_input</a></span><span class="op">(</span><span class="va">dnew</span><span class="op">$</span><span class="va">t</span>, <span class="va">dnew</span><span class="op">$</span><span class="va">y</span>, <span class="va">dnew</span><span class="op">$</span><span class="va">w</span>, <span class="va">dnew</span><span class="op">$</span><span class="va">QC_flag</span>,
                      <span class="va">nptperyear</span>, <span class="va">south</span>, 
                      maxgap <span class="op">=</span> <span class="va">nptperyear</span><span class="op">/</span><span class="fl">4</span>, alpha <span class="op">=</span> <span class="fl">0.02</span>, wmin <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span></code></pre></div>
 </div>
-<div class="section level2">
-<h2 id="divide-growing-seasons">2.3 Divide growing seasons<a class="anchor" aria-label="anchor" href="#divide-growing-seasons"></a>
-</h2>
+<div class="section level3">
+<h3 id="divide-growing-seasons">2.3 Divide growing seasons<a class="anchor" aria-label="anchor" href="#divide-growing-seasons"></a>
+</h3>
 <p>Simply treating calendar year as a complete growing season will induce a considerable error for phenology extraction. A simple growing season dividing method was proposed in <code>phenofit</code>.</p>
 <p>The growing season dividing method rely on heavily in Whittaker smoother.</p>
 <p>Procedures of initial weight, growing season dividing, curve fitting, and phenology extraction are conducted separately.</p>
@@ -229,9 +229,9 @@ data. [Here](https://code.earthengine.google.com/ee3ec39cf3061374dab435c358d008a
 <span class="fu"><a href="../reference/plot_season.html">plot_season</a></span><span class="op">(</span><span class="va">INPUT</span>, <span class="va">brks2</span><span class="op">)</span></code></pre></div>
 <p><img src="phenofit_CA-NS6_files/figure-html/divide%20growing%20season-1.png" width="700"></p>
 </div>
-<div class="section level2">
-<h2 id="curve-fitting">2.4 Curve fitting<a class="anchor" aria-label="anchor" href="#curve-fitting"></a>
-</h2>
+<div class="section level3">
+<h3 id="curve-fitting">2.4 Curve fitting<a class="anchor" aria-label="anchor" href="#curve-fitting"></a>
+</h3>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">fit</span>  <span class="op">&lt;-</span> <span class="fu"><a href="../reference/curvefits.html">curvefits</a></span><span class="op">(</span><span class="va">INPUT</span>, <span class="va">brks2</span>,
     options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>
@@ -302,9 +302,9 @@ data. [Here](https://code.earthengine.google.com/ee3ec39cf3061374dab435c358d008a
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># write_fig(g, "Figure1_phenofit_curve_fitting.pdf", 10, 6)</span></code></pre></div>
 </div>
-<div class="section level2">
-<h2 id="extract-phenology">2.5 Extract phenology<a class="anchor" aria-label="anchor" href="#extract-phenology"></a>
-</h2>
+<div class="section level3">
+<h3 id="extract-phenology">2.5 Extract phenology<a class="anchor" aria-label="anchor" href="#extract-phenology"></a>
+</h3>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># pheno: list(p_date, p_doy)</span>
 <span class="va">l_pheno</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_pheno.html">get_pheno</a></span><span class="op">(</span><span class="va">fit</span>, IsPlot <span class="op">=</span> <span class="cn">F</span><span class="op">)</span> <span class="co">#%&gt;% map(~melt_list(., "meth"))</span>
@@ -333,9 +333,9 @@ data. [Here](https://code.earthengine.google.com/ee3ec39cf3061374dab435c358d008a
 <span class="co">## 1:     151     200     254 136 167 240 267     129      175        235      272</span>
 <span class="co">## 2:     173     210     266 162 186 248 281     156      192        241      288</span>
 <span class="co">## 3:     153     202     256 138 169 242 269     131      177        237      274</span>
-<span class="co">## 4:     182     204     248 161 196 222 292     153      204         NA       NA</span>
+<span class="co">## 4:     182     204     248 161 196 222 292     153      204        219      307</span>
 <span class="co">## 5:     153     180     254 127 170 228 282     118      180        197      294</span>
-<span class="co">## 6:     172     228     248 157 189 235 268     150      196        274       NA</span></code></pre>
+<span class="co">## 6:     172     228     248 157 189 235 268     150      196        274      377</span></code></pre>
 </div>
 </div>
   </div>
@@ -357,7 +357,7 @@ data. [Here](https://code.earthengine.google.com/ee3ec39cf3061374dab435c358d008a
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
 </div>
 
       </footer>

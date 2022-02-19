@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenofit</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.5</span>
       </span>
     </div>
 
@@ -76,38 +76,9 @@
 and 'ylu', returned by <code>check_input</code>.</p></dd>
 <dt>brks</dt>
 <dd><p>A list object with the elements of 'fit' and 'dt', returned by
-<code>season</code> or <code>season_mov</code>, which contains the growing season
-dividing information.</p></dd>
+<code>season</code> or <code>season_mov</code>, which contains the growing season division information.</p></dd>
 <dt>options</dt>
-<dd><ul><li><p><code>methods</code> (default <code>c('AG', 'Beck', 'Elmore', 'Zhang')``): Fine curve fitting methods, can be one or more of </code>c('AG', 'Beck', 'Elmore', 'Zhang', 'Gu', 'Klos')`. Note that 'Gu' and 'Klos'
-are very slow.</p></li>
-<li><p><code>wFUN</code> (default <code>wTSM</code>): Character or function, weights updating function
-of fine fitting function.</p></li>
-<li><p><code>iters</code> (default 2): max iterations of fine fitting.</p></li>
-<li><p><code>wmin</code> (default 0.1): min weights in the weights updating procedure.</p></li>
-<li><p><code>use.rough</code> (default FALSE): Whether to use rough fitting smoothed time-series as input?
-If <code>false</code>, smoothed VI by rough fitting will be used for Phenological metrics
-extraction; If <code>true</code>, original input <code>y</code> will be used (rough fitting is used
-to divide growing seasons and update weights.</p></li>
-<li><p><code>use.y0</code> (default TRUE): boolean. whether to use original <code>y0</code> as the input of <code>plot_input</code>,
-note that not for curve fitting. <code>y0</code> is the original value before the process
-of <code>check_input</code>.</p></li>
-<li><p><code>nextend</code> (default 2): Extend curve fitting window, until <code>nextend</code> good or
-marginal element are found in previous and subsequent growing season.</p></li>
-<li><p><code>maxExtendMonth</code> (default 1): Search good or marginal good values in previous and
-subsequent <code>maxExtendMonth</code> period.</p></li>
-<li><p><code>minExtendMonth</code> (default 0.5): Extending perid defined by <code>nextend</code> and <code>maxExtendMonth</code>,
-should be no shorter than <code>minExtendMonth</code>.
-When all points of the input time-series are good value, then the extending
-period will be too short. In that situation, we can't make sure the connection
-between different growing seasons is smoothing.</p></li>
-<li><p><code>minPercValid</code>: (default 0, not use). If the percentage of good
-and marginal quality points is less than <code>minPercValid</code>, curve fiting result
-is set to <code>NA</code>.</p></li>
-<li><p><code>minT</code>: (not used currently). If <code>Tn</code> not provided in <code>INPUT</code>, <code>minT</code> will not be used.
-<code>minT</code> use night temperature Tn to define backgroud value (days with <code>Tn &lt; minT</code>
-treated as ungrowing season).</p></li>
-</ul></dd>
+<dd><p>see section: options for fitting for details.</p></dd>
 <dt>...</dt>
 <dd><p>other parameters to <code><a href="curvefit.html">curvefit()</a></code></p></dd>
 </dl></div>
@@ -115,6 +86,39 @@ treated as ungrowing season).</p></li>
     <h2>Value</h2>
     <p>List of phenofit fitting object.</p>
     </div>
+    <div id="options-for-fitting">
+    <h2>options for fitting</h2>
+    
+
+<ul><li><p><code>methods</code> (default <code>c('AG', 'Beck', 'Elmore', 'Zhang')``): Fine curve fitting methods, can be one or more of </code>c('AG', 'Beck', 'Elmore', 'Zhang',
+'Gu', 'Klos')`. Note that 'Gu' and 'Klos' are very slow.</p></li>
+<li><p><code>iters</code> (default 2): max iterations of fine fitting.</p></li>
+<li><p><code>wFUN</code> (default <code>wTSM</code>): Character or function, weights updating function
+of fine fitting function.</p></li>
+<li><p><code>wmin</code> (default 0.1): min weights in the weights updating procedure.</p></li>
+<li><p><code>use.rough</code> (default FALSE): Whether to use rough fitting smoothed
+time-series as input? If <code>false</code>, smoothed VI by rough fitting will be used
+for Phenological metrics extraction; If <code>true</code>, original input <code>y</code> will be
+used (rough fitting is used to divide growing seasons and update weights.</p></li>
+<li><p><code>use.y0</code> (default TRUE): boolean. whether to use original <code>y0</code> as the input
+of <code>plot_input</code>, note that not for curve fitting. <code>y0</code> is the original
+value before the process of <code>check_input</code>.</p></li>
+<li><p><code>nextend</code> (default 2): Extend curve fitting window, until <code>nextend</code> good or
+marginal element are found in previous and subsequent growing season.</p></li>
+<li><p><code>maxExtendMonth</code> (default 1): Search good or marginal good values in
+previous and subsequent <code>maxExtendMonth</code> period.</p></li>
+<li><p><code>minExtendMonth</code> (default 0.5): Extending perid defined by <code>nextend</code> and
+<code>maxExtendMonth</code>, should be no shorter than <code>minExtendMonth</code>. When all
+points of the input time-series are good value, then the extending period
+will be too short. In that situation, we can't make sure the connection
+between different growing seasons is smoothing.</p></li>
+<li><p><code>minPercValid</code>: (default 0, not use). If the percentage of good and
+marginal quality points is less than <code>minPercValid</code>, curve fiting result is
+set to <code>NA</code>.</p></li>
+<li><p><code>minT</code>: (not use). If <code>Tn</code> not provided in <code>INPUT</code>, <code>minT</code> will
+not be used. <code>minT</code> use night temperature Tn to define backgroud value
+(days with <code>Tn &lt; minT</code> treated as ungrowing season).</p></li>
+</ul></div>
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index"><p><code><a href="FitDL.html">FitDL()</a></code></p></div>
@@ -142,7 +146,7 @@ treated as ungrowing season).</p></li>
 <span class="r-in">    <span class="op">)</span><span class="op">)</span></span>
 <span class="r-in"><span class="co"># plot_season(INPUT, brks2, d)</span></span>
 <span class="r-in"><span class="co"># Fine fitting</span></span>
-<span class="r-in"><span class="va">fFITs</span> <span class="op">&lt;-</span> <span class="fu">curvefits</span><span class="op">(</span></span>
+<span class="r-in"><span class="va">fits</span> <span class="op">&lt;-</span> <span class="fu">curvefits</span><span class="op">(</span></span>
 <span class="r-in">    <span class="va">INPUT</span>, <span class="va">brks2</span>,</span>
 <span class="r-in">    options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span class="r-in">        methods <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AG"</span>, <span class="st">"Beck"</span>, <span class="st">"Elmore"</span>, <span class="st">"Zhang"</span><span class="op">)</span>, <span class="co">#,"klos", "Gu"</span></span>
@@ -151,10 +155,10 @@ treated as ungrowing season).</p></li>
 <span class="r-in">    <span class="op">)</span></span>
 <span class="r-in"><span class="op">)</span></span>
 <span class="r-in"></span>
-<span class="r-in"><span class="va">r_param</span> <span class="op">=</span> <span class="fu"><a href="get_param.html">get_param</a></span><span class="op">(</span><span class="va">fFITs</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">r_pheno</span> <span class="op">=</span> <span class="fu"><a href="get_pheno.html">get_pheno</a></span><span class="op">(</span><span class="va">fFITs</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">r_gof</span> <span class="op">=</span> <span class="fu"><a href="get_GOF.html">get_GOF</a></span><span class="op">(</span><span class="va">fFITs</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">d_fit</span> <span class="op">=</span> <span class="fu"><a href="get_fitting.html">get_fitting</a></span><span class="op">(</span><span class="va">fFITs</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">r_param</span> <span class="op">=</span> <span class="fu"><a href="get_param.html">get_param</a></span><span class="op">(</span><span class="va">fits</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">r_pheno</span> <span class="op">=</span> <span class="fu"><a href="get_pheno.html">get_pheno</a></span><span class="op">(</span><span class="va">fits</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">r_gof</span> <span class="op">=</span> <span class="fu"><a href="get_GOF.html">get_GOF</a></span><span class="op">(</span><span class="va">fits</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">d_fit</span> <span class="op">=</span> <span class="fu"><a href="get_fitting.html">get_fitting</a></span><span class="op">(</span><span class="va">fits</span><span class="op">)</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="va">g</span> <span class="op">&lt;-</span> <span class="fu"><a href="plot_curvefits.html">plot_curvefits</a></span><span class="op">(</span><span class="va">d_fit</span>, <span class="va">brks2</span><span class="op">)</span></span>
 <span class="r-in"><span class="fu">grid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grid/grid.newpage.html" class="external-link">grid.newpage</a></span><span class="op">(</span><span class="op">)</span>; <span class="fu">grid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grid/grid.draw.html" class="external-link">grid.draw</a></span><span class="op">(</span><span class="va">g</span><span class="op">)</span></span>
@@ -173,7 +177,7 @@ treated as ungrowing season).</p></li>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
 </div>
 
       </footer></div>

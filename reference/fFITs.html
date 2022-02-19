@@ -18,7 +18,7 @@ curvature (k) and the change rate of curvature(der.k)"><!-- mathjax --><script s
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenofit</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.5</span>
       </span>
     </div>
 
@@ -69,19 +69,29 @@ curvature (k) and the change rate of curvature(der.k)</p>
 
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># S3 method for fFITs</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">method</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">method</span>, show.pheno <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span><span class="op">)</span>
+
+<span class="co"># S3 method for fFIT</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">data</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>x</dt>
-<dd><p>Fine curve fitting object <code>fFITs()</code> returned by
-<code><a href="curvefit.html">curvefit()</a></code>.</p></dd>
+<dd><p>Fine curve fitting object <code>fFITs()</code> returned by <code><a href="curvefit.html">curvefit()</a></code>.</p></dd>
 <dt>method</dt>
 <dd><p>Which fine curve fitting method to be extracted?</p></dd>
+<dt>show.pheno</dt>
+<dd><p>whether to plot phenological metrics.</p></dd>
 <dt>...</dt>
-<dd><p>ignored.</p></dd>
+<dd><p>other parameters to <code><a href="D.html">curvature()</a></code>.</p></dd>
+<dt>data</dt>
+<dd><p>A data.frame with the columns of <code>c('t', 'y')</code></p></dd>
 </dl></div>
+    <div id="see-also">
+    <h2>See also</h2>
+    <div class="dont-index"><p><code><a href="D.html">curvature()</a></code></p></div>
+    </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
@@ -95,10 +105,10 @@ curvature (k) and the change rate of curvature(der.k)</p>
 <span class="r-in"><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu">fFUN</span><span class="op">(</span><span class="va">par</span>, <span class="va">t</span><span class="op">)</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="va">methods</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AG"</span>, <span class="st">"Beck"</span>, <span class="st">"Elmore"</span>, <span class="st">"Gu"</span>, <span class="st">"Zhang"</span><span class="op">)</span> <span class="co"># "Klos" too slow</span></span>
-<span class="r-in"><span class="va">fFITs</span> <span class="op">&lt;-</span> <span class="fu"><a href="curvefit.html">curvefit</a></span><span class="op">(</span><span class="va">y</span>, <span class="va">t</span>, <span class="va">tout</span>, <span class="va">methods</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="curvefit.html">curvefit</a></span><span class="op">(</span><span class="va">y</span>, <span class="va">t</span>, <span class="va">tout</span>, <span class="va">methods</span><span class="op">)</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># plot</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">fFITs</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span>
 <span class="r-plt img"><img src="fFITs-1.png" alt="" width="700" height="433"></span>
 <span class="r-plt img"><img src="fFITs-2.png" alt="" width="700" height="433"></span>
 <span class="r-plt img"><img src="fFITs-3.png" alt="" width="700" height="433"></span>
@@ -118,7 +128,7 @@ curvature (k) and the change rate of curvature(der.k)</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
 </div>
 
       </footer></div>

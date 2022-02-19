@@ -24,7 +24,7 @@ maxExtendMonth is extended."><!-- mathjax --><script src="https://cdnjs.cloudfla
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenofit</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.5</span>
       </span>
     </div>
 
@@ -121,16 +121,15 @@ For <code>season_mov</code> rough fitting is applied in every year, during which
 <dd><p>A list object with the elements of <code>t</code>, <code>y</code>, <code>w</code>,
 <code>Tn</code> (optional) and <code>ylu</code>, returned by <code><a href="check_input.html">check_input()</a></code>.</p></dd>
 <dt>rFUN</dt>
-<dd><p>Rough curve fitting function, character, can be one of
+<dd><p>character, the name of rough curve fitting function, can be one of
 c("smooth_wSG", "smooth_wWHIT", "smooth_wHANTS"), which are corresponding to
 <code><a href="smooth_wSG.html">smooth_wSG()</a></code>, <code><a href="smooth_wWHIT.html">smooth_wWHIT()</a></code> and <code><a href="smooth_wHANTS.html">smooth_wHANTS()</a></code>.</p></dd>
 <dt>wFUN</dt>
-<dd><p>weights updating function, can be one of <code><a href="wFUN.html">wTSM()</a></code>,
-<code><a href="wFUN.html">wChen()</a></code>, <code><a href="wFUN.html">wBisquare()</a></code> and <code><a href="wFUN.html">wSELF()</a></code>.</p></dd>
+<dd><p>weights updating function, can be one of .</p></dd>
 <dt>iters</dt>
-<dd><p>How many times curve fitting is implemented.</p></dd>
+<dd><p>integer, the number of rough fitting iterations</p></dd>
 <dt>wmin</dt>
-<dd><p>Double, minimum weigth (i.e. weight of snow, ice and cloud).</p></dd>
+<dd><p>double, minimum weigth (i.e. weight of snow, ice and cloud).</p></dd>
 <dt>lambda</dt>
 <dd><p>The smoothing parameter of <code><a href="smooth_wWHIT.html">smooth_wWHIT()</a></code>. For
 <code><a href="season_mov.html">season_mov()</a></code>, if lambda is <code>NULL</code>, <code><a href="init_lambda.html">init_lambda()</a></code>
@@ -143,8 +142,8 @@ considered above the zero frequency.</p></dd>
 <dd><p>The parameter of <code><a href="smooth_wSG.html">smooth_wSG()</a></code>, moving window size. Suggested by
 TIMESAT, default <code>frame = floor(nptperyear/7)*2 + 1</code>.</p></dd>
 <dt>minpeakdistance</dt>
-<dd><p>Numberic, in the unit of points (default as
-<code>nptperyear/12</code>). The minimum distance of two peaks. If the distance of two
+<dd><p>double, in points (default as
+<code>nptperyear/6</code>). The minimum distance of two peaks. If the distance of two
 maximum extreme value less than <code>minpeakdistance</code>, only the real maximum
 value will be left.</p></dd>
 <dt>ypeak_min</dt>
@@ -168,8 +167,8 @@ If TroughsPerYear &gt; MaxTroughsPerYear, then lambda = lambda*2.</p></dd>
 <dd><p>If true, only one static calendar growing season will be
 returned.</p></dd>
 <dt>adj.param</dt>
-<dd><p>Adjust rough curve fitting function parameters automatically,
-if too many or to less peak and trough values.</p></dd>
+<dd><p>,
+.</p></dd>
 <dt>rm.closed</dt>
 <dd><p>boolean. Whether check the two closest peaks (or troughs).</p></dd>
 <dt>is.continuous</dt>
@@ -190,24 +189,24 @@ is for fluxsite site-year data.</p></dd>
     <h2>Value</h2>
     <ul><li><p><code>fit</code>: A data.table of Rough fitting result, with the columns of
 (<code>t</code>, <code>y</code>, <code>witer1</code>, ..., <code>witerN</code>, <code>ziter1</code>, ..., <code>ziterN</code>).</p></li>
-<li><p><code>dt</code>: A data.table of Growing season dividing information, with the columns
+<li><p><code>dt</code>: A data.table of growing season division information, with the columns
 of (<code>beg</code>, <code>peak</code>, <code>end</code>, <code>y_beg</code>, <code>y_peak</code>, <code>y_end</code>, <code>len</code>, <code>year</code>,
 <code>season</code>, <code>flag</code>).</p></li>
 </ul><ul><li><p><code>fit</code>: A data.table of Rough fitting result, with the columns of
 (<code>t</code>, <code>y</code>, <code>witer1</code>, ..., <code>witerN</code>, <code>ziter1</code>, ..., <code>ziterN</code>).</p></li>
-<li><p><code>dt</code>: A data.table of Growing season dividing information, with the columns
+<li><p><code>dt</code>: A data.table of growing season division information, with the columns
 of (<code>beg</code>, <code>peak</code>, <code>end</code>, <code>y_beg</code>, <code>y_peak</code>, <code>y_end</code>, <code>len</code>, <code>year</code>,
 <code>season</code>, <code>flag</code>).</p></li>
 </ul></div>
     <div id="details">
     <h2>Details</h2>
-    <p>Before dividing growing season, <code>INPUT</code> should be added a year in head
+    <p>Before growing season division, <code>INPUT</code> should be added a year in head
 and tail first by <code>add_HeadTail</code>.</p>
 <p>Finally, use <code><a href="findpeaks.html">findpeaks()</a></code> to get local maximum and local minimum values.
 Two local minimum define a growing season.
 If two local minimum(maximum) are too closed, then only the smaller(biger)
 is left.</p>
-<p>Before dividing growing season, <code>INPUT</code> should be added a year in head
+<p>Before division growing season, <code>INPUT</code> should be added a year in head
 and tail first by <code>add_HeadTail</code>.</p>
 <p>Finally, use <code><a href="findpeaks.html">findpeaks()</a></code> to get local maximum and local minimum values.
 Two local minimum define a growing season.
@@ -435,7 +434,7 @@ is for fluxsite site-year data.</p></li>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
 </div>
 
       </footer></div>

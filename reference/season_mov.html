@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenofit</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.5</span>
       </span>
     </div>
 
@@ -75,25 +75,101 @@
 <dd><p>A list object with the elements of <code>t</code>, <code>y</code>, <code>w</code>,
 <code>Tn</code> (optional) and <code>ylu</code>, returned by <code><a href="check_input.html">check_input()</a></code>.</p></dd>
 <dt>options</dt>
-<dd><p>see details</p></dd>
+<dd><p>see the following section <code>options for season</code> for details.</p></dd>
 <dt>...</dt>
 <dd><p>others parameter to <code><a href="set_options.html">set_options()</a></code></p></dd>
 <dt>years.run</dt>
 <dd><p>Numeric vector. Which years to run? If not specified, it is
 all years.</p></dd>
 </dl></div>
-    <div id="options">
-    <h2>options</h2>
+    <div id="options-for-season">
+    <h2>options for season</h2>
     
 
-<ul><li><p><code>len_min</code>, <code>len_max</code>: minimum and maximum length (in the unit of days)
-of growing season</p></li>
-<li><p><code>.lambda_vcurve</code>: Boolean. If the Whittaker's parameter lambda not provided,
-whether to optimize lambda by V-curve theory? This parameter only works when
-<code>lambda</code> not provided.</p></li>
-<li><p><code>maxExtendMonth</code>: Previous and subsequent <code>maxExtendMonth</code> data were added
-for every year curve fitting.</p></li>
+<div class="section">
+<h3 id="-a-parameters-for-rough-fitting">(a) Parameters for rough fitting<a class="anchor" aria-label="anchor" href="#-a-parameters-for-rough-fitting"></a></h3>
+
+<ul><li><p><code>rFUN</code>              : character (default <code>smooth_wWHIT</code>), the name of rough
+curve fitting function, can be one of <code>c("smooth_wSG", "smooth_wWHIT", "smooth_wHANTS")</code>, which are corresponding to <code><a href="smooth_wSG.html">smooth_wSG()</a></code>,
+<code><a href="smooth_wWHIT.html">smooth_wWHIT()</a></code> and <code><a href="smooth_wHANTS.html">smooth_wHANTS()</a></code>.</p></li>
+<li><p><code>wFUN</code>              : character (default <code>wTSM</code>), the name of weights
+updating functions, can be one of c("wTSM", "wChen", "wBisquare",
+"wSELF"). See <code><a href="wFUN.html">wTSM()</a></code>, <code><a href="wFUN.html">wChen()</a></code>, <code><a href="wFUN.html">wBisquare()</a></code> and <code><a href="wFUN.html">wSELF()</a></code> for
+details.</p></li>
+<li><p><code>iters</code>             : integer (default 2), the number of rough fitting
+iterations.</p></li>
+<li><p><code>wmin</code>              : double, the minimum weigth of bads points (i.e. snow,
+ice and cloud).</p></li>
+<li><p><code>verbose</code>           : logical (default <code>FALSE</code>). If <code>TRUE</code>,
+<code>options$season</code> will be printed on the console.</p></li>
+<li><p><code>lambda</code>            : double (default NULL), the smoothing parameter of
+<code><a href="smooth_wWHIT.html">smooth_wWHIT()</a></code>.</p><ul><li><p>If <code>lambda = NULL</code>, V-curve theory will be employed to find the
+optimal <code>lambda</code>. See <code><a href="lambda_vcurve.html">lambda_vcurve()</a></code> for details.</p></li>
+</ul></li>
+<li><p><code>frame</code>             : integer (default NULL), the parameter of
+<code><a href="smooth_wSG.html">smooth_wSG()</a></code>, moving window size.</p><ul><li><p>If <code>frame = NULL</code>, <code>frame</code> will be reset as <code>floor(nptperyear/7)*2 +    1</code> (refered by TIMESAT).</p></li>
+</ul></li>
+<li><p><code>nf</code>                : integer (default 4), the number of frequencies in
+<code><a href="smooth_wHANTS.html">smooth_wHANTS()</a></code>.</p></li>
+<li><p><code>maxExtendMonth</code>: integer (default 12), previous and subsequent
+<code>maxExtendMonth</code> (in month) data were added to the current year for rough
+fitting.</p></li>
+<li><p><code>nextend</code>           : integer (default NULL), same as <code>maxExtendMonth</code>, but
+in points.</p><ul><li><p>If <code>nextend</code> provided, <code>maxExtendMonth</code> will be ignored.</p></li>
+<li><p>If <code>nextend = NULL</code>, <code>nextend</code> will be reset as
+<code>ceiling(maxExtendMonth/12*nptperyear)</code></p></li>
+</ul></li>
 </ul></div>
+
+<div class="section">
+<h3 id="-b-parameters-for-growing-season-division">(b) Parameters for growing season division<a class="anchor" aria-label="anchor" href="#-b-parameters-for-growing-season-division"></a></h3>
+
+<ul><li><p><code>minpeakdistance</code>   : double (default NULL), the minimum distance of two
+peaks (in points). If the distance of two maximum extreme value less than
+<code>minpeakdistance</code>, only the maximum one will be kept.</p><ul><li><p>If <code>minpeakdistance = NULL</code>, it will be reset as <code>nptperyear/6</code>.</p></li>
+</ul></li>
+<li><p><code>r_max</code>             : double (default 0.2; in (0, 1)). <code>r_max</code> and <code>r_min</code>
+are used to eliminate fake peaks and troughs.</p><ul><li><p>The real peaks should satisfy:</p><ol><li><p>\(max(h_{peak, L}, h_{peak, R}) &gt; r_{max} A\)</p></li>
+<li><p>\(min(h_{peak, L}, h_{peak, R}) &gt; r_{min} A,\) where \(h_{peak,
+     L}, h_{peak, R}\) are height difference from the peak to the left- and
+right-hand troughs.</p></li>
+</ol></li>
+<li><p>The troughs should satisfy:</p><ol><li><p>\(max(h_{trough, L}, h_{trough, R}) &gt; r_{max} A,\) where
+\(h_{trough, L}, h_{trough, R}\) are height difference from the trough
+to the left- and right-hand peaks.</p></li>
+</ol></li>
+</ul></li>
+<li><p><code>r_min</code>             : double (default 0.05; in (0, 1)), see above <code>r_max</code>
+for details. <code>r_min</code> &lt; <code>r_max</code>.</p></li>
+<li><p><code>rtrough_max</code>       : double (default 0.6, in (0, 1)), \(y_{peak} &lt;=
+  rtrough_max * A + ylu[1]\).</p></li>
+<li><p><code>ypeak_min</code>         : double 0.1 (in VI unit), \(y_{peak} &gt;= ypeak_min\).</p></li>
+<li><p><code>.check_season</code>     : logical (default <code>TRUE</code>). check the growing season
+length according to <code>len_min</code> and <code>len_max</code>. If <code>FALSE</code>, <code>len_min</code> and
+<code>len_max</code> will lose their effect.</p></li>
+<li><p><code>len_min</code>           : integer (default 45), the minimum length (in days) of
+growing season</p></li>
+<li><p><code>len_max</code>           : integer (default 650), the minimum length (in days)
+of growing season</p></li>
+<li><p><code>adj.param</code>         : logical. If <code>TRUE</code> (default), if there are too many
+or too less peaks and troughs, <code>phenofit</code> will automatically adjust rough
+curve fitting function parameters. See <code>MaxPeaksPerYear</code> and
+<code>MaxTroughsPerYear</code> for details.</p></li>
+<li><p><code>MaxPeaksPerYear</code> (optional)   : integer (default 2), the max number of
+peaks per year. If <code>PeaksPerYear</code> &gt; <code>MaxPeaksPerYear</code>, then <code>lambda = lambda*2</code>.</p></li>
+<li><p><code>MaxTroughsPerYear</code> (optional) : integer (default 3), the max number of
+troughs per year. If <code>TroughsPerYear</code> &gt; <code>MaxTroughsPerYear</code>, then <code>lambda = lambda*2</code>.</p></li>
+<li><p><code>calendarYear</code>      : logical (default <code>FALSE</code>). If <code>TRUE</code>, the start and
+end of a calender year will be regarded as growing season division (North
+Hemisphere is from 01 Jan to 31 Dec; South Hemisphere is from 01 Jul to 30
+Jun).</p></li>
+<li><p><code>rm.closed</code>         : logical (default <code>TRUE</code>). If <code>TRUE</code>, closed peaks (or troughs)
+will be further tidied. Only the maximum</p></li>
+<li><p><code>is.continuous</code> (not used): logical (default <code>TRUE</code>). This parameter is for
+<code>fluxnet2015</code> fluxsite data, where the input might be not continuous.</p></li>
+</ul></div>
+
+    </div>
     <div id="references">
     <h2>References</h2>
     
@@ -106,6 +182,10 @@ https://doi.org/10.1029/2020JG005636</p></li>
 reconstructing global MODIS EVI time series on the Google Earth Engine.
 ISPRS Journal of Photogrammetry and Remote Sensing, 155, 13-24.</p></li>
 </ol></div>
+    <div id="see-also">
+    <h2>See also</h2>
+    <div class="dont-index"><p><code><a href="season.html">season()</a></code></p></div>
+    </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
@@ -118,40 +198,11 @@ ISPRS Journal of Photogrammetry and Remote Sensing, 155, 13-24.</p></li>
 <span class="r-in">    nptperyear <span class="op">=</span> <span class="va">nptperyear</span>, south <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span class="r-in">    maxgap <span class="op">=</span> <span class="va">nptperyear</span> <span class="op">/</span> <span class="fl">4</span>, alpha <span class="op">=</span> <span class="fl">0.02</span>, wmin <span class="op">=</span> <span class="fl">0.2</span></span>
 <span class="r-in"><span class="op">)</span></span>
-<span class="r-in"><span class="co"># plot_input(INPUT)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">wFUN</span> <span class="op">&lt;-</span> <span class="st">"wTSM"</span></span>
-<span class="r-in"><span class="co"># all year as a whole</span></span>
-<span class="r-in"><span class="va">options</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>rFUN <span class="op">=</span> <span class="st">"smooth_wWHIT"</span>, wFUN <span class="op">=</span> <span class="va">wFUN</span>, lambda <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">brks</span> <span class="op">&lt;-</span> <span class="fu"><a href="season.html">season</a></span><span class="op">(</span><span class="va">INPUT</span>, lambda <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="plot_season.html">plot_season</a></span><span class="op">(</span><span class="va">INPUT</span>, <span class="va">brks</span>, <span class="va">d</span><span class="op">)</span></span>
-<span class="r-plt img"><img src="season_mov-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">brks2</span> <span class="op">=</span> <span class="fu"><a href="season_input.html">season_input</a></span><span class="op">(</span><span class="va">INPUT</span>, <span class="va">options</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iloop = 1: lambda = 10.0, ntrough_PerYear = 0.00, npeak_PerYear = 0.00</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iloop = 2: lambda = 5.0, ntrough_PerYear = 0.00, npeak_PerYear = 0.00</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iloop = 3: lambda = 2.5, ntrough_PerYear = 0.00, npeak_PerYear = 0.00</span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/all.equal.html" class="external-link">all.equal</a></span><span class="op">(</span><span class="va">brks2</span>, <span class="va">brks</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">d_fit</span>, <span class="va">info_peak</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/pkg/zeallot/man/operator.html" class="external-link">%&lt;-%</a></span> <span class="fu"><a href="season.html">roughFit</a></span><span class="op">(</span><span class="va">INPUT</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iloop = 1: lambda = 10.0, ntrough_PerYear = 0.00, npeak_PerYear = 0.00</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iloop = 2: lambda = 5.0, ntrough_PerYear = 0.00, npeak_PerYear = 0.00</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> iloop = 3: lambda = 2.5, ntrough_PerYear = 0.00, npeak_PerYear = 0.00</span>
-<span class="r-in"><span class="va">d_season</span> <span class="op">=</span> <span class="fu"><a href="find_season.peaks.html">find_season.peaks</a></span><span class="op">(</span><span class="va">d_fit</span>, <span class="va">info_peak</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">t</span>, <span class="va">ypred</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/pkg/zeallot/man/operator.html" class="external-link">%&lt;-%</a></span> <span class="va">d_fit</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">t</span>, <span class="va">ziter2</span><span class="op">)</span><span class="op">]</span></span>
-<span class="r-in"><span class="va">d_season</span> <span class="op">=</span> <span class="fu"><a href="find_season.peaks.html">find_season.default</a></span><span class="op">(</span><span class="va">ypred</span>, <span class="va">t</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/all.equal.html" class="external-link">all.equal</a></span><span class="op">(</span><span class="va">brks</span><span class="op">$</span><span class="va">dt</span>, <span class="va">d_season</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># opt &lt;- .options$season</span></span>
-<span class="r-in"><span class="co"># brks$fit - d_fit # function passed test</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># curve fitting by year</span></span>
 <span class="r-in"><span class="va">brks_mov</span> <span class="op">&lt;-</span> <span class="fu">season_mov</span><span class="op">(</span><span class="va">INPUT</span>,</span>
 <span class="r-in">    options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span class="r-in">        rFUN <span class="op">=</span> <span class="st">"smooth_wWHIT"</span>, wFUN <span class="op">=</span> <span class="va">wFUN</span>,</span>
+<span class="r-in">        rFUN <span class="op">=</span> <span class="st">"smooth_wWHIT"</span>, wFUN <span class="op">=</span> <span class="st">"wTSM"</span>,</span>
 <span class="r-in">        lambda <span class="op">=</span> <span class="fl">10</span>,</span>
 <span class="r-in">        r_min <span class="op">=</span> <span class="fl">0.05</span>, ypeak_min <span class="op">=</span> <span class="fl">0.05</span>,</span>
 <span class="r-in">        verbose <span class="op">=</span> <span class="cn">TRUE</span></span>
@@ -186,9 +237,10 @@ ISPRS Journal of Photogrammetry and Remote Sensing, 155, 13-24.</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span> iloop = 2: lambda = 5.0, ntrough_PerYear = 0.00, npeak_PerYear = 0.00</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> iloop = 3: lambda = 2.5, ntrough_PerYear = 0.00, npeak_PerYear = 0.00</span>
 <span class="r-in"><span class="fu"><a href="plot_season.html">plot_season</a></span><span class="op">(</span><span class="va">INPUT</span>, <span class="va">brks_mov</span><span class="op">)</span></span>
-<span class="r-plt img"><img src="season_mov-2.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="season_mov-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="va">rfit</span> <span class="op">&lt;-</span> <span class="fu"><a href="brks2rfit.html">brks2rfit</a></span><span class="op">(</span><span class="va">brks_mov</span><span class="op">)</span></span>
+<span class="r-in"><span class="co"># Phenological Metrics from rough fitting</span></span>
 <span class="r-in"><span class="va">r</span> <span class="op">&lt;-</span> <span class="fu"><a href="get_pheno.html">get_pheno</a></span><span class="op">(</span><span class="va">rfit</span><span class="op">)</span></span>
 </code></pre></div>
     </div>
@@ -204,7 +256,7 @@ ISPRS Journal of Photogrammetry and Remote Sensing, 155, 13-24.</p></li>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
 </div>
 
       </footer></div>

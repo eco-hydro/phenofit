@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenofit</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.5</span>
       </span>
     </div>
 
@@ -76,7 +76,7 @@
   <span class="va">x</span>,
   <span class="va">method</span>,
   TRS <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.2</span>, <span class="fl">0.5</span>, <span class="fl">0.6</span><span class="op">)</span>,
-  analytical <span class="op">=</span> <span class="cn">TRUE</span>,
+  analytical <span class="op">=</span> <span class="cn">FALSE</span>,
   smoothed.spline <span class="op">=</span> <span class="cn">FALSE</span>,
   IsPlot <span class="op">=</span> <span class="cn">FALSE</span>,
   show.title <span class="op">=</span> <span class="cn">TRUE</span>,
@@ -88,7 +88,7 @@
   <span class="va">x</span>,
   <span class="va">method</span>,
   TRS <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.2</span>, <span class="fl">0.5</span><span class="op">)</span>,
-  analytical <span class="op">=</span> <span class="cn">TRUE</span>,
+  analytical <span class="op">=</span> <span class="cn">FALSE</span>,
   smoothed.spline <span class="op">=</span> <span class="cn">FALSE</span>,
   IsPlot <span class="op">=</span> <span class="cn">FALSE</span>,
   title.left <span class="op">=</span> <span class="st">""</span>,
@@ -140,15 +140,14 @@ in top title?</p></dd>
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/eco-hydro/phenofit" class="external-link">phenofit</a></span><span class="op">)</span></span>
 <span class="r-in"><span class="co"># simulate vegetation time-series</span></span>
-<span class="r-in"><span class="va">fFUN</span> <span class="op">=</span> <span class="va">doubleLog.Beck</span></span>
+<span class="r-in"><span class="va">FUN</span> <span class="op">=</span> <span class="va">doubleLog.Beck</span></span>
 <span class="r-in"><span class="va">par</span>  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span> mn  <span class="op">=</span> <span class="fl">0.1</span>, mx  <span class="op">=</span> <span class="fl">0.7</span>, sos <span class="op">=</span> <span class="fl">50</span>, rsp <span class="op">=</span> <span class="fl">0.1</span>, eos <span class="op">=</span> <span class="fl">250</span>, rau <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span>
 <span class="r-in"><span class="va">t</span>    <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">365</span>, <span class="fl">8</span><span class="op">)</span></span>
 <span class="r-in"><span class="va">tout</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">365</span>, <span class="fl">1</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu">fFUN</span><span class="op">(</span><span class="va">par</span>, <span class="va">t</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu">FUN</span><span class="op">(</span><span class="va">par</span>, <span class="va">t</span><span class="op">)</span></span>
 <span class="r-in"><span class="va">methods</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AG"</span>, <span class="st">"Beck"</span>, <span class="st">"Elmore"</span>, <span class="st">"Gu"</span>, <span class="st">"Zhang"</span><span class="op">)</span> <span class="co"># "Klos" too slow</span></span>
-<span class="r-in"><span class="va">fFITs</span> <span class="op">&lt;-</span> <span class="fu"><a href="curvefit.html">curvefit</a></span><span class="op">(</span><span class="va">y</span>, <span class="va">t</span>, <span class="va">tout</span>, <span class="va">methods</span><span class="op">)</span></span>
-<span class="r-in"><span class="co"># multiple years</span></span>
-<span class="r-in"><span class="va">fits</span>  <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>`2001` <span class="op">=</span> <span class="va">fFITs</span>, `2002` <span class="op">=</span> <span class="va">fFITs</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="curvefit.html">curvefit</a></span><span class="op">(</span><span class="va">y</span>, <span class="va">t</span>, <span class="va">tout</span>, <span class="va">methods</span><span class="op">)</span> <span class="co"># `fFITs` (fine-fitting) object </span></span>
+<span class="r-in"><span class="va">fits</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>`2001` <span class="op">=</span> <span class="va">fit</span>, `2002` <span class="op">=</span> <span class="va">fit</span><span class="op">)</span> <span class="co"># multiple years</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="va">l_param</span>   <span class="op">&lt;-</span> <span class="fu"><a href="get_param.html">get_param</a></span><span class="op">(</span><span class="va">fits</span><span class="op">)</span></span>
 <span class="r-in"><span class="va">d_GOF</span>     <span class="op">&lt;-</span> <span class="fu"><a href="get_GOF.html">get_GOF</a></span><span class="op">(</span><span class="va">fits</span><span class="op">)</span></span>
@@ -169,7 +168,7 @@ in top title?</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
 </div>
 
       </footer></div>

@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenofit</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.5</span>
       </span>
     </div>
 
@@ -69,10 +69,10 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">lambda_vcurve</span><span class="op">(</span>
   <span class="va">y</span>,
   <span class="va">w</span>,
-  d <span class="op">=</span> <span class="fl">2</span>,
-  lg_lambda_min <span class="op">=</span> <span class="fl">0.1</span>,
-  lg_lambda_max <span class="op">=</span> <span class="fl">5</span>,
-  IsPlot <span class="op">=</span> <span class="cn">FALSE</span>
+  lg_lambdas <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">5</span>, <span class="fl">0.1</span><span class="op">)</span>,
+  plot <span class="op">=</span> <span class="cn">FALSE</span>,
+  verbose <span class="op">=</span> <span class="cn">FALSE</span>,
+  <span class="va">...</span>
 <span class="op">)</span>
 
 <span class="fu">lambda_vcurve_jl</span><span class="op">(</span><span class="va">y</span>, <span class="va">w</span>, lg_lambda_min <span class="op">=</span> <span class="fl">0.1</span>, lg_lambda_max <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>
@@ -80,6 +80,22 @@
 <span class="fu">lambda_cv_jl</span><span class="op">(</span><span class="va">y</span>, <span class="va">w</span>, d <span class="op">=</span> <span class="fl">2</span>, lg_lambda_min <span class="op">=</span> <span class="fl">0.1</span>, lg_lambda_max <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></code></pre></div>
     </div>
 
+    <div id="arguments">
+    <h2>Arguments</h2>
+    <dl><dt>y</dt>
+<dd><p>Numeric vector, vegetation index time-series</p></dd>
+<dt>w</dt>
+<dd><p>(optional) Numeric vector, weights of <code>y</code>. If not specified,
+weights of all <code>NA</code> values will be <code>wmin</code>, the others will be 1.0.</p></dd>
+<dt>lg_lambdas</dt>
+<dd><p>numeric vector, log10(lambda) candidates. The optimal <code>lambda</code>
+will be optimized from <code>lg_lambda</code>.</p></dd>
+<dt>plot</dt>
+<dd><p>logical. If <code>TRUE</code>, the optimized <code>lambda</code> will be printed on the
+console.</p></dd>
+<dt>...</dt>
+<dd><p>ignored.</p></dd>
+</dl></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -93,7 +109,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
 </div>
 
       </footer></div>

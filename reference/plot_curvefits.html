@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenofit</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.5</span>
       </span>
     </div>
 
@@ -90,7 +90,7 @@
     <dl><dt>d_fit</dt>
 <dd><p>data.frame of curve fittings returned by <code><a href="get_fitting.html">get_fitting()</a></code>.</p></dd>
 <dt>seasons</dt>
-<dd><p>Growing season dividing object returned by <code><a href="season.html">season()</a></code>
+<dd><p>growing season division object returned by <code><a href="season.html">season()</a></code>
 and <code><a href="season_mov.html">season_mov()</a></code>.</p></dd>
 <dt>d_obs</dt>
 <dd><p>data.frame of original vegetation time series, with the columns
@@ -141,7 +141,7 @@ of <code>t</code>, <code>y</code> and <code>QC_flag</code>. If not specified, it
 <span class="r-in">    <span class="op">)</span><span class="op">)</span></span>
 <span class="r-in"><span class="co"># plot_season(INPUT, brks2, d)</span></span>
 <span class="r-in"><span class="co"># Fine fitting</span></span>
-<span class="r-in"><span class="va">fFITs</span> <span class="op">&lt;-</span> <span class="fu"><a href="curvefits.html">curvefits</a></span><span class="op">(</span></span>
+<span class="r-in"><span class="va">fits</span> <span class="op">&lt;-</span> <span class="fu"><a href="curvefits.html">curvefits</a></span><span class="op">(</span></span>
 <span class="r-in">    <span class="va">INPUT</span>, <span class="va">brks2</span>,</span>
 <span class="r-in">    options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span class="r-in">        methods <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AG"</span>, <span class="st">"Beck"</span>, <span class="st">"Elmore"</span>, <span class="st">"Zhang"</span><span class="op">)</span>, <span class="co">#,"klos", "Gu"</span></span>
@@ -150,10 +150,10 @@ of <code>t</code>, <code>y</code> and <code>QC_flag</code>. If not specified, it
 <span class="r-in">    <span class="op">)</span></span>
 <span class="r-in"><span class="op">)</span></span>
 <span class="r-in"></span>
-<span class="r-in"><span class="va">r_param</span> <span class="op">=</span> <span class="fu"><a href="get_param.html">get_param</a></span><span class="op">(</span><span class="va">fFITs</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">r_pheno</span> <span class="op">=</span> <span class="fu"><a href="get_pheno.html">get_pheno</a></span><span class="op">(</span><span class="va">fFITs</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">r_gof</span> <span class="op">=</span> <span class="fu"><a href="get_GOF.html">get_GOF</a></span><span class="op">(</span><span class="va">fFITs</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">d_fit</span> <span class="op">=</span> <span class="fu"><a href="get_fitting.html">get_fitting</a></span><span class="op">(</span><span class="va">fFITs</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">r_param</span> <span class="op">=</span> <span class="fu"><a href="get_param.html">get_param</a></span><span class="op">(</span><span class="va">fits</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">r_pheno</span> <span class="op">=</span> <span class="fu"><a href="get_pheno.html">get_pheno</a></span><span class="op">(</span><span class="va">fits</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">r_gof</span> <span class="op">=</span> <span class="fu"><a href="get_GOF.html">get_GOF</a></span><span class="op">(</span><span class="va">fits</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">d_fit</span> <span class="op">=</span> <span class="fu"><a href="get_fitting.html">get_fitting</a></span><span class="op">(</span><span class="va">fits</span><span class="op">)</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="va">g</span> <span class="op">&lt;-</span> <span class="fu">plot_curvefits</span><span class="op">(</span><span class="va">d_fit</span>, <span class="va">brks2</span><span class="op">)</span></span>
 <span class="r-in"><span class="fu">grid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grid/grid.newpage.html" class="external-link">grid.newpage</a></span><span class="op">(</span><span class="op">)</span>; <span class="fu">grid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grid/grid.draw.html" class="external-link">grid.draw</a></span><span class="op">(</span><span class="va">g</span><span class="op">)</span></span>
@@ -172,7 +172,7 @@ of <code>t</code>, <code>y</code> and <code>QC_flag</code>. If not specified, it
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
 </div>
 
       </footer></div>

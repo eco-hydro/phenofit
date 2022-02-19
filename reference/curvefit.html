@@ -18,7 +18,7 @@ fine curve fitting methods."><!-- mathjax --><script src="https://cdnjs.cloudfla
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenofit</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.5</span>
       </span>
     </div>
 
@@ -75,6 +75,7 @@ fine curve fitting methods.</p>
   methods <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AG"</span>, <span class="st">"Beck"</span>, <span class="st">"Elmore"</span>, <span class="st">"Gu"</span>, <span class="st">"Klos"</span>, <span class="st">"Zhang"</span><span class="op">)</span>,
   w <span class="op">=</span> <span class="cn">NULL</span>,
   <span class="va">...</span>,
+  type <span class="op">=</span> <span class="fl">1L</span>,
   use.cpp <span class="op">=</span> <span class="cn">FALSE</span>
 <span class="op">)</span>
 
@@ -103,6 +104,10 @@ fine curve fitting methods.</p>
 weights of all <code>NA</code> values will be <code>wmin</code>, the others will be 1.0.</p></dd>
 <dt>...</dt>
 <dd><p>other parameters passed to curve fitting function.</p></dd>
+<dt>type</dt>
+<dd><p>integer, <code>1</code> or <code>-1</code></p><ul><li><p><code>1</code>: trough-to-trough curve fitting</p></li>
+<li><p><code>-1</code>: peak-to-peak curve fitting</p></li>
+</ul></dd>
 <dt>use.cpp</dt>
 <dd><p>(unstable, not used) boolean, whether to use c++ defined fine
 fitting function? If <code>FALSE</code>, R version will be used.</p></dd>
@@ -124,20 +129,14 @@ fitting function? If <code>FALSE</code>, R version will be used.</p></dd>
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/eco-hydro/phenofit" class="external-link">phenofit</a></span><span class="op">)</span></span>
 <span class="r-in"><span class="co"># simulate vegetation time-series</span></span>
-<span class="r-in"><span class="va">fFUN</span> <span class="op">=</span> <span class="va">doubleLog.Beck</span></span>
-<span class="r-in"><span class="va">par</span>  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
-<span class="r-in">    mn  <span class="op">=</span> <span class="fl">0.1</span>,</span>
-<span class="r-in">    mx  <span class="op">=</span> <span class="fl">0.7</span>,</span>
-<span class="r-in">    sos <span class="op">=</span> <span class="fl">50</span>,</span>
-<span class="r-in">    rsp <span class="op">=</span> <span class="fl">0.1</span>,</span>
-<span class="r-in">    eos <span class="op">=</span> <span class="fl">250</span>,</span>
-<span class="r-in">    rau <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">FUN</span> <span class="op">=</span> <span class="va">doubleLog.Beck</span></span>
+<span class="r-in"><span class="va">par</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>mn  <span class="op">=</span> <span class="fl">0.1</span>, mx  <span class="op">=</span> <span class="fl">0.7</span>, sos <span class="op">=</span> <span class="fl">50</span>, rsp <span class="op">=</span> <span class="fl">0.1</span>, eos <span class="op">=</span> <span class="fl">250</span>, rau <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span>
 <span class="r-in"><span class="va">t</span>    <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">365</span>, <span class="fl">8</span><span class="op">)</span></span>
 <span class="r-in"><span class="va">tout</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">365</span>, <span class="fl">1</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu">fFUN</span><span class="op">(</span><span class="va">par</span>, <span class="va">t</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu">FUN</span><span class="op">(</span><span class="va">par</span>, <span class="va">t</span><span class="op">)</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="va">methods</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AG"</span>, <span class="st">"Beck"</span>, <span class="st">"Elmore"</span>, <span class="st">"Gu"</span>, <span class="st">"Zhang"</span><span class="op">)</span> <span class="co"># "Klos" too slow</span></span>
-<span class="r-in"><span class="va">fFITs</span> <span class="op">&lt;-</span> <span class="fu">curvefit</span><span class="op">(</span><span class="va">y</span>, <span class="va">t</span>, tout <span class="op">=</span> <span class="va">tout</span>, <span class="va">methods</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu">curvefit</span><span class="op">(</span><span class="va">y</span>, <span class="va">t</span>, tout <span class="op">=</span> <span class="va">tout</span>, <span class="va">methods</span><span class="op">)</span></span>
 </code></pre></div>
     </div>
   </div>
@@ -152,7 +151,7 @@ fitting function? If <code>FALSE</code>, R version will be used.</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
 </div>
 
       </footer></div>
