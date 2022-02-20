@@ -109,18 +109,18 @@
 <ul>
 <li>
 <code>phenofit</code> combine merits of TIMESAT and phenopix</li>
-<li>A simple and stable growing season dividing methods was proposed</li>
-<li>Provide a practical snow elimination method, based on Whittaker</li>
+<li>A simple and stable growing season dividing method was proposed</li>
+<li>Provide a practical snow elimination method based on Whittaker</li>
 <li>7 curve fitting methods and 4 phenology extraction methods</li>
-<li>We add parameters boundary for every curve fitting methods according to their ecological meaning.</li>
+<li>We add parameters boundary for every curve fitting method according to their ecological meaning.</li>
 <li>
-<code>optimx</code> is used to select best optimization method for different curve fitting methods.</li>
+<code>optimx</code> is used to select the best optimization method for different curve fitting methods.</li>
 </ul>
 <p><strong><em>Task lists</em></strong></p>
 <ul>
 <li>
 <input type="checkbox" disabled checked>
-Test the performance of <code>phenofit</code> in multiple growing season regions (e.g. the North China Plain);</li>
+Test the performance of <code>phenofit</code> in multiple growing seasons regions (e.g., the North China Plain);</li>
 <li>
 <input type="checkbox" disabled>
 Uncertainty analysis of curve fitting and phenological metrics;</li>
@@ -143,7 +143,7 @@ Support annual season in curve fitting;</li>
 flexible fine fitting input ( original time-series or smoothed time-series by rough fitting).</li>
 <li>
 <input type="checkbox" disabled checked>
-Asymmetric of Threshold method</li>
+Asymmetric Threshold method</li>
 </ul>
 <!-- ![title](man/Figure/Figure1_phenofit_flowchart.svg)
 
@@ -164,10 +164,10 @@ Asymmetric of Threshold method</li>
 <ul>
 <li><p>Users can decrease those three parameters <code>nextend</code>, <code>minExtendMonth</code> and <code>maxExtendMonth</code> to a relative low value, by setting option <code>set_options(fitting = list(nextend = 1, minExtendMonth = 0, maxExtendMonth = 0.5))</code>.</p></li>
 <li>
-<p>Use <code>wHANTS</code> as the rough fitting function. Due to nature of fourier functions, <code>wHANTS</code> is more stable for multiple growing seasons, but it is less flexible than <code>wWHIT.</code> <code>wHANTS</code> is suitable for regions with the static growing season pattern accoss multiple years, <code>wWHIT</code> is more suitable for regions with the dynamic growing season pattern. Dynamic growing season pattern is the most challenging task, which also means that large uncertainty might be exists.</p>
-<p>When using <code>wHANTS</code> as the rough fitting function, <code>r_min</code> is suggested setting as zero.</p>
+<p>Use <code>wHANTS</code> as the rough fitting function. Due to the nature of Fourier functions, <code>wHANTS</code> is more stable for multiple growing seasons, but it is less flexible than <code>wWHIT.</code> <code>wHANTS</code> is suitable for regions with the static growing season pattern across multiple years, <code>wWHIT</code> is more suitable for regions with the dynamic growing season pattern. Dynamic growing season pattern is the most challenging task, which also means that a large uncertainty might exist.</p>
+<p>When using <code>wHANTS</code> as the rough fitting function, <code>r_min</code> is suggested to be set as zero.</p>
 </li>
-<li><p>Use only one iteration in fine fitting procedure.</p></li>
+<li><p>Use only one iteration in the fine fitting procedure.</p></li>
 </ul>
 </div>
 <div class="section level1">

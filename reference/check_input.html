@@ -168,16 +168,9 @@ points is only 10\<!-- %, we still can't set \code{w_critical=wmin}. --></p>
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"CA_NS6"</span><span class="op">)</span></span>
 <span class="r-in"><span class="va">d</span> <span class="op">=</span> <span class="va">CA_NS6</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">d</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      site      y       date          t   w QC_flag</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1: CA-NS6 0.1531 2010-01-01 2010-01-08 0.2    snow</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2: CA-NS6 0.1196 2010-01-17 2010-01-25 0.2    snow</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3: CA-NS6 0.1637 2010-02-02 2010-02-13 0.2    snow</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4: CA-NS6 0.1301 2010-02-18 2010-02-25 0.2    snow</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5: CA-NS6 0.1076 2010-03-06 2010-03-21 0.2    snow</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6: CA-NS6 0.0990 2010-03-22 2010-03-23 0.2    snow</span>
+<span class="r-in"><span class="co"># head(d)</span></span>
 <span class="r-in"></span>
-<span class="r-in"><span class="va">nptperyear</span> <span class="op">&lt;-</span> <span class="fl">23</span></span>
+<span class="r-in"><span class="va">nptperyear</span> <span class="op">=</span> <span class="fl">23</span></span>
 <span class="r-in"><span class="va">INPUT</span> <span class="op">&lt;-</span> <span class="fu">check_input</span><span class="op">(</span><span class="va">d</span><span class="op">$</span><span class="va">t</span>, <span class="va">d</span><span class="op">$</span><span class="va">y</span>, <span class="va">d</span><span class="op">$</span><span class="va">w</span>, QC_flag <span class="op">=</span> <span class="va">d</span><span class="op">$</span><span class="va">QC_flag</span>,</span>
 <span class="r-in">     nptperyear <span class="op">=</span> <span class="va">nptperyear</span>, south <span class="op">=</span> <span class="cn">FALSE</span>, </span>
 <span class="r-in">     maxgap <span class="op">=</span> <span class="va">nptperyear</span><span class="op">/</span><span class="fl">4</span>, alpha <span class="op">=</span> <span class="fl">0.02</span>, wmin <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span></span>

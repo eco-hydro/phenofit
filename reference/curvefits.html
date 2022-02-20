@@ -104,16 +104,16 @@ used (rough fitting is used to divide growing seasons and update weights.</p></l
 of <code>plot_input</code>, note that not for curve fitting. <code>y0</code> is the original
 value before the process of <code>check_input</code>.</p></li>
 <li><p><code>nextend</code> (default 2): Extend curve fitting window, until <code>nextend</code> good or
-marginal element are found in previous and subsequent growing season.</p></li>
+marginal points are found in the previous and subsequent growing season.</p></li>
 <li><p><code>maxExtendMonth</code> (default 1): Search good or marginal good values in
 previous and subsequent <code>maxExtendMonth</code> period.</p></li>
-<li><p><code>minExtendMonth</code> (default 0.5): Extending perid defined by <code>nextend</code> and
+<li><p><code>minExtendMonth</code> (default 0.5): Extend pperiod defined by <code>nextend</code> and
 <code>maxExtendMonth</code>, should be no shorter than <code>minExtendMonth</code>. When all
 points of the input time-series are good value, then the extending period
 will be too short. In that situation, we can't make sure the connection
 between different growing seasons is smoothing.</p></li>
-<li><p><code>minPercValid</code>: (default 0, not use). If the percentage of good and
-marginal quality points is less than <code>minPercValid</code>, curve fiting result is
+<li><p><code>minPercValid</code>: (default 0, not use). If the percentage of good- and
+marginal- quality points is less than <code>minPercValid</code>, curve fiting result is
 set to <code>NA</code>.</p></li>
 <li><p><code>minT</code>: (not use). If <code>Tn</code> not provided in <code>INPUT</code>, <code>minT</code> will
 not be used. <code>minT</code> use night temperature Tn to define backgroud value
