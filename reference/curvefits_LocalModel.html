@@ -108,6 +108,39 @@ and 'ylu', returned by <code>check_input</code>.</p></dd>
 <dt>fits</dt>
 <dd><p>List objects returned by <code>curvefits_LocalModel()</code> (not <code><a href="curvefits.html">curvefits()</a></code>).</p></dd>
 </dl></div>
+    <div id="options-for-fitting">
+    <h2>options for fitting</h2>
+    
+
+<ul><li><p><code>methods</code> (default <code>c('AG', 'Beck', 'Elmore', 'Zhang')``): Fine curve fitting methods, can be one or more of </code>c('AG', 'Beck', 'Elmore', 'Zhang',
+'Gu', 'Klos')`. Note that 'Gu' and 'Klos' are very slow.</p></li>
+<li><p><code>iters</code> (default 2): max iterations of fine fitting.</p></li>
+<li><p><code>wFUN</code> (default <code>wTSM</code>): Character or function, weights updating function
+of fine fitting function.</p></li>
+<li><p><code>wmin</code> (default 0.1): min weights in the weights updating procedure.</p></li>
+<li><p><code>use.rough</code> (default FALSE): Whether to use rough fitting smoothed
+time-series as input? If <code>false</code>, smoothed VI by rough fitting will be used
+for Phenological metrics extraction; If <code>true</code>, original input <code>y</code> will be
+used (rough fitting is used to divide growing seasons and update weights.</p></li>
+<li><p><code>use.y0</code> (default TRUE): boolean. whether to use original <code>y0</code> as the input
+of <code>plot_input</code>, note that not for curve fitting. <code>y0</code> is the original
+value before the process of <code>check_input</code>.</p></li>
+<li><p><code>nextend</code> (default 2): Extend curve fitting window, until <code>nextend</code> good or
+marginal points are found in the previous and subsequent growing season.</p></li>
+<li><p><code>maxExtendMonth</code> (default 1): Search good or marginal good values in
+previous and subsequent <code>maxExtendMonth</code> period.</p></li>
+<li><p><code>minExtendMonth</code> (default 0.5): Extend period defined by <code>nextend</code> and
+<code>maxExtendMonth</code>, should be no shorter than <code>minExtendMonth</code>. When all
+points of the input time-series are good value, then the extending period
+will be too short. In that situation, we can't make sure the connection
+between different growing seasons is smoothing.</p></li>
+<li><p><code>minPercValid</code>: (default 0, not use). If the percentage of good- and
+marginal- quality points is less than <code>minPercValid</code>, curve fiting result is
+set to <code>NA</code>.</p></li>
+<li><p><code>minT</code>: (not use). If <code>Tn</code> not provided in <code>INPUT</code>, <code>minT</code> will
+not be used. <code>minT</code> use night temperature Tn to define backgroud value
+(days with <code>Tn &lt; minT</code> treated as ungrowing season).</p></li>
+</ul></div>
     <div id="references">
     <h2>References</h2>
     

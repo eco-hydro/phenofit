@@ -121,7 +121,7 @@ ice and cloud).</p></li>
 optimal <code>lambda</code>. See <code><a href="lambda_vcurve.html">lambda_vcurve()</a></code> for details.</p></li>
 </ul></li>
 <li><p><code>frame</code>             : integer (default NULL), the parameter of
-<code><a href="smooth_wSG.html">smooth_wSG()</a></code>, moving window size.</p><ul><li><p>If <code>frame = NULL</code>, <code>frame</code> will be reset as <code>floor(nptperyear/7)*2 +    1</code> (refered by TIMESAT).</p></li>
+<code><a href="smooth_wSG.html">smooth_wSG()</a></code>, moving window size.</p><ul><li><p>If <code>frame = NULL</code>, <code>frame</code> will be reset as <code>floor(nptperyear/5)*2 +    1</code> (refered by TIMESAT).</p></li>
 </ul></li>
 <li><p><code>nf</code>                : integer (default 4), the number of frequencies in
 <code><a href="smooth_wHANTS.html">smooth_wHANTS()</a></code>.</p></li>
@@ -205,7 +205,7 @@ value before the process of <code>check_input</code>.</p></li>
 marginal points are found in the previous and subsequent growing season.</p></li>
 <li><p><code>maxExtendMonth</code> (default 1): Search good or marginal good values in
 previous and subsequent <code>maxExtendMonth</code> period.</p></li>
-<li><p><code>minExtendMonth</code> (default 0.5): Extend pperiod defined by <code>nextend</code> and
+<li><p><code>minExtendMonth</code> (default 0.5): Extend period defined by <code>nextend</code> and
 <code>maxExtendMonth</code>, should be no shorter than <code>minExtendMonth</code>. When all
 points of the input time-series are good value, then the extending period
 will be too short. In that situation, we can't make sure the connection

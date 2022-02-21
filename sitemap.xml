@@ -76,6 +76,9 @@
     <loc>/reference/curvefit.html</loc>
   </url>
   <url>
+    <loc>/reference/curvefit0.html</loc>
+  </url>
+  <url>
     <loc>/reference/curvefits.html</loc>
   </url>
   <url>
@@ -203,6 +206,9 @@
   </url>
   <url>
     <loc>/reference/removeClosedExtreme.html</loc>
+  </url>
+  <url>
+    <loc>/reference/roughFit.html</loc>
   </url>
   <url>
     <loc>/reference/season.html</loc>
