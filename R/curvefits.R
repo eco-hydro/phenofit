@@ -33,19 +33,19 @@
 #'   value before the process of `check_input`.
 #'
 #' - `nextend` (default 2): Extend curve fitting window, until `nextend` good or
-#'   marginal element are found in previous and subsequent growing season.
+#'   marginal points are found in the previous and subsequent growing season.
 #'
 #' - `maxExtendMonth` (default 1): Search good or marginal good values in
 #'   previous and subsequent `maxExtendMonth` period.
 #'
-#' - `minExtendMonth` (default 0.5): Extending perid defined by `nextend` and
+#' - `minExtendMonth` (default 0.5): Extend period defined by `nextend` and
 #'   `maxExtendMonth`, should be no shorter than `minExtendMonth`. When all
 #'   points of the input time-series are good value, then the extending period
 #'   will be too short. In that situation, we can't make sure the connection
 #'   between different growing seasons is smoothing.
 #'
-#' - `minPercValid`: (default 0, not use). If the percentage of good and
-#'   marginal quality points is less than `minPercValid`, curve fiting result is
+#' - `minPercValid`: (default 0, not use). If the percentage of good- and
+#'   marginal- quality points is less than `minPercValid`, curve fiting result is
 #'   set to `NA`.
 #'
 #' - `minT`: (not use). If `Tn` not provided in `INPUT`, `minT` will

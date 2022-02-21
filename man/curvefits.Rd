@@ -40,16 +40,16 @@ used (rough fitting is used to divide growing seasons and update weights.
 of \code{plot_input}, note that not for curve fitting. \code{y0} is the original
 value before the process of \code{check_input}.
 \item \code{nextend} (default 2): Extend curve fitting window, until \code{nextend} good or
-marginal element are found in previous and subsequent growing season.
+marginal points are found in the previous and subsequent growing season.
 \item \code{maxExtendMonth} (default 1): Search good or marginal good values in
 previous and subsequent \code{maxExtendMonth} period.
-\item \code{minExtendMonth} (default 0.5): Extending perid defined by \code{nextend} and
+\item \code{minExtendMonth} (default 0.5): Extend period defined by \code{nextend} and
 \code{maxExtendMonth}, should be no shorter than \code{minExtendMonth}. When all
 points of the input time-series are good value, then the extending period
 will be too short. In that situation, we can't make sure the connection
 between different growing seasons is smoothing.
-\item \code{minPercValid}: (default 0, not use). If the percentage of good and
-marginal quality points is less than \code{minPercValid}, curve fiting result is
+\item \code{minPercValid}: (default 0, not use). If the percentage of good- and
+marginal- quality points is less than \code{minPercValid}, curve fiting result is
 set to \code{NA}.
 \item \code{minT}: (not use). If \code{Tn} not provided in \code{INPUT}, \code{minT} will
 not be used. \code{minT} use night temperature Tn to define backgroud value

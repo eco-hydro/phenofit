@@ -74,7 +74,7 @@
 #'      `y_good = y[w >= w_critical]`,  \cr
 #'      `ymin = pmax( quantile(y_good, alpha/2), 0)`  \cr `ymax = max(y_good)`.
 #'
-#' @example inst/examples/ex-check_input.R
+#' @example R/examples/ex-check_input.R
 #' @export
 check_input <- function(t, y, w, QC_flag,
     nptperyear, south = FALSE, 
@@ -182,9 +182,10 @@ check_input <- function(t, y, w, QC_flag,
     }
     
     # if (!is_empty(Tn)) Tn <- na.approx(Tn, maxgap = maxgap, na.rm = FALSE)
-    list(t = t, y0 = y0, y = y, w = w, QC_flag = QC_flag, ylu = ylu,
+    structure(list(
+        t = t, y0 = y0, y = y, w = w, QC_flag = QC_flag, ylu = ylu,
         nptperyear = nptperyear, south = south,
-        date_start = date_start, date_end = date_end)
+        date_start = date_start, date_end = date_end), class = 'input')
 }
 
 #' check_ylu

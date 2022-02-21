@@ -27,7 +27,7 @@
 #' - `iters`             : integer (default 2), the number of rough fitting
 #'   iterations.
 #'
-#' - `wmin`              : double, the minimum weigth of bads points (i.e. snow,
+#' - `wmin`              : double, the minimum weight of bad points (i.e. snow,
 #'   ice and cloud).
 #'
 #' - `verbose`           : logical (default `FALSE`). If `TRUE`,
@@ -39,7 +39,7 @@
 #'      optimal `lambda`. See [lambda_vcurve()] for details.
 #' - `frame`             : integer (default NULL), the parameter of
 #'      [smooth_wSG()], moving window size.
-#'      + If `frame = NULL`, `frame` will be reset as `floor(nptperyear/7)*2 +
+#'      + If `frame = NULL`, `frame` will be reset as `floor(nptperyear/5)*2 +
 #'      1` (refered by TIMESAT).
 #' - `nf`                : integer (default 4), the number of frequencies in
 #'   [smooth_wHANTS()].
@@ -99,7 +99,7 @@
 #'   lambda*2`.
 #'
 #' - `calendarYear`      : logical (default `FALSE`). If `TRUE`, the start and
-#'   end of a calender year will be regarded as growing season division (North
+#'   end of a calendar year will be regarded as growing season division (North
 #'   Hemisphere is from 01 Jan to 31 Dec; South Hemisphere is from 01 Jul to 30
 #'   Jun).
 #'

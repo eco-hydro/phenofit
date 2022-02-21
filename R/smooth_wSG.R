@@ -10,7 +10,7 @@ sgolayS <- function(frame, d){
 #' @param ylu (optional) `[low, high]` value of time-series y (curve fitting values
 #' are constrained in the range of ylu.
 #' @inherit smooth_wHANTS return
-#'
+#' 
 #' @references
 #' 1. Chen, J., J\"onsson, P., Tamura, M., Gu, Z., Matsushita, B., Eklundh, L.,
 #'      2004. A simple method for reconstructing a high-quality NDVI time-series
@@ -28,7 +28,7 @@ sgolayS <- function(frame, d){
 #' r_wSG <- smooth_wSG(l$y, l$w, l$ylu, nptperyear = 23, iters = 2)
 #' @export
 smooth_wSG <- function(y, w, nptperyear, ylu, wFUN = wTSM, iters = 2,
-                   frame = floor(nptperyear/7)*2 + 1, d=2, ...){
+                   frame = floor(nptperyear/5)*2 + 1, d=2, ...){
     if (all(is.na(y)) || sum(y, na.rm = TRUE) == 0) {
         return(list(zs = list(ziter1 = y * NA), ws = list(witer1 = y*NA)))
     }

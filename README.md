@@ -13,18 +13,18 @@ A state-of-the-art **remote sensing vegetation phenology** extraction
 package: `phenofit`
 
 -   `phenofit` combine merits of TIMESAT and phenopix
--   A simple and stable growing season dividing methods was proposed
--   Provide a practical snow elimination method, based on Whittaker
+-   A simple and stable growing season dividing method was proposed
+-   Provide a practical snow elimination method based on Whittaker
 -   7 curve fitting methods and 4 phenology extraction methods
--   We add parameters boundary for every curve fitting methods according
+-   We add parameters boundary for every curve fitting method according
     to their ecological meaning.
--   `optimx` is used to select best optimization method for different
+-   `optimx` is used to select the best optimization method for different
     curve fitting methods.
 
 ***Task lists***
 
--   [x] Test the performance of `phenofit` in multiple growing season
-    regions (e.g. the North China Plain);
+-   [x] Test the performance of `phenofit` in multiple growing seasons
+    regions (e.g., the North China Plain);
 -   [ ] Uncertainty analysis of curve fitting and phenological metrics;
 -   [x] shiny app has been moved to
     [phenofit.shiny](https://github.com/eco-hydro/phenofit.shiny);
@@ -34,7 +34,7 @@ package: `phenofit`
 -   [x] Support annual season in curve fitting;
 -   [x] flexible fine fitting input ( original time-series or smoothed
     time-series by rough fitting).
--   [x] Asymmetric of Threshold method
+-   [x] Asymmetric Threshold method
 
 <!-- ![title](man/Figure/Figure1_phenofit_flowchart.svg)
 
@@ -58,18 +58,18 @@ season regions:
   `maxExtendMonth` to a relative low value, by setting option 
   `set_options(fitting = list(nextend = 1, minExtendMonth = 0, maxExtendMonth = 0.5))`.
 
-- Use `wHANTS` as the rough fitting function. Due to nature of fourier functions,
-  `wHANTS` is more stable for multiple growing seasons, but it is less flexible
-  than `wWHIT.` `wHANTS` is suitable for regions with the static growing season
-  pattern accoss multiple years, `wWHIT` is more suitable for regions with the
-  dynamic growing season pattern. 
-  Dynamic growing season pattern is the most challenging task, which also means
-  that large uncertainty might be exists.
+- Use `wHANTS` as the rough fitting function. Due to the nature of Fourier
+  functions, `wHANTS` is more stable for multiple growing seasons, but it is
+  less flexible than `wWHIT.` `wHANTS` is suitable for regions with the static
+  growing season pattern across multiple years, `wWHIT` is more suitable for
+  regions with the dynamic growing season pattern. Dynamic growing season
+  pattern is the most challenging task, which also means that a large
+  uncertainty might exist.
 
-  When using `wHANTS` as the rough fitting function, `r_min` is suggested setting as zero.
-  
+  When using `wHANTS` as the rough fitting function, `r_min` is suggested to be
+  set as zero.
 
-- Use only one iteration in fine fitting procedure.
+- Use only one iteration in the fine fitting procedure.
 
 
 # **References**

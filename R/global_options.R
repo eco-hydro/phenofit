@@ -104,7 +104,7 @@ options_fitting <- list(
 #'      `options$wmin` will overwrite it.
 #' 
 #' - `season`     : See the following part: options for season for details.
-#' - `fitting`    : See the following part: options for season for details.
+#' - `fitting`    : See the following part: options for fitting for details.
 #' 
 #' @export
 set_options <- function(..., options = NULL) {

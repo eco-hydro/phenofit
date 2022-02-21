@@ -33,7 +33,7 @@ updating functions, can be one of c("wTSM", "wChen", "wBisquare",
 details.
 \item \code{iters}             : integer (default 2), the number of rough fitting
 iterations.
-\item \code{wmin}              : double, the minimum weigth of bads points (i.e. snow,
+\item \code{wmin}              : double, the minimum weight of bad points (i.e. snow,
 ice and cloud).
 \item \code{verbose}           : logical (default \code{FALSE}). If \code{TRUE},
 \code{options$season} will be printed on the console.
@@ -46,7 +46,7 @@ optimal \code{lambda}. See \code{\link[=lambda_vcurve]{lambda_vcurve()}} for det
 \item \code{frame}             : integer (default NULL), the parameter of
 \code{\link[=smooth_wSG]{smooth_wSG()}}, moving window size.
 \itemize{
-\item If \code{frame = NULL}, \code{frame} will be reset as \code{floor(nptperyear/7)*2 +    1} (refered by TIMESAT).
+\item If \code{frame = NULL}, \code{frame} will be reset as \code{floor(nptperyear/5)*2 +    1} (refered by TIMESAT).
 }
 \item \code{nf}                : integer (default 4), the number of frequencies in
 \code{\link[=smooth_wHANTS]{smooth_wHANTS()}}.
@@ -109,7 +109,7 @@ peaks per year. If \code{PeaksPerYear} > \code{MaxPeaksPerYear}, then \code{lamb
 \item \code{MaxTroughsPerYear} (optional) : integer (default 3), the max number of
 troughs per year. If \code{TroughsPerYear} > \code{MaxTroughsPerYear}, then \code{lambda = lambda*2}.
 \item \code{calendarYear}      : logical (default \code{FALSE}). If \code{TRUE}, the start and
-end of a calender year will be regarded as growing season division (North
+end of a calendar year will be regarded as growing season division (North
 Hemisphere is from 01 Jan to 31 Dec; South Hemisphere is from 01 Jul to 30
 Jun).
 \item \code{rm.closed}         : logical (default \code{TRUE}). If \code{TRUE}, closed peaks (or troughs)

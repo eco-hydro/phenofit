@@ -38,6 +38,40 @@ F(t)= \begin{cases}
 \beta(t) f_{C}(t)+[1-\beta(t)] f_{R}(t) & t_{C}<t<t_{R}\end{cases}
 }
 }
+\section{options for fitting}{
+
+\itemize{
+\item \code{methods} (default \verb{c('AG', 'Beck', 'Elmore', 'Zhang')``): Fine curve fitting methods, can be one or more of }c('AG', 'Beck', 'Elmore', 'Zhang',
+'Gu', 'Klos')`. Note that 'Gu' and 'Klos' are very slow.
+\item \code{iters} (default 2): max iterations of fine fitting.
+\item \code{wFUN} (default \code{wTSM}): Character or function, weights updating function
+of fine fitting function.
+\item \code{wmin} (default 0.1): min weights in the weights updating procedure.
+\item \code{use.rough} (default FALSE): Whether to use rough fitting smoothed
+time-series as input? If \code{false}, smoothed VI by rough fitting will be used
+for Phenological metrics extraction; If \code{true}, original input \code{y} will be
+used (rough fitting is used to divide growing seasons and update weights.
+\item \code{use.y0} (default TRUE): boolean. whether to use original \code{y0} as the input
+of \code{plot_input}, note that not for curve fitting. \code{y0} is the original
+value before the process of \code{check_input}.
+\item \code{nextend} (default 2): Extend curve fitting window, until \code{nextend} good or
+marginal points are found in the previous and subsequent growing season.
+\item \code{maxExtendMonth} (default 1): Search good or marginal good values in
+previous and subsequent \code{maxExtendMonth} period.
+\item \code{minExtendMonth} (default 0.5): Extend period defined by \code{nextend} and
+\code{maxExtendMonth}, should be no shorter than \code{minExtendMonth}. When all
+points of the input time-series are good value, then the extending period
+will be too short. In that situation, we can't make sure the connection
+between different growing seasons is smoothing.
+\item \code{minPercValid}: (default 0, not use). If the percentage of good- and
+marginal- quality points is less than \code{minPercValid}, curve fiting result is
+set to \code{NA}.
+\item \code{minT}: (not use). If \code{Tn} not provided in \code{INPUT}, \code{minT} will
+not be used. \code{minT} use night temperature Tn to define backgroud value
+(days with \code{Tn < minT} treated as ungrowing season).
+}
+}
+
 \examples{
 library(phenofit)
 

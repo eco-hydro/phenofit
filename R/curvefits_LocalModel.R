@@ -18,6 +18,8 @@
 #' @inheritParams curvefits
 #' @param fits List objects returned by [curvefits_LocalModel()] (not [curvefits()]).
 #' 
+#' @inheritSection curvefits options for fitting
+#' 
 #' @references 
 #' 1. Per J\"onsson, P., Eklundh, L., 2004. TIMESAT - A program for analyzing
 #'     time-series of satellite sensor data. Comput. Geosci. 30, 833-845.

@@ -11,7 +11,7 @@ smooth_wSG(
   ylu,
   wFUN = wTSM,
   iters = 2,
-  frame = floor(nptperyear/7) * 2 + 1,
+  frame = floor(nptperyear/5) * 2 + 1,
   d = 2,
   ...
 )

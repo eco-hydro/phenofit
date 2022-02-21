@@ -1,13 +1,13 @@
-#' @title Growing season division
-#' @name season
-#'
+#' @title Rough fitting
+#' @name roughFit
+#' 
 #' @description
 #' Divide growing seasons according to rough fitting (`rFUN`) result .
-#'
+#' 
 #' For `season`, rough fitting is applied for whole.
 #' For `season_mov` rough fitting is applied in every year, during which
 #' `maxExtendMonth` is extended.
-#'
+#' 
 #' @details
 #' Before division growing season, `INPUT` should be added a year in head
 #' and tail first by `add_HeadTail`.
@@ -21,64 +21,8 @@
 #' `Tn` (optional) and `ylu`, returned by [check_input()].
 #' @param options see details
 #' @param  ... ignored.
-#'
-#' @section options:
-#' - `rFUN` Rough curve fitting function, can be one of [smooth_wSG()],
-#' [smooth_wWHIT()] and [smooth_wHANTS()].
-#'
-#' - `wFUN` weights updating function, can be one of [wTSM()],
-#' [wChen()], [wBisquare()] and [wSELF()].
-#'
-#' - `iters` How many times curve fitting is implemented.
-#'
-#' - `wmin` Double, minimum weigth (i.e. weight of snow, ice and cloud).
-#'
-#' - `lambda` The smoothing parameter of [smooth_wWHIT()]. For
-#' [season_mov()], if lambda is `NULL`, [init_lambda()]
-#' will be used. Generally, it was set as 10000, 15, and 5 for daily, 8-day
-#' and 16-day inputs respectively.
-#'
-#' - `nf` The parameter of [smooth_wHANTS()], number of frequencies to be
-#' considered above the zero frequency.
-#'
-#' - `frame` The parameter of [smooth_wSG()], moving window size. Suggested by
-#' TIMESAT, default `frame = floor(nptperyear/7)*2 + 1`.
-#'
-#' - `minpeakdistance` Numberic, in the unit of points (default as
-#' `nptperyear/12`). The minimum distance of two peaks. If the distance of two
-#' maximum extreme value less than `minpeakdistance`, only the real maximum
-#' value will be left.
-#'
-#' - `ypeak_min` `y_peak >= ypeak_min`
-#'
-#' - `r_min` Threshold is defined as the difference of peak value with
-#' trough value. There are two threshold (left and right). The minimum threshold
-#' should be greater than r_min.
-#'
-#' - `r_max` Similar as `r_min`, The maximum threshold should
-#' be greater than `r_max`.
-#'
-#' - `rtrough_max` `ytrough <= rtrough_max*A`, A is the amplitude of y.
-#' - MaxPeaksPerYear This parameter is used to adjust lambda in iterations.
-#' If PeaksPerYear > MaxPeaksPerYear, then lambda = lambda*2.
-#'
-#' - `MaxTroughsPerYear`: This parameter is used to adjust lambda in iterations.
-#' If TroughsPerYear > MaxTroughsPerYear, then lambda = lambda*2.
-#'
-#' - `calendarYear`: If true, only one static calendar growing season will be
-#' returned.
-#'
-#' - `adj.param`: Adjust rough curve fitting function parameters automatically,
-#' if too many or to less peak and trough values.
-#'
-#' - `rm.closed`: boolean. Whether check the two closest peaks (or troughs).
-#'
-#' - `is.continuous`: boolean. Whether the input is continuous? This parameter
-#' is for fluxsite site-year data.
-#'
-#' - `.check_season`: not used (only for debug)
-#' - `verbose`: whether to print `options_season` into console?
-#'
+#' 
+#' @inheritSection season_mov options for season
 #' @return
 #' - `fit`: A data.table of Rough fitting result, with the columns of
 #' (`t`, `y`, `witer1`, ..., `witerN`, `ziter1`, ..., `ziterN`).
