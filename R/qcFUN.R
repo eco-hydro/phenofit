@@ -10,9 +10,10 @@
 #'      confidence score, suit for MCD15A3H(LAI, FparLai_QC), MOD17A2H(GPP, Psn_QC) 
 #'      and MOD16A2(ET, ET_QC).
 #' * `qc_StateQA`: Initial weights based on `StateQA`, suit for MOD09A1, MYD09A1.
-#' * `qc_FparLai`
-#' * `qc_NDVI3g`: For NDVI3g
-#' * `qc_NDVIv4`: For NDVIv4
+#' * `qc_FparLai`: For MODIS LAI
+#' 
+#' * `qc_NDVI3g`: For AVHRR NDVI3g
+#' * `qc_NDVIv4`: For AVHRR NDVIv4
 #' 
 #' @param x Binary value
 #' @param start Bit starting position, count from zero
@@ -28,6 +29,8 @@
 #' 
 #' @note
 #' `qc_5l` and `qc_NDVIv4` only returns `weight`, without `QC_flag`.
+#' 
+#' @seealso [qc_sentinel2()]
 #' 
 #' @references
 #' https://developers.google.com/earth-engine/datasets/catalog/MODIS_006_MOD13A1

@@ -62,9 +62,9 @@ suit for MOD13A1, MOD13A2 and MOD13Q1 (SummaryQA band).
 confidence score, suit for MCD15A3H(LAI, FparLai_QC), MOD17A2H(GPP, Psn_QC)
 and MOD16A2(ET, ET_QC).
 \item \code{qc_StateQA}: Initial weights based on \code{StateQA}, suit for MOD09A1, MYD09A1.
-\item \code{qc_FparLai}
-\item \code{qc_NDVI3g}: For NDVI3g
-\item \code{qc_NDVIv4}: For NDVIv4
+\item \code{qc_FparLai}: For MODIS LAI
+\item \code{qc_NDVI3g}: For AVHRR NDVI3g
+\item \code{qc_NDVIv4}: For AVHRR NDVIv4
 }
 }
 \details{
@@ -90,4 +90,7 @@ https://developers.google.com/earth-engine/datasets/catalog/MODIS_006_MCD15A3H
 
 Erwin Wolters, Else Swinnen, Carolien Toté, Sindy Sterckx.
 SPOT-VGT COLLECTION 3 PRODUCTS USER MANUAL V1.2, 2018, P47
+}
+\seealso{
+\code{\link[=qc_sentinel2]{qc_sentinel2()}}
 }
