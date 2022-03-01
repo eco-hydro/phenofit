@@ -8,9 +8,9 @@ qc_5l: Initial weights based on Quality control of five-level
 confidence score, suit for MCD15A3H(LAI, FparLai_QC), MOD17A2H(GPP, Psn_QC)
 and MOD16A2(ET, ET_QC).
 qc_StateQA: Initial weights based on StateQA, suit for MOD09A1, MYD09A1.
-qc_FparLai
-qc_NDVI3g: For NDVI3g
-qc_NDVIv4: For NDVIv4
+qc_FparLai: For MODIS LAI
+qc_NDVI3g: For AVHRR NDVI3g
+qc_NDVIv4: For AVHRR NDVIv4
 
 "><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -83,9 +83,9 @@ suit for MOD13A1, MOD13A2 and MOD13Q1 (SummaryQA band).</p></li>
 confidence score, suit for MCD15A3H(LAI, FparLai_QC), MOD17A2H(GPP, Psn_QC)
 and MOD16A2(ET, ET_QC).</p></li>
 <li><p><code>qc_StateQA</code>: Initial weights based on <code>StateQA</code>, suit for MOD09A1, MYD09A1.</p></li>
-<li><p><code>qc_FparLai</code></p></li>
-<li><p><code>qc_NDVI3g</code>: For NDVI3g</p></li>
-<li><p><code>qc_NDVIv4</code>: For NDVIv4</p></li>
+<li><p><code>qc_FparLai</code>: For MODIS LAI</p></li>
+<li><p><code>qc_NDVI3g</code>: For AVHRR NDVI3g</p></li>
+<li><p><code>qc_NDVIv4</code>: For AVHRR NDVIv4</p></li>
 </ul></div>
 
     <div id="ref-usage">
@@ -145,6 +145,10 @@ and MOD16A2(ET, ET_QC).</p></li>
 <p>https://developers.google.com/earth-engine/datasets/catalog/MODIS_006_MCD15A3H</p>
 <p>Erwin Wolters, Else Swinnen, Carolien Toté, Sindy Sterckx.
 SPOT-VGT COLLECTION 3 PRODUCTS USER MANUAL V1.2, 2018, P47</p>
+    </div>
+    <div id="see-also">
+    <h2>See also</h2>
+    <div class="dont-index"><p><code><a href="qc_sentinel2.html">qc_sentinel2()</a></code></p></div>
     </div>
 
     <div id="ref-examples">
