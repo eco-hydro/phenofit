@@ -149,7 +149,7 @@ doubleLog.Beck = function(par, t) {
     return(pred)
 }
 attr(doubleLog.Beck, 'par')  = c("mn", "mx", "sos", "rsp", "eos", "rau")
-attr(doubleLog.Beck, 'formula') = expression(mn + (mx - mn)*(1/(1 + exp(-rsp*(t - sos))) + 1/(1 + exp(rau*(t - eos)))) - 1)
+attr(doubleLog.Beck, "formula") = expression(mn + (mx - mn) * (1 / (1 + exp(-rsp * (t - sos))) + 1 / (1 + exp(rau * (t - eos))) - 1))
 
 #' @rdname logistics
 #' @export
