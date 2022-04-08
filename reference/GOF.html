@@ -26,7 +26,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -108,10 +108,10 @@ calculate. See details in Zhang et al., (2015).</p></li>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">Y_obs</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span></span>
 <span class="r-in"><span class="va">Y_sim</span> <span class="op">=</span> <span class="va">Y_obs</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span><span class="op">/</span><span class="fl">4</span></span>
 <span class="r-in"><span class="fu">GOF</span><span class="op">(</span><span class="va">Y_obs</span>, <span class="va">Y_sim</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         RMSE          NSE          MAE           AI         Bias    Bias_perc </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2.606733e-01 9.319442e-01 2.060775e-01 9.834543e-01 3.254747e-02 5.091650e-01 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>        n_sim           R2            R       pvalue </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1.000000e+02 9.384286e-01 9.687253e-01 3.965527e-61 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          RMSE           NSE           MAE            AI          Bias </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2.605028e-01  9.241295e-01  2.107156e-01  9.809849e-01 -3.589522e-02 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Bias_perc         n_sim            R2             R        pvalue </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> -1.304197e-01  1.000000e+02  9.281758e-01  9.634188e-01  7.556777e-58 </span>
 <span class="r-in"></span>
 </code></pre></div>
     </div>
