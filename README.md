@@ -7,7 +7,7 @@
 [![CRAN](http://www.r-pkg.org/badges/version/phenofit)](https://cran.r-project.org/package=phenofit)
 [![total](http://cranlogs.r-pkg.org/badges/grand-total/phenofit)](https://www.rpackages.io/package/phenofit)
 [![monthly](http://cranlogs.r-pkg.org/badges/phenofit)](https://www.rpackages.io/package/phenofit)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5150204.svg)](https://doi.org/10.5281/zenodo.5150204)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6320537.svg)](https://doi.org/10.5281/zenodo.6320537)
 
 A state-of-the-art **remote sensing vegetation phenology** extraction
 package: `phenofit`
@@ -89,8 +89,8 @@ season regions:
 > 13–24.
 >
 > [4] Kong, D., (2020). R package: A state-of-the-art Vegetation
-> Phenology extraction package, `phenofit` version 0.3.1,
-> <https://doi.org/10.5281/zenodo.5150204>
+> Phenology extraction package, `phenofit` version 0.3.5,
+> <https://doi.org/10.5281/zenodo.6320537>
 >
 > [5] Zhang, Q.\*, Kong, D.\*, Shi, P., Singh, V.P., Sun, P., 2018.
 > Vegetation phenology on the Qinghai-Tibetan Plateau and its response
