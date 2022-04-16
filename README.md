@@ -75,7 +75,7 @@ season regions:
 # **References**
 
 > [1]. Dongdong Kong, Tim R. McVicar, Mingzhong Xiao\*, Yongqiang Zhang, Jorge L. Peña-Arancibia, Gianluca Filippa, Yuxuan Xie, and Xihui Gu\*. (2022), 
-> phenofit: A R package for extracting vegetation phenology from time series remote sensing. __*Methods in Ecology and Evolution*__. (Accepted April 08, 2022).
+> phenofit: A R package for extracting vegetation phenology from time series remote sensing. __*Methods in Ecology and Evolution*__. (Accepted April 08, 2022). <https://doi.org/10.1111/2041-210X.13870>
 > 
 > [2] Kong, D., Zhang, Y.\*, Wang, D., Chen, J., & Gu, X\*. (2020).
 > Photoperiod Explains the Asynchronization Between Vegetation Carbon
