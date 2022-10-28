@@ -66,34 +66,49 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">PhenoDeriv</span><span class="op">(</span><span class="va">x</span>, <span class="va">t</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="co"># S3 method for fFIT</span>
-<span class="fu">PhenoDeriv</span><span class="op">(</span><span class="va">x</span>, t <span class="op">=</span> <span class="cn">NULL</span>, analytical <span class="op">=</span> <span class="cn">FALSE</span>, smoothed.spline <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="co"># S3 method for default</span>
-<span class="fu">PhenoDeriv</span><span class="op">(</span><span class="va">x</span>, <span class="va">t</span>, <span class="va">der1</span>, IsPlot <span class="op">=</span> <span class="cn">TRUE</span>, show.legend <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">PhenoDeriv</span><span class="op">(</span><span class="va">x</span>, <span class="va">t</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for fFIT</span></span>
+<span><span class="fu">PhenoDeriv</span><span class="op">(</span><span class="va">x</span>, t <span class="op">=</span> <span class="cn">NULL</span>, analytical <span class="op">=</span> <span class="cn">FALSE</span>, smoothed.spline <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for default</span></span>
+<span><span class="fu">PhenoDeriv</span><span class="op">(</span><span class="va">x</span>, <span class="va">t</span>, <span class="va">der1</span>, IsPlot <span class="op">=</span> <span class="cn">TRUE</span>, show.legend <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>x</dt>
 <dd><p>numeric vector, or <code>fFIT</code> object returned by <code><a href="curvefit.html">curvefit()</a></code>.</p></dd>
+
+
 <dt>t</dt>
 <dd><p><code>doy</code> vector, corresponding doy of vegetation index.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Other parameters will be ignored.</p></dd>
+
+
 <dt>analytical</dt>
 <dd><p>If true, <code>numDeriv</code> package <code>grad</code> and <code>hess</code>
 will be used; if false, <code>D1</code> and <code>D2</code> will be used.</p></dd>
+
+
 <dt>smoothed.spline</dt>
 <dd><p>Whether apply <code>smooth.spline</code> first?</p></dd>
+
+
 <dt>der1</dt>
 <dd><p>the first order difference</p></dd>
+
+
 <dt>IsPlot</dt>
 <dd><p>whether to plot?</p></dd>
+
+
 <dt>show.legend</dt>
 <dd><p>whether show figure lelend?</p></dd>
+
 </dl></div>
     <div id="references">
     <h2>References</h2>
@@ -120,7 +135,7 @@ image-based vegetation phenology. Agricultural and Forest Meteorology,
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

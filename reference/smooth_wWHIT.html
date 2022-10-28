@@ -66,53 +66,72 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">smooth_wWHIT</span><span class="op">(</span>
-  <span class="va">y</span>,
-  <span class="va">w</span>,
-  <span class="va">ylu</span>,
-  <span class="va">nptperyear</span>,
-  wFUN <span class="op">=</span> <span class="va">wTSM</span>,
-  iters <span class="op">=</span> <span class="fl">1</span>,
-  lambda <span class="op">=</span> <span class="fl">15</span>,
-  second <span class="op">=</span> <span class="cn">FALSE</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">smooth_wWHIT</span><span class="op">(</span></span>
+<span>  <span class="va">y</span>,</span>
+<span>  <span class="va">w</span>,</span>
+<span>  <span class="va">ylu</span>,</span>
+<span>  <span class="va">nptperyear</span>,</span>
+<span>  wFUN <span class="op">=</span> <span class="va">wTSM</span>,</span>
+<span>  iters <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  lambda <span class="op">=</span> <span class="fl">15</span>,</span>
+<span>  second <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>y</dt>
 <dd><p>Numeric vector, vegetation index time-series</p></dd>
+
+
 <dt>w</dt>
 <dd><p>(optional) Numeric vector, weights of <code>y</code>. If not specified,
 weights of all <code>NA</code> values will be <code>wmin</code>, the others will be 1.0.</p></dd>
+
+
 <dt>ylu</dt>
 <dd><p><code>[low, high]</code> of time-series y (curve fitting values are constrained
 in the range of <code>ylu</code>.</p></dd>
+
+
 <dt>nptperyear</dt>
 <dd><p>Integer, number of images per year.</p></dd>
+
+
 <dt>wFUN</dt>
 <dd><p>weights updating function, can be one of 'wTSM', 'wChen' and
 'wBisquare'.</p></dd>
+
+
 <dt>iters</dt>
 <dd><p>How many times curve fitting is implemented.</p></dd>
+
+
 <dt>lambda</dt>
 <dd><p>scaler or numeric vector, whittaker parameter.</p><ul><li><p>If <code>lambda = NULL</code>, <code>V-curve</code> theory will be applied to retrieve the optimal <code>lambda</code>.</p></li>
 <li><p>If multiple <code>lambda</code> provided (numeric vector), a list of the smoothing results
 with the same length of <code>lambda</code> will be returned.</p></li>
 </ul></dd>
+
+
 <dt>second</dt>
 <dd><p>If true, in every iteration, Whittaker will be implemented
 twice to make sure curve fitting is smooth. If curve has been smoothed
 enough, it will not care about the second smooth. If no, the second one is
 just prepared for this situation. If lambda value has been optimized, second
 smoothing is unnecessary.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Additional parameters are passed to <code>wFUN</code>.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <ul><li><p><code>ws</code>: weights of every iteration</p></li>
+    
+
+<ul><li><p><code>ws</code>: weights of every iteration</p></li>
 <li><p><code>zs</code>: curve fittings of every iteration</p></li>
 </ul></div>
     <div id="note">
@@ -134,16 +153,16 @@ Modelling 15, 91-111. <a href="https://doi.org/10.1177/1471082X14549288" class="
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"MOD13A1"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">dt</span> <span class="op">&lt;-</span> <span class="fu"><a href="tidy_MOD13.html">tidy_MOD13</a></span><span class="op">(</span><span class="va">MOD13A1</span><span class="op">$</span><span class="va">dt</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">d</span> <span class="op">&lt;-</span> <span class="va">dt</span><span class="op">[</span><span class="va">site</span> <span class="op">==</span> <span class="st">"AT-Neu"</span>, <span class="op">]</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">l</span> <span class="op">&lt;-</span> <span class="fu"><a href="check_input.html">check_input</a></span><span class="op">(</span><span class="va">d</span><span class="op">$</span><span class="va">t</span>, <span class="va">d</span><span class="op">$</span><span class="va">y</span>, <span class="va">d</span><span class="op">$</span><span class="va">w</span>, nptperyear<span class="op">=</span><span class="fl">23</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">r_wWHIT</span> <span class="op">&lt;-</span> <span class="fu">smooth_wWHIT</span><span class="op">(</span><span class="va">l</span><span class="op">$</span><span class="va">y</span>, <span class="va">l</span><span class="op">$</span><span class="va">w</span>, <span class="va">l</span><span class="op">$</span><span class="va">ylu</span>, nptperyear <span class="op">=</span> <span class="fl">23</span>, iters <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Optimize `lambda` by V-curve theory</span></span>
-<span class="r-in"><span class="co"># (a) optimize manually</span></span>
-<span class="r-in"><span class="fu"><a href="lambda_vcurve.html">lambda_vcurve</a></span><span class="op">(</span><span class="va">l</span><span class="op">$</span><span class="va">y</span>, <span class="va">l</span><span class="op">$</span><span class="va">w</span>, plot <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> </span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"MOD13A1"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">dt</span> <span class="op">&lt;-</span> <span class="fu"><a href="tidy_MOD13.html">tidy_MOD13</a></span><span class="op">(</span><span class="va">MOD13A1</span><span class="op">$</span><span class="va">dt</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="va">dt</span><span class="op">[</span><span class="va">site</span> <span class="op">==</span> <span class="st">"AT-Neu"</span>, <span class="op">]</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">l</span> <span class="op">&lt;-</span> <span class="fu"><a href="check_input.html">check_input</a></span><span class="op">(</span><span class="va">d</span><span class="op">$</span><span class="va">t</span>, <span class="va">d</span><span class="op">$</span><span class="va">y</span>, <span class="va">d</span><span class="op">$</span><span class="va">w</span>, nptperyear<span class="op">=</span><span class="fl">23</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">r_wWHIT</span> <span class="op">&lt;-</span> <span class="fu">smooth_wWHIT</span><span class="op">(</span><span class="va">l</span><span class="op">$</span><span class="va">y</span>, <span class="va">l</span><span class="op">$</span><span class="va">w</span>, <span class="va">l</span><span class="op">$</span><span class="va">ylu</span>, nptperyear <span class="op">=</span> <span class="fl">23</span>, iters <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Optimize `lambda` by V-curve theory</span></span></span>
+<span class="r-in"><span><span class="co"># (a) optimize manually</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="lambda_vcurve.html">lambda_vcurve</a></span><span class="op">(</span><span class="va">l</span><span class="op">$</span><span class="va">y</span>, <span class="va">l</span><span class="op">$</span><span class="va">w</span>, plot <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> </span></span>
 <span class="r-plt img"><img src="smooth_wWHIT-1.png" alt="" width="700" height="433"></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $lambda</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 8.912509</span>
@@ -201,9 +220,9 @@ Modelling 15, 91-111. <a href="https://doi.org/10.1177/1471082X14549288" class="
 <span class="r-out co"><span class="r-pr">#&gt;</span> 49:      4.95 1.5587223</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     lg_lambda         v</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># (b) optimize automatically by setting `lambda = NULL` in smooth_wWHIT</span></span>
-<span class="r-in"><span class="va">r_wWHIT2</span> <span class="op">&lt;-</span> <span class="fu">smooth_wWHIT</span><span class="op">(</span><span class="va">l</span><span class="op">$</span><span class="va">y</span>, <span class="va">l</span><span class="op">$</span><span class="va">w</span>, <span class="va">l</span><span class="op">$</span><span class="va">ylu</span>, nptperyear <span class="op">=</span> <span class="fl">23</span>, iters <span class="op">=</span> <span class="fl">2</span>, lambda <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="co"># </span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># (b) optimize automatically by setting `lambda = NULL` in smooth_wWHIT</span></span></span>
+<span class="r-in"><span><span class="va">r_wWHIT2</span> <span class="op">&lt;-</span> <span class="fu">smooth_wWHIT</span><span class="op">(</span><span class="va">l</span><span class="op">$</span><span class="va">y</span>, <span class="va">l</span><span class="op">$</span><span class="va">w</span>, <span class="va">l</span><span class="op">$</span><span class="va">ylu</span>, nptperyear <span class="op">=</span> <span class="fl">23</span>, iters <span class="op">=</span> <span class="fl">2</span>, lambda <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="co"># </span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -218,7 +237,7 @@ Modelling 15, 91-111. <a href="https://doi.org/10.1177/1471082X14549288" class="
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

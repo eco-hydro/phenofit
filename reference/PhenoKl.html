@@ -66,38 +66,53 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">PhenoKl</span><span class="op">(</span>
-  <span class="va">fFIT</span>,
-  t <span class="op">=</span> <span class="cn">NULL</span>,
-  analytical <span class="op">=</span> <span class="cn">FALSE</span>,
-  smoothed.spline <span class="op">=</span> <span class="cn">FALSE</span>,
-  IsPlot <span class="op">=</span> <span class="cn">TRUE</span>,
-  show.legend <span class="op">=</span> <span class="cn">TRUE</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">PhenoKl</span><span class="op">(</span></span>
+<span>  <span class="va">fFIT</span>,</span>
+<span>  t <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  analytical <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  smoothed.spline <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  IsPlot <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  show.legend <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>fFIT</dt>
 <dd><p>object return by <code><a href="curvefit.html">curvefit()</a></code></p></dd>
+
+
 <dt>t</dt>
 <dd><p><code>doy</code> vector, corresponding doy of vegetation index.</p></dd>
+
+
 <dt>analytical</dt>
 <dd><p>If true, <code>numDeriv</code> package <code>grad</code> and <code>hess</code>
 will be used; if false, <code>D1</code> and <code>D2</code> will be used.</p></dd>
+
+
 <dt>smoothed.spline</dt>
 <dd><p>Whether apply <code>smooth.spline</code> first?</p></dd>
+
+
 <dt>IsPlot</dt>
 <dd><p>whether to plot?</p></dd>
+
+
 <dt>show.legend</dt>
 <dd><p>whether show figure lelend?</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Other parameters will be ignored.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A numeric vector, with the elements of:
+    
+
+<p>A numeric vector, with the elements of:
 <code>Greenup</code>, <code>Maturity</code>, <code>Senescence</code>, <code>Dormancy</code>.</p>
     </div>
     <div id="references">
@@ -111,27 +126,27 @@ MODIS. Remote Sensing of Environment, 84(3), 471–475.
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># `doubleLog.Beck` simulate vegetation time-series</span></span>
-<span class="r-in"><span class="va">t</span>    <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">365</span>, <span class="fl">8</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">tout</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">365</span>, <span class="fl">1</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">par</span>  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span> mn  <span class="op">=</span> <span class="fl">0.1</span> , mx  <span class="op">=</span> <span class="fl">0.7</span> , sos <span class="op">=</span> <span class="fl">50</span> , rsp <span class="op">=</span> <span class="fl">0.1</span> , eos <span class="op">=</span> <span class="fl">250</span>, rau <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="logistics.html">doubleLog.Beck</a></span><span class="op">(</span><span class="va">par</span>, <span class="va">t</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">methods</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AG"</span>, <span class="st">"Beck"</span>, <span class="st">"Elmore"</span>, <span class="st">"Gu"</span>, <span class="st">"Zhang"</span><span class="op">)</span> <span class="co"># "Klos" too slow</span></span>
-<span class="r-in"><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="curvefit.html">curvefit</a></span><span class="op">(</span><span class="va">y</span>, <span class="va">t</span>, <span class="va">tout</span>, <span class="va">methods</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">x</span> <span class="op">&lt;-</span> <span class="va">fit</span><span class="op">$</span><span class="va">model</span><span class="op">$</span><span class="va">AG</span> <span class="co"># one model</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="PhenoTrs.html">PhenoTrs</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># `doubleLog.Beck` simulate vegetation time-series</span></span></span>
+<span class="r-in"><span><span class="va">t</span>    <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">365</span>, <span class="fl">8</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tout</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">365</span>, <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">par</span>  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span> mn  <span class="op">=</span> <span class="fl">0.1</span> , mx  <span class="op">=</span> <span class="fl">0.7</span> , sos <span class="op">=</span> <span class="fl">50</span> , rsp <span class="op">=</span> <span class="fl">0.1</span> , eos <span class="op">=</span> <span class="fl">250</span>, rau <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="logistics.html">doubleLog.Beck</a></span><span class="op">(</span><span class="va">par</span>, <span class="va">t</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">methods</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AG"</span>, <span class="st">"Beck"</span>, <span class="st">"Elmore"</span>, <span class="st">"Gu"</span>, <span class="st">"Zhang"</span><span class="op">)</span> <span class="co"># "Klos" too slow</span></span></span>
+<span class="r-in"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="curvefit.html">curvefit</a></span><span class="op">(</span><span class="va">y</span>, <span class="va">t</span>, <span class="va">tout</span>, <span class="va">methods</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="va">fit</span><span class="op">$</span><span class="va">model</span><span class="op">$</span><span class="va">AG</span> <span class="co"># one model</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="PhenoTrs.html">PhenoTrs</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> sos eos </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  50 250 </span>
-<span class="r-in"><span class="fu"><a href="PhenoDeriv.html">PhenoDeriv</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu"><a href="PhenoDeriv.html">PhenoDeriv</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> sos pos eos </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  47 150 253 </span>
-<span class="r-in"><span class="fu"><a href="PhenoGu.html">PhenoGu</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu"><a href="PhenoGu.html">PhenoGu</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  UD  SD  DD  RD </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  26  73 227 275 </span>
-<span class="r-in"><span class="fu">PhenoKl</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">PhenoKl</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="PhenoKl-1.png" alt="" width="700" height="433"></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    Greenup   Maturity Senescence   Dormancy </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         16         82        218        284 </span>
@@ -149,7 +164,7 @@ MODIS. Remote Sensing of Environment, 84(3), 471–475.
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

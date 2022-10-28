@@ -81,32 +81,41 @@ see <code><a href="https://rdrr.io/pkg/ucminf/man/ucminf.html" class="external-l
 </ul></div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">opt_ucminf</span><span class="op">(</span><span class="va">par0</span>, <span class="va">objective</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="fu">opt_nlm</span><span class="op">(</span><span class="va">par0</span>, <span class="va">objective</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="fu">opt_optim</span><span class="op">(</span><span class="va">par0</span>, <span class="va">objective</span>, method <span class="op">=</span> <span class="st">"BFGS"</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="fu">opt_nlminb</span><span class="op">(</span><span class="va">par0</span>, <span class="va">objective</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">opt_ucminf</span><span class="op">(</span><span class="va">par0</span>, <span class="va">objective</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">opt_nlm</span><span class="op">(</span><span class="va">par0</span>, <span class="va">objective</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">opt_optim</span><span class="op">(</span><span class="va">par0</span>, <span class="va">objective</span>, method <span class="op">=</span> <span class="st">"BFGS"</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">opt_nlminb</span><span class="op">(</span><span class="va">par0</span>, <span class="va">objective</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>par0</dt>
 <dd><p>Initial values for the parameters to be optimized over.</p></dd>
+
+
 <dt>objective</dt>
 <dd><p>A function to be minimized (or maximized), with first
 argument the vector of parameters over which minimization is to take place.
 It should return a scalar result.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>other parameters passed to <code>objective</code>.</p></dd>
+
+
 <dt>method</dt>
 <dd><p>optimization method to be used in <code>p_optim</code>. See
 <code><a href="https://rdrr.io/r/stats/optim.html" class="external-link">stats::optim()</a></code>.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <ul><li><p><code>convcode</code>: An integer code. 0 indicates successful convergence.
+    
+
+<ul><li><p><code>convcode</code>: An integer code. 0 indicates successful convergence.
 Various methods may or may not return sufficient information to allow all
 the codes to be specified. An incomplete list of codes includes</p><ul><li><p><code>1</code>: indicates that the iteration limit <code>maxit</code> had been reached.</p></li>
 <li><p><code>20</code>: indicates that the initial set of parameters is inadmissible,
@@ -132,40 +141,40 @@ NULL, or NA value.</p></li>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/eco-hydro/phenofit" class="external-link">phenofit</a></span><span class="op">)</span></span>
-<span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
-<span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://magrittr.tidyverse.org" class="external-link">magrittr</a></span><span class="op">)</span></span>
-<span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://purrr.tidyverse.org" class="external-link">purrr</a></span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/eco-hydro/phenofit" class="external-link">phenofit</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://magrittr.tidyverse.org" class="external-link">magrittr</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://purrr.tidyverse.org/" class="external-link">purrr</a></span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Attaching package: ‘purrr’</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> The following object is masked from ‘package:magrittr’:</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>     set_names</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># simulate vegetation time-series</span></span>
-<span class="r-in"><span class="va">fFUN</span> <span class="op">=</span> <span class="va">doubleLog_Beck</span></span>
-<span class="r-in"><span class="va">par</span>  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span> mn  <span class="op">=</span> <span class="fl">0.1</span> , mx  <span class="op">=</span> <span class="fl">0.7</span> , sos <span class="op">=</span> <span class="fl">50</span> , rsp <span class="op">=</span> <span class="fl">0.1</span> , eos <span class="op">=</span> <span class="fl">250</span>, rau <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">par0</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span> mn  <span class="op">=</span> <span class="fl">0.15</span>, mx  <span class="op">=</span> <span class="fl">0.65</span>, sos <span class="op">=</span> <span class="fl">100</span>, rsp <span class="op">=</span> <span class="fl">0.12</span>, eos <span class="op">=</span> <span class="fl">200</span>, rau <span class="op">=</span> <span class="fl">0.12</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">t</span>    <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">365</span>, <span class="fl">8</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">tout</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">365</span>, <span class="fl">1</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu">fFUN</span><span class="op">(</span><span class="va">par</span>, <span class="va">t</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">optFUNs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"opt_ucminf"</span>, <span class="st">"opt_nlminb"</span>, <span class="st">"opt_nlm"</span>, <span class="st">"opt_optim"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/set_names.html" class="external-link">set_names</a></span><span class="op">(</span><span class="va">.</span>, <span class="va">.</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">opts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">optFUNs</span>, <span class="kw">function</span><span class="op">(</span><span class="va">optFUN</span><span class="op">)</span><span class="op">{</span></span>
-<span class="r-in">    <span class="va">optFUN</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/get.html" class="external-link">get</a></span><span class="op">(</span><span class="va">optFUN</span><span class="op">)</span></span>
-<span class="r-in">    <span class="va">opt</span>    <span class="op">&lt;-</span> <span class="fu">optFUN</span><span class="op">(</span><span class="va">par0</span>, <span class="va">f_goal</span>, y <span class="op">=</span> <span class="va">y</span>, t <span class="op">=</span> <span class="va">t</span>, fun <span class="op">=</span> <span class="va">fFUN</span><span class="op">)</span></span>
-<span class="r-in">    <span class="va">opt</span><span class="op">$</span><span class="va">ysim</span> <span class="op">&lt;-</span> <span class="fu">fFUN</span><span class="op">(</span><span class="va">opt</span><span class="op">$</span><span class="va">par</span>, <span class="va">t</span><span class="op">)</span></span>
-<span class="r-in">    <span class="va">opt</span></span>
-<span class="r-in"><span class="op">}</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># visualization</span></span>
-<span class="r-in"><span class="va">df</span>   <span class="op">&lt;-</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">map</a></span><span class="op">(</span><span class="va">opts</span>, <span class="st">"ysim"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">t</span>, <span class="va">y</span>, <span class="va">.</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">pdat</span> <span class="op">&lt;-</span> <span class="fu">reshape2</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/reshape2/man/melt.html" class="external-link">melt</a></span><span class="op">(</span><span class="va">df</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"t"</span>, <span class="st">"y"</span><span class="op">)</span>, variable.name <span class="op">=</span> <span class="st">"optFUN"</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">pdat</span><span class="op">)</span> <span class="op">+</span> </span>
-<span class="r-in">    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="va">t</span>, <span class="va">y</span><span class="op">)</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">t</span>, <span class="va">y</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">+</span> </span>
-<span class="r-in">    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">t</span>, <span class="va">value</span>, color <span class="op">=</span> <span class="va">optFUN</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">0.9</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># simulate vegetation time-series</span></span></span>
+<span class="r-in"><span><span class="va">fFUN</span> <span class="op">=</span> <span class="va">doubleLog_Beck</span></span></span>
+<span class="r-in"><span><span class="va">par</span>  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span> mn  <span class="op">=</span> <span class="fl">0.1</span> , mx  <span class="op">=</span> <span class="fl">0.7</span> , sos <span class="op">=</span> <span class="fl">50</span> , rsp <span class="op">=</span> <span class="fl">0.1</span> , eos <span class="op">=</span> <span class="fl">250</span>, rau <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">par0</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span> mn  <span class="op">=</span> <span class="fl">0.15</span>, mx  <span class="op">=</span> <span class="fl">0.65</span>, sos <span class="op">=</span> <span class="fl">100</span>, rsp <span class="op">=</span> <span class="fl">0.12</span>, eos <span class="op">=</span> <span class="fl">200</span>, rau <span class="op">=</span> <span class="fl">0.12</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">t</span>    <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">365</span>, <span class="fl">8</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tout</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">365</span>, <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu">fFUN</span><span class="op">(</span><span class="va">par</span>, <span class="va">t</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">optFUNs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"opt_ucminf"</span>, <span class="st">"opt_nlminb"</span>, <span class="st">"opt_nlm"</span>, <span class="st">"opt_optim"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rlang.r-lib.org/reference/set_names.html" class="external-link">set_names</a></span><span class="op">(</span><span class="va">.</span>, <span class="va">.</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">opts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">optFUNs</span>, <span class="kw">function</span><span class="op">(</span><span class="va">optFUN</span><span class="op">)</span><span class="op">{</span></span></span>
+<span class="r-in"><span>    <span class="va">optFUN</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/get.html" class="external-link">get</a></span><span class="op">(</span><span class="va">optFUN</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="va">opt</span>    <span class="op">&lt;-</span> <span class="fu">optFUN</span><span class="op">(</span><span class="va">par0</span>, <span class="va">f_goal</span>, y <span class="op">=</span> <span class="va">y</span>, t <span class="op">=</span> <span class="va">t</span>, fun <span class="op">=</span> <span class="va">fFUN</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="va">opt</span><span class="op">$</span><span class="va">ysim</span> <span class="op">&lt;-</span> <span class="fu">fFUN</span><span class="op">(</span><span class="va">opt</span><span class="op">$</span><span class="va">par</span>, <span class="va">t</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="va">opt</span></span></span>
+<span class="r-in"><span><span class="op">}</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># visualization</span></span></span>
+<span class="r-in"><span><span class="va">df</span>   <span class="op">&lt;-</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">map</a></span><span class="op">(</span><span class="va">opts</span>, <span class="st">"ysim"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">t</span>, <span class="va">y</span>, <span class="va">.</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">pdat</span> <span class="op">&lt;-</span> <span class="fu">reshape2</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/reshape2/man/melt.html" class="external-link">melt</a></span><span class="op">(</span><span class="va">df</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"t"</span>, <span class="st">"y"</span><span class="op">)</span>, variable.name <span class="op">=</span> <span class="st">"optFUN"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">pdat</span><span class="op">)</span> <span class="op">+</span> </span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="va">t</span>, <span class="va">y</span><span class="op">)</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">t</span>, <span class="va">y</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">+</span> </span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">t</span>, <span class="va">value</span>, color <span class="op">=</span> <span class="va">optFUN</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">0.9</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="opt_FUN-1.png" alt="" width="700" height="433"></span>
 </code></pre></div>
     </div>
@@ -181,7 +190,7 @@ NULL, or NA value.</p></li>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

@@ -66,40 +66,53 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">plot_phenofit</span><span class="op">(</span>
-  <span class="va">obj</span>,
-  type <span class="op">=</span> <span class="st">"all"</span>,
-  <span class="va">methods</span>,
-  title <span class="op">=</span> <span class="cn">NULL</span>,
-  ylab <span class="op">=</span> <span class="st">"Vegetation Index"</span>,
-  IsPlot <span class="op">=</span> <span class="cn">TRUE</span>,
-  show.legend <span class="op">=</span> <span class="cn">TRUE</span>,
-  newpage <span class="op">=</span> <span class="cn">TRUE</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">plot_phenofit</span><span class="op">(</span></span>
+<span>  <span class="va">obj</span>,</span>
+<span>  type <span class="op">=</span> <span class="st">"all"</span>,</span>
+<span>  <span class="va">methods</span>,</span>
+<span>  title <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  ylab <span class="op">=</span> <span class="st">"Vegetation Index"</span>,</span>
+<span>  IsPlot <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  show.legend <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  newpage <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>obj</dt>
 <dd><p><code>phenofit</code> object, list(INPUT, fit, seasons)</p></dd>
+
+
 <dt>type</dt>
 <dd><p>one of c("season", "fitting", "pheno", "all")</p></dd>
+
+
 <dt>methods</dt>
 <dd><p>fine fitting functions, e.g., <code>c("AG", "Zhang", "Beck", "Elmore", "Gu")</code></p></dd>
+
+
 <dt>title</dt>
 <dd><p>String, title of figure.</p></dd>
-<dt>ylab</dt>
-<dd><p>String, title of <code>xlab</code> and <code>ylab</code>.</p></dd>
+
+
 <dt>IsPlot</dt>
 <dd><p>boolean. If false, a ggplot object will be returned.</p></dd>
+
+
 <dt>show.legend</dt>
 <dd><p>If now show legend, ggplot object will be returned, else
 grid object will be returned.</p></dd>
+
+
 <dt>newpage</dt>
 <dd><p>boolean, whether draw figure in a new page?</p></dd>
+
+
 <dt>...</dt>
 <dd><p>other parameters to <code><a href="plot_curvefits.html">plot_curvefits()</a></code></p></dd>
+
 </dl></div>
 
   </div>
@@ -114,7 +127,7 @@ grid object will be returned.</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

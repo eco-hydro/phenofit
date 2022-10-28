@@ -68,25 +68,25 @@ curve fitting functions.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">optim_pheno</span><span class="op">(</span>
-  <span class="va">prior</span>,
-  <span class="va">sFUN</span>,
-  <span class="va">y</span>,
-  <span class="va">t</span>,
-  <span class="va">tout</span>,
-  <span class="va">method</span>,
-  <span class="va">w</span>,
-  <span class="va">nptperyear</span>,
-  <span class="va">ylu</span>,
-  iters <span class="op">=</span> <span class="fl">2</span>,
-  wFUN <span class="op">=</span> <span class="va">wTSM</span>,
-  lower <span class="op">=</span> <span class="op">-</span><span class="cn">Inf</span>,
-  upper <span class="op">=</span> <span class="cn">Inf</span>,
-  constrain <span class="op">=</span> <span class="cn">TRUE</span>,
-  verbose <span class="op">=</span> <span class="cn">FALSE</span>,
-  <span class="va">...</span>,
-  use.cpp <span class="op">=</span> <span class="cn">FALSE</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">optim_pheno</span><span class="op">(</span></span>
+<span>  <span class="va">prior</span>,</span>
+<span>  <span class="va">sFUN</span>,</span>
+<span>  <span class="va">y</span>,</span>
+<span>  <span class="va">t</span>,</span>
+<span>  <span class="va">tout</span>,</span>
+<span>  <span class="va">method</span>,</span>
+<span>  <span class="va">w</span>,</span>
+<span>  <span class="va">nptperyear</span>,</span>
+<span>  <span class="va">ylu</span>,</span>
+<span>  iters <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>  wFUN <span class="op">=</span> <span class="va">wTSM</span>,</span>
+<span>  lower <span class="op">=</span> <span class="op">-</span><span class="cn">Inf</span>,</span>
+<span>  upper <span class="op">=</span> <span class="cn">Inf</span>,</span>
+<span>  constrain <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">...</span>,</span>
+<span>  use.cpp <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -94,53 +94,82 @@ curve fitting functions.</p>
     <dl><dt>prior</dt>
 <dd><p>A vector of initial values for the parameters for which optimal
 values are to be found. <code>prior</code> is suggested giving a column name.</p></dd>
+
+
 <dt>sFUN</dt>
 <dd><p>The name of fine curve fitting functions, can be one of <code> 'FitAG', 'FitDL.Beck', 'FitDL.Elmore', 'FitDL.Gu' and 'FitDL.Klos', 'FitDL.Zhang'</code>.</p></dd>
+
+
 <dt>y</dt>
 <dd><p>Numeric vector, vegetation index time-series</p></dd>
+
+
 <dt>t</dt>
 <dd><p>Numeric vector, <code>Date</code> variable</p></dd>
+
+
 <dt>tout</dt>
 <dd><p>Corresponding doy of prediction.</p></dd>
+
+
 <dt>method</dt>
 <dd><p>The name of optimization method to solve fine fitting, one of
 <code>'BFGS','CG','Nelder-Mead', 'L-BFGS-B', 'nlm', 'nlminb', 'ucminf'</code> and
 <code>'spg','Rcgmin','Rvmmin', 'newuoa','bobyqa','nmkb','hjkb'</code>.</p></dd>
+
+
 <dt>w</dt>
 <dd><p>(optional) Numeric vector, weights of <code>y</code>. If not specified,
 weights of all <code>NA</code> values will be <code>wmin</code>, the others will be 1.0.</p></dd>
+
+
 <dt>nptperyear</dt>
 <dd><p>Integer, number of images per year, passed to <code>wFUN</code>.
 Only <code><a href="wFUN.html">wTSM()</a></code> needs <code>nptperyear</code>. If not specified,
 <code>nptperyear</code> will be calculated based on <code>t</code>.</p></dd>
+
+
 <dt>ylu</dt>
 <dd><p><code>[ymin, ymax]</code>, which is used to force <code>ypred</code> in the range of <code>ylu</code>.</p></dd>
+
+
 <dt>iters</dt>
 <dd><p>How many times curve fitting is implemented.</p></dd>
+
+
 <dt>wFUN</dt>
 <dd><p>weights updating function, can be one of 'wTSM', 'wChen' and
 'wBisquare'.</p></dd>
-<dt>lower</dt>
+
+
+<dt>lower, upper</dt>
 <dd><p>vectors of lower and upper bounds, replicated to be as long as
     <code>start</code>.  If unspecified, all parameters are assumed to be
     unconstrained.</p></dd>
-<dt>upper</dt>
-<dd><p>vectors of lower and upper bounds, replicated to be as long as
-    <code>start</code>.  If unspecified, all parameters are assumed to be
-    unconstrained.</p></dd>
+
+
 <dt>constrain</dt>
 <dd><p>boolean, whether to use parameter constrain</p></dd>
+
+
 <dt>verbose</dt>
 <dd><p>Whether to display intermediate variables?</p></dd>
+
+
 <dt>...</dt>
 <dd><p>other parameters passed to <code><a href="I_optim.html">I_optim()</a></code> or <code><a href="I_optim.html">I_optimx()</a></code>.</p></dd>
+
+
 <dt>use.cpp</dt>
 <dd><p>(unstable, not used) boolean, whether to use c++ defined fine
 fitting function? If <code>FALSE</code>, R version will be used.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A <code><a href="fFIT.html">fFIT()</a></code> object, with the element of:</p><ul><li><p><code>tout</code>: The time of output curve fitting time-series.</p></li>
+    
+
+<p>A <code><a href="fFIT.html">fFIT()</a></code> object, with the element of:</p><ul><li><p><code>tout</code>: The time of output curve fitting time-series.</p></li>
 <li><p><code>zs</code>  : Smoothed vegetation time-series of every iteration.</p></li>
 <li><p><code>ws</code>  : Weights of every iteration.</p></li>
 <li><p><code>par</code> : Final optimized parameter of fine fitting.</p></li>
@@ -153,26 +182,26 @@ fitting function? If <code>FALSE</code>, R version will be used.</p></dd>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># library(magrittr)</span></span>
-<span class="r-in"><span class="co"># library(purrr)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># simulate vegetation time-series</span></span>
-<span class="r-in"><span class="va">t</span>    <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">365</span>, <span class="fl">8</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">tout</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">365</span>, <span class="fl">1</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">FUN</span> <span class="op">=</span> <span class="va">doubleLog_Beck</span></span>
-<span class="r-in"><span class="va">par</span>  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span> mn  <span class="op">=</span> <span class="fl">0.1</span> , mx  <span class="op">=</span> <span class="fl">0.7</span> , sos <span class="op">=</span> <span class="fl">50</span> , rsp <span class="op">=</span> <span class="fl">0.1</span> , eos <span class="op">=</span> <span class="fl">250</span>, rau <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">par0</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span> mn  <span class="op">=</span> <span class="fl">0.15</span>, mx  <span class="op">=</span> <span class="fl">0.65</span>, sos <span class="op">=</span> <span class="fl">100</span>, rsp <span class="op">=</span> <span class="fl">0.12</span>, eos <span class="op">=</span> <span class="fl">200</span>, rau <span class="op">=</span> <span class="fl">0.12</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu">FUN</span><span class="op">(</span><span class="va">par</span>, <span class="va">t</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">methods</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"BFGS"</span>, <span class="st">"ucminf"</span>, <span class="st">"nlm"</span>, <span class="st">"nlminb"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">opt1</span> <span class="op">&lt;-</span> <span class="fu"><a href="I_optim.html">I_optim</a></span><span class="op">(</span><span class="va">par0</span>, <span class="va">doubleLog_Beck</span>, <span class="va">y</span>, <span class="va">t</span>, <span class="va">methods</span><span class="op">)</span> <span class="co"># "BFGS", "ucminf", "nlm",</span></span>
-<span class="r-in"><span class="co"># opt2 &lt;- I_optimx(prior, fFUN, y, t, tout, )</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">sFUN</span>   <span class="op">=</span> <span class="st">"doubleLog.Beck"</span> <span class="co"># doubleLog.Beck</span></span>
-<span class="r-in"><span class="va">r</span> <span class="op">&lt;-</span> <span class="fu">optim_pheno</span><span class="op">(</span><span class="va">par0</span>, <span class="va">sFUN</span>, <span class="va">y</span>, <span class="va">t</span>, <span class="va">tout</span>, method <span class="op">=</span> <span class="va">methods</span><span class="op">[</span><span class="fl">4</span><span class="op">]</span>,</span>
-<span class="r-in">                 nptperyear <span class="op">=</span> <span class="fl">46</span>, iters <span class="op">=</span> <span class="fl">2</span>, wFUN <span class="op">=</span> <span class="va">wTSM</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span>, use.julia <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># library(magrittr)</span></span></span>
+<span class="r-in"><span><span class="co"># library(purrr)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># simulate vegetation time-series</span></span></span>
+<span class="r-in"><span><span class="va">t</span>    <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">365</span>, <span class="fl">8</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tout</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">365</span>, <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">FUN</span> <span class="op">=</span> <span class="va">doubleLog_Beck</span></span></span>
+<span class="r-in"><span><span class="va">par</span>  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span> mn  <span class="op">=</span> <span class="fl">0.1</span> , mx  <span class="op">=</span> <span class="fl">0.7</span> , sos <span class="op">=</span> <span class="fl">50</span> , rsp <span class="op">=</span> <span class="fl">0.1</span> , eos <span class="op">=</span> <span class="fl">250</span>, rau <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">par0</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span> mn  <span class="op">=</span> <span class="fl">0.15</span>, mx  <span class="op">=</span> <span class="fl">0.65</span>, sos <span class="op">=</span> <span class="fl">100</span>, rsp <span class="op">=</span> <span class="fl">0.12</span>, eos <span class="op">=</span> <span class="fl">200</span>, rau <span class="op">=</span> <span class="fl">0.12</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu">FUN</span><span class="op">(</span><span class="va">par</span>, <span class="va">t</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">methods</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"BFGS"</span>, <span class="st">"ucminf"</span>, <span class="st">"nlm"</span>, <span class="st">"nlminb"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">opt1</span> <span class="op">&lt;-</span> <span class="fu"><a href="I_optim.html">I_optim</a></span><span class="op">(</span><span class="va">par0</span>, <span class="va">doubleLog_Beck</span>, <span class="va">y</span>, <span class="va">t</span>, <span class="va">methods</span><span class="op">)</span> <span class="co"># "BFGS", "ucminf", "nlm",</span></span></span>
+<span class="r-in"><span><span class="co"># opt2 &lt;- I_optimx(prior, fFUN, y, t, tout, )</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">sFUN</span>   <span class="op">=</span> <span class="st">"doubleLog.Beck"</span> <span class="co"># doubleLog.Beck</span></span></span>
+<span class="r-in"><span><span class="va">r</span> <span class="op">&lt;-</span> <span class="fu">optim_pheno</span><span class="op">(</span><span class="va">par0</span>, <span class="va">sFUN</span>, <span class="va">y</span>, <span class="va">t</span>, <span class="va">tout</span>, method <span class="op">=</span> <span class="va">methods</span><span class="op">[</span><span class="fl">4</span><span class="op">]</span>,</span></span>
+<span class="r-in"><span>                 nptperyear <span class="op">=</span> <span class="fl">46</span>, iters <span class="op">=</span> <span class="fl">2</span>, wFUN <span class="op">=</span> <span class="va">wTSM</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span>, use.julia <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -187,7 +216,7 @@ fitting function? If <code>FALSE</code>, R version will be used.</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

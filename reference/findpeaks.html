@@ -68,64 +68,89 @@ pracma::findpeaks."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/aj
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">findpeaks</span><span class="op">(</span>
-  <span class="va">x</span>,
-  nups <span class="op">=</span> <span class="fl">1</span>,
-  ndowns <span class="op">=</span> <span class="va">nups</span>,
-  zero <span class="op">=</span> <span class="st">"0"</span>,
-  peakpat <span class="op">=</span> <span class="cn">NULL</span>,
-  minpeakheight <span class="op">=</span> <span class="op">-</span><span class="cn">Inf</span>,
-  minpeakdistance <span class="op">=</span> <span class="fl">1</span>,
-  h_min <span class="op">=</span> <span class="fl">0</span>,
-  h_max <span class="op">=</span> <span class="fl">0</span>,
-  npeaks <span class="op">=</span> <span class="fl">0</span>,
-  sortstr <span class="op">=</span> <span class="cn">FALSE</span>,
-  include_gregexpr <span class="op">=</span> <span class="cn">FALSE</span>,
-  IsPlot <span class="op">=</span> <span class="cn">F</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">findpeaks</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  nups <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  ndowns <span class="op">=</span> <span class="va">nups</span>,</span>
+<span>  zero <span class="op">=</span> <span class="st">"0"</span>,</span>
+<span>  peakpat <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  minpeakheight <span class="op">=</span> <span class="op">-</span><span class="cn">Inf</span>,</span>
+<span>  minpeakdistance <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  h_min <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  h_max <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  npeaks <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  sortstr <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  include_gregexpr <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  IsPlot <span class="op">=</span> <span class="cn">F</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>x</dt>
 <dd><p>Numeric vector.</p></dd>
+
+
 <dt>nups</dt>
 <dd><p>minimum number of increasing steps before a peak is reached</p></dd>
+
+
 <dt>ndowns</dt>
 <dd><p>minimum number of decreasing steps after the peak</p></dd>
+
+
 <dt>zero</dt>
 <dd><p>can be <code>+</code>, <code>-</code>, or <code>0</code>; how to interprete succeeding steps
 of the same value: increasing, decreasing, or special</p></dd>
+
+
 <dt>peakpat</dt>
 <dd><p>define a peak as a regular pattern, such as the default
 pattern <code>[+]{1,}[-]{1,}</code>; if a pattern is provided, the parameters
 <code>nups</code> and <code>ndowns</code> are not taken into account</p></dd>
+
+
 <dt>minpeakheight</dt>
 <dd><p>The minimum (absolute) height a peak has to have
 to be recognized as such</p></dd>
+
+
 <dt>minpeakdistance</dt>
 <dd><p>The minimum distance (in indices) peaks have to have
 to be counted. If the distance of two maximum extreme value less than
 <code>minpeakdistance</code>, only the real maximum value will be left.</p></dd>
+
+
 <dt>h_min</dt>
 <dd><p><code>h</code> is defined as the difference of peak value to the
 adjacent left and right trough value (<code>h_left</code> and <code>h_right</code> respectively).
 The real peaks should follow <code>min(h_left, h_right) &gt;= h_min</code>.</p></dd>
+
+
 <dt>h_max</dt>
 <dd><p>Similar as <code>h_min</code>, the real peaks should follow
 <code>max(h_left, h_right) &gt;= h_min</code>.</p></dd>
+
+
 <dt>npeaks</dt>
 <dd><p>the number of peaks to return. If <code>sortstr</code> = true, the
 largest npeaks maximum values will be returned; If <code>sortstr</code> = false,
 just the first npeaks are returned in the order of index.</p></dd>
+
+
 <dt>sortstr</dt>
 <dd><p>Boolean, Should the peaks be returned sorted in decreasing oreder of
 their maximum value?</p></dd>
+
+
 <dt>include_gregexpr</dt>
 <dd><p>Boolean (default <code>FALSE</code>), whether to include the
 matched <code>gregexpr</code>?</p></dd>
+
+
 <dt>IsPlot</dt>
 <dd><p>Boolean, whether to plot?</p></dd>
+
 </dl></div>
     <div id="note">
     <h2>Note</h2>
@@ -137,20 +162,20 @@ peaks when a flat pattern exit in the middle.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span>, len <span class="op">=</span> <span class="fl">1024</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">pos</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.13</span>, <span class="fl">0.15</span>, <span class="fl">0.23</span>, <span class="fl">0.25</span>, <span class="fl">0.40</span>, <span class="fl">0.44</span>, <span class="fl">0.65</span>, <span class="fl">0.76</span>, <span class="fl">0.78</span>, <span class="fl">0.81</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">hgt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">5</span>, <span class="fl">3</span>, <span class="fl">4</span>, <span class="fl">5</span>, <span class="fl">4.2</span>, <span class="fl">2.1</span>, <span class="fl">4.3</span>, <span class="fl">3.1</span>, <span class="fl">5.1</span>, <span class="fl">4.2</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">wdt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.005</span>, <span class="fl">0.005</span>, <span class="fl">0.006</span>, <span class="fl">0.01</span>, <span class="fl">0.01</span>, <span class="fl">0.03</span>, <span class="fl">0.01</span>, <span class="fl">0.01</span>, <span class="fl">0.005</span>, <span class="fl">0.008</span>, <span class="fl">0.005</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">pSignal</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span>along<span class="op">=</span><span class="va">pos</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in">    <span class="va">pSignal</span> <span class="op">&lt;-</span> <span class="va">pSignal</span> <span class="op">+</span> <span class="va">hgt</span><span class="op">[</span><span class="va">i</span><span class="op">]</span><span class="op">/</span><span class="op">(</span><span class="fl">1</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="op">(</span><span class="va">x</span> <span class="op">-</span> <span class="va">pos</span><span class="op">[</span><span class="va">i</span><span class="op">]</span><span class="op">)</span><span class="op">/</span><span class="va">wdt</span><span class="op">[</span><span class="va">i</span><span class="op">]</span><span class="op">)</span><span class="op">)</span><span class="op">^</span><span class="fl">4</span></span>
-<span class="r-in"><span class="op">}</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">pSignal</span>, type<span class="op">=</span><span class="st">"l"</span>, col<span class="op">=</span><span class="st">"navy"</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/grid.html" class="external-link">grid</a></span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">findpeaks</span><span class="op">(</span><span class="va">pSignal</span>, npeaks<span class="op">=</span><span class="fl">3</span>, h_min<span class="op">=</span><span class="fl">4</span>, sortstr<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></span><span class="op">(</span><span class="va">val</span><span class="op">~</span><span class="va">pos</span>, <span class="va">x</span><span class="op">$</span><span class="va">X</span>, pch<span class="op">=</span><span class="fl">20</span>, col<span class="op">=</span><span class="st">"maroon"</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span>, len <span class="op">=</span> <span class="fl">1024</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">pos</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.13</span>, <span class="fl">0.15</span>, <span class="fl">0.23</span>, <span class="fl">0.25</span>, <span class="fl">0.40</span>, <span class="fl">0.44</span>, <span class="fl">0.65</span>, <span class="fl">0.76</span>, <span class="fl">0.78</span>, <span class="fl">0.81</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">hgt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">5</span>, <span class="fl">3</span>, <span class="fl">4</span>, <span class="fl">5</span>, <span class="fl">4.2</span>, <span class="fl">2.1</span>, <span class="fl">4.3</span>, <span class="fl">3.1</span>, <span class="fl">5.1</span>, <span class="fl">4.2</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">wdt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.005</span>, <span class="fl">0.005</span>, <span class="fl">0.006</span>, <span class="fl">0.01</span>, <span class="fl">0.01</span>, <span class="fl">0.03</span>, <span class="fl">0.01</span>, <span class="fl">0.01</span>, <span class="fl">0.005</span>, <span class="fl">0.008</span>, <span class="fl">0.005</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">pSignal</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span>along<span class="op">=</span><span class="va">pos</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>    <span class="va">pSignal</span> <span class="op">&lt;-</span> <span class="va">pSignal</span> <span class="op">+</span> <span class="va">hgt</span><span class="op">[</span><span class="va">i</span><span class="op">]</span><span class="op">/</span><span class="op">(</span><span class="fl">1</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="op">(</span><span class="va">x</span> <span class="op">-</span> <span class="va">pos</span><span class="op">[</span><span class="va">i</span><span class="op">]</span><span class="op">)</span><span class="op">/</span><span class="va">wdt</span><span class="op">[</span><span class="va">i</span><span class="op">]</span><span class="op">)</span><span class="op">)</span><span class="op">^</span><span class="fl">4</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">pSignal</span>, type<span class="op">=</span><span class="st">"l"</span>, col<span class="op">=</span><span class="st">"navy"</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/grid.html" class="external-link">grid</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">findpeaks</span><span class="op">(</span><span class="va">pSignal</span>, npeaks<span class="op">=</span><span class="fl">3</span>, h_min<span class="op">=</span><span class="fl">4</span>, sortstr<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></span><span class="op">(</span><span class="va">val</span><span class="op">~</span><span class="va">pos</span>, <span class="va">x</span><span class="op">$</span><span class="va">X</span>, pch<span class="op">=</span><span class="fl">20</span>, col<span class="op">=</span><span class="st">"maroon"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="findpeaks-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -165,7 +190,7 @@ peaks when a flat pattern exit in the middle.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

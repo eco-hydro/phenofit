@@ -71,9 +71,9 @@ I_optimx: deprecated, which is about 10 times slower than I_optim.
 </ul></div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">I_optim</span><span class="op">(</span><span class="va">prior</span>, <span class="va">FUN</span>, <span class="va">y</span>, <span class="va">t</span>, method <span class="op">=</span> <span class="st">"BFGS"</span>, <span class="va">...</span>, use.cpp <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
-
-<span class="fu">I_optimx</span><span class="op">(</span><span class="va">prior</span>, <span class="va">FUN</span>, <span class="va">y</span>, <span class="va">t</span>, <span class="va">method</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span>, use.cpp <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">I_optim</span><span class="op">(</span><span class="va">prior</span>, <span class="va">FUN</span>, <span class="va">y</span>, <span class="va">t</span>, method <span class="op">=</span> <span class="st">"BFGS"</span>, <span class="va">...</span>, use.cpp <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">I_optimx</span><span class="op">(</span><span class="va">prior</span>, <span class="va">FUN</span>, <span class="va">y</span>, <span class="va">t</span>, <span class="va">method</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span>, use.cpp <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -81,29 +81,46 @@ I_optimx: deprecated, which is about 10 times slower than I_optim.
     <dl><dt>prior</dt>
 <dd><p>A vector of initial values for the parameters for which optimal
 values are to be found. <code>prior</code> is suggested giving a column name.</p></dd>
+
+
 <dt>FUN</dt>
 <dd><p>Fine curve fitting function for goal function <code><a href="f_goal.html">f_goal()</a></code>.</p></dd>
+
+
 <dt>y</dt>
 <dd><p>Numeric vector, vegetation index time-series</p></dd>
+
+
 <dt>t</dt>
 <dd><p>Numeric vector, <code>Date</code> variable</p></dd>
+
+
 <dt>method</dt>
 <dd><p><code>method</code> can be some of <code>'BFGS','CG','Nelder-Mead', 'L-BFGS-B', 'nlm', 'nlminb', 'ucminf'</code>. <br>
 For <code>I_optimx</code>, other methods are also supported,
 e.g. <code>'spg','Rcgmin','Rvmmin', 'newuoa','bobyqa','nmkb','hjkb'</code>.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>other parameters passed to <code>I_optim()</code> or <code>I_optimx()</code>.</p></dd>
+
+
 <dt>use.cpp</dt>
 <dd><p>(unstable, not used) boolean, whether to use c++ defined fine
 fitting function? If <code>FALSE</code>, R version will be used.</p></dd>
+
+
 <dt>verbose</dt>
 <dd><p>If <code>TRUE</code>, all optimization methods in
 <code><a href="https://rdrr.io/pkg/optimx/man/optimx.html" class="external-link">optimx::optimx()</a></code> are used, and print optimization information
 of all methods.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <ul><li><p><code>convcode</code>: An integer code. 0 indicates successful convergence.
+    
+
+<ul><li><p><code>convcode</code>: An integer code. 0 indicates successful convergence.
 Various methods may or may not return sufficient information to allow all
 the codes to be specified. An incomplete list of codes includes</p><ul><li><p><code>1</code>: indicates that the iteration limit <code>maxit</code> had been reached.</p></li>
 <li><p><code>20</code>: indicates that the initial set of parameters is inadmissible,
@@ -131,25 +148,25 @@ NULL, or NA value.</p></li>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># simulate vegetation time-series</span></span>
-<span class="r-in"><span class="va">FUN</span>  <span class="op">=</span> <span class="va">doubleLog_Beck</span></span>
-<span class="r-in"><span class="va">par</span>  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span> mn  <span class="op">=</span> <span class="fl">0.1</span> , mx  <span class="op">=</span> <span class="fl">0.7</span> , sos <span class="op">=</span> <span class="fl">50</span> , rsp <span class="op">=</span> <span class="fl">0.1</span> , eos <span class="op">=</span> <span class="fl">250</span>, rau <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">par0</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span> mn  <span class="op">=</span> <span class="fl">0.15</span>, mx  <span class="op">=</span> <span class="fl">0.65</span>, sos <span class="op">=</span> <span class="fl">100</span>, rsp <span class="op">=</span> <span class="fl">0.12</span>, eos <span class="op">=</span> <span class="fl">200</span>, rau <span class="op">=</span> <span class="fl">0.12</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">t</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">365</span>, <span class="fl">8</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu">FUN</span><span class="op">(</span><span class="va">par</span>, <span class="va">t</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">methods</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"BFGS"</span>, <span class="st">"ucminf"</span>, <span class="st">"nlm"</span>, <span class="st">"nlminb"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">opt1</span> <span class="op">&lt;-</span> <span class="fu">I_optim</span> <span class="op">(</span><span class="va">par0</span>, <span class="va">FUN</span>, <span class="va">y</span>, <span class="va">t</span>, <span class="va">methods</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">opt2</span> <span class="op">&lt;-</span> <span class="fu">I_optimx</span><span class="op">(</span><span class="va">par0</span>, <span class="va">FUN</span>, <span class="va">y</span>, <span class="va">t</span>, <span class="va">methods</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># \dontrun{</span></span>
-<span class="r-in"><span class="co"># microbenchmark::microbenchmark(</span></span>
-<span class="r-in"><span class="co">#     opt1 = I_optim (par0, FUN, y, t, methods),</span></span>
-<span class="r-in"><span class="co">#     opt2 = I_optimx(par0, FUN, y, t, methods),</span></span>
-<span class="r-in"><span class="co">#     times = 2</span></span>
-<span class="r-in"><span class="co"># )</span></span>
-<span class="r-in"><span class="co"># }</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># simulate vegetation time-series</span></span></span>
+<span class="r-in"><span><span class="va">FUN</span>  <span class="op">=</span> <span class="va">doubleLog_Beck</span></span></span>
+<span class="r-in"><span><span class="va">par</span>  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span> mn  <span class="op">=</span> <span class="fl">0.1</span> , mx  <span class="op">=</span> <span class="fl">0.7</span> , sos <span class="op">=</span> <span class="fl">50</span> , rsp <span class="op">=</span> <span class="fl">0.1</span> , eos <span class="op">=</span> <span class="fl">250</span>, rau <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">par0</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span> mn  <span class="op">=</span> <span class="fl">0.15</span>, mx  <span class="op">=</span> <span class="fl">0.65</span>, sos <span class="op">=</span> <span class="fl">100</span>, rsp <span class="op">=</span> <span class="fl">0.12</span>, eos <span class="op">=</span> <span class="fl">200</span>, rau <span class="op">=</span> <span class="fl">0.12</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">t</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">365</span>, <span class="fl">8</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu">FUN</span><span class="op">(</span><span class="va">par</span>, <span class="va">t</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">methods</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"BFGS"</span>, <span class="st">"ucminf"</span>, <span class="st">"nlm"</span>, <span class="st">"nlminb"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">opt1</span> <span class="op">&lt;-</span> <span class="fu">I_optim</span> <span class="op">(</span><span class="va">par0</span>, <span class="va">FUN</span>, <span class="va">y</span>, <span class="va">t</span>, <span class="va">methods</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">opt2</span> <span class="op">&lt;-</span> <span class="fu">I_optimx</span><span class="op">(</span><span class="va">par0</span>, <span class="va">FUN</span>, <span class="va">y</span>, <span class="va">t</span>, <span class="va">methods</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># \dontrun{</span></span></span>
+<span class="r-in"><span><span class="co"># microbenchmark::microbenchmark(</span></span></span>
+<span class="r-in"><span><span class="co">#     opt1 = I_optim (par0, FUN, y, t, methods),</span></span></span>
+<span class="r-in"><span><span class="co">#     opt2 = I_optimx(par0, FUN, y, t, methods),</span></span></span>
+<span class="r-in"><span><span class="co">#     times = 2</span></span></span>
+<span class="r-in"><span><span class="co"># )</span></span></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -164,7 +181,7 @@ NULL, or NA value.</p></li>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

@@ -70,20 +70,20 @@ curvature curvature."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">D1</span><span class="op">(</span><span class="va">fit</span>, t <span class="op">=</span> <span class="cn">NULL</span>, analytical <span class="op">=</span> <span class="cn">FALSE</span>, smoothed.spline <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="fu">D2</span><span class="op">(</span><span class="va">fit</span>, t <span class="op">=</span> <span class="cn">NULL</span>, analytical <span class="op">=</span> <span class="cn">FALSE</span>, smoothed.spline <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="co"># S3 method for fFIT</span>
-<span class="fu">D1</span><span class="op">(</span><span class="va">fit</span>, t <span class="op">=</span> <span class="cn">NULL</span>, analytical <span class="op">=</span> <span class="cn">FALSE</span>, smoothed.spline <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="co"># S3 method for fFIT</span>
-<span class="fu">D2</span><span class="op">(</span><span class="va">fit</span>, t <span class="op">=</span> <span class="cn">NULL</span>, analytical <span class="op">=</span> <span class="cn">FALSE</span>, smoothed.spline <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="fu">curvature</span><span class="op">(</span><span class="va">fit</span>, t <span class="op">=</span> <span class="cn">NULL</span>, analytical <span class="op">=</span> <span class="cn">FALSE</span>, smoothed.spline <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="co"># S3 method for fFIT</span>
-<span class="fu">curvature</span><span class="op">(</span><span class="va">fit</span>, t <span class="op">=</span> <span class="cn">NULL</span>, analytical <span class="op">=</span> <span class="cn">FALSE</span>, smoothed.spline <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">D1</span><span class="op">(</span><span class="va">fit</span>, t <span class="op">=</span> <span class="cn">NULL</span>, analytical <span class="op">=</span> <span class="cn">FALSE</span>, smoothed.spline <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">D2</span><span class="op">(</span><span class="va">fit</span>, t <span class="op">=</span> <span class="cn">NULL</span>, analytical <span class="op">=</span> <span class="cn">FALSE</span>, smoothed.spline <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for fFIT</span></span>
+<span><span class="fu">D1</span><span class="op">(</span><span class="va">fit</span>, t <span class="op">=</span> <span class="cn">NULL</span>, analytical <span class="op">=</span> <span class="cn">FALSE</span>, smoothed.spline <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for fFIT</span></span>
+<span><span class="fu">D2</span><span class="op">(</span><span class="va">fit</span>, t <span class="op">=</span> <span class="cn">NULL</span>, analytical <span class="op">=</span> <span class="cn">FALSE</span>, smoothed.spline <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">curvature</span><span class="op">(</span><span class="va">fit</span>, t <span class="op">=</span> <span class="cn">NULL</span>, analytical <span class="op">=</span> <span class="cn">FALSE</span>, smoothed.spline <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for fFIT</span></span>
+<span><span class="fu">curvature</span><span class="op">(</span><span class="va">fit</span>, t <span class="op">=</span> <span class="cn">NULL</span>, analytical <span class="op">=</span> <span class="cn">FALSE</span>, smoothed.spline <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -93,17 +93,26 @@ curvature curvature."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/
 <li><p><code>fun</code>: curve fitting function name, e.g., "doubleLog_AG"</p></li>
 <li><p><code>zs</code>: predicted values, vector or data.frame</p></li>
 </ul></dd>
+
+
 <dt>analytical</dt>
 <dd><p>If true, <code>numDeriv</code> package <code>grad</code> and <code>hess</code>
 will be used; if false, <code>D1</code> and <code>D2</code> will be used.</p></dd>
+
+
 <dt>smoothed.spline</dt>
 <dd><p>Whether apply <code>smooth.spline</code> first?</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Other parameters will be ignored.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <ul><li><p>der1 First order derivative</p></li>
+    
+
+<ul><li><p>der1 First order derivative</p></li>
 <li><p>der2 Second order derivative</p></li>
 <li><p>k    Curvature</p></li>
 </ul></div>
@@ -117,18 +126,18 @@ will be ignored.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># doubleLog.Beck</span></span>
-<span class="r-in"><span class="va">t</span>    <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">365</span>, <span class="fl">8</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">tout</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">365</span>, <span class="fl">1</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">par</span>  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>mn  <span class="op">=</span> <span class="fl">0.1</span>, mx  <span class="op">=</span> <span class="fl">0.7</span>, sos <span class="op">=</span> <span class="fl">50</span>, rsp <span class="op">=</span> <span class="fl">0.1</span>, eos <span class="op">=</span> <span class="fl">250</span>, rau <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="logistics.html">doubleLog.Beck</a></span><span class="op">(</span><span class="va">par</span>, <span class="va">t</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">methods</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AG"</span>, <span class="st">"Beck"</span>, <span class="st">"Elmore"</span>, <span class="st">"Gu"</span>, <span class="st">"Zhang"</span><span class="op">)</span> <span class="co"># "Klos" too slow</span></span>
-<span class="r-in"><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="curvefit.html">curvefit</a></span><span class="op">(</span><span class="va">y</span>, <span class="va">t</span>, <span class="va">tout</span>, <span class="va">methods</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">x</span>  <span class="op">&lt;-</span> <span class="va">fit</span><span class="op">$</span><span class="va">model</span><span class="op">$</span><span class="va">AG</span></span>
-<span class="r-in"><span class="va">d1</span> <span class="op">&lt;-</span> <span class="fu">D1</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">d2</span> <span class="op">&lt;-</span> <span class="fu">D2</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">d_k</span> <span class="op">&lt;-</span> <span class="fu">curvature</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># doubleLog.Beck</span></span></span>
+<span class="r-in"><span><span class="va">t</span>    <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">365</span>, <span class="fl">8</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tout</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">365</span>, <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">par</span>  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>mn  <span class="op">=</span> <span class="fl">0.1</span>, mx  <span class="op">=</span> <span class="fl">0.7</span>, sos <span class="op">=</span> <span class="fl">50</span>, rsp <span class="op">=</span> <span class="fl">0.1</span>, eos <span class="op">=</span> <span class="fl">250</span>, rau <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="logistics.html">doubleLog.Beck</a></span><span class="op">(</span><span class="va">par</span>, <span class="va">t</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">methods</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AG"</span>, <span class="st">"Beck"</span>, <span class="st">"Elmore"</span>, <span class="st">"Gu"</span>, <span class="st">"Zhang"</span><span class="op">)</span> <span class="co"># "Klos" too slow</span></span></span>
+<span class="r-in"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="curvefit.html">curvefit</a></span><span class="op">(</span><span class="va">y</span>, <span class="va">t</span>, <span class="va">tout</span>, <span class="va">methods</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">x</span>  <span class="op">&lt;-</span> <span class="va">fit</span><span class="op">$</span><span class="va">model</span><span class="op">$</span><span class="va">AG</span></span></span>
+<span class="r-in"><span><span class="va">d1</span> <span class="op">&lt;-</span> <span class="fu">D1</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">d2</span> <span class="op">&lt;-</span> <span class="fu">D2</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">d_k</span> <span class="op">&lt;-</span> <span class="fu">curvature</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -143,7 +152,7 @@ will be ignored.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

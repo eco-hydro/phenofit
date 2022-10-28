@@ -87,46 +87,65 @@ still not finished.</p></li>
 </ul></div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">wSELF</span><span class="op">(</span><span class="va">y</span>, <span class="va">yfit</span>, <span class="va">w</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="fu">wTSM</span><span class="op">(</span><span class="va">y</span>, <span class="va">yfit</span>, <span class="va">w</span>, iter <span class="op">=</span> <span class="fl">2</span>, <span class="va">nptperyear</span>, wfact <span class="op">=</span> <span class="fl">0.5</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="fu">wBisquare0</span><span class="op">(</span><span class="va">y</span>, <span class="va">yfit</span>, <span class="va">w</span>, <span class="va">...</span>, wmin <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span>
-
-<span class="fu">wBisquare</span><span class="op">(</span><span class="va">y</span>, <span class="va">yfit</span>, <span class="va">w</span>, <span class="va">...</span>, wmin <span class="op">=</span> <span class="fl">0.2</span>, .toUpper <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-
-<span class="fu">wChen</span><span class="op">(</span><span class="va">y</span>, <span class="va">yfit</span>, <span class="va">w</span>, <span class="va">...</span>, wmin <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span>
-
-<span class="fu">wKong</span><span class="op">(</span><span class="va">y</span>, <span class="va">yfit</span>, <span class="va">w</span>, <span class="va">...</span>, wmin <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">wSELF</span><span class="op">(</span><span class="va">y</span>, <span class="va">yfit</span>, <span class="va">w</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">wTSM</span><span class="op">(</span><span class="va">y</span>, <span class="va">yfit</span>, <span class="va">w</span>, iter <span class="op">=</span> <span class="fl">2</span>, <span class="va">nptperyear</span>, wfact <span class="op">=</span> <span class="fl">0.5</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">wBisquare0</span><span class="op">(</span><span class="va">y</span>, <span class="va">yfit</span>, <span class="va">w</span>, <span class="va">...</span>, wmin <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">wBisquare</span><span class="op">(</span><span class="va">y</span>, <span class="va">yfit</span>, <span class="va">w</span>, <span class="va">...</span>, wmin <span class="op">=</span> <span class="fl">0.2</span>, .toUpper <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">wChen</span><span class="op">(</span><span class="va">y</span>, <span class="va">yfit</span>, <span class="va">w</span>, <span class="va">...</span>, wmin <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">wKong</span><span class="op">(</span><span class="va">y</span>, <span class="va">yfit</span>, <span class="va">w</span>, <span class="va">...</span>, wmin <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>y</dt>
 <dd><p>Numeric vector, vegetation index time-series</p></dd>
+
+
 <dt>yfit</dt>
 <dd><p>Numeric vector curve fitting values.</p></dd>
+
+
 <dt>w</dt>
 <dd><p>(optional) Numeric vector, weights of <code>y</code>. If not specified,
 weights of all <code>NA</code> values will be <code>wmin</code>, the others will be 1.0.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>other parameters are ignored.</p></dd>
+
+
 <dt>iter</dt>
 <dd><p>iteration of curve fitting.</p></dd>
+
+
 <dt>nptperyear</dt>
 <dd><p>Integer, number of images per year.</p></dd>
+
+
 <dt>wfact</dt>
 <dd><p>weight adaptation factor (0-1), equal to the reciprocal of
 'Adaptation strength' in TIMESAT.</p></dd>
+
+
 <dt>wmin</dt>
 <dd><p>Double, minimum weight of bad points, which could be smaller
 the weight of snow, ice and cloud.</p></dd>
+
+
 <dt>.toUpper</dt>
 <dd><p>Boolean. Whether to approach the upper envelope?</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>wnew Numeric Vector, adjusted weights.</p>
+    
+
+<p>wnew Numeric Vector, adjusted weights.</p>
     </div>
     <div id="references">
     <h2>References</h2>
@@ -168,7 +187,7 @@ And Translated into Rcpp by Dongdong Kong, 01 May 2018.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

@@ -68,21 +68,28 @@ This function is modified from <code>ptw</code> package.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">whit2</span><span class="op">(</span><span class="va">y</span>, <span class="va">lambda</span>, w <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="va">ny</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">whit2</span><span class="op">(</span><span class="va">y</span>, <span class="va">lambda</span>, w <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="va">ny</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>y</dt>
 <dd><p>signal to be smoothed: a vector</p></dd>
+
+
 <dt>lambda</dt>
 <dd><p>smoothing parameter: larger values lead to more smoothing</p></dd>
+
+
 <dt>w</dt>
 <dd><p>weights: a vector of same length as y. Default weights are equal to one</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A numeric vector, smoothed signal.</p>
+    
+
+<p>A numeric vector, smoothed signal.</p>
     </div>
     <div id="references">
     <h2>References</h2>
@@ -99,16 +106,16 @@ This function is modified from <code>ptw</code> package.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/eco-hydro/phenofit" class="external-link">phenofit</a></span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"MOD13A1"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">dt</span> <span class="op">&lt;-</span> <span class="fu"><a href="tidy_MOD13.html">tidy_MOD13</a></span><span class="op">(</span><span class="va">MOD13A1</span><span class="op">$</span><span class="va">dt</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">y</span> <span class="op">&lt;-</span> <span class="va">dt</span><span class="op">[</span><span class="va">site</span> <span class="op">==</span> <span class="st">"AT-Neu"</span>, <span class="op">]</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">120</span>, <span class="va">y</span><span class="op">]</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">y</span>, type <span class="op">=</span> <span class="st">"b"</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="fu">whit2</span><span class="op">(</span><span class="va">y</span>, lambda <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>, col <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="fu">whit2</span><span class="op">(</span><span class="va">y</span>, lambda <span class="op">=</span> <span class="fl">10</span><span class="op">)</span>, col <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="fu">whit2</span><span class="op">(</span><span class="va">y</span>, lambda <span class="op">=</span> <span class="fl">100</span><span class="op">)</span>, col <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span><span class="st">"bottomleft"</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"lambda = "</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">10</span>, <span class="fl">15</span><span class="op">)</span><span class="op">)</span>, col <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="fl">4</span>, lty <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/eco-hydro/phenofit" class="external-link">phenofit</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"MOD13A1"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">dt</span> <span class="op">&lt;-</span> <span class="fu"><a href="tidy_MOD13.html">tidy_MOD13</a></span><span class="op">(</span><span class="va">MOD13A1</span><span class="op">$</span><span class="va">dt</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">y</span> <span class="op">&lt;-</span> <span class="va">dt</span><span class="op">[</span><span class="va">site</span> <span class="op">==</span> <span class="st">"AT-Neu"</span>, <span class="op">]</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">120</span>, <span class="va">y</span><span class="op">]</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">y</span>, type <span class="op">=</span> <span class="st">"b"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="fu">whit2</span><span class="op">(</span><span class="va">y</span>, lambda <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>, col <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="fu">whit2</span><span class="op">(</span><span class="va">y</span>, lambda <span class="op">=</span> <span class="fl">10</span><span class="op">)</span>, col <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="fu">whit2</span><span class="op">(</span><span class="va">y</span>, lambda <span class="op">=</span> <span class="fl">100</span><span class="op">)</span>, col <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span><span class="st">"bottomleft"</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"lambda = "</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">10</span>, <span class="fl">15</span><span class="op">)</span><span class="op">)</span>, col <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="fl">4</span>, lty <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="whit2-1.png" alt="" width="700" height="433"></span>
 </code></pre></div>
     </div>
@@ -124,7 +131,7 @@ This function is modified from <code>ptw</code> package.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

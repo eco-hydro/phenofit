@@ -82,19 +82,26 @@ SCL ValueDescriptionQualityweight
 <table class="table table"><tr><td><strong>SCL Value</strong></td><td><strong>Description</strong></td><td><strong>Quality</strong></td><td><strong>weight</strong></td></tr><tr><td>1</td><td>Saturated or defective</td><td>Bad</td><td>\(w_{min}\)</td></tr><tr><td>2</td><td>Dark Area Pixels</td><td>Bad</td><td>\(w_{min}\)</td></tr><tr><td>3</td><td>Cloud Shadows</td><td>Bad</td><td>\(w_{min}\)</td></tr><tr><td>4</td><td>Vegetation</td><td>Good</td><td>\(w_{max}\)</td></tr><tr><td>5</td><td>Bare Soils</td><td>Good</td><td>\(w_{max}\)</td></tr><tr><td>6</td><td>Water</td><td>Good</td><td>\(w_{max}\)</td></tr><tr><td>7</td><td>Clouds Low Probability / Unclassified</td><td>Good</td><td>\(w_{max}\)</td></tr><tr><td>8</td><td>Clouds Medium Probability</td><td>Marginal</td><td>\(w_{mid}\)</td></tr><tr><td>9</td><td>Clouds High Probability</td><td>Bad</td><td>\(w_{mid}\)</td></tr><tr><td>10</td><td>Cirrus</td><td>Good</td><td>\(w_{mid}\)</td></tr><tr><td>11</td><td>Snow / Ice</td><td>Bad</td><td>\(w_{mid}\)</td></tr></table></div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">qc_sentinel2</span><span class="op">(</span><span class="va">SCL</span>, wmin <span class="op">=</span> <span class="fl">0.2</span>, wmid <span class="op">=</span> <span class="fl">0.5</span>, wmax <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">qc_sentinel2</span><span class="op">(</span><span class="va">SCL</span>, wmin <span class="op">=</span> <span class="fl">0.2</span>, wmid <span class="op">=</span> <span class="fl">0.5</span>, wmax <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>SCL</dt>
 <dd><p>quality control variable for sentinel2</p></dd>
+
+
 <dt>wmin</dt>
 <dd><p>Double, minimum weigth (i.e. weight of snow, ice and cloud).</p></dd>
+
+
 <dt>wmid</dt>
 <dd><p>Dougle, middle weight, i.e. marginal</p></dd>
+
+
 <dt>wmax</dt>
 <dd><p>Double, maximum weight, i.e. good</p></dd>
+
 </dl></div>
     <div id="references">
     <h2>References</h2>
@@ -103,7 +110,7 @@ SCL ValueDescriptionQualityweight
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu">qc_sentinel2</span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">11</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">qc_sentinel2</span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">11</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $QC_flag</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "cloud"    "cloud"    "cloud"    "good"     "good"     "good"    </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [7] "good"     "marginal" "cloud"    "good"     "snow"    </span>
@@ -125,7 +132,7 @@ SCL ValueDescriptionQualityweight
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

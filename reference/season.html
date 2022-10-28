@@ -72,32 +72,32 @@ For <code>season_mov</code> rough fitting is applied in every year, during which
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">season</span><span class="op">(</span>
-  <span class="va">INPUT</span>,
-  <span class="va">rFUN</span>,
-  <span class="va">wFUN</span>,
-  iters <span class="op">=</span> <span class="fl">2</span>,
-  wmin <span class="op">=</span> <span class="fl">0.1</span>,
-  <span class="va">lambda</span>,
-  nf <span class="op">=</span> <span class="fl">3</span>,
-  frame <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">floor</a></span><span class="op">(</span><span class="va">INPUT</span><span class="op">$</span><span class="va">nptperyear</span><span class="op">/</span><span class="fl">5</span><span class="op">)</span> <span class="op">*</span> <span class="fl">2</span> <span class="op">+</span> <span class="fl">1</span>,
-  minpeakdistance <span class="op">=</span> <span class="cn">NULL</span>,
-  ypeak_min <span class="op">=</span> <span class="fl">0.1</span>,
-  r_max <span class="op">=</span> <span class="fl">0.2</span>,
-  r_min <span class="op">=</span> <span class="fl">0.05</span>,
-  rtrough_max <span class="op">=</span> <span class="fl">0.6</span>,
-  MaxPeaksPerYear <span class="op">=</span> <span class="fl">2</span>,
-  MaxTroughsPerYear <span class="op">=</span> <span class="fl">3</span>,
-  calendarYear <span class="op">=</span> <span class="cn">FALSE</span>,
-  adj.param <span class="op">=</span> <span class="cn">TRUE</span>,
-  rm.closed <span class="op">=</span> <span class="cn">TRUE</span>,
-  is.continuous <span class="op">=</span> <span class="cn">TRUE</span>,
-  .check_season <span class="op">=</span> <span class="cn">TRUE</span>,
-  verbose <span class="op">=</span> <span class="cn">FALSE</span>,
-  <span class="va">...</span>
-<span class="op">)</span>
-
-<span class="fu">stat_season</span><span class="op">(</span><span class="va">INPUT</span>, <span class="va">d_fit</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">season</span><span class="op">(</span></span>
+<span>  <span class="va">INPUT</span>,</span>
+<span>  <span class="va">rFUN</span>,</span>
+<span>  <span class="va">wFUN</span>,</span>
+<span>  iters <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>  wmin <span class="op">=</span> <span class="fl">0.1</span>,</span>
+<span>  <span class="va">lambda</span>,</span>
+<span>  nf <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>  frame <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">floor</a></span><span class="op">(</span><span class="va">INPUT</span><span class="op">$</span><span class="va">nptperyear</span><span class="op">/</span><span class="fl">5</span><span class="op">)</span> <span class="op">*</span> <span class="fl">2</span> <span class="op">+</span> <span class="fl">1</span>,</span>
+<span>  minpeakdistance <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  ypeak_min <span class="op">=</span> <span class="fl">0.1</span>,</span>
+<span>  r_max <span class="op">=</span> <span class="fl">0.2</span>,</span>
+<span>  r_min <span class="op">=</span> <span class="fl">0.05</span>,</span>
+<span>  rtrough_max <span class="op">=</span> <span class="fl">0.6</span>,</span>
+<span>  MaxPeaksPerYear <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>  MaxTroughsPerYear <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>  calendarYear <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  adj.param <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  rm.closed <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  is.continuous <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  .check_season <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">stat_season</span><span class="op">(</span><span class="va">INPUT</span>, <span class="va">d_fit</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -105,72 +105,119 @@ For <code>season_mov</code> rough fitting is applied in every year, during which
     <dl><dt>INPUT</dt>
 <dd><p>A list object with the elements of <code>t</code>, <code>y</code>, <code>w</code>,
 <code>Tn</code> (optional) and <code>ylu</code>, returned by <code><a href="check_input.html">check_input()</a></code>.</p></dd>
+
+
 <dt>rFUN</dt>
 <dd><p>character, the name of rough curve fitting function, can be one of
 c("smooth_wSG", "smooth_wWHIT", "smooth_wHANTS"), which are corresponding to
 <code><a href="smooth_wSG.html">smooth_wSG()</a></code>, <code><a href="smooth_wWHIT.html">smooth_wWHIT()</a></code> and <code><a href="smooth_wHANTS.html">smooth_wHANTS()</a></code>.</p></dd>
+
+
 <dt>wFUN</dt>
 <dd><p>weights updating function, can be one of .</p></dd>
+
+
 <dt>iters</dt>
 <dd><p>integer, the number of rough fitting iterations</p></dd>
+
+
 <dt>wmin</dt>
 <dd><p>double, minimum weigth (i.e. weight of snow, ice and cloud).</p></dd>
+
+
 <dt>lambda</dt>
 <dd><p>The smoothing parameter of <code><a href="smooth_wWHIT.html">smooth_wWHIT()</a></code>. For
 <code><a href="season_mov.html">season_mov()</a></code>, if lambda is <code>NULL</code>, <code><a href="init_lambda.html">init_lambda()</a></code>
 will be used. Generally, it was set as 10000, 15, and 5 for daily, 8-day
 and 16-day inputs respectively.</p></dd>
+
+
 <dt>nf</dt>
 <dd><p>The parameter of <code><a href="smooth_wHANTS.html">smooth_wHANTS()</a></code>, number of frequencies to be
 considered above the zero frequency.</p></dd>
+
+
 <dt>frame</dt>
 <dd><p>The parameter of <code><a href="smooth_wSG.html">smooth_wSG()</a></code>, moving window size. Suggested by
 TIMESAT, default <code>frame = floor(nptperyear/7)*2 + 1</code>.</p></dd>
+
+
 <dt>minpeakdistance</dt>
 <dd><p>double, in points (default as
 <code>nptperyear/6</code>). The minimum distance of two peaks. If the distance of two
 maximum extreme value less than <code>minpeakdistance</code>, only the real maximum
 value will be left.</p></dd>
+
+
 <dt>ypeak_min</dt>
 <dd><p><code>y_peak &gt;= ypeak_min</code></p></dd>
+
+
 <dt>r_max</dt>
 <dd><p>Similar as <code>r_min</code>, The maximum threshold should
 be greater than <code>r_max</code>.</p></dd>
+
+
 <dt>r_min</dt>
 <dd><p>Threshold is defined as the difference of peak value with
 trough value. There are two threshold (left and right). The minimum threshold
 should be greater than r_min.</p></dd>
+
+
 <dt>rtrough_max</dt>
 <dd><p><code>ytrough &lt;= rtrough_max*A</code>, A is the amplitude of y.</p></dd>
+
+
 <dt>MaxPeaksPerYear</dt>
 <dd><p>This parameter is used to adjust lambda in iterations.
 If PeaksPerYear &gt; MaxPeaksPerYear, then lambda = lambda*2.</p></dd>
+
+
 <dt>MaxTroughsPerYear</dt>
 <dd><p>This parameter is used to adjust lambda in iterations.
 If TroughsPerYear &gt; MaxTroughsPerYear, then lambda = lambda*2.</p></dd>
+
+
 <dt>calendarYear</dt>
 <dd><p>If true, only one static calendar growing season will be
 returned.</p></dd>
+
+
 <dt>adj.param</dt>
 <dd><p>,
 .</p></dd>
+
+
 <dt>rm.closed</dt>
 <dd><p>boolean. Whether check the two closest peaks (or troughs).</p></dd>
+
+
 <dt>is.continuous</dt>
 <dd><p>boolean. Whether the input is continuous? This parameter
 is for fluxsite site-year data.</p></dd>
+
+
 <dt>.check_season</dt>
 <dd><p>not used (only for debug)</p></dd>
+
+
 <dt>verbose</dt>
 <dd><p>whether to print <code>options_season</code> into console?</p></dd>
+
+
 <dt>...</dt>
 <dd><p>ignored.</p></dd>
+
+
 <dt>d_fit</dt>
 <dd><p>A data.frame with the columns of <code>t</code>, <code>y</code>, <code>witer...</code> and <code>ziter...</code>.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <ul><li><p><code>fit</code>: A data.table of Rough fitting result, with the columns of
+    
+
+<ul><li><p><code>fit</code>: A data.table of Rough fitting result, with the columns of
 (<code>t</code>, <code>y</code>, <code>witer1</code>, ..., <code>witerN</code>, <code>ziter1</code>, ..., <code>ziterN</code>).</p></li>
 <li><p><code>dt</code>: A data.table of growing season division information, with the columns
 of (<code>beg</code>, <code>peak</code>, <code>end</code>, <code>y_beg</code>, <code>y_peak</code>, <code>y_end</code>, <code>len</code>, <code>year</code>,
@@ -192,54 +239,54 @@ is left.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"CA_NS6"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">d</span> <span class="op">&lt;-</span> <span class="va">CA_NS6</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">nptperyear</span> <span class="op">&lt;-</span> <span class="fl">23</span></span>
-<span class="r-in"><span class="va">INPUT</span> <span class="op">&lt;-</span> <span class="fu"><a href="check_input.html">check_input</a></span><span class="op">(</span><span class="va">d</span><span class="op">$</span><span class="va">t</span>, <span class="va">d</span><span class="op">$</span><span class="va">y</span>, <span class="va">d</span><span class="op">$</span><span class="va">w</span>,</span>
-<span class="r-in">    QC_flag <span class="op">=</span> <span class="va">d</span><span class="op">$</span><span class="va">QC_flag</span>,</span>
-<span class="r-in">    nptperyear <span class="op">=</span> <span class="va">nptperyear</span>, south <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span class="r-in">    maxgap <span class="op">=</span> <span class="va">nptperyear</span> <span class="op">/</span> <span class="fl">4</span>, alpha <span class="op">=</span> <span class="fl">0.02</span>, wmin <span class="op">=</span> <span class="fl">0.2</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"><span class="co"># plot_input(INPUT)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">wFUN</span> <span class="op">&lt;-</span> <span class="st">"wTSM"</span></span>
-<span class="r-in"><span class="co"># all year as a whole</span></span>
-<span class="r-in"><span class="va">options</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>rFUN <span class="op">=</span> <span class="st">"smooth_wWHIT"</span>, wFUN <span class="op">=</span> <span class="va">wFUN</span>, lambda <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">brks</span> <span class="op">&lt;-</span> <span class="fu">season</span><span class="op">(</span><span class="va">INPUT</span>, lambda <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="plot_season.html">plot_season</a></span><span class="op">(</span><span class="va">INPUT</span>, <span class="va">brks</span>, <span class="va">d</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"CA_NS6"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="va">CA_NS6</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">nptperyear</span> <span class="op">&lt;-</span> <span class="fl">23</span></span></span>
+<span class="r-in"><span><span class="va">INPUT</span> <span class="op">&lt;-</span> <span class="fu"><a href="check_input.html">check_input</a></span><span class="op">(</span><span class="va">d</span><span class="op">$</span><span class="va">t</span>, <span class="va">d</span><span class="op">$</span><span class="va">y</span>, <span class="va">d</span><span class="op">$</span><span class="va">w</span>,</span></span>
+<span class="r-in"><span>    QC_flag <span class="op">=</span> <span class="va">d</span><span class="op">$</span><span class="va">QC_flag</span>,</span></span>
+<span class="r-in"><span>    nptperyear <span class="op">=</span> <span class="va">nptperyear</span>, south <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
+<span class="r-in"><span>    maxgap <span class="op">=</span> <span class="va">nptperyear</span> <span class="op">/</span> <span class="fl">4</span>, alpha <span class="op">=</span> <span class="fl">0.02</span>, wmin <span class="op">=</span> <span class="fl">0.2</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># plot_input(INPUT)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">wFUN</span> <span class="op">&lt;-</span> <span class="st">"wTSM"</span></span></span>
+<span class="r-in"><span><span class="co"># all year as a whole</span></span></span>
+<span class="r-in"><span><span class="va">options</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>rFUN <span class="op">=</span> <span class="st">"smooth_wWHIT"</span>, wFUN <span class="op">=</span> <span class="va">wFUN</span>, lambda <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">brks</span> <span class="op">&lt;-</span> <span class="fu">season</span><span class="op">(</span><span class="va">INPUT</span>, lambda <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="plot_season.html">plot_season</a></span><span class="op">(</span><span class="va">INPUT</span>, <span class="va">brks</span>, <span class="va">d</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="season-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">brks2</span> <span class="op">=</span> <span class="fu"><a href="season_input.html">season_input</a></span><span class="op">(</span><span class="va">INPUT</span>, <span class="va">options</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">brks2</span> <span class="op">=</span> <span class="fu"><a href="season_input.html">season_input</a></span><span class="op">(</span><span class="va">INPUT</span>, <span class="va">options</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> iloop = 1: lambda = 10.0, ntrough_PerYear = 0.00, npeak_PerYear = 0.00</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> iloop = 2: lambda = 5.0, ntrough_PerYear = 0.00, npeak_PerYear = 0.00</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> iloop = 3: lambda = 2.5, ntrough_PerYear = 0.00, npeak_PerYear = 0.00</span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/all.equal.html" class="external-link">all.equal</a></span><span class="op">(</span><span class="va">brks2</span>, <span class="va">brks</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/all.equal.html" class="external-link">all.equal</a></span><span class="op">(</span><span class="va">brks2</span>, <span class="va">brks</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">d_fit</span>, <span class="va">info_peak</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/pkg/zeallot/man/operator.html" class="external-link">%&lt;-%</a></span> <span class="fu"><a href="roughFit.html">roughFit</a></span><span class="op">(</span><span class="va">INPUT</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">d_fit</span>, <span class="va">info_peak</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/pkg/zeallot/man/operator.html" class="external-link">%&lt;-%</a></span> <span class="fu"><a href="roughFit.html">roughFit</a></span><span class="op">(</span><span class="va">INPUT</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> iloop = 1: lambda = 10.0, ntrough_PerYear = 0.00, npeak_PerYear = 0.00</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> iloop = 2: lambda = 5.0, ntrough_PerYear = 0.00, npeak_PerYear = 0.00</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> iloop = 3: lambda = 2.5, ntrough_PerYear = 0.00, npeak_PerYear = 0.00</span>
-<span class="r-in"><span class="va">d_season</span> <span class="op">=</span> <span class="fu"><a href="find_season.peaks.html">find_season.peaks</a></span><span class="op">(</span><span class="va">d_fit</span>, <span class="va">info_peak</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">t</span>, <span class="va">ypred</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/pkg/zeallot/man/operator.html" class="external-link">%&lt;-%</a></span> <span class="va">d_fit</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">t</span>, <span class="va">ziter2</span><span class="op">)</span><span class="op">]</span></span>
-<span class="r-in"><span class="va">d_season</span> <span class="op">=</span> <span class="fu"><a href="find_season.peaks.html">find_season.default</a></span><span class="op">(</span><span class="va">ypred</span>, <span class="va">t</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/all.equal.html" class="external-link">all.equal</a></span><span class="op">(</span><span class="va">brks</span><span class="op">$</span><span class="va">dt</span>, <span class="va">d_season</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="va">d_season</span> <span class="op">=</span> <span class="fu"><a href="find_season.peaks.html">find_season.peaks</a></span><span class="op">(</span><span class="va">d_fit</span>, <span class="va">info_peak</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">t</span>, <span class="va">ypred</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/pkg/zeallot/man/operator.html" class="external-link">%&lt;-%</a></span> <span class="va">d_fit</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">t</span>, <span class="va">ziter2</span><span class="op">)</span><span class="op">]</span></span></span>
+<span class="r-in"><span><span class="va">d_season</span> <span class="op">=</span> <span class="fu"><a href="find_season.peaks.html">find_season.default</a></span><span class="op">(</span><span class="va">ypred</span>, <span class="va">t</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/all.equal.html" class="external-link">all.equal</a></span><span class="op">(</span><span class="va">brks</span><span class="op">$</span><span class="va">dt</span>, <span class="va">d_season</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># opt &lt;- .options$season</span></span>
-<span class="r-in"><span class="co"># brks$fit - d_fit # function passed test</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># curve fitting by year</span></span>
-<span class="r-in"><span class="va">brks_mov</span> <span class="op">&lt;-</span> <span class="fu"><a href="season_mov.html">season_mov</a></span><span class="op">(</span><span class="va">INPUT</span>,</span>
-<span class="r-in">    options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span class="r-in">        rFUN <span class="op">=</span> <span class="st">"smooth_wWHIT"</span>, wFUN <span class="op">=</span> <span class="va">wFUN</span>,</span>
-<span class="r-in">        lambda <span class="op">=</span> <span class="fl">10</span>,</span>
-<span class="r-in">        r_min <span class="op">=</span> <span class="fl">0.05</span>, ypeak_min <span class="op">=</span> <span class="fl">0.05</span>,</span>
-<span class="r-in">        verbose <span class="op">=</span> <span class="cn">TRUE</span></span>
-<span class="r-in">    <span class="op">)</span></span>
-<span class="r-in"><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># opt &lt;- .options$season</span></span></span>
+<span class="r-in"><span><span class="co"># brks$fit - d_fit # function passed test</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># curve fitting by year</span></span></span>
+<span class="r-in"><span><span class="va">brks_mov</span> <span class="op">&lt;-</span> <span class="fu"><a href="season_mov.html">season_mov</a></span><span class="op">(</span><span class="va">INPUT</span>,</span></span>
+<span class="r-in"><span>    options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>        rFUN <span class="op">=</span> <span class="st">"smooth_wWHIT"</span>, wFUN <span class="op">=</span> <span class="va">wFUN</span>,</span></span>
+<span class="r-in"><span>        lambda <span class="op">=</span> <span class="fl">10</span>,</span></span>
+<span class="r-in"><span>        r_min <span class="op">=</span> <span class="fl">0.05</span>, ypeak_min <span class="op">=</span> <span class="fl">0.05</span>,</span></span>
+<span class="r-in"><span>        verbose <span class="op">=</span> <span class="cn">TRUE</span></span></span>
+<span class="r-in"><span>    <span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [season_mov] running 1 ... </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> iloop = 1: lambda = 10.0, ntrough_PerYear = 0.00, npeak_PerYear = 0.00</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> iloop = 2: lambda = 5.0, ntrough_PerYear = 0.00, npeak_PerYear = 0.00</span>
@@ -268,11 +315,11 @@ is left.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> iloop = 1: lambda = 10.0, ntrough_PerYear = 0.00, npeak_PerYear = 0.00</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> iloop = 2: lambda = 5.0, ntrough_PerYear = 0.00, npeak_PerYear = 0.00</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> iloop = 3: lambda = 2.5, ntrough_PerYear = 0.00, npeak_PerYear = 0.00</span>
-<span class="r-in"><span class="fu"><a href="plot_season.html">plot_season</a></span><span class="op">(</span><span class="va">INPUT</span>, <span class="va">brks_mov</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu"><a href="plot_season.html">plot_season</a></span><span class="op">(</span><span class="va">INPUT</span>, <span class="va">brks_mov</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="season-2.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">rfit</span> <span class="op">&lt;-</span> <span class="fu"><a href="brks2rfit.html">brks2rfit</a></span><span class="op">(</span><span class="va">brks_mov</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">r</span> <span class="op">&lt;-</span> <span class="fu"><a href="get_pheno.html">get_pheno</a></span><span class="op">(</span><span class="va">rfit</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">rfit</span> <span class="op">&lt;-</span> <span class="fu"><a href="brks2rfit.html">brks2rfit</a></span><span class="op">(</span><span class="va">brks_mov</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">r</span> <span class="op">&lt;-</span> <span class="fu"><a href="get_pheno.html">get_pheno</a></span><span class="op">(</span><span class="va">rfit</span><span class="op">)</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -287,7 +334,7 @@ is left.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

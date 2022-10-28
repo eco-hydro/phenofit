@@ -66,28 +66,33 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">getRealDate</span><span class="op">(</span><span class="va">date</span>, <span class="va">DayOfYear</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">getRealDate</span><span class="op">(</span><span class="va">date</span>, <span class="va">DayOfYear</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>date</dt>
 <dd><p>Date vector, the first day of the 16-day composite period.</p></dd>
+
+
 <dt>DayOfYear</dt>
 <dd><p>Numeric vector, exact composite day of year.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A data.table with a new column <code>t</code>, which is the exact compositing date.</p>
+    
+
+<p>A data.table with a new column <code>t</code>, which is the exact compositing date.</p>
     </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/eco-hydro/phenofit" class="external-link">phenofit</a></span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"MOD13A1"</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">df</span>  <span class="op">&lt;-</span> <span class="va">MOD13A1</span><span class="op">$</span><span class="va">dt</span></span>
-<span class="r-in"><span class="va">df</span><span class="op">$</span><span class="va">t</span> <span class="op">&lt;-</span> <span class="fu">getRealDate</span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">date</span>, <span class="va">df</span><span class="op">$</span><span class="va">DayOfYear</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/eco-hydro/phenofit" class="external-link">phenofit</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"MOD13A1"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">df</span>  <span class="op">&lt;-</span> <span class="va">MOD13A1</span><span class="op">$</span><span class="va">dt</span></span></span>
+<span class="r-in"><span><span class="va">df</span><span class="op">$</span><span class="va">t</span> <span class="op">&lt;-</span> <span class="fu">getRealDate</span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">date</span>, <span class="va">df</span><span class="op">$</span><span class="va">DayOfYear</span><span class="op">)</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -102,7 +107,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

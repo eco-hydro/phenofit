@@ -66,26 +66,37 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">GOF</span><span class="op">(</span><span class="va">Y_obs</span>, <span class="va">Y_sim</span>, <span class="va">w</span>, include.r <span class="op">=</span> <span class="cn">TRUE</span>, include.cv <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">GOF</span><span class="op">(</span><span class="va">Y_obs</span>, <span class="va">Y_sim</span>, <span class="va">w</span>, include.r <span class="op">=</span> <span class="cn">TRUE</span>, include.cv <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>Y_obs</dt>
 <dd><p>Numeric vector, observations</p></dd>
+
+
 <dt>Y_sim</dt>
 <dd><p>Numeric vector, corresponding simulated values</p></dd>
+
+
 <dt>w</dt>
 <dd><p>Numeric vector, weights of every points. If w included, when
 calculating mean, Bias, MAE, RMSE and NSE, w will be taken into considered.</p></dd>
+
+
 <dt>include.r</dt>
 <dd><p>If true, r and R2 will be included.</p></dd>
+
+
 <dt>include.cv</dt>
 <dd><p>If true, cv will be included.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <ul><li><p><code>RMSE</code> root mean square error</p></li>
+    
+
+<ul><li><p><code>RMSE</code> root mean square error</p></li>
 <li><p><code>NSE</code> NASH coefficient</p></li>
 <li><p><code>MAE</code> mean absolute error</p></li>
 <li><p><code>AI</code> Agreement index (only good points (w == 1)) participate to
@@ -105,14 +116,14 @@ calculate. See details in Zhang et al., (2015).</p></li>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">Y_obs</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">Y_sim</span> <span class="op">=</span> <span class="va">Y_obs</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span><span class="op">/</span><span class="fl">4</span></span>
-<span class="r-in"><span class="fu">GOF</span><span class="op">(</span><span class="va">Y_obs</span>, <span class="va">Y_sim</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>          RMSE           NSE           MAE            AI          Bias </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  2.651382e-01  9.270384e-01  2.044477e-01  9.819502e-01  2.849754e-03 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Bias_perc         n_sim            R2             R        pvalue </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> -3.554309e-02  1.000000e+02  9.310182e-01  9.648929e-01  1.043270e-58 </span>
-<span class="r-in"></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">Y_obs</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">Y_sim</span> <span class="op">=</span> <span class="va">Y_obs</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span><span class="op">/</span><span class="fl">4</span></span></span>
+<span class="r-in"><span><span class="fu">GOF</span><span class="op">(</span><span class="va">Y_obs</span>, <span class="va">Y_sim</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         RMSE          NSE          MAE           AI         Bias    Bias_perc </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2.424662e-01 9.411477e-01 1.859245e-01 9.851819e-01 1.751473e-02 1.620025e-01 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        n_sim           R2            R       pvalue </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1.000000e+02 9.426903e-01 9.709224e-01 1.177471e-62 </span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -127,7 +138,7 @@ calculate. See details in Zhang et al., (2015).</p></li>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

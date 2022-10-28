@@ -68,7 +68,7 @@ year of <code>year_end - 1</code> to the tail.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">add_HeadTail</span><span class="op">(</span><span class="va">d</span>, south <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">nptperyear</span>, trs <span class="op">=</span> <span class="fl">0.45</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">add_HeadTail</span><span class="op">(</span><span class="va">d</span>, south <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">nptperyear</span>, trs <span class="op">=</span> <span class="fl">0.45</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -76,18 +76,27 @@ year of <code>year_end - 1</code> to the tail.</p>
     <dl><dt>d</dt>
 <dd><p>A data.table, should have <code>t</code> (compositing date) or <code>date</code>
 (image date) column which are (<code>Date</code> variable).</p></dd>
+
+
 <dt>south</dt>
 <dd><p>Boolean. In south hemisphere, growing year is 1 July to the
 following year 31 June; In north hemisphere, growing year is 1 Jan to 31 Dec.</p></dd>
+
+
 <dt>nptperyear</dt>
 <dd><p>Integer, number of images per year.</p></dd>
+
+
 <dt>trs</dt>
 <dd><p>If nmissing &lt; trs*nptperyear (little missing), this year is
 include to extract phenology; if <code>FALSE</code>, this year is excluded.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>data.table</p>
+    
+
+<p>data.table</p>
     </div>
     <div id="note">
     <h2>Note</h2>
@@ -96,11 +105,11 @@ include to extract phenology; if <code>FALSE</code>, this year is excluded.</p><
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/eco-hydro/phenofit" class="external-link">phenofit</a></span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"CA_NS6"</span><span class="op">)</span>; <span class="va">d</span> <span class="op">=</span> <span class="va">CA_NS6</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">nptperyear</span> <span class="op">=</span> <span class="fl">23</span></span>
-<span class="r-in"><span class="va">dnew</span>     <span class="op">&lt;-</span> <span class="fu">add_HeadTail</span><span class="op">(</span><span class="va">d</span>, nptperyear <span class="op">=</span> <span class="va">nptperyear</span><span class="op">)</span> <span class="co"># add one year in head and tail</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/eco-hydro/phenofit" class="external-link">phenofit</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"CA_NS6"</span><span class="op">)</span>; <span class="va">d</span> <span class="op">=</span> <span class="va">CA_NS6</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">nptperyear</span> <span class="op">=</span> <span class="fl">23</span></span></span>
+<span class="r-in"><span><span class="va">dnew</span>     <span class="op">&lt;-</span> <span class="fu">add_HeadTail</span><span class="op">(</span><span class="va">d</span>, nptperyear <span class="op">=</span> <span class="va">nptperyear</span><span class="op">)</span> <span class="co"># add one year in head and tail</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -115,7 +124,7 @@ include to extract phenology; if <code>FALSE</code>, this year is excluded.</p><
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

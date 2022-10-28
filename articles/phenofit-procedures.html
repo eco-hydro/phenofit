@@ -98,33 +98,33 @@
 <h3 id="load-packages">Load packages<a class="anchor" aria-label="anchor" href="#load-packages"></a>
 </h3>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/eco-hydro/phenofit" class="external-link">phenofit</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-datatable.com" class="external-link">data.table</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/eco-hydro/phenofit" class="external-link">phenofit</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-datatable.com" class="external-link">data.table</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="load-data">Load data<a class="anchor" aria-label="anchor" href="#load-data"></a>
 </h3>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">d</span> <span class="op">=</span> <span class="va">MOD13A1</span><span class="op">$</span><span class="va">dt</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/subset.data.table.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">site</span> <span class="op">==</span> <span class="st">"CA-NS6"</span> <span class="op">&amp;</span> <span class="va">date</span> <span class="op">&gt;=</span> <span class="st">"2010-01-01"</span> <span class="op">&amp;</span> <span class="va">date</span> <span class="op">&lt;=</span> <span class="st">"2016-12-31"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-    <span class="va">.</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">date</span>, y <span class="op">=</span> <span class="va">EVI</span><span class="op">/</span><span class="fl">1e4</span>, <span class="va">DayOfYear</span>, QC <span class="op">=</span> <span class="va">SummaryQA</span><span class="op">)</span><span class="op">]</span>
-<span class="va">d</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/compound.html" class="external-link">%&lt;&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>t <span class="op">=</span> <span class="fu"><a href="../reference/getRealDate.html">getRealDate</a></span><span class="op">(</span><span class="va">date</span>, <span class="va">DayOfYear</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-    <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">d</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">as.list</a></span><span class="op">(</span><span class="fu"><a href="../reference/qcFUN.html">qc_summary</a></span><span class="op">(</span><span class="va">QC</span>, wmin <span class="op">=</span> <span class="fl">0.2</span>, wmid <span class="op">=</span> <span class="fl">0.5</span>, wmax <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span><span class="op">)</span><span class="op">]</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-    <span class="va">.</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">date</span>, <span class="va">t</span>, <span class="va">y</span>, <span class="va">QC_flag</span>, <span class="va">w</span><span class="op">)</span><span class="op">]</span>
-<span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">d</span><span class="op">)</span>
-<span class="co">#&gt;            date          t      y QC_flag   w</span>
-<span class="co">#&gt;   1: 2010-01-01 2010-01-08 0.1531    snow 0.2</span>
-<span class="co">#&gt;   2: 2010-01-17 2010-01-25 0.1196    snow 0.2</span>
-<span class="co">#&gt;   3: 2010-02-02 2010-02-13 0.1637    snow 0.2</span>
-<span class="co">#&gt;   4: 2010-02-18 2010-02-25 0.1301    snow 0.2</span>
-<span class="co">#&gt;   5: 2010-03-06 2010-03-21 0.1076    snow 0.2</span>
-<span class="co">#&gt;  ---                                         </span>
-<span class="co">#&gt; 157: 2016-10-15 2016-10-23 0.1272    snow 0.2</span>
-<span class="co">#&gt; 158: 2016-10-31 2016-11-07 0.1773    snow 0.2</span>
-<span class="co">#&gt; 159: 2016-11-16 2016-11-25 0.0711   cloud 0.2</span>
-<span class="co">#&gt; 160: 2016-12-02 2016-12-12 0.1372    snow 0.2</span>
-<span class="co">#&gt; 161: 2016-12-18 2017-01-02 0.1075    snow 0.2</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">d</span> <span class="op">=</span> <span class="va">MOD13A1</span><span class="op">$</span><span class="va">dt</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">site</span> <span class="op">==</span> <span class="st">"CA-NS6"</span> <span class="op">&amp;</span> <span class="va">date</span> <span class="op">&gt;=</span> <span class="st">"2010-01-01"</span> <span class="op">&amp;</span> <span class="va">date</span> <span class="op">&lt;=</span> <span class="st">"2016-12-31"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>    <span class="va">.</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">date</span>, y <span class="op">=</span> <span class="va">EVI</span><span class="op">/</span><span class="fl">1e4</span>, <span class="va">DayOfYear</span>, QC <span class="op">=</span> <span class="va">SummaryQA</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">d</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/compound.html" class="external-link">%&lt;&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>t <span class="op">=</span> <span class="fu"><a href="../reference/getRealDate.html">getRealDate</a></span><span class="op">(</span><span class="va">date</span>, <span class="va">DayOfYear</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">d</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">as.list</a></span><span class="op">(</span><span class="fu"><a href="../reference/qcFUN.html">qc_summary</a></span><span class="op">(</span><span class="va">QC</span>, wmin <span class="op">=</span> <span class="fl">0.2</span>, wmid <span class="op">=</span> <span class="fl">0.5</span>, wmax <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span><span class="op">)</span><span class="op">]</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>    <span class="va">.</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">date</span>, <span class="va">t</span>, <span class="va">y</span>, <span class="va">QC_flag</span>, <span class="va">w</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">d</span><span class="op">)</span></span>
+<span><span class="co">#&gt;            date          t      y QC_flag   w</span></span>
+<span><span class="co">#&gt;   1: 2010-01-01 2010-01-08 0.1531    snow 0.2</span></span>
+<span><span class="co">#&gt;   2: 2010-01-17 2010-01-25 0.1196    snow 0.2</span></span>
+<span><span class="co">#&gt;   3: 2010-02-02 2010-02-13 0.1637    snow 0.2</span></span>
+<span><span class="co">#&gt;   4: 2010-02-18 2010-02-25 0.1301    snow 0.2</span></span>
+<span><span class="co">#&gt;   5: 2010-03-06 2010-03-21 0.1076    snow 0.2</span></span>
+<span><span class="co">#&gt;  ---                                         </span></span>
+<span><span class="co">#&gt; 157: 2016-10-15 2016-10-23 0.1272    snow 0.2</span></span>
+<span><span class="co">#&gt; 158: 2016-10-31 2016-11-07 0.1773    snow 0.2</span></span>
+<span><span class="co">#&gt; 159: 2016-11-16 2016-11-25 0.0711   cloud 0.2</span></span>
+<span><span class="co">#&gt; 160: 2016-12-02 2016-12-12 0.1372    snow 0.2</span></span>
+<span><span class="co">#&gt; 161: 2016-12-18 2017-01-02 0.1075    snow 0.2</span></span></code></pre></div>
 <p><code>date</code>: image date <code>t</code> : composite date</p>
 <p><code>QC_flag</code> and <code>date</code> are optional.</p>
 </div>
@@ -132,14 +132,14 @@
 <h3 id="phenofit-parameters">phenofit parameters<a class="anchor" aria-label="anchor" href="#phenofit-parameters"></a>
 </h3>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">lambda</span>         <span class="op">&lt;-</span> <span class="fl">8</span>
-<span class="va">nptperyear</span>     <span class="op">&lt;-</span> <span class="fl">23</span>
-<span class="va">minExtendMonth</span> <span class="op">&lt;-</span> <span class="fl">0.5</span>
-<span class="va">maxExtendMonth</span> <span class="op">&lt;-</span> <span class="fl">1</span>
-<span class="va">minPercValid</span>   <span class="op">&lt;-</span> <span class="fl">0</span>
-<span class="va">wFUN</span>           <span class="op">&lt;-</span> <span class="va">wTSM</span> <span class="co"># wBisquare</span>
-<span class="va">wmin</span>           <span class="op">&lt;-</span> <span class="fl">0.2</span>
-<span class="va">methods_fine</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AG"</span>, <span class="st">"Zhang"</span>, <span class="st">"Beck"</span>, <span class="st">"Elmore"</span>, <span class="st">"Gu"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">lambda</span>         <span class="op">&lt;-</span> <span class="fl">8</span></span>
+<span><span class="va">nptperyear</span>     <span class="op">&lt;-</span> <span class="fl">23</span></span>
+<span><span class="va">minExtendMonth</span> <span class="op">&lt;-</span> <span class="fl">0.5</span></span>
+<span><span class="va">maxExtendMonth</span> <span class="op">&lt;-</span> <span class="fl">1</span></span>
+<span><span class="va">minPercValid</span>   <span class="op">&lt;-</span> <span class="fl">0</span></span>
+<span><span class="va">wFUN</span>           <span class="op">&lt;-</span> <span class="va">wTSM</span> <span class="co"># wBisquare</span></span>
+<span><span class="va">wmin</span>           <span class="op">&lt;-</span> <span class="fl">0.2</span></span>
+<span><span class="va">methods_fine</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AG"</span>, <span class="st">"Zhang"</span>, <span class="st">"Beck"</span>, <span class="st">"Elmore"</span>, <span class="st">"Gu"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="growing-season-division-and-fine-curve-fitting">growing season division and fine-curve fitting<a class="anchor" aria-label="anchor" href="#growing-season-division-and-fine-curve-fitting"></a>
@@ -148,146 +148,146 @@
 <p>The growing season dividing method rely on heavily in Whittaker smoother.</p>
 <p>Procedures of initial weight, growing season dividing, curve fitting, and phenology extraction are conducted separately.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">INPUT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/check_input.html">check_input</a></span><span class="op">(</span><span class="va">d</span><span class="op">$</span><span class="va">t</span>, <span class="va">d</span><span class="op">$</span><span class="va">y</span>, <span class="va">d</span><span class="op">$</span><span class="va">w</span>,
-    QC_flag <span class="op">=</span> <span class="va">d</span><span class="op">$</span><span class="va">QC_flag</span>,
-    nptperyear <span class="op">=</span> <span class="va">nptperyear</span>,
-    maxgap <span class="op">=</span> <span class="va">nptperyear</span> <span class="op">/</span> <span class="fl">4</span>, wmin <span class="op">=</span> <span class="fl">0.2</span>
-<span class="op">)</span>
-
-<span class="va">brks</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/season_mov.html">season_mov</a></span><span class="op">(</span><span class="va">INPUT</span>,
-    <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>FUN <span class="op">=</span> <span class="st">"smooth_wWHIT"</span>, wFUN <span class="op">=</span> <span class="va">wFUN</span>,
-        maxExtendMonth <span class="op">=</span> <span class="fl">3</span>,
-        wmin <span class="op">=</span> <span class="va">wmin</span>, r_min <span class="op">=</span> <span class="fl">0.1</span>
-    <span class="op">)</span><span class="op">)</span>
-<span class="co"># plot_season(INPUT, brks)</span>
-
-<span class="co">## 2.4 Curve fitting</span>
-<span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/curvefits.html">curvefits</a></span><span class="op">(</span><span class="va">INPUT</span>, <span class="va">brks</span>,
-    <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>
-        methods <span class="op">=</span> <span class="va">methods_fine</span>, <span class="co"># ,"klos",, 'Gu'</span>
-        wFUN <span class="op">=</span> <span class="va">wFUN</span>,
-        iters <span class="op">=</span> <span class="fl">2</span>,
-        wmin <span class="op">=</span> <span class="va">wmin</span>,
-        <span class="co"># constrain = FALSE,</span>
-        nextend <span class="op">=</span> <span class="fl">2</span>,
-        maxExtendMonth <span class="op">=</span> <span class="va">maxExtendMonth</span>, minExtendMonth <span class="op">=</span> <span class="va">minExtendMonth</span>,
-        minPercValid <span class="op">=</span> <span class="va">minPercValid</span>
-    <span class="op">)</span><span class="op">)</span>
-
-<span class="co">## check the curve fitting parameters</span>
-<span class="va">l_param</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_param.html">get_param</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">l_param</span><span class="op">$</span><span class="va">Beck</span><span class="op">)</span>
-<span class="co">#&gt; <span style="color: #949494;"># A tibble: 7 × 7</span></span>
-<span class="co">#&gt;   flag      mn    mx   sos    rsp   eos    rau</span>
-<span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">1</span> 2010_1 0.191 0.538 <span style="text-decoration: underline;">3</span>808. 0.082<span style="text-decoration: underline;">6</span> <span style="text-decoration: underline;">3</span>894. 0.043<span style="text-decoration: underline;">2</span></span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">2</span> 2011_1 0.194 0.477 <span style="text-decoration: underline;">4</span>180. 0.113  <span style="text-decoration: underline;">4</span>274. 0.113 </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">3</span> 2012_1 0.189 0.514 <span style="text-decoration: underline;">4</span>542. 0.196  <span style="text-decoration: underline;">4</span>643. 0.086<span style="text-decoration: underline;">4</span></span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">4</span> 2013_1 0.190 0.493 <span style="text-decoration: underline;">4</span>903. 0.190  <span style="text-decoration: underline;">5</span>011. 0.067<span style="text-decoration: underline;">2</span></span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">5</span> 2014_1 0.198 0.494 <span style="text-decoration: underline;">5</span>276. 0.122  <span style="text-decoration: underline;">5</span>375. 0.289 </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">6</span> 2015_1 0.212 0.493 <span style="text-decoration: underline;">5</span>639. 0.142  <span style="text-decoration: underline;">5</span>726. 0.169 </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">7</span> 2016_1 0.198 0.501 <span style="text-decoration: underline;">6</span>002. 0.186  <span style="text-decoration: underline;">6</span>095. 0.073<span style="text-decoration: underline;">1</span></span>
-
-<span class="va">dfit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_fitting.html">get_fitting</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">dfit</span><span class="op">)</span>
-<span class="co">#&gt;        flag          t      y QC_flag   meth    ziter1    ziter2</span>
-<span class="co">#&gt;   1: 2010_1 2010-01-25 0.1196    snow     AG 0.1888598 0.1903677</span>
-<span class="co">#&gt;   2: 2010_1 2010-01-25 0.1196    snow  Zhang 0.1881071 0.1897593</span>
-<span class="co">#&gt;   3: 2010_1 2010-01-25 0.1196    snow   Beck 0.1888971 0.1906256</span>
-<span class="co">#&gt;   4: 2010_1 2010-01-25 0.1196    snow Elmore 0.1881961 0.1906009</span>
-<span class="co">#&gt;   5: 2010_1 2010-01-25 0.1196    snow     Gu 0.1877055 0.1882123</span>
-<span class="co">#&gt;  ---                                                            </span>
-<span class="co">#&gt; 761: 2016_1 2016-12-12 0.1372    snow     AG 0.1933491 0.1963926</span>
-<span class="co">#&gt; 762: 2016_1 2016-12-12 0.1372    snow  Zhang 0.1939335 0.1981793</span>
-<span class="co">#&gt; 763: 2016_1 2016-12-12 0.1372    snow   Beck 0.1940403 0.1985395</span>
-<span class="co">#&gt; 764: 2016_1 2016-12-12 0.1372    snow Elmore 0.1941100 0.1986073</span>
-<span class="co">#&gt; 765: 2016_1 2016-12-12 0.1372    snow     Gu 0.1872110 0.1872110</span>
-
-<span class="co">## 2.5 Extract phenology</span>
-<span class="va">TRS</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.2</span>, <span class="fl">0.5</span><span class="op">)</span>
-<span class="va">l_pheno</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_pheno.html">get_pheno</a></span><span class="op">(</span><span class="va">fit</span>, TRS <span class="op">=</span> <span class="va">TRS</span>, IsPlot <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="co"># %&gt;% map(~melt_list(., "meth"))</span>
-<span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">l_pheno</span><span class="op">$</span><span class="va">doy</span><span class="op">$</span><span class="va">Beck</span><span class="op">)</span>
-<span class="co">#&gt;      flag     origin TRS1.sos TRS1.eos TRS2.sos TRS2.eos TRS5.sos TRS5.eos</span>
-<span class="co">#&gt; 1: 2010_1 2010-01-01      126      300      137      280      154      248</span>
-<span class="co">#&gt; 2: 2011_1 2011-01-01      143      278      151      270      163      257</span>
-<span class="co">#&gt; 3: 2012_1 2012-01-01      148      288      153      277      160      261</span>
-<span class="co">#&gt; 4: 2013_1 2013-01-01      142      298      147      284      154      262</span>
-<span class="co">#&gt; 5: 2014_1 2014-01-01      143      271      151      267      163      262</span>
-<span class="co">#&gt; 6: 2015_1 2015-01-01      144      262      150      256      161      248</span>
-<span class="co">#&gt; 7: 2016_1 2016-01-01      147      285      151      272      159      253</span>
-<span class="co">#&gt;    DER.sos DER.pos DER.eos  UD  SD  DD  RD Greenup Maturity Senescence Dormancy</span>
-<span class="co">#&gt; 1:     155     192     242 132 175 211 289     128      184        213      295</span>
-<span class="co">#&gt; 2:     163     210     257 146 181 240 277     142      185        236      279</span>
-<span class="co">#&gt; 3:     160     194     261 150 170 239 284     145      175        233      288</span>
-<span class="co">#&gt; 4:     155     187     263 144 165 236 293     139      170        228      297</span>
-<span class="co">#&gt; 5:     163     230     262 146 179 253 273     142      183        250      274</span>
-<span class="co">#&gt; 6:     161     207     248 147 175 235 261     142      179        231      264</span>
-<span class="co">#&gt; 7:     159     189     252 148 170 228 280     144      175        221      284</span>
-
-<span class="va">pheno</span> <span class="op">&lt;-</span> <span class="va">l_pheno</span><span class="op">$</span><span class="va">doy</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/melt_list.html">melt_list</a></span><span class="op">(</span><span class="st">"meth"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">INPUT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/check_input.html">check_input</a></span><span class="op">(</span><span class="va">d</span><span class="op">$</span><span class="va">t</span>, <span class="va">d</span><span class="op">$</span><span class="va">y</span>, <span class="va">d</span><span class="op">$</span><span class="va">w</span>,</span>
+<span>    QC_flag <span class="op">=</span> <span class="va">d</span><span class="op">$</span><span class="va">QC_flag</span>,</span>
+<span>    nptperyear <span class="op">=</span> <span class="va">nptperyear</span>,</span>
+<span>    maxgap <span class="op">=</span> <span class="va">nptperyear</span> <span class="op">/</span> <span class="fl">4</span>, wmin <span class="op">=</span> <span class="fl">0.2</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">brks</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/season_mov.html">season_mov</a></span><span class="op">(</span><span class="va">INPUT</span>,</span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>FUN <span class="op">=</span> <span class="st">"smooth_wWHIT"</span>, wFUN <span class="op">=</span> <span class="va">wFUN</span>,</span>
+<span>        maxExtendMonth <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>        wmin <span class="op">=</span> <span class="va">wmin</span>, r_min <span class="op">=</span> <span class="fl">0.1</span></span>
+<span>    <span class="op">)</span><span class="op">)</span></span>
+<span><span class="co"># plot_season(INPUT, brks)</span></span>
+<span></span>
+<span><span class="co">## 2.4 Curve fitting</span></span>
+<span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/curvefits.html">curvefits</a></span><span class="op">(</span><span class="va">INPUT</span>, <span class="va">brks</span>,</span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>        methods <span class="op">=</span> <span class="va">methods_fine</span>, <span class="co"># ,"klos",, 'Gu'</span></span>
+<span>        wFUN <span class="op">=</span> <span class="va">wFUN</span>,</span>
+<span>        iters <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>        wmin <span class="op">=</span> <span class="va">wmin</span>,</span>
+<span>        <span class="co"># constrain = FALSE,</span></span>
+<span>        nextend <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>        maxExtendMonth <span class="op">=</span> <span class="va">maxExtendMonth</span>, minExtendMonth <span class="op">=</span> <span class="va">minExtendMonth</span>,</span>
+<span>        minPercValid <span class="op">=</span> <span class="va">minPercValid</span></span>
+<span>    <span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">## check the curve fitting parameters</span></span>
+<span><span class="va">l_param</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_param.html">get_param</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">l_param</span><span class="op">$</span><span class="va">Beck</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 7 × 7</span></span></span>
+<span><span class="co">#&gt;   flag      mn    mx   sos    rsp   eos    rau</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> 2010_1 0.191 0.538 <span style="text-decoration: underline;">3</span>808. 0.082<span style="text-decoration: underline;">6</span> <span style="text-decoration: underline;">3</span>894. 0.043<span style="text-decoration: underline;">2</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> 2011_1 0.194 0.477 <span style="text-decoration: underline;">4</span>180. 0.113  <span style="text-decoration: underline;">4</span>274. 0.113 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> 2012_1 0.189 0.514 <span style="text-decoration: underline;">4</span>542. 0.196  <span style="text-decoration: underline;">4</span>643. 0.086<span style="text-decoration: underline;">4</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> 2013_1 0.190 0.493 <span style="text-decoration: underline;">4</span>903. 0.190  <span style="text-decoration: underline;">5</span>011. 0.067<span style="text-decoration: underline;">2</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> 2014_1 0.198 0.494 <span style="text-decoration: underline;">5</span>276. 0.122  <span style="text-decoration: underline;">5</span>375. 0.289 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> 2015_1 0.212 0.493 <span style="text-decoration: underline;">5</span>639. 0.142  <span style="text-decoration: underline;">5</span>726. 0.169 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">7</span> 2016_1 0.198 0.501 <span style="text-decoration: underline;">6</span>002. 0.186  <span style="text-decoration: underline;">6</span>095. 0.073<span style="text-decoration: underline;">1</span></span></span>
+<span></span>
+<span><span class="va">dfit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_fitting.html">get_fitting</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">dfit</span><span class="op">)</span></span>
+<span><span class="co">#&gt;        flag          t      y QC_flag   meth    ziter1    ziter2</span></span>
+<span><span class="co">#&gt;   1: 2010_1 2010-01-25 0.1196    snow     AG 0.1888598 0.1903677</span></span>
+<span><span class="co">#&gt;   2: 2010_1 2010-01-25 0.1196    snow  Zhang 0.1881071 0.1897593</span></span>
+<span><span class="co">#&gt;   3: 2010_1 2010-01-25 0.1196    snow   Beck 0.1888971 0.1906256</span></span>
+<span><span class="co">#&gt;   4: 2010_1 2010-01-25 0.1196    snow Elmore 0.1881961 0.1906009</span></span>
+<span><span class="co">#&gt;   5: 2010_1 2010-01-25 0.1196    snow     Gu 0.1877055 0.1882123</span></span>
+<span><span class="co">#&gt;  ---                                                            </span></span>
+<span><span class="co">#&gt; 761: 2016_1 2016-12-12 0.1372    snow     AG 0.1933491 0.1963926</span></span>
+<span><span class="co">#&gt; 762: 2016_1 2016-12-12 0.1372    snow  Zhang 0.1939335 0.1981793</span></span>
+<span><span class="co">#&gt; 763: 2016_1 2016-12-12 0.1372    snow   Beck 0.1940403 0.1985395</span></span>
+<span><span class="co">#&gt; 764: 2016_1 2016-12-12 0.1372    snow Elmore 0.1941100 0.1986073</span></span>
+<span><span class="co">#&gt; 765: 2016_1 2016-12-12 0.1372    snow     Gu 0.1872110 0.1872110</span></span>
+<span></span>
+<span><span class="co">## 2.5 Extract phenology</span></span>
+<span><span class="va">TRS</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.2</span>, <span class="fl">0.5</span><span class="op">)</span></span>
+<span><span class="va">l_pheno</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_pheno.html">get_pheno</a></span><span class="op">(</span><span class="va">fit</span>, TRS <span class="op">=</span> <span class="va">TRS</span>, IsPlot <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="co"># %&gt;% map(~melt_list(., "meth"))</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">l_pheno</span><span class="op">$</span><span class="va">doy</span><span class="op">$</span><span class="va">Beck</span><span class="op">)</span></span>
+<span><span class="co">#&gt;      flag     origin TRS1.sos TRS1.eos TRS2.sos TRS2.eos TRS5.sos TRS5.eos</span></span>
+<span><span class="co">#&gt; 1: 2010_1 2010-01-01      126      300      137      280      154      248</span></span>
+<span><span class="co">#&gt; 2: 2011_1 2011-01-01      143      278      151      270      163      257</span></span>
+<span><span class="co">#&gt; 3: 2012_1 2012-01-01      148      288      153      277      160      261</span></span>
+<span><span class="co">#&gt; 4: 2013_1 2013-01-01      142      298      147      284      154      262</span></span>
+<span><span class="co">#&gt; 5: 2014_1 2014-01-01      143      271      151      267      163      262</span></span>
+<span><span class="co">#&gt; 6: 2015_1 2015-01-01      144      262      150      256      161      248</span></span>
+<span><span class="co">#&gt; 7: 2016_1 2016-01-01      147      285      151      272      159      253</span></span>
+<span><span class="co">#&gt;    DER.sos DER.pos DER.eos  UD  SD  DD  RD Greenup Maturity Senescence Dormancy</span></span>
+<span><span class="co">#&gt; 1:     155     192     242 132 175 211 289     128      184        213      295</span></span>
+<span><span class="co">#&gt; 2:     163     210     257 146 181 240 277     142      185        236      279</span></span>
+<span><span class="co">#&gt; 3:     160     194     261 150 170 239 284     145      175        233      288</span></span>
+<span><span class="co">#&gt; 4:     155     187     263 144 165 236 293     139      170        228      297</span></span>
+<span><span class="co">#&gt; 5:     163     230     262 146 179 253 273     142      183        250      274</span></span>
+<span><span class="co">#&gt; 6:     161     207     248 147 175 235 261     142      179        231      264</span></span>
+<span><span class="co">#&gt; 7:     159     189     252 148 170 228 280     144      175        221      284</span></span>
+<span></span>
+<span><span class="va">pheno</span> <span class="op">&lt;-</span> <span class="va">l_pheno</span><span class="op">$</span><span class="va">doy</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/melt_list.html">melt_list</a></span><span class="op">(</span><span class="st">"meth"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="visualization">Visualization<a class="anchor" aria-label="anchor" href="#visualization"></a>
 </h3>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># growing season dividing</span>
-<span class="fu"><a href="../reference/plot_season.html">plot_season</a></span><span class="op">(</span><span class="va">INPUT</span>, <span class="va">brks</span>, ylab <span class="op">=</span> <span class="st">"EVI"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># growing season dividing</span></span>
+<span><span class="fu"><a href="../reference/plot_season.html">plot_season</a></span><span class="op">(</span><span class="va">INPUT</span>, <span class="va">brks</span>, ylab <span class="op">=</span> <span class="st">"EVI"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="phenofit-procedures_files/figure-html/unnamed-chunk-7-1.png" width="672"></p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Ipaper::write_fig({  }, "Figure4_seasons.pdf", 9, 4)</span>
-
-<span class="co"># fine curvefitting</span>
-<span class="va">g</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/plot_curvefits.html">plot_curvefits</a></span><span class="op">(</span><span class="va">dfit</span>, <span class="va">brks</span>, title <span class="op">=</span> <span class="cn">NULL</span>, cex <span class="op">=</span> <span class="fl">1.5</span>, ylab <span class="op">=</span> <span class="st">"EVI"</span>, angle <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>
-<span class="fu">grid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grid/grid.newpage.html" class="external-link">grid.newpage</a></span><span class="op">(</span><span class="op">)</span>
-<span class="fu">grid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grid/grid.draw.html" class="external-link">grid.draw</a></span><span class="op">(</span><span class="va">g</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># Ipaper::write_fig({  }, "Figure4_seasons.pdf", 9, 4)</span></span>
+<span></span>
+<span><span class="co"># fine curvefitting</span></span>
+<span><span class="va">g</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/plot_curvefits.html">plot_curvefits</a></span><span class="op">(</span><span class="va">dfit</span>, <span class="va">brks</span>, title <span class="op">=</span> <span class="cn">NULL</span>, cex <span class="op">=</span> <span class="fl">1.5</span>, ylab <span class="op">=</span> <span class="st">"EVI"</span>, angle <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span>
+<span><span class="fu">grid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grid/grid.newpage.html" class="external-link">grid.newpage</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">grid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grid/grid.draw.html" class="external-link">grid.draw</a></span><span class="op">(</span><span class="va">g</span><span class="op">)</span></span></code></pre></div>
 <p><img src="phenofit-procedures_files/figure-html/unnamed-chunk-7-2.png" width="672"></p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Ipaper::write_fig(g, "Figure5_curvefitting.pdf", 8, 6, show = TRUE)</span>
-
-<span class="co"># extract phenology metrics, only the first 3 year showed at here</span>
-<span class="co"># write_fig({</span>
-<span class="va">l_pheno</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_pheno.html">get_pheno</a></span><span class="op">(</span><span class="va">fit</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">7</span><span class="op">]</span>, method <span class="op">=</span> <span class="st">"AG"</span>, TRS <span class="op">=</span> <span class="va">TRS</span>, IsPlot <span class="op">=</span> <span class="cn">TRUE</span>, show.title <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># Ipaper::write_fig(g, "Figure5_curvefitting.pdf", 8, 6, show = TRUE)</span></span>
+<span></span>
+<span><span class="co"># extract phenology metrics, only the first 3 year showed at here</span></span>
+<span><span class="co"># write_fig({</span></span>
+<span><span class="va">l_pheno</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_pheno.html">get_pheno</a></span><span class="op">(</span><span class="va">fit</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">7</span><span class="op">]</span>, method <span class="op">=</span> <span class="st">"AG"</span>, TRS <span class="op">=</span> <span class="va">TRS</span>, IsPlot <span class="op">=</span> <span class="cn">TRUE</span>, show.title <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="phenofit-procedures_files/figure-html/unnamed-chunk-7-3.png" width="672"></p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># }, "Figure6_phenology_metrics.pdf", 8, 6, show = TRUE)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># }, "Figure6_phenology_metrics.pdf", 8, 6, show = TRUE)</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
 <h2 id="comparison-with-timesat-and-phenopix">Comparison with <code>TIMESAT</code> and <code>phenopix</code><a class="anchor" aria-label="anchor" href="#comparison-with-timesat-and-phenopix"></a>
 </h2>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># library(ggplot2)</span>
-<span class="co"># library(ggnewscale)</span>
-
-<span class="co"># # on the top of `Figure7_predata...`</span>
-<span class="co"># d_comp = fread("data-raw/dat_Figure7_comparison_with_others-CA-NS6.csv")</span>
-<span class="co"># d_comp = merge(d[, .(date, t)], d_comp[, .(date, TIMESAT, phenopix)]) %&gt;%</span>
-<span class="co">#     merge(dfit[meth == "Beck", .(t, phenofit = ziter2)], by = "t") %&gt;%</span>
-<span class="co">#     melt(c("date", "t"), variable.name = "meth")</span>
-
-<span class="co"># labels = c("good", "marginal", "snow", "cloud")</span>
-<span class="co"># theme_set(theme_grey(base_size = 16))</span>
-<span class="co"># cols_line = c(phenofit = "red", TIMESAT = "blue", phenopix = "black")</span>
-<span class="co"># p &lt;- ggplot(dfit, aes(t, y)) +</span>
-<span class="co">#     geom_point(aes(color = QC_flag, fill = QC_flag, shape = QC_flag), size = 3) +</span>
-<span class="co">#     scale_shape_manual(values = qc_shapes[labels], guide = guide_legend(order = 1)) +</span>
-<span class="co">#     scale_color_manual(values = qc_colors[labels], guide = guide_legend(order = 1)) +</span>
-<span class="co">#     scale_fill_manual(values = qc_colors[labels], guide = guide_legend(order = 1)) +</span>
-<span class="co">#     new_scale_color() +</span>
-<span class="co">#     geom_line(data = d_comp, aes(t, value, color = meth)) +</span>
-<span class="co">#     # geom_line(data = d_comp[meth == "phenofit"], aes(t, value),</span>
-<span class="co">#     #           size = 1, show.legend = FALSE, color = "red") +</span>
-<span class="co">#     scale_color_manual(values = cols_line, guide = guide_legend(order = 2)) +</span>
-<span class="co">#     labs(x = "Time", y = "EVI") +</span>
-<span class="co">#     theme(</span>
-<span class="co">#         axis.title.x = element_text(margin = margin(t = 0, unit='cm')),</span>
-<span class="co">#         # plot.margin = margin(t = 0, unit='cm'),</span>
-<span class="co">#         legend.text = element_text(size = 13),</span>
-<span class="co">#         legend.position = "bottom",</span>
-<span class="co">#             legend.title  = element_blank(),</span>
-<span class="co">#             legend.margin = margin(t = -0.3, unit='cm'))</span>
-<span class="co"># p</span>
-<span class="co"># # write_fig(p, "Figure7_comparison_with_others.pdf", 10, 4, show = TRUE)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># library(ggplot2)</span></span>
+<span><span class="co"># library(ggnewscale)</span></span>
+<span></span>
+<span><span class="co"># # on the top of `Figure7_predata...`</span></span>
+<span><span class="co"># d_comp = fread("data-raw/dat_Figure7_comparison_with_others-CA-NS6.csv")</span></span>
+<span><span class="co"># d_comp = merge(d[, .(date, t)], d_comp[, .(date, TIMESAT, phenopix)]) %&gt;%</span></span>
+<span><span class="co">#     merge(dfit[meth == "Beck", .(t, phenofit = ziter2)], by = "t") %&gt;%</span></span>
+<span><span class="co">#     melt(c("date", "t"), variable.name = "meth")</span></span>
+<span></span>
+<span><span class="co"># labels = c("good", "marginal", "snow", "cloud")</span></span>
+<span><span class="co"># theme_set(theme_grey(base_size = 16))</span></span>
+<span><span class="co"># cols_line = c(phenofit = "red", TIMESAT = "blue", phenopix = "black")</span></span>
+<span><span class="co"># p &lt;- ggplot(dfit, aes(t, y)) +</span></span>
+<span><span class="co">#     geom_point(aes(color = QC_flag, fill = QC_flag, shape = QC_flag), size = 3) +</span></span>
+<span><span class="co">#     scale_shape_manual(values = qc_shapes[labels], guide = guide_legend(order = 1)) +</span></span>
+<span><span class="co">#     scale_color_manual(values = qc_colors[labels], guide = guide_legend(order = 1)) +</span></span>
+<span><span class="co">#     scale_fill_manual(values = qc_colors[labels], guide = guide_legend(order = 1)) +</span></span>
+<span><span class="co">#     new_scale_color() +</span></span>
+<span><span class="co">#     geom_line(data = d_comp, aes(t, value, color = meth)) +</span></span>
+<span><span class="co">#     # geom_line(data = d_comp[meth == "phenofit"], aes(t, value),</span></span>
+<span><span class="co">#     #           size = 1, show.legend = FALSE, color = "red") +</span></span>
+<span><span class="co">#     scale_color_manual(values = cols_line, guide = guide_legend(order = 2)) +</span></span>
+<span><span class="co">#     labs(x = "Time", y = "EVI") +</span></span>
+<span><span class="co">#     theme(</span></span>
+<span><span class="co">#         axis.title.x = element_text(margin = margin(t = 0, unit='cm')),</span></span>
+<span><span class="co">#         # plot.margin = margin(t = 0, unit='cm'),</span></span>
+<span><span class="co">#         legend.text = element_text(size = 13),</span></span>
+<span><span class="co">#         legend.position = "bottom",</span></span>
+<span><span class="co">#             legend.title  = element_blank(),</span></span>
+<span><span class="co">#             legend.margin = margin(t = -0.3, unit='cm'))</span></span>
+<span><span class="co"># p</span></span>
+<span><span class="co"># # write_fig(p, "Figure7_comparison_with_others.pdf", 10, 4, show = TRUE)</span></span></code></pre></div>
 </div>
   </div>
 
@@ -308,7 +308,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer>

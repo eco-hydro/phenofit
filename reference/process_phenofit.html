@@ -66,35 +66,44 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">process_phenofit</span><span class="op">(</span>
-  <span class="va">d_obs</span>,
-  nptperyear <span class="op">=</span> <span class="fl">36</span>,
-  south <span class="op">=</span> <span class="cn">FALSE</span>,
-  options_season <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>wFUN <span class="op">=</span> <span class="st">"wTSM"</span>, maxExtendMonth <span class="op">=</span> <span class="fl">12</span>, MaxPeaksPerYear <span class="op">=</span> <span class="fl">3</span>,
-    MaxTroughsPerYear <span class="op">=</span> <span class="fl">4</span><span class="op">)</span>,
-  options_fitting <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>methods <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AG"</span>, <span class="st">"Zhang"</span>, <span class="st">"Beck"</span>, <span class="st">"Elmore"</span>, <span class="st">"Gu"</span><span class="op">)</span>, wFUN <span class="op">=</span>
-    <span class="st">"wTSM"</span>, maxExtendMonth <span class="op">=</span> <span class="fl">12</span>, minExtendMonth <span class="op">=</span> <span class="fl">0.5</span>, use.y0 <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>,
-  brks <span class="op">=</span> <span class="cn">NULL</span>,
-  TRS <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.2</span>, <span class="fl">0.5</span>, <span class="fl">0.6</span>, <span class="fl">0.8</span>, <span class="fl">0.9</span><span class="op">)</span>,
-  run.curvefit <span class="op">=</span> <span class="cn">TRUE</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">process_phenofit</span><span class="op">(</span></span>
+<span>  <span class="va">d_obs</span>,</span>
+<span>  nptperyear <span class="op">=</span> <span class="fl">36</span>,</span>
+<span>  south <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  options_season <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>wFUN <span class="op">=</span> <span class="st">"wTSM"</span>, maxExtendMonth <span class="op">=</span> <span class="fl">12</span>, MaxPeaksPerYear <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>    MaxTroughsPerYear <span class="op">=</span> <span class="fl">4</span><span class="op">)</span>,</span>
+<span>  options_fitting <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>methods <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AG"</span>, <span class="st">"Zhang"</span>, <span class="st">"Beck"</span>, <span class="st">"Elmore"</span>, <span class="st">"Gu"</span><span class="op">)</span>, wFUN <span class="op">=</span></span>
+<span>    <span class="st">"wTSM"</span>, maxExtendMonth <span class="op">=</span> <span class="fl">12</span>, minExtendMonth <span class="op">=</span> <span class="fl">0.5</span>, use.y0 <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>,</span>
+<span>  brks <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  TRS <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.2</span>, <span class="fl">0.5</span>, <span class="fl">0.6</span>, <span class="fl">0.8</span>, <span class="fl">0.9</span><span class="op">)</span>,</span>
+<span>  run.curvefit <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>d_obs</dt>
 <dd><p>data.table with the columns of y, t, w and QC_flag (optional).</p></dd>
+
+
 <dt>nptperyear</dt>
 <dd><p>Integer, number of images per year.</p></dd>
+
+
 <dt>south</dt>
 <dd><p>Boolean. In south hemisphere, growing year is 1 July to the
 following year 31 June; In north hemisphere, growing year is 1 Jan to 31 Dec.</p></dd>
+
+
 <dt>brks</dt>
 <dd><p>A list object with the elements of 'fit' and 'dt', returned by
 <code>season</code> or <code>season_mov</code>, which contains the growing season division information.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>other parameters to <code><a href="curvefits.html">curvefits()</a></code></p></dd>
+
 </dl></div>
 
   </div>
@@ -109,7 +118,7 @@ following year 31 June; In north hemisphere, growing year is 1 Jan to 31 Dec.</p
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

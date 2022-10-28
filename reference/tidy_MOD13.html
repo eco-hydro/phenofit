@@ -75,22 +75,29 @@ Tidy contents include: <br></p><ol><li><p>add exact compositing date, see <code>
 </ol></div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">tidy_MOD13</span><span class="op">(</span><span class="va">infile</span>, <span class="va">outfile</span>, wmin <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">tidy_MOD13</span><span class="op">(</span><span class="va">infile</span>, <span class="va">outfile</span>, wmin <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>infile</dt>
 <dd><p>A character csv file path or a data.table</p></dd>
+
+
 <dt>outfile</dt>
 <dd><p>Output file name. If missing, will not be written to file.</p></dd>
+
+
 <dt>wmin</dt>
 <dd><p>Double, minimum weight of bad points, which could be smaller
 the weight of snow, ice and cloud.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A tidied data.table, with columns of 'site', 'y', 't', 'w', 'date' and
+    
+
+<p>A tidied data.table, with columns of 'site', 'y', 't', 'w', 'date' and
 'SummaryQA'.</p><ul><li><p><code>site</code>: site name</p></li>
 <li><p><code>y</code>: real value of EVI, <code>[-1, 1]</code></p></li>
 <li><p><code>date</code>: image date</p></li>
@@ -102,9 +109,9 @@ or "cloud".</p></li>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/eco-hydro/phenofit" class="external-link">phenofit</a></span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"MOD13A1"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">dt</span> <span class="op">&lt;-</span> <span class="fu">tidy_MOD13</span><span class="op">(</span><span class="va">MOD13A1</span><span class="op">$</span><span class="va">dt</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/eco-hydro/phenofit" class="external-link">phenofit</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"MOD13A1"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">dt</span> <span class="op">&lt;-</span> <span class="fu">tidy_MOD13</span><span class="op">(</span><span class="va">MOD13A1</span><span class="op">$</span><span class="va">dt</span><span class="op">)</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -119,7 +126,7 @@ or "cloud".</p></li>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

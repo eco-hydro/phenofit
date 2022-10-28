@@ -1,8 +1,8 @@
 pandoc: 2.7.3
-pkgdown: 2.0.3
+pkgdown: 2.0.6
 pkgdown_sha: ~
 articles:
   phenofit-procedures: phenofit-procedures.html
   phenofit_CA-NS6: phenofit_CA-NS6.html
-last_built: 2022-04-28T09:26Z
+last_built: 2022-10-28T11:05Z
 

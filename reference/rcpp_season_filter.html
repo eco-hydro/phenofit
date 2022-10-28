@@ -66,27 +66,36 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">rcpp_season_filter</span><span class="op">(</span><span class="va">d</span>, rm_closed <span class="op">=</span> <span class="cn">TRUE</span>, rtrough_max <span class="op">=</span> <span class="fl">0.7</span>, r_min <span class="op">=</span> <span class="fl">0.02</span><span class="op">)</span>
-
-<span class="fu">check_season_dt</span><span class="op">(</span><span class="va">dt</span><span class="op">)</span>
-
-<span class="fu">check_season_list</span><span class="op">(</span><span class="va">lst_dt</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">rcpp_season_filter</span><span class="op">(</span><span class="va">d</span>, rm_closed <span class="op">=</span> <span class="cn">TRUE</span>, rtrough_max <span class="op">=</span> <span class="fl">0.7</span>, r_min <span class="op">=</span> <span class="fl">0.02</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">check_season_dt</span><span class="op">(</span><span class="va">dt</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">check_season_list</span><span class="op">(</span><span class="va">lst_dt</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>d</dt>
 <dd><p>Data.frame of growing season dividing info</p></dd>
+
+
 <dt>rtrough_max</dt>
 <dd><p><code>ytrough &lt;= rtrough_max*A</code>, A is the amplitude of y.</p></dd>
+
+
 <dt>r_min</dt>
 <dd><p>Threshold is defined as the difference of peak value with
 trough value. There are two threshold (left and right). The minimum threshold
 should be greater than r_min.</p></dd>
+
+
 <dt>dt</dt>
 <dd><p>data.table of growing season division info</p></dd>
+
+
 <dt>lst_dt</dt>
 <dd><p>list of <code>dt</code>. Every year is corresponding to a <code>dt</code>.</p></dd>
+
 </dl></div>
 
   </div>
@@ -101,7 +110,7 @@ should be greater than r_min.</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

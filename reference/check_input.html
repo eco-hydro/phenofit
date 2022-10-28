@@ -68,62 +68,82 @@ weights for NA in y and w.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">check_input</span><span class="op">(</span>
-  <span class="va">t</span>,
-  <span class="va">y</span>,
-  <span class="va">w</span>,
-  <span class="va">QC_flag</span>,
-  <span class="va">nptperyear</span>,
-  south <span class="op">=</span> <span class="cn">FALSE</span>,
-  wmin <span class="op">=</span> <span class="fl">0.2</span>,
-  wsnow <span class="op">=</span> <span class="fl">0.8</span>,
-  <span class="va">ymin</span>,
-  <span class="va">missval</span>,
-  <span class="va">maxgap</span>,
-  alpha <span class="op">=</span> <span class="fl">0.02</span>,
-  alpha_high <span class="op">=</span> <span class="cn">NULL</span>,
-  date_start <span class="op">=</span> <span class="cn">NULL</span>,
-  date_end <span class="op">=</span> <span class="cn">NULL</span>,
-  mask_spike <span class="op">=</span> <span class="cn">TRUE</span>,
-  na.rm <span class="op">=</span> <span class="cn">FALSE</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">check_input</span><span class="op">(</span></span>
+<span>  <span class="va">t</span>,</span>
+<span>  <span class="va">y</span>,</span>
+<span>  <span class="va">w</span>,</span>
+<span>  <span class="va">QC_flag</span>,</span>
+<span>  <span class="va">nptperyear</span>,</span>
+<span>  south <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  wmin <span class="op">=</span> <span class="fl">0.2</span>,</span>
+<span>  wsnow <span class="op">=</span> <span class="fl">0.8</span>,</span>
+<span>  <span class="va">ymin</span>,</span>
+<span>  <span class="va">missval</span>,</span>
+<span>  <span class="va">maxgap</span>,</span>
+<span>  alpha <span class="op">=</span> <span class="fl">0.02</span>,</span>
+<span>  alpha_high <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  date_start <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  date_end <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  mask_spike <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  na.rm <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>t</dt>
 <dd><p>Numeric vector, <code>Date</code> variable</p></dd>
+
+
 <dt>y</dt>
 <dd><p>Numeric vector, vegetation index time-series</p></dd>
+
+
 <dt>w</dt>
 <dd><p>(optional) Numeric vector, weights of <code>y</code>. If not specified,
 weights of all <code>NA</code> values will be <code>wmin</code>, the others will be 1.0.</p></dd>
+
+
 <dt>QC_flag</dt>
 <dd><p>Factor (optional) returned by <code>qcFUN</code>, levels should be
 in the range of <code>c("snow", "cloud", "shadow", "aerosol", "marginal", "good")</code>, others will be categoried into <code>others</code>. <code>QC_flag</code> is
 used for visualization in <code><a href="get_pheno.html">get_pheno()</a></code> and <code><a href="plot_curvefits.html">plot_curvefits()</a></code>.</p></dd>
+
+
 <dt>nptperyear</dt>
 <dd><p>Integer, number of images per year.</p></dd>
+
+
 <dt>south</dt>
 <dd><p>Boolean. In south hemisphere, growing year is 1 July to the
 following year 31 June; In north hemisphere, growing year is 1 Jan to 31 Dec.</p></dd>
+
+
 <dt>wmin</dt>
 <dd><p>Double, minimum weight of bad points, which could be smaller
 the weight of snow, ice and cloud.</p></dd>
+
+
 <dt>wsnow</dt>
 <dd><p>Doulbe. Reset the weight of snow points, after get <code>ylu</code>.
 Snow flag is an important flag of ending of growing
 season. Snow points is more valuable than marginal points. Hence, the weight
 of snow should be great than that of <code>marginal</code>.</p></dd>
+
+
 <dt>ymin</dt>
 <dd><p>If specified, <code>ylu[1]</code> is constrained greater than ymin. This
 value is critical for bare, snow/ice land, where vegetation amplitude is quite
 small. Generally, you can set ymin=0.08 for NDVI, ymin=0.05 for EVI,
 ymin=0.5 gC m-2 s-1 for GPP.</p></dd>
+
+
 <dt>missval</dt>
 <dd><p>Double, which is used to replace NA values in y. If missing,
 the default vlaue is <code>ylu[1]</code>.</p></dd>
+
+
 <dt>maxgap</dt>
 <dd><p>Integer, nptperyear/4 will be a suitable value. If continuous
 missing value numbers less than maxgap, then interpolate those NA values by
@@ -133,25 +153,40 @@ Replacing NA values with a constant missing value (e.g. background value ymin)
 is inappropriate for middle growing season points. Interpolating all values
 by na.approx, it is unsuitable for large number continous missing segments,
 e.g. in the start or end of growing season.</p></dd>
+
+
 <dt>alpha</dt>
 <dd><p>Double, in <code>[0,1]</code>, quantile prob of ylu_min.</p></dd>
+
+
 <dt>alpha_high</dt>
 <dd><p>Double, <code>[0,1]</code>, quantile prob of <code>ylu_max</code>. If not
 specified, <code>alpha_high=alpha</code>.</p></dd>
+
+
 <dt>date_start, date_end</dt>
 <dd><p>starting and ending date of the original vegetation
 time-sereis (before <code>add_HeadTail</code>)</p></dd>
+
+
 <dt>mask_spike</dt>
 <dd><p>Boolean. Whether to remove spike values?</p></dd>
+
+
 <dt>na.rm</dt>
 <dd><p>Boolean. If <code>TRUE</code>, NA and spike values will be removed;
 otherwise, NA and spike values will be interpolated by valid neighbours.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Others will be ignored.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A list object returned:</p><ul><li><p><code>t</code> : Numeric vector</p></li>
+    
+
+<p>A list object returned:</p><ul><li><p><code>t</code> : Numeric vector</p></li>
 <li><p><code>y0</code>: Numeric vector, original vegetation time-series.</p></li>
 <li><p><code>y</code> : Numeric vector, checked vegetation time-series, <code>NA</code> values are interpolated.</p></li>
 <li><p><code>w</code> : Numeric vector</p></li>
@@ -166,15 +201,15 @@ points is only 10\<!-- %, we still can't set \code{w_critical=wmin}. --></p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"CA_NS6"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">d</span> <span class="op">=</span> <span class="va">CA_NS6</span></span>
-<span class="r-in"><span class="co"># head(d)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">nptperyear</span> <span class="op">=</span> <span class="fl">23</span></span>
-<span class="r-in"><span class="va">INPUT</span> <span class="op">&lt;-</span> <span class="fu">check_input</span><span class="op">(</span><span class="va">d</span><span class="op">$</span><span class="va">t</span>, <span class="va">d</span><span class="op">$</span><span class="va">y</span>, <span class="va">d</span><span class="op">$</span><span class="va">w</span>, QC_flag <span class="op">=</span> <span class="va">d</span><span class="op">$</span><span class="va">QC_flag</span>,</span>
-<span class="r-in">     nptperyear <span class="op">=</span> <span class="va">nptperyear</span>, south <span class="op">=</span> <span class="cn">FALSE</span>, </span>
-<span class="r-in">     maxgap <span class="op">=</span> <span class="va">nptperyear</span><span class="op">/</span><span class="fl">4</span>, alpha <span class="op">=</span> <span class="fl">0.02</span>, wmin <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="plot_input.html">plot_input</a></span><span class="op">(</span><span class="va">INPUT</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"CA_NS6"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">d</span> <span class="op">=</span> <span class="va">CA_NS6</span></span></span>
+<span class="r-in"><span><span class="co"># head(d)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">nptperyear</span> <span class="op">=</span> <span class="fl">23</span></span></span>
+<span class="r-in"><span><span class="va">INPUT</span> <span class="op">&lt;-</span> <span class="fu">check_input</span><span class="op">(</span><span class="va">d</span><span class="op">$</span><span class="va">t</span>, <span class="va">d</span><span class="op">$</span><span class="va">y</span>, <span class="va">d</span><span class="op">$</span><span class="va">w</span>, QC_flag <span class="op">=</span> <span class="va">d</span><span class="op">$</span><span class="va">QC_flag</span>,</span></span>
+<span class="r-in"><span>     nptperyear <span class="op">=</span> <span class="va">nptperyear</span>, south <span class="op">=</span> <span class="cn">FALSE</span>, </span></span>
+<span class="r-in"><span>     maxgap <span class="op">=</span> <span class="va">nptperyear</span><span class="op">/</span><span class="fl">4</span>, alpha <span class="op">=</span> <span class="fl">0.02</span>, wmin <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="plot_input.html">plot_input</a></span><span class="op">(</span><span class="va">INPUT</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="check_input-1.png" alt="" width="700" height="433"></span>
 </code></pre></div>
     </div>
@@ -190,7 +225,7 @@ points is only 10\<!-- %, we still can't set \code{w_critical=wmin}. --></p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

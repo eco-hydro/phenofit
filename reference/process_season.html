@@ -66,29 +66,38 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">process_season</span><span class="op">(</span>
-  <span class="va">d_obs</span>,
-  options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>wFUN <span class="op">=</span> <span class="st">"wTSM"</span>, maxExtendMonth <span class="op">=</span> <span class="fl">12</span>, MaxPeaksPerYear <span class="op">=</span> <span class="fl">3</span>,
-    MaxTroughsPerYear <span class="op">=</span> <span class="fl">4</span><span class="op">)</span>,
-  nptperyear <span class="op">=</span> <span class="fl">36</span>,
-  south <span class="op">=</span> <span class="cn">FALSE</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">process_season</span><span class="op">(</span></span>
+<span>  <span class="va">d_obs</span>,</span>
+<span>  options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>wFUN <span class="op">=</span> <span class="st">"wTSM"</span>, maxExtendMonth <span class="op">=</span> <span class="fl">12</span>, MaxPeaksPerYear <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>    MaxTroughsPerYear <span class="op">=</span> <span class="fl">4</span><span class="op">)</span>,</span>
+<span>  nptperyear <span class="op">=</span> <span class="fl">36</span>,</span>
+<span>  south <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>nptperyear</dt>
 <dd><p>Integer, number of images per year.</p></dd>
+
+
 <dt>south</dt>
 <dd><p>Boolean. In south hemisphere, growing year is 1 July to the
 following year 31 June; In north hemisphere, growing year is 1 Jan to 31 Dec.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Others will be ignored.</p></dd>
+
+
 <dt>d</dt>
 <dd><p>data.frame, with the columns of <code>t</code>, <code>y</code> and <code>w</code>.</p></dd>
+
+
 <dt>options_season</dt>
 <dd><p>options of <code><a href="season_mov.html">season_mov()</a></code></p></dd>
+
 </dl></div>
     <div id="note">
     <h2>Note</h2>
@@ -107,7 +116,7 @@ following year 31 June; In north hemisphere, growing year is 1 Jan to 31 Dec.</p
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

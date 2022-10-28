@@ -66,17 +66,17 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">plot_season</span><span class="op">(</span>
-  <span class="va">INPUT</span>,
-  <span class="va">brks</span>,
-  <span class="va">plotdat</span>,
-  IsPlot.OnlyBad <span class="op">=</span> <span class="cn">FALSE</span>,
-  show.legend <span class="op">=</span> <span class="cn">TRUE</span>,
-  ylab <span class="op">=</span> <span class="st">"VI"</span>,
-  title <span class="op">=</span> <span class="cn">NULL</span>,
-  show.shade <span class="op">=</span> <span class="cn">TRUE</span>,
-  margin <span class="op">=</span> <span class="fl">0.35</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">plot_season</span><span class="op">(</span></span>
+<span>  <span class="va">INPUT</span>,</span>
+<span>  <span class="va">brks</span>,</span>
+<span>  <span class="va">plotdat</span>,</span>
+<span>  IsPlot.OnlyBad <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  show.legend <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  ylab <span class="op">=</span> <span class="st">"VI"</span>,</span>
+<span>  title <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  show.shade <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  margin <span class="op">=</span> <span class="fl">0.35</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -84,25 +84,42 @@
     <dl><dt>INPUT</dt>
 <dd><p>A list object with the elements of <code>t</code>, <code>y</code>, <code>w</code>,
 <code>Tn</code> (optional) and <code>ylu</code>, returned by <code><a href="check_input.html">check_input()</a></code>.</p></dd>
+
+
 <dt>brks</dt>
 <dd><p>A list object returned by <code>season</code> or <code>season_mov</code>.</p></dd>
+
+
 <dt>plotdat</dt>
 <dd><p>(optional) A list or data.table, with <code>t</code>, <code>y</code> and <code>w</code>.
 Only if <code>IsPlot=TRUE</code>, <code><a href="plot_input.html">plot_input()</a></code> will be used to plot.
 Known that y and w in <code>INPUT</code> have been changed, we suggest using the
 original data.table.</p></dd>
+
+
 <dt>IsPlot.OnlyBad</dt>
 <dd><p>If true, only plot partial figures whose NSE &lt; 0.3.</p></dd>
+
+
 <dt>show.legend</dt>
 <dd><p>Whether to show legend?</p></dd>
+
+
 <dt>ylab</dt>
 <dd><p>y axis title</p></dd>
+
+
 <dt>title</dt>
 <dd><p>The main title (on top)</p></dd>
+
+
 <dt>show.shade</dt>
 <dd><p>Boolean, period inside growing cycle colored as shade?</p></dd>
+
+
 <dt>margin</dt>
 <dd><p><code>ylim = c(ymin, ymax + margin * A); A = ymax - ymin</code>.</p></dd>
+
 </dl></div>
 
   </div>
@@ -117,7 +134,7 @@ original data.table.</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

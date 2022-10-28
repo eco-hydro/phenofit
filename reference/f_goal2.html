@@ -66,31 +66,46 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">f_goal2</span><span class="op">(</span><span class="va">par</span>, <span class="va">fun</span>, <span class="va">y</span>, <span class="va">t</span>, <span class="va">pred</span>, w <span class="op">=</span> <span class="cn">NULL</span>, ylu <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">f_goal2</span><span class="op">(</span><span class="va">par</span>, <span class="va">fun</span>, <span class="va">y</span>, <span class="va">t</span>, <span class="va">pred</span>, w <span class="op">=</span> <span class="cn">NULL</span>, ylu <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>par</dt>
 <dd><p>A vector of parameters</p></dd>
+
+
 <dt>fun</dt>
 <dd><p>A curve fitting function, can be one of <code>doubleAG</code>,
 <code>doubleLog.Beck</code>, <code>doubleLog.Elmore</code>, <code>doubleLog.Gu</code>,
 <code>doubleLog.Klos</code>, <code>doubleLog.Zhang</code>, see <code><a href="logistics.html">Logistic()</a></code>
 for details.</p></dd>
+
+
 <dt>y</dt>
 <dd><p>Numeric vector, vegetation index time-series</p></dd>
+
+
 <dt>t</dt>
 <dd><p>Numeric vector, <code>Date</code> variable</p></dd>
+
+
 <dt>pred</dt>
 <dd><p>Numeric Vector, predicted values</p></dd>
+
+
 <dt>w</dt>
 <dd><p>(optional) Numeric vector, weights of <code>y</code>. If not specified,
 weights of all <code>NA</code> values will be <code>wmin</code>, the others will be 1.0.</p></dd>
+
+
 <dt>ylu</dt>
 <dd><p><code>[ymin, ymax]</code>, which is used to force <code>ypred</code> in the range of <code>ylu</code>.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>others will be ignored.</p></dd>
+
 </dl></div>
 
   </div>
@@ -105,7 +120,7 @@ weights of all <code>NA</code> values will be <code>wmin</code>, the others will
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

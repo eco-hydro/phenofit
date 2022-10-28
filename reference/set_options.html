@@ -66,9 +66,9 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">set_options</span><span class="op">(</span><span class="va">...</span>, options <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span>
-
-<span class="fu">get_options</span><span class="op">(</span>names <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">set_options</span><span class="op">(</span><span class="va">...</span>, options <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">get_options</span><span class="op">(</span>names <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -77,6 +77,8 @@
 <dd><p>list of phenofit options FUN_season: character, <code>season_mov</code> or
 <code>season</code> rFUN: character, rough fitting function. <code>smooth_wWHIT</code>,
 <code>smooth_wSG</code> or <code>smooth_wHANTs</code>.</p></dd>
+
+
 <dt>options</dt>
 <dd><p>If not NULL, <code>options</code> will overwrite the default parameters
 (<code>get_options()</code>).</p><ul><li><p><code>qcFUN</code>      : function to process qc flag, see <code><a href="qcFUN.html">qcFUN()</a></code> for details.</p></li>
@@ -93,8 +95,11 @@ and cloud).</p><ul><li><p>If <code>options$season$wmin</code> or <code>options$s
 <li><p><code>season</code>     : See the following part: options for season for details.</p></li>
 <li><p><code>fitting</code>    : See the following part: options for fitting for details.</p></li>
 </ul></dd>
+
+
 <dt>names</dt>
 <dd><p>vector of character, names of options</p></dd>
+
 </dl></div>
     <div id="options-for-season">
     <h2>options for season</h2>
@@ -220,8 +225,8 @@ not be used. <code>minT</code> use night temperature Tn to define backgroud valu
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu">set_options</span><span class="op">(</span>verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> </span>
-<span class="r-in"><span class="fu">get_options</span><span class="op">(</span><span class="st">"season"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">set_options</span><span class="op">(</span>verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> </span></span>
+<span class="r-in"><span><span class="fu">get_options</span><span class="op">(</span><span class="st">"season"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> List of 24</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ rFUN             : chr "smooth_wWHIT"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ iters            : num 2</span>
@@ -262,7 +267,7 @@ not be used. <code>minT</code> use night temperature Tn to define backgroud valu
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

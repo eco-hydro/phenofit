@@ -66,97 +66,124 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">plot_curvefits</span><span class="op">(</span>
-  <span class="va">d_fit</span>,
-  <span class="va">seasons</span>,
-  d_obs <span class="op">=</span> <span class="cn">NULL</span>,
-  title <span class="op">=</span> <span class="cn">NULL</span>,
-  xlab <span class="op">=</span> <span class="st">"Time"</span>,
-  ylab <span class="op">=</span> <span class="st">"Vegetation Index"</span>,
-  yticks <span class="op">=</span> <span class="cn">NULL</span>,
-  font.size <span class="op">=</span> <span class="fl">14</span>,
-  theme <span class="op">=</span> <span class="cn">NULL</span>,
-  cex <span class="op">=</span> <span class="fl">2</span>,
-  shape <span class="op">=</span> <span class="st">"point"</span>,
-  angle <span class="op">=</span> <span class="fl">30</span>,
-  show.legend <span class="op">=</span> <span class="cn">TRUE</span>,
-  layer_extra <span class="op">=</span> <span class="cn">NULL</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">plot_curvefits</span><span class="op">(</span></span>
+<span>  <span class="va">d_fit</span>,</span>
+<span>  <span class="va">seasons</span>,</span>
+<span>  d_obs <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  title <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  xlab <span class="op">=</span> <span class="st">"Time"</span>,</span>
+<span>  ylab <span class="op">=</span> <span class="st">"Vegetation Index"</span>,</span>
+<span>  yticks <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  font.size <span class="op">=</span> <span class="fl">14</span>,</span>
+<span>  theme <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  cex <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>  shape <span class="op">=</span> <span class="st">"point"</span>,</span>
+<span>  angle <span class="op">=</span> <span class="fl">30</span>,</span>
+<span>  show.legend <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  layer_extra <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>d_fit</dt>
 <dd><p>data.frame of curve fittings returned by <code><a href="get_fitting.html">get_fitting()</a></code>.</p></dd>
+
+
 <dt>seasons</dt>
 <dd><p>growing season division object returned by <code><a href="season.html">season()</a></code>
 and <code><a href="season_mov.html">season_mov()</a></code>.</p></dd>
+
+
 <dt>d_obs</dt>
 <dd><p>data.frame of original vegetation time series, with the columns
 of <code>t</code>, <code>y</code> and <code>QC_flag</code>. If not specified, it will be determined from <code>d_fit</code>.</p></dd>
+
+
 <dt>title</dt>
 <dd><p>String, title of figure.</p></dd>
+
+
 <dt>xlab, ylab</dt>
 <dd><p>String, title of <code>xlab</code> and <code>ylab</code>.</p></dd>
+
+
 <dt>yticks</dt>
 <dd><p>ticks of y axis</p></dd>
+
+
 <dt>font.size</dt>
 <dd><p>Font size of axis.text</p></dd>
+
+
 <dt>theme</dt>
 <dd><p>ggplot theme</p></dd>
+
+
 <dt>cex</dt>
 <dd><p>point size for VI observation.</p></dd>
+
+
 <dt>shape</dt>
 <dd><p>the shape of input VI observation? <code>line</code> or <code>point</code></p></dd>
+
+
 <dt>angle</dt>
 <dd><p><code>text.x</code> angle</p></dd>
+
+
 <dt>show.legend</dt>
 <dd><p>Boolean</p></dd>
+
+
 <dt>layer_extra</dt>
 <dd><p>(not used) extra ggplot layers</p></dd>
+
+
 <dt>...</dt>
 <dd><p>ignored</p></dd>
+
 </dl></div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"CA_NS6"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">d</span> <span class="op">=</span> <span class="va">CA_NS6</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">nptperyear</span> <span class="op">&lt;-</span> <span class="fl">23</span></span>
-<span class="r-in"><span class="va">INPUT</span> <span class="op">&lt;-</span> <span class="fu"><a href="check_input.html">check_input</a></span><span class="op">(</span><span class="va">d</span><span class="op">$</span><span class="va">t</span>, <span class="va">d</span><span class="op">$</span><span class="va">y</span>, <span class="va">d</span><span class="op">$</span><span class="va">w</span>, QC_flag <span class="op">=</span> <span class="va">d</span><span class="op">$</span><span class="va">QC_flag</span>,</span>
-<span class="r-in">     nptperyear <span class="op">=</span> <span class="va">nptperyear</span>, south <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span class="r-in">     maxgap <span class="op">=</span> <span class="va">nptperyear</span><span class="op">/</span><span class="fl">4</span>, alpha <span class="op">=</span> <span class="fl">0.02</span>, wmin <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span></span>
-<span class="r-in"><span class="co"># plot_input(INPUT)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Rough fitting and growing season dividing</span></span>
-<span class="r-in"><span class="va">wFUN</span> <span class="op">&lt;-</span> <span class="st">"wTSM"</span></span>
-<span class="r-in"><span class="va">brks2</span> <span class="op">&lt;-</span> <span class="fu"><a href="season_mov.html">season_mov</a></span><span class="op">(</span><span class="va">INPUT</span>,</span>
-<span class="r-in">    options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span class="r-in">        rFUN <span class="op">=</span> <span class="st">"smooth_wWHIT"</span>, wFUN <span class="op">=</span> <span class="va">wFUN</span>,</span>
-<span class="r-in">        r_min <span class="op">=</span> <span class="fl">0.05</span>, ypeak_min <span class="op">=</span> <span class="fl">0.05</span>,</span>
-<span class="r-in">        lambda <span class="op">=</span> <span class="fl">10</span>,</span>
-<span class="r-in">        verbose <span class="op">=</span> <span class="cn">FALSE</span></span>
-<span class="r-in">    <span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="co"># plot_season(INPUT, brks2, d)</span></span>
-<span class="r-in"><span class="co"># Fine fitting</span></span>
-<span class="r-in"><span class="va">fits</span> <span class="op">&lt;-</span> <span class="fu"><a href="curvefits.html">curvefits</a></span><span class="op">(</span></span>
-<span class="r-in">    <span class="va">INPUT</span>, <span class="va">brks2</span>,</span>
-<span class="r-in">    options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span class="r-in">        methods <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AG"</span>, <span class="st">"Beck"</span>, <span class="st">"Elmore"</span>, <span class="st">"Zhang"</span><span class="op">)</span>, <span class="co">#,"klos", "Gu"</span></span>
-<span class="r-in">        wFUN <span class="op">=</span> <span class="va">wFUN</span>,</span>
-<span class="r-in">        nextend <span class="op">=</span> <span class="fl">2</span>, maxExtendMonth <span class="op">=</span> <span class="fl">2</span>, minExtendMonth <span class="op">=</span> <span class="fl">1</span>, minPercValid <span class="op">=</span> <span class="fl">0.2</span></span>
-<span class="r-in">    <span class="op">)</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">r_param</span> <span class="op">=</span> <span class="fu"><a href="get_param.html">get_param</a></span><span class="op">(</span><span class="va">fits</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">r_pheno</span> <span class="op">=</span> <span class="fu"><a href="get_pheno.html">get_pheno</a></span><span class="op">(</span><span class="va">fits</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">r_gof</span> <span class="op">=</span> <span class="fu"><a href="get_GOF.html">get_GOF</a></span><span class="op">(</span><span class="va">fits</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">d_fit</span> <span class="op">=</span> <span class="fu"><a href="get_fitting.html">get_fitting</a></span><span class="op">(</span><span class="va">fits</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">g</span> <span class="op">&lt;-</span> <span class="fu">plot_curvefits</span><span class="op">(</span><span class="va">d_fit</span>, <span class="va">brks2</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu">grid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grid/grid.newpage.html" class="external-link">grid.newpage</a></span><span class="op">(</span><span class="op">)</span>; <span class="fu">grid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grid/grid.draw.html" class="external-link">grid.draw</a></span><span class="op">(</span><span class="va">g</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"CA_NS6"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">d</span> <span class="op">=</span> <span class="va">CA_NS6</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">nptperyear</span> <span class="op">&lt;-</span> <span class="fl">23</span></span></span>
+<span class="r-in"><span><span class="va">INPUT</span> <span class="op">&lt;-</span> <span class="fu"><a href="check_input.html">check_input</a></span><span class="op">(</span><span class="va">d</span><span class="op">$</span><span class="va">t</span>, <span class="va">d</span><span class="op">$</span><span class="va">y</span>, <span class="va">d</span><span class="op">$</span><span class="va">w</span>, QC_flag <span class="op">=</span> <span class="va">d</span><span class="op">$</span><span class="va">QC_flag</span>,</span></span>
+<span class="r-in"><span>     nptperyear <span class="op">=</span> <span class="va">nptperyear</span>, south <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
+<span class="r-in"><span>     maxgap <span class="op">=</span> <span class="va">nptperyear</span><span class="op">/</span><span class="fl">4</span>, alpha <span class="op">=</span> <span class="fl">0.02</span>, wmin <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># plot_input(INPUT)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Rough fitting and growing season dividing</span></span></span>
+<span class="r-in"><span><span class="va">wFUN</span> <span class="op">&lt;-</span> <span class="st">"wTSM"</span></span></span>
+<span class="r-in"><span><span class="va">brks2</span> <span class="op">&lt;-</span> <span class="fu"><a href="season_mov.html">season_mov</a></span><span class="op">(</span><span class="va">INPUT</span>,</span></span>
+<span class="r-in"><span>    options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>        rFUN <span class="op">=</span> <span class="st">"smooth_wWHIT"</span>, wFUN <span class="op">=</span> <span class="va">wFUN</span>,</span></span>
+<span class="r-in"><span>        r_min <span class="op">=</span> <span class="fl">0.05</span>, ypeak_min <span class="op">=</span> <span class="fl">0.05</span>,</span></span>
+<span class="r-in"><span>        lambda <span class="op">=</span> <span class="fl">10</span>,</span></span>
+<span class="r-in"><span>        verbose <span class="op">=</span> <span class="cn">FALSE</span></span></span>
+<span class="r-in"><span>    <span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># plot_season(INPUT, brks2, d)</span></span></span>
+<span class="r-in"><span><span class="co"># Fine fitting</span></span></span>
+<span class="r-in"><span><span class="va">fits</span> <span class="op">&lt;-</span> <span class="fu"><a href="curvefits.html">curvefits</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="va">INPUT</span>, <span class="va">brks2</span>,</span></span>
+<span class="r-in"><span>    options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>        methods <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AG"</span>, <span class="st">"Beck"</span>, <span class="st">"Elmore"</span>, <span class="st">"Zhang"</span><span class="op">)</span>, <span class="co">#,"klos", "Gu"</span></span></span>
+<span class="r-in"><span>        wFUN <span class="op">=</span> <span class="va">wFUN</span>,</span></span>
+<span class="r-in"><span>        nextend <span class="op">=</span> <span class="fl">2</span>, maxExtendMonth <span class="op">=</span> <span class="fl">2</span>, minExtendMonth <span class="op">=</span> <span class="fl">1</span>, minPercValid <span class="op">=</span> <span class="fl">0.2</span></span></span>
+<span class="r-in"><span>    <span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">r_param</span> <span class="op">=</span> <span class="fu"><a href="get_param.html">get_param</a></span><span class="op">(</span><span class="va">fits</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">r_pheno</span> <span class="op">=</span> <span class="fu"><a href="get_pheno.html">get_pheno</a></span><span class="op">(</span><span class="va">fits</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">r_gof</span> <span class="op">=</span> <span class="fu"><a href="get_GOF.html">get_GOF</a></span><span class="op">(</span><span class="va">fits</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">d_fit</span> <span class="op">=</span> <span class="fu"><a href="get_fitting.html">get_fitting</a></span><span class="op">(</span><span class="va">fits</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">g</span> <span class="op">&lt;-</span> <span class="fu">plot_curvefits</span><span class="op">(</span><span class="va">d_fit</span>, <span class="va">brks2</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">grid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grid/grid.newpage.html" class="external-link">grid.newpage</a></span><span class="op">(</span><span class="op">)</span>; <span class="fu">grid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grid/grid.draw.html" class="external-link">grid.draw</a></span><span class="op">(</span><span class="va">g</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plot_curvefits-1.png" alt="" width="700" height="433"></span>
 </code></pre></div>
     </div>
@@ -172,7 +199,7 @@ of <code>t</code>, <code>y</code> and <code>QC_flag</code>. If not specified, it
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

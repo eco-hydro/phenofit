@@ -68,43 +68,58 @@ time-series in every growing season.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">FitDL.Zhang</span><span class="op">(</span><span class="va">y</span>, t <span class="op">=</span> <span class="fu">index</span><span class="op">(</span><span class="va">y</span><span class="op">)</span>, tout <span class="op">=</span> <span class="va">t</span>, method <span class="op">=</span> <span class="st">"nlm"</span>, <span class="va">w</span>, type <span class="op">=</span> <span class="fl">1L</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="fu">FitDL.AG</span><span class="op">(</span><span class="va">y</span>, t <span class="op">=</span> <span class="fu">index</span><span class="op">(</span><span class="va">y</span><span class="op">)</span>, tout <span class="op">=</span> <span class="va">t</span>, method <span class="op">=</span> <span class="st">"nlminb"</span>, <span class="va">w</span>, type <span class="op">=</span> <span class="fl">1L</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="fu">FitDL.AG2</span><span class="op">(</span><span class="va">y</span>, t <span class="op">=</span> <span class="fu">index</span><span class="op">(</span><span class="va">y</span><span class="op">)</span>, tout <span class="op">=</span> <span class="va">t</span>, method <span class="op">=</span> <span class="st">"nlminb"</span>, <span class="va">w</span>, type <span class="op">=</span> <span class="fl">1L</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="fu">FitDL.Beck</span><span class="op">(</span><span class="va">y</span>, t <span class="op">=</span> <span class="fu">index</span><span class="op">(</span><span class="va">y</span><span class="op">)</span>, tout <span class="op">=</span> <span class="va">t</span>, method <span class="op">=</span> <span class="st">"nlminb"</span>, <span class="va">w</span>, type <span class="op">=</span> <span class="fl">1L</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="fu">FitDL.Elmore</span><span class="op">(</span><span class="va">y</span>, t <span class="op">=</span> <span class="fu">index</span><span class="op">(</span><span class="va">y</span><span class="op">)</span>, tout <span class="op">=</span> <span class="va">t</span>, method <span class="op">=</span> <span class="st">"nlminb"</span>, <span class="va">w</span>, type <span class="op">=</span> <span class="fl">1L</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="fu">FitDL.Gu</span><span class="op">(</span><span class="va">y</span>, t <span class="op">=</span> <span class="fu">index</span><span class="op">(</span><span class="va">y</span><span class="op">)</span>, tout <span class="op">=</span> <span class="va">t</span>, method <span class="op">=</span> <span class="st">"nlminb"</span>, <span class="va">w</span>, type <span class="op">=</span> <span class="fl">1L</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="fu">FitDL.Klos</span><span class="op">(</span><span class="va">y</span>, t <span class="op">=</span> <span class="fu">index</span><span class="op">(</span><span class="va">y</span><span class="op">)</span>, tout <span class="op">=</span> <span class="va">t</span>, method <span class="op">=</span> <span class="st">"BFGS"</span>, <span class="va">w</span>, type <span class="op">=</span> <span class="fl">1L</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">FitDL.Zhang</span><span class="op">(</span><span class="va">y</span>, t <span class="op">=</span> <span class="fu">index</span><span class="op">(</span><span class="va">y</span><span class="op">)</span>, tout <span class="op">=</span> <span class="va">t</span>, method <span class="op">=</span> <span class="st">"nlm"</span>, <span class="va">w</span>, type <span class="op">=</span> <span class="fl">1L</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">FitDL.AG</span><span class="op">(</span><span class="va">y</span>, t <span class="op">=</span> <span class="fu">index</span><span class="op">(</span><span class="va">y</span><span class="op">)</span>, tout <span class="op">=</span> <span class="va">t</span>, method <span class="op">=</span> <span class="st">"nlminb"</span>, <span class="va">w</span>, type <span class="op">=</span> <span class="fl">1L</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">FitDL.AG2</span><span class="op">(</span><span class="va">y</span>, t <span class="op">=</span> <span class="fu">index</span><span class="op">(</span><span class="va">y</span><span class="op">)</span>, tout <span class="op">=</span> <span class="va">t</span>, method <span class="op">=</span> <span class="st">"nlminb"</span>, <span class="va">w</span>, type <span class="op">=</span> <span class="fl">1L</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">FitDL.Beck</span><span class="op">(</span><span class="va">y</span>, t <span class="op">=</span> <span class="fu">index</span><span class="op">(</span><span class="va">y</span><span class="op">)</span>, tout <span class="op">=</span> <span class="va">t</span>, method <span class="op">=</span> <span class="st">"nlminb"</span>, <span class="va">w</span>, type <span class="op">=</span> <span class="fl">1L</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">FitDL.Elmore</span><span class="op">(</span><span class="va">y</span>, t <span class="op">=</span> <span class="fu">index</span><span class="op">(</span><span class="va">y</span><span class="op">)</span>, tout <span class="op">=</span> <span class="va">t</span>, method <span class="op">=</span> <span class="st">"nlminb"</span>, <span class="va">w</span>, type <span class="op">=</span> <span class="fl">1L</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">FitDL.Gu</span><span class="op">(</span><span class="va">y</span>, t <span class="op">=</span> <span class="fu">index</span><span class="op">(</span><span class="va">y</span><span class="op">)</span>, tout <span class="op">=</span> <span class="va">t</span>, method <span class="op">=</span> <span class="st">"nlminb"</span>, <span class="va">w</span>, type <span class="op">=</span> <span class="fl">1L</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">FitDL.Klos</span><span class="op">(</span><span class="va">y</span>, t <span class="op">=</span> <span class="fu">index</span><span class="op">(</span><span class="va">y</span><span class="op">)</span>, tout <span class="op">=</span> <span class="va">t</span>, method <span class="op">=</span> <span class="st">"BFGS"</span>, <span class="va">w</span>, type <span class="op">=</span> <span class="fl">1L</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>y</dt>
 <dd><p>input vegetation index time-series.</p></dd>
+
+
 <dt>t</dt>
 <dd><p>the corresponding doy(day of year) of y.</p></dd>
+
+
 <dt>tout</dt>
 <dd><p>the time of output curve fitting time-series.</p></dd>
+
+
 <dt>method</dt>
 <dd><p>method passed to <code>optimx</code> or <code>optim</code> function.</p></dd>
+
+
 <dt>w</dt>
 <dd><p>weights</p></dd>
+
+
 <dt>type</dt>
 <dd><p>integer, <code>1</code> or <code>-1</code></p><ul><li><p><code>1</code>: trough-to-trough curve fitting</p></li>
 <li><p><code>-1</code>: peak-to-peak curve fitting</p></li>
 </ul></dd>
+
+
 <dt>...</dt>
 <dd><p>other paraters passed to <code><a href="optim_pheno.html">optim_pheno()</a></code>.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <ul><li><p><code>tout</code>: The time of output curve fitting time-series.</p></li>
+    
+
+<ul><li><p><code>tout</code>: The time of output curve fitting time-series.</p></li>
 <li><p><code>zs</code>  : Smoothed vegetation time-series of every iteration.</p></li>
 <li><p><code>ws</code>  : Weights of every iteration.</p></li>
 <li><p><code>par</code> : Final optimized parameter of fine fitting.</p></li>
@@ -132,21 +147,21 @@ https://doi.org/10.1007/978-1-4419-0026-5_2. <br></p></li>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># simulate vegetation time-series</span></span>
-<span class="r-in"><span class="va">t</span>    <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">365</span>, <span class="fl">8</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">par</span>  <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>mn <span class="op">=</span> <span class="fl">0.1</span>, mx <span class="op">=</span> <span class="fl">0.7</span>, sos <span class="op">=</span> <span class="fl">50</span>, rsp <span class="op">=</span> <span class="fl">0.1</span>, eos <span class="op">=</span> <span class="fl">250</span>, rau <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">y</span>    <span class="op">&lt;-</span> <span class="fu"><a href="logistics.html">doubleLog.Beck</a></span><span class="op">(</span><span class="va">par</span>, <span class="va">t</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="va">t</span>, <span class="va">y</span><span class="op">)</span></span>
-<span class="r-in"><span class="co"># methods &lt;- c("AG", "Beck", "Elmore", "Gu", "Zhang")</span></span>
-<span class="r-in"><span class="va">tout</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">365</span>, <span class="fl">1</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">r</span> <span class="op">&lt;-</span> <span class="fu">FitDL.Elmore</span><span class="op">(</span><span class="va">y</span>, <span class="va">t</span>, <span class="va">tout</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">r</span>, <span class="va">data</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># simulate vegetation time-series</span></span></span>
+<span class="r-in"><span><span class="va">t</span>    <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">365</span>, <span class="fl">8</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">par</span>  <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>mn <span class="op">=</span> <span class="fl">0.1</span>, mx <span class="op">=</span> <span class="fl">0.7</span>, sos <span class="op">=</span> <span class="fl">50</span>, rsp <span class="op">=</span> <span class="fl">0.1</span>, eos <span class="op">=</span> <span class="fl">250</span>, rau <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">y</span>    <span class="op">&lt;-</span> <span class="fu"><a href="logistics.html">doubleLog.Beck</a></span><span class="op">(</span><span class="va">par</span>, <span class="va">t</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="va">t</span>, <span class="va">y</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># methods &lt;- c("AG", "Beck", "Elmore", "Gu", "Zhang")</span></span></span>
+<span class="r-in"><span><span class="va">tout</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">365</span>, <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">r</span> <span class="op">&lt;-</span> <span class="fu">FitDL.Elmore</span><span class="op">(</span><span class="va">y</span>, <span class="va">t</span>, <span class="va">tout</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">r</span>, <span class="va">data</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="FitDL-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span class="fu"><a href="get_GOF.html">get_GOF</a></span><span class="op">(</span><span class="va">r</span>, <span class="va">data</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu"><a href="get_GOF.html">get_GOF</a></span><span class="op">(</span><span class="va">r</span>, <span class="va">data</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    R2 NSE R         RMSE pvalue n_sim</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1:  1   1 1 4.392087e-10      0    46</span>
-<span class="r-in"><span class="fu"><a href="get_param.html">get_param</a></span><span class="op">(</span><span class="va">r</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu"><a href="get_param.html">get_param</a></span><span class="op">(</span><span class="va">r</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 7</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      mn    mx   sos   rsp   eos   rau       m7</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
@@ -165,7 +180,7 @@ https://doi.org/10.1007/978-1-4419-0026-5_2. <br></p></li>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>
