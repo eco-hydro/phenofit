@@ -30,13 +30,7 @@ weights of all \code{NA} values will be \code{wmin}, the others will be 1.0.}
 
 \item{ylu}{\verb{[ymin, ymax]}, which is used to force \code{ypred} in the range of \code{ylu}.}
 
-\item{lower}{
-    vectors of lower and upper bounds, replicated to be as long as
-    \code{start}.  If unspecified, all parameters are assumed to be
-    unconstrained.
-  }
-
-\item{upper}{
+\item{lower, upper}{
     vectors of lower and upper bounds, replicated to be as long as
     \code{start}.  If unspecified, all parameters are assumed to be
     unconstrained.

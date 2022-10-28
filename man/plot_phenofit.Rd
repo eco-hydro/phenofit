@@ -25,8 +25,6 @@ plot_phenofit(
 
 \item{title}{String, title of figure.}
 
-\item{ylab}{String, title of \code{xlab} and \code{ylab}.}
-
 \item{IsPlot}{boolean. If false, a ggplot object will be returned.}
 
 \item{show.legend}{If now show legend, ggplot object will be returned, else

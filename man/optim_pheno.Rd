@@ -54,13 +54,7 @@ Only \code{\link[=wTSM]{wTSM()}} needs \code{nptperyear}. If not specified,
 \item{wFUN}{weights updating function, can be one of 'wTSM', 'wChen' and
 'wBisquare'.}
 
-\item{lower}{
-    vectors of lower and upper bounds, replicated to be as long as
-    \code{start}.  If unspecified, all parameters are assumed to be
-    unconstrained.
-  }
-
-\item{upper}{
+\item{lower, upper}{
     vectors of lower and upper bounds, replicated to be as long as
     \code{start}.  If unspecified, all parameters are assumed to be
     unconstrained.
