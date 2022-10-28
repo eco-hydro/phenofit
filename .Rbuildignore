@@ -42,3 +42,4 @@
 ^R/temp$
 ^tests/testthat/Rplots\.pdf$
 ^\.covrignore$
+^_build\.R$

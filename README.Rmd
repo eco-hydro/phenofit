@@ -77,13 +77,15 @@ season regions:
 
 # **References** 
 
-> [1] Kong, D., Zhang, Y., Wang, D., Chen, J., & Gu, X. (2020). Photoperiod Explains the Asynchronization Between Vegetation Carbon Phenology and Vegetation Greenness Phenology. *Journal of Geophysical Research: Biogeosciences*, 125(8), e2020JG005636. https://doi.org/10.1029/2020JG005636
+> [1] Kong, D., McVicar, T. R., Xiao, M., Zhang, Y., Peña-Arancibia, J. L., Filippa, G., Xie, Y., Gu, X. (2022). phenofit: An R package for extracting vegetation phenology from time series remote sensing. *Methods in Ecology and Evolution*, 13, 1508-1527. https://doi.org/10.1111/2041-210X.13870
+
+> [2] Kong, D., Zhang, Y., Wang, D., Chen, J., & Gu, X. (2020). Photoperiod Explains the Asynchronization Between Vegetation Carbon Phenology and Vegetation Greenness Phenology. *Journal of Geophysical Research: Biogeosciences*, 125(8), e2020JG005636. https://doi.org/10.1029/2020JG005636
 >
-> [2] Kong, D., Zhang, Y., Gu, X., & Wang, D. (2019). A robust method for reconstructing global MODIS EVI time series on the Google Earth Engine. *ISPRS Journal of Photogrammetry and Remote Sensing*, 155, 13–24.
+> [3] Kong, D., Zhang, Y., Gu, X., & Wang, D. (2019). A robust method for reconstructing global MODIS EVI time series on the Google Earth Engine. *ISPRS Journal of Photogrammetry and Remote Sensing*, 155, 13–24.
 >
-> [3] Kong, D., (2020). R package: A state-of-the-art Vegetation Phenology extraction package, `phenofit` version 0.3.1, <https://doi.org/10.5281/zenodo.5150204>
+> [4] Kong, D., (2020). R package: A state-of-the-art Vegetation Phenology extraction package, `phenofit` version 0.3.1, <https://doi.org/10.5281/zenodo.5150204>
 >
-> [4] Zhang, Q., Kong, D., Shi, P., Singh, V.P., Sun, P., 2018. Vegetation phenology on the Qinghai-Tibetan Plateau and its response to climate change (1982–2013). Agric. For. Meteorol. 248, 408–417. <https://doi.org/10.1016/j.agrformet.2017.10.026>
+> [5] Zhang, Q., Kong, D., Shi, P., Singh, V.P., Sun, P., 2018. Vegetation phenology on the Qinghai-Tibetan Plateau and its response to climate change (1982–2013). Agric. For. Meteorol. 248, 408–417. <https://doi.org/10.1016/j.agrformet.2017.10.026>
 
 # Acknowledgements
 

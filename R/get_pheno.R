@@ -66,8 +66,8 @@ get_pheno.list <- function(x, method,
     IsPlot = FALSE, show.title = TRUE, ...)
 {
     if (!is.list(x)) stop("Unsupported input type!")
-    if (class(x) == 'fFITs')  x <- list(x)
-
+    if (inherits(x, "fFITs")) x <- list(x)
+    
     names   <- names(x) # methods
     methods <- if (missing(method)) names(x[[1]]$model) else method
 

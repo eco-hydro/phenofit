@@ -1,11 +1,10 @@
-# phenofit 0.3.5 (2022-02-12)
+# phenofit 0.3.5 (2022-02-12; Kong et al., 2022, MEE)
 
 - add TIMESAT global model function and cutoff function.
 - add the parameter `na.rm` in `check_input`. If `na.rm` = true, missing and
   spike values will be discarded; otherwise, they will be interpolated by valid
   neihbours.
 - change `analytical` to `FALSE` in `PhenoDeriv.fFIT`, `PhenoGu.fFIT`
-- 
 
 # phenofit 0.3.4 (2021-12-12)
 
