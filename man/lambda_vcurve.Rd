@@ -2,8 +2,6 @@
 % Please edit documentation in R/smooth_wWHIT_lambda.R
 \name{lambda_vcurve}
 \alias{lambda_vcurve}
-\alias{lambda_vcurve_jl}
-\alias{lambda_cv_jl}
 \title{lambda_vcurve}
 \usage{
 lambda_vcurve(
@@ -14,10 +12,6 @@ lambda_vcurve(
   verbose = FALSE,
   ...
 )
-
-lambda_vcurve_jl(y, w, lg_lambda_min = 0.1, lg_lambda_max = 3)
-
-lambda_cv_jl(y, w, d = 2, lg_lambda_min = 0.1, lg_lambda_max = 3)
 }
 \arguments{
 \item{y}{Numeric vector, vegetation index time-series}

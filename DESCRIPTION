@@ -49,7 +49,6 @@ Imports:
     optimx,
     ucminf,
     numDeriv,
-    JuliaCall,
     methods,
     zeallot
 Suggests: 
