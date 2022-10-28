@@ -5,8 +5,8 @@
 [![codecov](https://codecov.io/gh/eco-hydro/phenofit/branch/master/graph/badge.svg)](https://app.codecov.io/gh/eco-hydro/phenofit)
 [![License](http://img.shields.io/badge/license-GPL%20%28%3E=%202%29-brightgreen.svg?style=flat)](http://www.gnu.org/licenses/gpl-2.0.html)
 [![CRAN](http://www.r-pkg.org/badges/version/phenofit)](https://cran.r-project.org/package=phenofit)
-[![total](http://cranlogs.r-pkg.org/badges/grand-total/phenofit)](https://www.rpackages.io/package/phenofit)
-[![monthly](http://cranlogs.r-pkg.org/badges/phenofit)](https://www.rpackages.io/package/phenofit)
+[![total](https://cranlogs.r-pkg.org/badges/grand-total/phenofit)](https://cran.r-project.org/package=phenofit)
+[![monthly](https://cranlogs.r-pkg.org/badges/phenofit)](https://cran.r-project.org/package=phenofit)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6320537.svg)](https://doi.org/10.5281/zenodo.6320537)
 
 A state-of-the-art **remote sensing vegetation phenology** extraction

@@ -1,3 +1,4 @@
+\dontrun{
 library(phenofit)
 
 data("CA_NS6")
@@ -34,7 +35,6 @@ fits <- curvefits_LocalModel(
 fits_merged = merge_LocalModels(fits) 
 
 ## Visualization ---------------------------------------------------------------
-\dontrun{
 l_fitting = map(fits %>% guess_names, get_fitting) #%>% melt_list("period")
 
 d_merged = get_fitting(fits_merged[[2]]) %>% cbind(type = "Merged")
