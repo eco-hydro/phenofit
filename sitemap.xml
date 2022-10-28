@@ -136,9 +136,6 @@
     <loc>/reference/input_single.html</loc>
   </url>
   <url>
-    <loc>/reference/julia_setup.html</loc>
-  </url>
-  <url>
     <loc>/reference/kurtosis.html</loc>
   </url>
   <url>
@@ -158,9 +155,6 @@
   </url>
   <url>
     <loc>/reference/opt_FUN.html</loc>
-  </url>
-  <url>
-    <loc>/reference/opt_nlminb_julia.html</loc>
   </url>
   <url>
     <loc>/reference/optim_pheno.html</loc>
