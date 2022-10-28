@@ -78,7 +78,7 @@
 
       
 
-      </header><script src="phenofit-procedures_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Detailed procedures of phenofit</h1>
@@ -144,9 +144,13 @@
 <div class="section level3">
 <h3 id="growing-season-division-and-fine-curve-fitting">growing season division and fine-curve fitting<a class="anchor" aria-label="anchor" href="#growing-season-division-and-fine-curve-fitting"></a>
 </h3>
-<p>Simply treating calendar year as a complete growing season will induce a considerable error for phenology extraction. A simple growing season dividing method was proposed in <code>phenofit</code>.</p>
-<p>The growing season dividing method rely on heavily in Whittaker smoother.</p>
-<p>Procedures of initial weight, growing season dividing, curve fitting, and phenology extraction are conducted separately.</p>
+<p>Simply treating calendar year as a complete growing season will
+induce a considerable error for phenology extraction. A simple growing
+season dividing method was proposed in <code>phenofit</code>.</p>
+<p>The growing season dividing method rely on heavily in Whittaker
+smoother.</p>
+<p>Procedures of initial weight, growing season dividing, curve fitting,
+and phenology extraction are conducted separately.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">INPUT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/check_input.html">check_input</a></span><span class="op">(</span><span class="va">d</span><span class="op">$</span><span class="va">t</span>, <span class="va">d</span><span class="op">$</span><span class="va">y</span>, <span class="va">d</span><span class="op">$</span><span class="va">w</span>,</span>
 <span>    QC_flag <span class="op">=</span> <span class="va">d</span><span class="op">$</span><span class="va">QC_flag</span>,</span>

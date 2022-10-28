@@ -78,10 +78,11 @@
 
       
 
-      </header><script src="phenofit_CA-NS6_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>Extract vegetation phenology from MOD13A1 EVI</h1>
+      <h1 data-toc-skip>Extract vegetation phenology from MOD13A1
+EVI</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/eco-hydro/phenofit/blob/HEAD/vignettes/phenofit_CA-NS6.Rmd" class="external-link"><code>vignettes/phenofit_CA-NS6.Rmd</code></a></small>
@@ -94,7 +95,9 @@
 <div class="section level2">
 <h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
 </h2>
-<p>Here, we illustrate how to use <code>phenofit</code> to extract vegetation phenology from MOD13A1 in the sampled points. Regional analysis also can be conducted in the similar way.</p>
+<p>Here, we illustrate how to use <code>phenofit</code> to extract
+vegetation phenology from MOD13A1 in the sampled points. Regional
+analysis also can be conducted in the similar way.</p>
 <!-- ## 1.1 Download MOD13A1 data
 Upload point shapefile into GEE, clip MOD13A1 and download vegetation index
 data. [Here](https://code.earthengine.google.com/ee3ec39cf3061374dab435c358d008a3) is the corresponding GEE script. 
@@ -112,11 +115,19 @@ data. [Here](https://code.earthengine.google.com/ee3ec39cf3061374dab435c358d008a
 <span><span class="va">nptperyear</span> <span class="op">&lt;-</span> <span class="fl">23</span>   <span class="co"># How many points for a single year</span></span>
 <span><span class="va">wFUN</span>       <span class="op">&lt;-</span> <span class="va">wBisquare</span> <span class="co">#wTSM #wBisquare # Weights updating function, could be one of `wTSM`, 'wBisquare', `wChen` and `wSELF`.</span></span></code></pre></div>
 <ul>
-<li>Add date according to composite day of the year (DayOfYear), other than image date.</li>
+<li>Add date according to composite day of the year (DayOfYear), other
+than image date.</li>
 <li>Add weights according to <code>SummaryQA</code>.</li>
 </ul>
-<p>For MOD13A1, Weights can by initialed by <code>SummaryQA</code> band (also suit for MOD13A2 and MOD13Q1). There is already a <code>QC</code> function for <code>SummaryQA</code>, i.e. <code>qc_summary</code>.</p>
+<p>For MOD13A1, Weights can by initialed by <code>SummaryQA</code> band
+(also suit for MOD13A2 and MOD13Q1). There is already a <code>QC</code>
+function for <code>SummaryQA</code>, i.e. <code>qc_summary</code>.</p>
 <table class="table">
+<colgroup>
+<col width="30%">
+<col width="57%">
+<col width="12%">
+</colgroup>
 <thead><tr class="header">
 <th>SummaryQA</th>
 <th>Pixel reliability summary QA</th>
@@ -172,7 +183,11 @@ data. [Here](https://code.earthengine.google.com/ee3ec39cf3061374dab435c358d008a
 <span><span class="va">df</span> <span class="op">&lt;-</span> <span class="va">df</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">site</span>, y <span class="op">=</span> <span class="va">EVI</span><span class="op">/</span><span class="fl">1e4</span>, <span class="va">t</span>, <span class="va">date</span>, <span class="va">w</span>, <span class="va">QC_flag</span><span class="op">)</span><span class="op">]</span></span></code></pre></div>
 <ul>
 <li>
-<code>add_HeadTail</code> is used to deal with such situation, e.g. MOD13A2 begins from 2000-02-08. We need to construct a series with complete year, which begins from 01-01 for NH, and 07-01 for SH. For example, the input data period is 20000218 ~ 20171219. After adding one year in head and tail, it becomes 19990101 ~ 20181219.</li>
+<code>add_HeadTail</code> is used to deal with such situation,
+e.g. MOD13A2 begins from 2000-02-08. We need to construct a series with
+complete year, which begins from 01-01 for NH, and 07-01 for SH. For
+example, the input data period is 20000218 ~ 20171219. After adding one
+year in head and tail, it becomes 19990101 ~ 20181219.</li>
 </ul>
 </div>
 <div class="section level3">
@@ -192,7 +207,8 @@ data. [Here](https://code.earthengine.google.com/ee3ec39cf3061374dab435c358d008a
 <span><span class="va">titlestr</span>   <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="va">sp</span>, <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">'[%03d,%s] %s, lat = %5.2f, lon = %6.2f'</span>,</span>
 <span>                                     <span class="va">ID</span>, <span class="va">site</span>, <span class="va">IGBPname</span>, <span class="va">lat</span>, <span class="va">lon</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">file_pdf</span>   <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">'Figure/%s_[%03d]_%s.pdf'</span>, <span class="va">prefix_fig</span>, <span class="va">sp</span><span class="op">$</span><span class="va">ID</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, <span class="va">sp</span><span class="op">$</span><span class="va">site</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
-<p>If need night temperature (Tn) to constrain ungrowing season backgroud value, NA values in Tn should be filled.</p>
+<p>If need night temperature (Tn) to constrain ungrowing season
+backgroud value, NA values in Tn should be filled.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">d</span><span class="op">$</span><span class="va">Tn</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/compound.html" class="external-link">%&lt;&gt;%</a></span> <span class="fu">zoo</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/zoo/man/na.approx.html" class="external-link">na.approx</a></span><span class="op">(</span>maxgap <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">d</span><span class="op">$</span><span class="va">Tn</span>, type <span class="op">=</span> <span class="st">"l"</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fl">5</span>, b <span class="op">=</span> <span class="fl">0</span>, col <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span></span></code></pre></div>
@@ -209,9 +225,13 @@ data. [Here](https://code.earthengine.google.com/ee3ec39cf3061374dab435c358d008a
 <div class="section level3">
 <h3 id="divide-growing-seasons">2.3 Divide growing seasons<a class="anchor" aria-label="anchor" href="#divide-growing-seasons"></a>
 </h3>
-<p>Simply treating calendar year as a complete growing season will induce a considerable error for phenology extraction. A simple growing season dividing method was proposed in <code>phenofit</code>.</p>
-<p>The growing season dividing method rely on heavily in Whittaker smoother.</p>
-<p>Procedures of initial weight, growing season dividing, curve fitting, and phenology extraction are conducted separately.</p>
+<p>Simply treating calendar year as a complete growing season will
+induce a considerable error for phenology extraction. A simple growing
+season dividing method was proposed in <code>phenofit</code>.</p>
+<p>The growing season dividing method rely on heavily in Whittaker
+smoother.</p>
+<p>Procedures of initial weight, growing season dividing, curve fitting,
+and phenology extraction are conducted separately.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">2</span>, <span class="fl">2</span>, <span class="fl">1</span><span class="op">)</span>, mgp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">0.6</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">lambda</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/init_lambda.html">init_lambda</a></span><span class="op">(</span><span class="va">INPUT</span><span class="op">$</span><span class="va">y</span><span class="op">)</span></span>
