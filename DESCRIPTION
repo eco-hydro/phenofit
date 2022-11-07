@@ -1,7 +1,7 @@
 Package: phenofit
 Type: Package
 Title: Extract Remote Sensing Vegetation Phenology 
-Version: 0.3.6
+Version: 0.3.7
 Authors@R: c(
     person("Dongdong", "Kong", role = c("aut", "cre"), email = "kongdd.sysu@gmail.com"),
     person("Mingzhong", "Xiao", role = c("aut"), email = "xmingzh@mail2.sysu.edu.cn"),
