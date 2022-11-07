@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenofit</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.7</span>
       </span>
     </div>
 
@@ -315,7 +315,7 @@ and phenology extraction are conducted separately.</p>
 <code class="sourceCode R"><span><span class="co">## visualization</span></span>
 <span><span class="va">g</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/plot_curvefits.html">plot_curvefits</a></span><span class="op">(</span><span class="va">d_fit</span>, <span class="va">brks2</span>, <span class="cn">NULL</span>, ylab <span class="op">=</span> <span class="st">"NDVI"</span>, <span class="st">"Time"</span>,</span>
 <span>                   theme <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_cartesian.html" class="external-link">coord_cartesian</a></span><span class="op">(</span>xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu">ymd</span><span class="op">(</span><span class="st">"2000-04-01"</span><span class="op">)</span>, <span class="fu">ymd</span><span class="op">(</span><span class="st">"2017-07-31"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## Warning: Removed 4 rows containing missing values (geom_point).</span></span></code></pre>
+<pre><code><span><span class="co">## Warning: Removed 4 rows containing missing values (`geom_point()`).</span></span></code></pre>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">grid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grid/grid.newpage.html" class="external-link">grid.newpage</a></span><span class="op">(</span><span class="op">)</span>; <span class="fu">grid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grid/grid.draw.html" class="external-link">grid.draw</a></span><span class="op">(</span><span class="va">g</span><span class="op">)</span><span class="co"># plot to check the curve fitting</span></span></code></pre></div>
 <p><img src="phenofit_CA-NS6_files/figure-html/curve%20fitting-1.png" width="700" style="display: block; margin: auto;"></p>
