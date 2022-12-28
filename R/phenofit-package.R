@@ -7,7 +7,7 @@
 #' 
 #' @import magrittr numDeriv
 #' @import ggplot2 
-#' @importFrom dplyr first last nth mutate group_by group_map group_modify select
+#' @importFrom dplyr nth mutate group_by group_map group_modify select
 #' ungroup across starts_with as_tibble
 #' @importFrom gridExtra arrangeGrob
 #' @importFrom data.table data.table as.data.table := is.data.table fwrite fread 
@@ -56,3 +56,13 @@ NULL
 # .onUnload <- function (libpath) {
 #   library.dynam.unload("phenofit", libpath)
 # }
+
+# dplyr's version now returns last row instead of last col when
+# supplied a data frame
+last <- function(x) {
+  x[[length(x)]]
+}
+
+first <- function(x) {
+  x[[1]]
+}
