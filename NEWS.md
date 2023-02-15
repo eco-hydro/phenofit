@@ -1,3 +1,7 @@
+# phenofit 0.3.8 (2023-02-15)
+
+- fix dplyr `first` and `last`
+
 # phenofit 0.3.5 (2022-02-12; Kong et al., 2022, MEE)
 
 - add TIMESAT global model function and cutoff function.
