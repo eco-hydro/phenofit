@@ -210,6 +210,26 @@ check_ylu <- function(yfit, ylu){
     return(yfit)
 }
 
+#' @importFrom zoo na.spline
+rm_spike <- function(y, times = 3, halfwin = 1, maxgap = 4) {
+    # 强化除钉值模块, 20191127
+    std <- sd(y, na.rm = TRUE)
+    # ymov <- cbind(y[c(1, 1:(n - 2), n-1)], y[c(2, 3:n, n)]) %>% rowMeans(na.rm = TRUE)
+    # # ymov2 <- movmean(y, 1)
+    # halfwin <- ceiling(nptperyear/36) # about 10-days
+    ymov2 <- movmean(y, halfwin = halfwin)
+    # which(abs(y - ymean) > std) & w <= w_critical
+    #  | abs(y - ymov2) > 2*std
+    I_spike <- which(abs(y - ymov2) > times * std) # 95.44% interval, `(1- 2*pnorm(-2))*100`
+    # print(I_spike)
+    if (length(I_spike) > 0) {
+        y[I_spike] <- NA # missval
+        y <- na.spline(y, maxgap = maxgap, na.rm = FALSE)
+    }
+    y
+}
+
+
 # #' check_ylu2
 # #'
 # #' values out of ylu, set to be na and interpolate it.

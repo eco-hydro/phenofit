@@ -2,7 +2,7 @@
 # ' @export
 hess.fFIT <- function(fit, tout = NULL){
     FUN <- get(fit$fun, mode = 'function')
-    grad(function(t) grad(FUN, t, par= fit$par), tout)
+    grad(function(t) grad(FUN, t, par = fit$par), tout)
 }
 
 
@@ -16,10 +16,9 @@ hess.fFIT <- function(fit, tout = NULL){
 # '
 # ' @rdname derivative
 # ' @export
-grad.fFIT <- function(fit, tout = NULL){
+grad_fit <- function(fit, tout = NULL){
     FUN <- get(fit$fun, mode = 'function')
     grad(FUN, tout, par = fit$par)
-
 }
 
 #' @title D
@@ -90,7 +89,7 @@ D1.fFIT <- function(fit, t = NULL, analytical = FALSE, smoothed.spline = FALSE, 
         der1 <- D1(par, t)[, 1] # the default option
     } else {
         # numerical approximation by package `numDeriv`
-        der1 <- grad.fFIT(fit, t)
+        der1 <- grad_fit(fit, t)
     }
 
     der1[is.infinite(der1)] <- NA
@@ -124,7 +123,7 @@ D2.fFIT <- function(fit, t = NULL, analytical = FALSE, smoothed.spline = FALSE, 
         der2 <- D2(par, t)[, 1, 1]
     } else {
         # numerical approximation
-        der1 <- grad.fFIT(fit, t)
+        der1 <- grad_fit(fit, t)
         der2 <- hess.fFIT(fit, t)
     }
 
@@ -148,23 +147,4 @@ curvature.fFIT <- function(fit, t = NULL, analytical = FALSE, smoothed.spline = 
     derivs <- D2.fFIT(fit, t, analytical, smoothed.spline)
     k      <- derivs$der2 / (1 + derivs$der1 ^ 2) ^ (3 / 2)
     c(derivs, list(k = k))
-}
-
-#' @importFrom zoo na.spline
-rm_spike <- function(y, times = 3, halfwin = 1, maxgap = 4) {
-    # 强化除钉值模块, 20191127
-    std <- sd(y, na.rm = TRUE)
-    # ymov <- cbind(y[c(1, 1:(n - 2), n-1)], y[c(2, 3:n, n)]) %>% rowMeans(na.rm = TRUE)
-    # # ymov2 <- movmean(y, 1)
-    # halfwin <- ceiling(nptperyear/36) # about 10-days
-    ymov2 <- movmean(y, halfwin = halfwin)
-    # which(abs(y - ymean) > std) & w <= w_critical
-    #  | abs(y - ymov2) > 2*std
-    I_spike <- which(abs(y - ymov2) > times * std) # 95.44% interval, `(1- 2*pnorm(-2))*100`
-    # print(I_spike)
-    if (length(I_spike) > 0) {
-        y[I_spike] <- NA # missval
-        y = na.spline(y, maxgap = maxgap, na.rm = FALSE)
-    }
-    y
 }
