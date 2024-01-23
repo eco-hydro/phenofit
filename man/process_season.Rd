@@ -14,16 +14,16 @@ process_season(
 )
 }
 \arguments{
+\item{d_obs}{data.frame, with the columns of \code{t}, \code{y} and \code{w}.}
+
+\item{options}{options of \code{\link[=season_mov]{season_mov()}}}
+
 \item{nptperyear}{Integer, number of images per year.}
 
 \item{south}{Boolean. In south hemisphere, growing year is 1 July to the
 following year 31 June; In north hemisphere, growing year is 1 Jan to 31 Dec.}
 
 \item{...}{Others will be ignored.}
-
-\item{d}{data.frame, with the columns of \code{t}, \code{y} and \code{w}.}
-
-\item{options_season}{options of \code{\link[=season_mov]{season_mov()}}}
 }
 \description{
 divide_seasons

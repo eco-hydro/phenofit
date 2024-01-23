@@ -4,8 +4,8 @@
 #' divide_seasons
 #'
 #' @inheritParams check_input
-#' @param d data.frame, with the columns of `t`, `y` and `w`.
-#' @param options_season options of [season_mov()]
+#' @param d_obs data.frame, with the columns of `t`, `y` and `w`.
+#' @param options options of [season_mov()]
 #'
 #' @note site-year may be not continuous.
 #' 

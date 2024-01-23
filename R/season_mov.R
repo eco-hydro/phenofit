@@ -209,12 +209,12 @@ season_mov <- function(INPUT,
             brk$dt %<>% subset(year == year_i) %>% mutate(lambda = lambda)
 
         # improve for head and tail, v0.3.4
-        if (i == 1) {
-            rfit = brk$fit[date_year[I] <= year_i, ]
+        rfit = if (i == 1) {
+            brk$fit[date_year[I] <= year_i, ]
         } else if (i == length(years.run)) {
-            rfit = brk$fit[date_year[I] >= year_i, ]
+            brk$fit[date_year[I] >= year_i, ]
         } else {
-            rfit = brk$fit[date_year[I] == year_i, ]
+            brk$fit[date_year[I] == year_i, ]
         }
         ans = list(fit = rfit, dt = brk$dt)
         if (.options$debug) ans %<>% c(list(fit.raw = brk$fit), .)

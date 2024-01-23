@@ -69,6 +69,7 @@ library(phenofit)
 library(ggplot2)
 library(magrittr)
 library(purrr)
+library(data.table)
 
 # simulate vegetation time-series
 fFUN = doubleLog_Beck
@@ -88,12 +89,12 @@ opts <- lapply(optFUNs, function(optFUN){
 })
 
 # visualization
-df   <- map(opts, "ysim") \%>\% as.data.frame() \%>\% cbind(t, y, .)
-pdat <- reshape2::melt(df, c("t", "y"), variable.name = "optFUN")
+df   <- map(opts, "ysim") \%>\% as.data.table() \%>\% cbind(t, y, .)
+pdat <- data.table::melt(df, c("t", "y"), variable.name = "optFUN")
 
 ggplot(pdat) + 
     geom_point(data = data.frame(t, y), aes(t, y), size = 2) + 
-    geom_line(aes(t, value, color = optFUN), size = 0.9)
+    geom_line(aes(t, value, color = optFUN), linewidth = 0.9)
 }
 \seealso{
 \code{\link[=optim_pheno]{optim_pheno()}}, \code{\link[=I_optim]{I_optim()}}
