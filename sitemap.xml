@@ -1,243 +1,83 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>/404.html</loc>
-  </url>
-  <url>
-    <loc>/LICENSE-text.html</loc>
-  </url>
-  <url>
-    <loc>/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>/articles/phenofit-procedures.html</loc>
-  </url>
-  <url>
-    <loc>/articles/phenofit_CA-NS6.html</loc>
-  </url>
-  <url>
-    <loc>/authors.html</loc>
-  </url>
-  <url>
-    <loc>/index.html</loc>
-  </url>
-  <url>
-    <loc>/news/index.html</loc>
-  </url>
-  <url>
-    <loc>/reference/CA_NS6.html</loc>
-  </url>
-  <url>
-    <loc>/reference/D.html</loc>
-  </url>
-  <url>
-    <loc>/reference/FitDL.html</loc>
-  </url>
-  <url>
-    <loc>/reference/GOF.html</loc>
-  </url>
-  <url>
-    <loc>/reference/I_optim.html</loc>
-  </url>
-  <url>
-    <loc>/reference/MOD13A1.html</loc>
-  </url>
-  <url>
-    <loc>/reference/PhenoDeriv.html</loc>
-  </url>
-  <url>
-    <loc>/reference/PhenoGu.html</loc>
-  </url>
-  <url>
-    <loc>/reference/PhenoKl.html</loc>
-  </url>
-  <url>
-    <loc>/reference/PhenoTrs.html</loc>
-  </url>
-  <url>
-    <loc>/reference/R2_sign.html</loc>
-  </url>
-  <url>
-    <loc>/reference/add_HeadTail.html</loc>
-  </url>
-  <url>
-    <loc>/reference/brks2rfit.html</loc>
-  </url>
-  <url>
-    <loc>/reference/check_GS_HeadTail.html</loc>
-  </url>
-  <url>
-    <loc>/reference/check_input.html</loc>
-  </url>
-  <url>
-    <loc>/reference/check_ylu.html</loc>
-  </url>
-  <url>
-    <loc>/reference/curvefit.html</loc>
-  </url>
-  <url>
-    <loc>/reference/curvefit0.html</loc>
-  </url>
-  <url>
-    <loc>/reference/curvefits.html</loc>
-  </url>
-  <url>
-    <loc>/reference/curvefits_LocalModel.html</loc>
-  </url>
-  <url>
-    <loc>/reference/cutoff.html</loc>
-  </url>
-  <url>
-    <loc>/reference/cv_coef.html</loc>
-  </url>
-  <url>
-    <loc>/reference/fFIT.html</loc>
-  </url>
-  <url>
-    <loc>/reference/fFITs.html</loc>
-  </url>
-  <url>
-    <loc>/reference/f_goal.html</loc>
-  </url>
-  <url>
-    <loc>/reference/f_goal2.html</loc>
-  </url>
-  <url>
-    <loc>/reference/find_season.peaks.html</loc>
-  </url>
-  <url>
-    <loc>/reference/findpeaks.html</loc>
-  </url>
-  <url>
-    <loc>/reference/getRealDate.html</loc>
-  </url>
-  <url>
-    <loc>/reference/get_GOF.html</loc>
-  </url>
-  <url>
-    <loc>/reference/get_fitting.html</loc>
-  </url>
-  <url>
-    <loc>/reference/get_param.html</loc>
-  </url>
-  <url>
-    <loc>/reference/get_pheno.html</loc>
-  </url>
-  <url>
-    <loc>/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>/reference/init_lambda.html</loc>
-  </url>
-  <url>
-    <loc>/reference/init_param.html</loc>
-  </url>
-  <url>
-    <loc>/reference/input_single.html</loc>
-  </url>
-  <url>
-    <loc>/reference/kurtosis.html</loc>
-  </url>
-  <url>
-    <loc>/reference/lambda_vcurve.html</loc>
-  </url>
-  <url>
-    <loc>/reference/logistic.html</loc>
-  </url>
-  <url>
-    <loc>/reference/logistics.html</loc>
-  </url>
-  <url>
-    <loc>/reference/melt_list.html</loc>
-  </url>
-  <url>
-    <loc>/reference/movmean.html</loc>
-  </url>
-  <url>
-    <loc>/reference/opt_FUN.html</loc>
-  </url>
-  <url>
-    <loc>/reference/optim_pheno.html</loc>
-  </url>
-  <url>
-    <loc>/reference/phenofit.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plot_curvefits.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plot_input.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plot_phenofit.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plot_season.html</loc>
-  </url>
-  <url>
-    <loc>/reference/process_phenofit.html</loc>
-  </url>
-  <url>
-    <loc>/reference/process_season.html</loc>
-  </url>
-  <url>
-    <loc>/reference/qcFUN.html</loc>
-  </url>
-  <url>
-    <loc>/reference/qc_levels.html</loc>
-  </url>
-  <url>
-    <loc>/reference/qc_sentinel2.html</loc>
-  </url>
-  <url>
-    <loc>/reference/rcpp_season_filter.html</loc>
-  </url>
-  <url>
-    <loc>/reference/rcpp_wSG.html</loc>
-  </url>
-  <url>
-    <loc>/reference/reexports.html</loc>
-  </url>
-  <url>
-    <loc>/reference/removeClosedExtreme.html</loc>
-  </url>
-  <url>
-    <loc>/reference/roughFit.html</loc>
-  </url>
-  <url>
-    <loc>/reference/season.html</loc>
-  </url>
-  <url>
-    <loc>/reference/season_input.html</loc>
-  </url>
-  <url>
-    <loc>/reference/season_mov.html</loc>
-  </url>
-  <url>
-    <loc>/reference/set_options.html</loc>
-  </url>
-  <url>
-    <loc>/reference/smooth_wHANTS.html</loc>
-  </url>
-  <url>
-    <loc>/reference/smooth_wSG.html</loc>
-  </url>
-  <url>
-    <loc>/reference/smooth_wWHIT.html</loc>
-  </url>
-  <url>
-    <loc>/reference/tidy_MOD13.html</loc>
-  </url>
-  <url>
-    <loc>/reference/tidy_pheno.html</loc>
-  </url>
-  <url>
-    <loc>/reference/v_curve.html</loc>
-  </url>
-  <url>
-    <loc>/reference/wFUN.html</loc>
-  </url>
-  <url>
-    <loc>/reference/whit2.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>/404.html</loc></url>
+<url><loc>/LICENSE-text.html</loc></url>
+<url><loc>/articles/index.html</loc></url>
+<url><loc>/articles/phenofit-procedures.html</loc></url>
+<url><loc>/articles/phenofit_CA-NS6.html</loc></url>
+<url><loc>/authors.html</loc></url>
+<url><loc>/index.html</loc></url>
+<url><loc>/news/index.html</loc></url>
+<url><loc>/reference/CA_NS6.html</loc></url>
+<url><loc>/reference/D.html</loc></url>
+<url><loc>/reference/FitDL.html</loc></url>
+<url><loc>/reference/GOF.html</loc></url>
+<url><loc>/reference/I_optim.html</loc></url>
+<url><loc>/reference/MOD13A1.html</loc></url>
+<url><loc>/reference/PhenoDeriv.html</loc></url>
+<url><loc>/reference/PhenoGu.html</loc></url>
+<url><loc>/reference/PhenoKl.html</loc></url>
+<url><loc>/reference/PhenoTrs.html</loc></url>
+<url><loc>/reference/R2_sign.html</loc></url>
+<url><loc>/reference/add_HeadTail.html</loc></url>
+<url><loc>/reference/brks2rfit.html</loc></url>
+<url><loc>/reference/check_GS_HeadTail.html</loc></url>
+<url><loc>/reference/check_input.html</loc></url>
+<url><loc>/reference/check_ylu.html</loc></url>
+<url><loc>/reference/curvefit.html</loc></url>
+<url><loc>/reference/curvefit0.html</loc></url>
+<url><loc>/reference/curvefits.html</loc></url>
+<url><loc>/reference/curvefits_LocalModel.html</loc></url>
+<url><loc>/reference/cutoff.html</loc></url>
+<url><loc>/reference/cv_coef.html</loc></url>
+<url><loc>/reference/fFIT.html</loc></url>
+<url><loc>/reference/fFITs.html</loc></url>
+<url><loc>/reference/f_goal.html</loc></url>
+<url><loc>/reference/f_goal2.html</loc></url>
+<url><loc>/reference/find_season.peaks.html</loc></url>
+<url><loc>/reference/findpeaks.html</loc></url>
+<url><loc>/reference/getRealDate.html</loc></url>
+<url><loc>/reference/get_GOF.html</loc></url>
+<url><loc>/reference/get_fitting.html</loc></url>
+<url><loc>/reference/get_param.html</loc></url>
+<url><loc>/reference/get_pheno.html</loc></url>
+<url><loc>/reference/index.html</loc></url>
+<url><loc>/reference/init_lambda.html</loc></url>
+<url><loc>/reference/init_param.html</loc></url>
+<url><loc>/reference/input_single.html</loc></url>
+<url><loc>/reference/kurtosis.html</loc></url>
+<url><loc>/reference/lambda_vcurve.html</loc></url>
+<url><loc>/reference/logistic.html</loc></url>
+<url><loc>/reference/logistics.html</loc></url>
+<url><loc>/reference/melt_list.html</loc></url>
+<url><loc>/reference/movmean.html</loc></url>
+<url><loc>/reference/opt_FUN.html</loc></url>
+<url><loc>/reference/optim_pheno.html</loc></url>
+<url><loc>/reference/phenofit.html</loc></url>
+<url><loc>/reference/plot_curvefits.html</loc></url>
+<url><loc>/reference/plot_input.html</loc></url>
+<url><loc>/reference/plot_phenofit.html</loc></url>
+<url><loc>/reference/plot_season.html</loc></url>
+<url><loc>/reference/process_phenofit.html</loc></url>
+<url><loc>/reference/process_season.html</loc></url>
+<url><loc>/reference/qcFUN.html</loc></url>
+<url><loc>/reference/qc_levels.html</loc></url>
+<url><loc>/reference/qc_sentinel2.html</loc></url>
+<url><loc>/reference/rcpp_season_filter.html</loc></url>
+<url><loc>/reference/rcpp_wSG.html</loc></url>
+<url><loc>/reference/reexports.html</loc></url>
+<url><loc>/reference/removeClosedExtreme.html</loc></url>
+<url><loc>/reference/roughFit.html</loc></url>
+<url><loc>/reference/season.html</loc></url>
+<url><loc>/reference/season_input.html</loc></url>
+<url><loc>/reference/season_mov.html</loc></url>
+<url><loc>/reference/set_options.html</loc></url>
+<url><loc>/reference/smooth_wHANTS.html</loc></url>
+<url><loc>/reference/smooth_wSG.html</loc></url>
+<url><loc>/reference/smooth_wWHIT.html</loc></url>
+<url><loc>/reference/tidy_MOD13.html</loc></url>
+<url><loc>/reference/tidy_pheno.html</loc></url>
+<url><loc>/reference/v_curve.html</loc></url>
+<url><loc>/reference/wFUN.html</loc></url>
+<url><loc>/reference/whit2.html</loc></url>
 </urlset>
+
