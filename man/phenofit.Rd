@@ -3,7 +3,6 @@
 \docType{package}
 \name{phenofit}
 \alias{phenofit}
-\alias{_PACKAGE}
 \alias{phenofit-package}
 \title{phenofit}
 \description{
