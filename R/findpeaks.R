@@ -147,7 +147,7 @@ findpeaks <- function (x, nups = 1, ndowns = nups, zero = "0", peakpat = NULL,
 #' @importFrom stringr str_replace_all
 str_replace_midzero <- function(x) {
     replace = function(x, replacement = "+") {
-        paste(rep(replacement, nchar(x)), collapse = "")
+        strrep(replacement, nchar(x))
     }
     str_replace_all(x, "\\++0\\++", . %>% replace("+")) %>%
         str_replace_all("-+0-+", . %>% replace("-"))
