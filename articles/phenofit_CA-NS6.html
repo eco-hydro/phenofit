@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenofit</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.9</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.11</span>
       </span>
     </div>
 
@@ -246,7 +246,7 @@ and phenology extraction are conducted separately.</p>
 <span><span class="va">brks2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/season_mov.html">season_mov</a></span><span class="op">(</span><span class="va">INPUT</span>, </span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>rFUN <span class="op">=</span> <span class="st">"smooth_wWHIT"</span>, wFUN <span class="op">=</span> <span class="va">wFUN</span>, maxExtendMonth <span class="op">=</span> <span class="fl">6</span>, r_min <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/plot_season.html">plot_season</a></span><span class="op">(</span><span class="va">INPUT</span>, <span class="va">brks2</span><span class="op">)</span></span></code></pre></div>
-<p><img src="phenofit_CA-NS6_files/figure-html/divide%20growing%20season-1.png" width="700"></p>
+<p><img src="phenofit_CA-NS6_files/figure-html/divide%20growing%20season-1.png" class="r-plt" alt="" width="700"></p>
 </div>
 <div class="section level3">
 <h3 id="curve-fitting">2.4 Curve fitting<a class="anchor" aria-label="anchor" href="#curve-fitting"></a>
@@ -271,70 +271,70 @@ and phenology extraction are conducted separately.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">l_param</span><span class="op">$</span><span class="va">AG</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 20 × 8</span></span></span>
-<span><span class="co">##    flag      t0    mn    mx    rsp    a3    rau    a5</span></span>
-<span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> 1999_1 -<span style="color: #BB0000;">166.</span> 0.169 0.398 0.019<span style="text-decoration: underline;">3</span>  4.43 0.017<span style="text-decoration: underline;">7</span>  6   </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> 2000_1  209. 0.167 0.407 0.025<span style="text-decoration: underline;">5</span>  4.36 0.017<span style="text-decoration: underline;">1</span>  4.84</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> 2001_1  567. 0.169 0.398 0.019<span style="text-decoration: underline;">3</span>  4.43 0.017<span style="text-decoration: underline;">7</span>  6   </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> 2002_1  934. 0.168 0.528 0.032<span style="text-decoration: underline;">9</span>  2    0.016<span style="text-decoration: underline;">1</span>  2   </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> 2003_1 <span style="text-decoration: underline;">1</span>275. 0.167 0.432 0.026<span style="text-decoration: underline;">8</span>  2    0.012<span style="text-decoration: underline;">3</span>  3.73</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> 2004_1 <span style="text-decoration: underline;">1</span>689. 0.168 0.446 0.016<span style="text-decoration: underline;">7</span>  5.04 0.036<span style="text-decoration: underline;">9</span>  2   </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> 2005_1 <span style="text-decoration: underline;">2</span>025. 0.172 0.449 0.022<span style="text-decoration: underline;">4</span>  6    0.016<span style="text-decoration: underline;">1</span>  3.62</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> 2006_1 <span style="text-decoration: underline;">2</span>370. 0.166 0.420 0.028<span style="text-decoration: underline;">0</span>  2.02 0.011<span style="text-decoration: underline;">2</span>  3.12</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> 2007_1 <span style="text-decoration: underline;">2</span>752. 0.166 0.483 0.021<span style="text-decoration: underline;">0</span>  2    0.015<span style="text-decoration: underline;">0</span>  2.90</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">10</span> 2008_1 <span style="text-decoration: underline;">3</span>123. 0.170 0.481 0.021<span style="text-decoration: underline;">5</span>  2.74 0.016<span style="text-decoration: underline;">5</span>  6   </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">11</span> 2009_1 <span style="text-decoration: underline;">3</span>522. 0.168 0.479 0.014<span style="text-decoration: underline;">2</span>  6    0.027<span style="text-decoration: underline;">7</span>  2   </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">12</span> 2010_1 <span style="text-decoration: underline;">3</span>840. 0.167 0.489 0.022<span style="text-decoration: underline;">8</span>  2    0.013<span style="text-decoration: underline;">1</span>  2   </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">13</span> 2011_1 <span style="text-decoration: underline;">4</span>207. 0.175 0.467 0.029<span style="text-decoration: underline;">0</span>  2    0.013<span style="text-decoration: underline;">3</span>  5.04</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">14</span> 2012_1 <span style="text-decoration: underline;">4</span>558. 0.166 0.506 0.048<span style="text-decoration: underline;">3</span>  2    0.010<span style="text-decoration: underline;">9</span>  4.15</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">15</span> 2013_1 <span style="text-decoration: underline;">4</span>965. 0.166 0.483 0.014<span style="text-decoration: underline;">4</span>  6    0.019<span style="text-decoration: underline;">0</span>  2.47</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">16</span> 2014_1 <span style="text-decoration: underline;">5</span>306. 0.169 0.507 0.028<span style="text-decoration: underline;">1</span>  2    0.012<span style="text-decoration: underline;">7</span>  2.70</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">17</span> 2015_1 <span style="text-decoration: underline;">5</span>701. 0.184 0.486 0.014<span style="text-decoration: underline;">5</span>  5.62 0.028<span style="text-decoration: underline;">0</span>  2   </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">18</span> 2016_1 <span style="text-decoration: underline;">6</span>024. 0.176 0.484 0.037<span style="text-decoration: underline;">0</span>  2    0.012<span style="text-decoration: underline;">6</span>  5.14</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">19</span> 2017_1 <span style="text-decoration: underline;">6</span>384. 0.168 0.445 0.036<span style="text-decoration: underline;">7</span>  3.09 0.010<span style="text-decoration: underline;">1</span>  5.37</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">20</span> 2018_1 <span style="text-decoration: underline;">6</span>774. 0.165 0.451 0.015<span style="text-decoration: underline;">5</span>  3.22 0.016<span style="text-decoration: underline;">4</span>  3.07</span></span></code></pre>
+<span><span class="co">##    flag      t0    mn    mx    rsp    a3     rau    a5</span></span>
+<span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> 1999_1 -<span style="color: #BB0000;">166.</span> 0.169 0.398 0.019<span style="text-decoration: underline;">3</span>  4.43 0.017<span style="text-decoration: underline;">7</span>   6   </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> 2000_1  209. 0.167 0.407 0.025<span style="text-decoration: underline;">5</span>  4.36 0.017<span style="text-decoration: underline;">1</span>   4.84</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> 2001_1  567. 0.169 0.398 0.019<span style="text-decoration: underline;">3</span>  4.43 0.017<span style="text-decoration: underline;">7</span>   6   </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> 2002_1  934. 0.168 0.528 0.032<span style="text-decoration: underline;">9</span>  2    0.016<span style="text-decoration: underline;">1</span>   2   </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> 2003_1 <span style="text-decoration: underline;">1</span>275. 0.167 0.432 0.026<span style="text-decoration: underline;">8</span>  2    0.012<span style="text-decoration: underline;">3</span>   3.73</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> 2004_1 <span style="text-decoration: underline;">1</span>689. 0.168 0.446 0.016<span style="text-decoration: underline;">7</span>  5.04 0.036<span style="text-decoration: underline;">9</span>   2   </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> 2005_1 <span style="text-decoration: underline;">2</span>025. 0.172 0.449 0.022<span style="text-decoration: underline;">4</span>  6    0.016<span style="text-decoration: underline;">1</span>   3.62</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> 2006_1 <span style="text-decoration: underline;">2</span>370. 0.166 0.420 0.028<span style="text-decoration: underline;">0</span>  2.02 0.011<span style="text-decoration: underline;">2</span>   3.12</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> 2007_1 <span style="text-decoration: underline;">2</span>751. 0.166 0.482 0.021<span style="text-decoration: underline;">3</span>  2    0.014<span style="text-decoration: underline;">8</span>   2.95</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span> 2008_1 <span style="text-decoration: underline;">3</span>123. 0.170 0.481 0.021<span style="text-decoration: underline;">5</span>  2.74 0.016<span style="text-decoration: underline;">5</span>   6   </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">11</span> 2009_1 <span style="text-decoration: underline;">3</span>522. 0.168 0.479 0.014<span style="text-decoration: underline;">2</span>  6    0.027<span style="text-decoration: underline;">7</span>   2   </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">12</span> 2010_1 <span style="text-decoration: underline;">3</span>840. 0.167 0.489 0.022<span style="text-decoration: underline;">8</span>  2    0.013<span style="text-decoration: underline;">1</span>   2   </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">13</span> 2011_1 <span style="text-decoration: underline;">4</span>207. 0.175 0.467 0.029<span style="text-decoration: underline;">0</span>  2    0.013<span style="text-decoration: underline;">3</span>   5.04</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">14</span> 2012_1 <span style="text-decoration: underline;">4</span>558. 0.166 0.506 0.048<span style="text-decoration: underline;">3</span>  2    0.010<span style="text-decoration: underline;">9</span>   4.15</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">15</span> 2013_1 <span style="text-decoration: underline;">4</span>965. 0.166 0.483 0.014<span style="text-decoration: underline;">4</span>  6    0.019<span style="text-decoration: underline;">0</span>   2.47</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">16</span> 2014_1 <span style="text-decoration: underline;">5</span>306. 0.169 0.507 0.028<span style="text-decoration: underline;">1</span>  2    0.012<span style="text-decoration: underline;">7</span>   2.70</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">17</span> 2015_1 <span style="text-decoration: underline;">5</span>701. 0.184 0.486 0.014<span style="text-decoration: underline;">5</span>  5.62 0.028<span style="text-decoration: underline;">0</span>   2   </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">18</span> 2016_1 <span style="text-decoration: underline;">6</span>024. 0.176 0.484 0.037<span style="text-decoration: underline;">0</span>  2    0.012<span style="text-decoration: underline;">6</span>   5.14</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">19</span> 2017_1 <span style="text-decoration: underline;">6</span>381. 0.168 0.441 0.040<span style="text-decoration: underline;">3</span>  2.95 0.009<span style="text-decoration: underline;">79</span>  5.98</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">20</span> 2018_1 <span style="text-decoration: underline;">6</span>774. 0.165 0.451 0.015<span style="text-decoration: underline;">5</span>  3.22 0.016<span style="text-decoration: underline;">4</span>   3.07</span></span></code></pre>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">d_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_fitting.html">get_fitting</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## Warning in merge.data.table(x$data[Ix], df, id = "t"): Unknown argument 'id'</span></span>
-<span><span class="co">## has been passed.</span></span>
-<span><span class="co">## Warning in merge.data.table(x$data[Ix], df, id = "t"): Unknown argument 'id'</span></span>
-<span><span class="co">## has been passed.</span></span>
-<span><span class="co">## Warning in merge.data.table(x$data[Ix], df, id = "t"): Unknown argument 'id'</span></span>
-<span><span class="co">## has been passed.</span></span>
-<span><span class="co">## Warning in merge.data.table(x$data[Ix], df, id = "t"): Unknown argument 'id'</span></span>
-<span><span class="co">## has been passed.</span></span>
-<span><span class="co">## Warning in merge.data.table(x$data[Ix], df, id = "t"): Unknown argument 'id'</span></span>
-<span><span class="co">## has been passed.</span></span>
-<span><span class="co">## Warning in merge.data.table(x$data[Ix], df, id = "t"): Unknown argument 'id'</span></span>
-<span><span class="co">## has been passed.</span></span>
-<span><span class="co">## Warning in merge.data.table(x$data[Ix], df, id = "t"): Unknown argument 'id'</span></span>
-<span><span class="co">## has been passed.</span></span>
-<span><span class="co">## Warning in merge.data.table(x$data[Ix], df, id = "t"): Unknown argument 'id'</span></span>
-<span><span class="co">## has been passed.</span></span>
-<span><span class="co">## Warning in merge.data.table(x$data[Ix], df, id = "t"): Unknown argument 'id'</span></span>
-<span><span class="co">## has been passed.</span></span>
-<span><span class="co">## Warning in merge.data.table(x$data[Ix], df, id = "t"): Unknown argument 'id'</span></span>
-<span><span class="co">## has been passed.</span></span>
-<span><span class="co">## Warning in merge.data.table(x$data[Ix], df, id = "t"): Unknown argument 'id'</span></span>
-<span><span class="co">## has been passed.</span></span>
-<span><span class="co">## Warning in merge.data.table(x$data[Ix], df, id = "t"): Unknown argument 'id'</span></span>
-<span><span class="co">## has been passed.</span></span>
-<span><span class="co">## Warning in merge.data.table(x$data[Ix], df, id = "t"): Unknown argument 'id'</span></span>
-<span><span class="co">## has been passed.</span></span>
-<span><span class="co">## Warning in merge.data.table(x$data[Ix], df, id = "t"): Unknown argument 'id'</span></span>
-<span><span class="co">## has been passed.</span></span>
-<span><span class="co">## Warning in merge.data.table(x$data[Ix], df, id = "t"): Unknown argument 'id'</span></span>
-<span><span class="co">## has been passed.</span></span>
-<span><span class="co">## Warning in merge.data.table(x$data[Ix], df, id = "t"): Unknown argument 'id'</span></span>
-<span><span class="co">## has been passed.</span></span>
-<span><span class="co">## Warning in merge.data.table(x$data[Ix], df, id = "t"): Unknown argument 'id'</span></span>
-<span><span class="co">## has been passed.</span></span>
-<span><span class="co">## Warning in merge.data.table(x$data[Ix], df, id = "t"): Unknown argument 'id'</span></span>
-<span><span class="co">## has been passed.</span></span>
-<span><span class="co">## Warning in merge.data.table(x$data[Ix], df, id = "t"): Unknown argument 'id'</span></span>
-<span><span class="co">## has been passed.</span></span>
-<span><span class="co">## Warning in merge.data.table(x$data[Ix], df, id = "t"): Unknown argument 'id'</span></span>
-<span><span class="co">## has been passed.</span></span></code></pre>
+<pre><code><span><span class="co">## Warning in .maybe_warn_merge_dots(...): merge.data.table() received 1 unknown</span></span>
+<span><span class="co">## keyword argument which will be ignored: [id]</span></span>
+<span><span class="co">## Warning in .maybe_warn_merge_dots(...): merge.data.table() received 1 unknown</span></span>
+<span><span class="co">## keyword argument which will be ignored: [id]</span></span>
+<span><span class="co">## Warning in .maybe_warn_merge_dots(...): merge.data.table() received 1 unknown</span></span>
+<span><span class="co">## keyword argument which will be ignored: [id]</span></span>
+<span><span class="co">## Warning in .maybe_warn_merge_dots(...): merge.data.table() received 1 unknown</span></span>
+<span><span class="co">## keyword argument which will be ignored: [id]</span></span>
+<span><span class="co">## Warning in .maybe_warn_merge_dots(...): merge.data.table() received 1 unknown</span></span>
+<span><span class="co">## keyword argument which will be ignored: [id]</span></span>
+<span><span class="co">## Warning in .maybe_warn_merge_dots(...): merge.data.table() received 1 unknown</span></span>
+<span><span class="co">## keyword argument which will be ignored: [id]</span></span>
+<span><span class="co">## Warning in .maybe_warn_merge_dots(...): merge.data.table() received 1 unknown</span></span>
+<span><span class="co">## keyword argument which will be ignored: [id]</span></span>
+<span><span class="co">## Warning in .maybe_warn_merge_dots(...): merge.data.table() received 1 unknown</span></span>
+<span><span class="co">## keyword argument which will be ignored: [id]</span></span>
+<span><span class="co">## Warning in .maybe_warn_merge_dots(...): merge.data.table() received 1 unknown</span></span>
+<span><span class="co">## keyword argument which will be ignored: [id]</span></span>
+<span><span class="co">## Warning in .maybe_warn_merge_dots(...): merge.data.table() received 1 unknown</span></span>
+<span><span class="co">## keyword argument which will be ignored: [id]</span></span>
+<span><span class="co">## Warning in .maybe_warn_merge_dots(...): merge.data.table() received 1 unknown</span></span>
+<span><span class="co">## keyword argument which will be ignored: [id]</span></span>
+<span><span class="co">## Warning in .maybe_warn_merge_dots(...): merge.data.table() received 1 unknown</span></span>
+<span><span class="co">## keyword argument which will be ignored: [id]</span></span>
+<span><span class="co">## Warning in .maybe_warn_merge_dots(...): merge.data.table() received 1 unknown</span></span>
+<span><span class="co">## keyword argument which will be ignored: [id]</span></span>
+<span><span class="co">## Warning in .maybe_warn_merge_dots(...): merge.data.table() received 1 unknown</span></span>
+<span><span class="co">## keyword argument which will be ignored: [id]</span></span>
+<span><span class="co">## Warning in .maybe_warn_merge_dots(...): merge.data.table() received 1 unknown</span></span>
+<span><span class="co">## keyword argument which will be ignored: [id]</span></span>
+<span><span class="co">## Warning in .maybe_warn_merge_dots(...): merge.data.table() received 1 unknown</span></span>
+<span><span class="co">## keyword argument which will be ignored: [id]</span></span>
+<span><span class="co">## Warning in .maybe_warn_merge_dots(...): merge.data.table() received 1 unknown</span></span>
+<span><span class="co">## keyword argument which will be ignored: [id]</span></span>
+<span><span class="co">## Warning in .maybe_warn_merge_dots(...): merge.data.table() received 1 unknown</span></span>
+<span><span class="co">## keyword argument which will be ignored: [id]</span></span>
+<span><span class="co">## Warning in .maybe_warn_merge_dots(...): merge.data.table() received 1 unknown</span></span>
+<span><span class="co">## keyword argument which will be ignored: [id]</span></span>
+<span><span class="co">## Warning in .maybe_warn_merge_dots(...): merge.data.table() received 1 unknown</span></span>
+<span><span class="co">## keyword argument which will be ignored: [id]</span></span></code></pre>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Get GOF information</span></span>
 <span><span class="va">d_gof</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_GOF.html">get_GOF</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span>
@@ -345,7 +345,7 @@ and phenology extraction are conducted separately.</p>
 <span><span class="co">## 1: 1999_1     AG 0.8235796 0.6150465 0.9075129 0.08514232 2.304668e-09    23</span></span>
 <span><span class="co">## 2: 1999_1  Zhang 0.8285788 0.6189771 0.9102630 0.08470653 1.699585e-09    23</span></span>
 <span><span class="co">## 3: 1999_1   Beck 0.8289473 0.6192976 0.9104654 0.08467090 1.661281e-09    23</span></span>
-<span><span class="co">## 4: 1999_1 Elmore 0.8334679 0.6054137 0.9129446 0.08620101 1.250963e-09    23</span></span>
+<span><span class="co">## 4: 1999_1 Elmore 0.8334679 0.6054137 0.9129446 0.08620101 1.250962e-09    23</span></span>
 <span><span class="co">## 5: 2000_1     AG 0.8252408 0.5496414 0.9084277 0.09660186 2.084845e-09    23</span></span>
 <span><span class="co">## 6: 2000_1  Zhang 0.8271460 0.5499378 0.9094757 0.09657007 1.856258e-09    23</span></span></code></pre>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
@@ -361,21 +361,21 @@ and phenology extraction are conducted separately.</p>
 <span><span class="co">## <span style="color: #00BBBB;">ℹ</span> See also `vignette("ggplot2-in-packages")` for more information.</span></span>
 <span><span class="co">## <span style="color: #00BBBB;">ℹ</span> The deprecated feature was likely used in the <span style="color: #0000BB;">phenofit</span> package.</span></span>
 <span><span class="co">##   Please report the issue at <span style="color: #0000BB; font-style: italic;">&lt;https://github.com/eco-hydro/phenofit/issues&gt;</span>.</span></span>
-<span><span class="co">## <span style="color: #555555;">This warning is displayed once every 8 hours.</span></span></span>
+<span><span class="co">## <span style="color: #555555;">This warning is displayed once per session.</span></span></span>
 <span><span class="co">## <span style="color: #555555;">Call `lifecycle::last_lifecycle_warnings()` to see where this warning was</span></span></span>
 <span><span class="co">## <span style="color: #555555;">generated.</span></span></span></code></pre>
 <pre><code><span><span class="co">## Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.</span></span>
 <span><span class="co">## <span style="color: #00BBBB;">ℹ</span> Please use `linewidth` instead.</span></span>
 <span><span class="co">## <span style="color: #00BBBB;">ℹ</span> The deprecated feature was likely used in the <span style="color: #0000BB;">phenofit</span> package.</span></span>
 <span><span class="co">##   Please report the issue at <span style="color: #0000BB; font-style: italic;">&lt;https://github.com/eco-hydro/phenofit/issues&gt;</span>.</span></span>
-<span><span class="co">## <span style="color: #555555;">This warning is displayed once every 8 hours.</span></span></span>
+<span><span class="co">## <span style="color: #555555;">This warning is displayed once per session.</span></span></span>
 <span><span class="co">## <span style="color: #555555;">Call `lifecycle::last_lifecycle_warnings()` to see where this warning was</span></span></span>
 <span><span class="co">## <span style="color: #555555;">generated.</span></span></span></code></pre>
 <pre><code><span><span class="co">## Warning: Removed 4 rows containing missing values or values outside the scale range</span></span>
 <span><span class="co">## (`geom_point()`).</span></span></code></pre>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">grid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grid/grid.newpage.html" class="external-link">grid.newpage</a></span><span class="op">(</span><span class="op">)</span>; <span class="fu">grid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grid/grid.draw.html" class="external-link">grid.draw</a></span><span class="op">(</span><span class="va">g</span><span class="op">)</span><span class="co"># plot to check the curve fitting</span></span></code></pre></div>
-<p><img src="phenofit_CA-NS6_files/figure-html/curve%20fitting-1.png" width="700" style="display: block; margin: auto;"></p>
+<p><img src="phenofit_CA-NS6_files/figure-html/curve%20fitting-1.png" class="r-plt" alt="" width="700" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># write_fig(g, "Figure1_phenofit_curve_fitting.pdf", 10, 6)</span></span></code></pre></div>
 </div>
@@ -395,7 +395,7 @@ and phenology extraction are conducted separately.</p>
 <span></span>
 <span><span class="co">## check the extracted phenology</span></span>
 <span><span class="va">pheno</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_pheno.html">get_pheno</a></span><span class="op">(</span><span class="va">fit</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span>, <span class="st">"Elmore"</span>, IsPlot <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span></code></pre></div>
-<p><img src="phenofit_CA-NS6_files/figure-html/Extract%20phenology-1.png" width="768" style="display: block; margin: auto;"></p>
+<p><img src="phenofit_CA-NS6_files/figure-html/Extract%20phenology-1.png" class="r-plt" alt="" width="768" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># print(str(pheno, 1))</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">l_pheno</span><span class="op">$</span><span class="va">doy</span><span class="op">$</span><span class="va">AG</span><span class="op">)</span></span></code></pre></div>
@@ -442,7 +442,7 @@ and phenology extraction are conducted separately.</p>
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
       </footer>
