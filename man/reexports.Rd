@@ -14,10 +14,10 @@ These objects are imported from other packages. Follow the links
 below to see their documentation.
 
 \describe{
-  \item{lubridate}{\code{\link[lubridate:make_datetime]{make_date}}}
+  \item{lubridate}{\code{\link[lubridate:make_date]{make_date()}}}
 
-  \item{magrittr}{\code{\link[magrittr:compound]{\%<>\%}}, \code{\link[magrittr:pipe]{\%>\%}}}
+  \item{magrittr}{\code{\link[magrittr:\%<>\%]{\%<>\%}}, \code{\link[magrittr:\%>\%]{\%>\%}}}
 
-  \item{zeallot}{\code{\link[zeallot:operator]{\%<-\%}}}
+  \item{zeallot}{\code{\link[zeallot:\%<-\%]{\%<-\%}}}
 }}
 

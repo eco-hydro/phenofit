@@ -8,10 +8,11 @@
 #' @import magrittr numDeriv
 #' @import ggplot2 
 #' @importFrom dplyr nth mutate group_by group_map group_modify select
-#' ungroup across starts_with as_tibble
+#' @importFrom dplyr ungroup across starts_with as_tibble
+#' 
 #' @importFrom gridExtra arrangeGrob
 #' @importFrom data.table data.table as.data.table := is.data.table fwrite fread 
-#' dcast
+#' @importFrom data.table dcast
 #' @importFrom zoo na.approx index zoo
 #' @importFrom purrr map map_df
 #' @importFrom lubridate ymd yday year month day dyears is.Date
